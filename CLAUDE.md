@@ -21,6 +21,7 @@ screenshots anywhere in the product (ADR-0003). The plan is the proposal in
 | Plan | `.claude/rules/issue-authoring.md` | Milestone → EPIC → PBI, filed in that order; every issue has DoR / AC / DoD; dependencies and touch sets mapped so PBIs run in parallel |
 | Deliver | `.claude/rules/delivery.md` | The main session is the Director; one `pbi-implementer` (sonnet) per PBI in its own worktree; TDD → impl → code-review → E2E → verify, looped until AC/DoD hold; Director merges to `main` and pushes |
 | Review | `.claude/agents/code-reviewer.md`, `.claude/agents/security-reviewer.md` | Two independent read-only sonnet subagents per round, given only the issue and the diff range |
+| EPIC test | `.claude/rules/delivery.md` §5, `.claude/agents/epic-tester.md` | When an EPIC's PBIs are all closed: an integrated test in **real Chrome**, report + screenshots committed to `docs/test-reports/`; the EPIC closes only on PASS |
 | Environment | `.claude/rules/local-environment.md` | One shared compose stack; each worktree gets a slot (ports, database, bucket) |
 | Tests | `.claude/rules/tdd.md` | Red → green → refactor, one behavior at a time, the red recorded |
 | Docs | `.claude/rules/documentation.md` | `docs/` is an OKF v0.3 bundle; decisions are ADRs in `docs/adr/`, superseded never edited |

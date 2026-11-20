@@ -102,7 +102,8 @@ graph LR
 
 ## 完了の定義（DoD）
 - [ ] 子 PBI が全て閉じている
-- [ ] EPIC の受け入れ条件を `main` で確かめた（E2E）
+- [ ] 実ブラウザ（Chrome）で総合試験を行い、結果が PASS だった
+- [ ] 総合試験のレポートと画面の写真を `docs/test-reports/` に commit し、`main` に push した
 - [ ] 関係する docs と ADR が更新されている
 ```
 

@@ -17,6 +17,7 @@ description: 写真共有 SNS の UX を独自ブランドで再現する Web �
 
 * [proposal/](proposal/) - 企画書
 * [adr/](adr/) - 決定とその理由
+* [test-reports/](test-reports/) - EPIC の総合試験のレポートとエビデンス
 
 # 履歴
 

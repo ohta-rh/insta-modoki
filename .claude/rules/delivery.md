@@ -11,6 +11,7 @@ results, integrates to `main`, and closes issues. It does not write the PBI's co
 | Implementer | `pbi-implementer` | sonnet | code, tests, docs of the PBI; commits on its branch | its own worktree |
 | Code reviewer | `code-reviewer` | sonnet | nothing (read-only) | reads the implementer's worktree |
 | Security reviewer | `security-reviewer` | sonnet | nothing (read-only) | reads the implementer's worktree |
+| EPIC tester | `epic-tester` | sonnet | test report + evidence; commits on its branch | its own worktree, real Chrome |
 
 Always pass `model: "sonnet"` explicitly as well; never fork; never pass `name` (one-shot
 workers, resumed with SendMessage by agent id). Append the paste block of
@@ -77,10 +78,29 @@ are filed as new PBIs, not folded in.
 4. Clean up by exact name: `git worktree remove .worktrees/pbi-<N>`, `git branch -d pbi/<N>`,
    drop the slot's databases/bucket, free the slot. Then re-evaluate the ready set (§2).
 
-## 5. Never
+## 5. EPIC integrated test — in a real browser (ADR-0012)
+
+When the last child PBI of an EPIC is closed, the EPIC is **not** closed yet:
+
+1. Create `.worktrees/epic-<N>` (branch `epic-test/<N>` from `origin/main`), take a free slot and
+   reset it. Only one EPIC test runs at a time: the real Chrome is a shared resource.
+2. Spawn `epic-tester` (`model: "sonnet"`, `ALLOW_COMMIT=true`, contract paste block). It drives
+   **real Chrome through the chrome-devtools MCP** — headless Playwright never counts as the
+   integrated test. If it returns `BLOCKED` for the browser, the Director runs the same test
+   itself with the claude-in-chrome tools and writes the same report.
+3. `PASS` → verify the report against the EPIC's AC (every AC has screenshots; console and
+   network clean), integrate the report and evidence like a PBI (§4: rebase, ff-merge, push),
+   tick the EPIC's DoD, comment with the report link and SHA, close the EPIC.
+4. `FAIL` → integrate the report anyway (the failure is evidence), file one bug PBI per root
+   cause under the EPIC (`.claude/rules/issue-authoring.md`), deliver them through §3, then
+   rerun the whole integrated test on the new `main`. Repeat until `PASS`.
+
+## 6. Never
 
 - Close an issue with an unmet AC, a missing review approval, a skipped gate, or no E2E for a
   screen-observable AC.
+- Close an EPIC without a `PASS` integrated test run in real Chrome whose report and screenshots
+  are committed on `main`.
 - Let a worker edit outside its worktree, touch another slot's data, or stop the shared stack.
 - Weaken a gate, skip/only a test, or exclude code from coverage to finish.
 - Ask the user mid-loop. Decide from the ADRs, or decide and write the ADR; report at the end.
