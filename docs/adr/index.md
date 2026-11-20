@@ -13,9 +13,14 @@
 * [ADR-0010: コードレビューとセキュリティレビューを独立した sonnet のサブエージェントで行う](0010-independent-code-and-security-review.md) - 採用
 * [ADR-0012: EPIC が完了したら実ブラウザで総合試験を行い、エビデンスを commit する](0012-epic-integrated-test-in-real-browser.md) - 採用
 
-# 製品
+# 製品と計画
 
 * [ADR-0003: Instagram の UX と機能を忠実に再現し、ブランドは独自にする](0003-reproduce-ux-under-own-brand.md) - 採用
+* [ADR-0013: ロードマップを 4 つのマイルストーン（ローカルの MVP → Cloudflare で公開 → Phase 2 → Phase 3）に組み直す](0013-four-milestones-local-mvp-then-cloudflare.md) - 採用
+
+# アーキテクチャ
+
+* [ADR-0014: コードは機能ごとの slice（src/features/<name>/）と共有の部分（src/shared/）に分ける](0014-code-in-feature-slices.md) - 採用
 
 # 環境とホスティング
 

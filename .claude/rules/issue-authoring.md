@@ -49,6 +49,9 @@ The point of filing is to let the Director run several PBIs at once. While writi
 - **Lanes.** The EPIC body carries a mermaid dependency graph and a wave table (wave → PBIs that
   can run together). Cross-EPIC dependencies are allowed and written the same way.
 - In task lists reference children by number only (`- [ ] #12`); GitHub expands the title.
+- Touch sets are written in feature-slice units (`src/features/<name>/`, `src/shared/<part>/`,
+  a route) per ADR-0014. Append-only shared files (`docs/log.md`, `docs/**/index.md`) are not
+  counted; the Director resolves their rebase conflicts by keeping both entries.
 
 ## 4. Templates (headings are literal — copy them verbatim)
 
