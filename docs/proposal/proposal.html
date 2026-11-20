@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Mado（仮称）企画書 — insta-modoki</title>
+<style>
+@page { size: A4; margin: 0; }
+:root{
+  --ink:#111827; --ink2:#374151; --mute:#6b7280; --line:#e5e7eb; --soft:#f4f6f9;
+  --teal:#0bb8a9; --blue:#2b6cf6; --indigo:#4f46c8; --coral:#ff6b5e;
+  --grad:linear-gradient(120deg,#0bb8a9 0%,#2b6cf6 62%,#4f46c8 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:"Helvetica Neue","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  color:var(--ink);font-size:12.6px;line-height:1.72;counter-reset:pg;background:#fff;font-feature-settings:"palt"}
+.page{width:210mm;height:297mm;padding:17mm 18mm 15mm;position:relative;display:flex;flex-direction:column;
+  page-break-after:always;break-after:page;overflow:hidden;counter-increment:pg;background:#fff}
+.page:last-child{page-break-after:auto;break-after:auto}
+.ph{display:flex;align-items:flex-end;gap:14px;padding-bottom:11px;margin-bottom:18px;position:relative}
+.ph::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--grad);border-radius:2px}
+.ph .no{font-size:34px;font-weight:700;line-height:1;color:var(--blue);letter-spacing:-.02em}
+.ph h1{font-size:21px;font-weight:700;line-height:1.25;letter-spacing:.02em}
+.ph .en{margin-left:auto;font-size:9.5px;letter-spacing:.16em;color:var(--mute);text-transform:uppercase;padding-bottom:3px}
+.body{flex:1;min-height:0;display:flex;flex-direction:column}
+.pf{display:flex;justify-content:space-between;font-size:9px;color:var(--mute);letter-spacing:.06em;padding-top:8px;border-top:1px solid var(--line);margin-top:10px}
+.pn::after{content:counter(pg) " / 13"}
+h2{font-size:14px;font-weight:700;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--grad)}
+h2:first-child{margin-top:0}
+p{margin-bottom:8px}
+.lead{font-size:13.6px;line-height:1.85;color:var(--ink2);margin-bottom:14px}
+.mute{color:var(--mute)} .sm{font-size:11px} b,strong{font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+.card.soft{background:var(--soft);border-color:transparent}
+.card h3{font-size:12.6px;font-weight:700;margin-bottom:4px}
+.card p{margin:0;font-size:11.6px;line-height:1.65;color:var(--ink2)}
+.num{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;flex:none}
+ul.tight{list-style:none} ul.tight li{position:relative;padding-left:13px;margin-bottom:3px;font-size:11.6px;line-height:1.62;color:var(--ink2)}
+ul.tight li::before{content:"";position:absolute;left:1px;top:.68em;width:5px;height:5px;border-radius:50%;background:var(--teal)}
+table{width:100%;border-collapse:collapse;font-size:11px;line-height:1.5}
+th{background:var(--ink);color:#fff;font-weight:600;text-align:left;padding:6px 9px;font-size:10.4px;letter-spacing:.04em}
+th:first-child{border-radius:6px 0 0 0} th:last-child{border-radius:0 6px 0 0}
+td{padding:6px 9px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+td b{color:var(--ink)}
+tr:nth-child(even) td{background:#fafbfc}
+.compact td{padding:4px 9px}
+.roomy td{padding:9px 9px}
+.cover .facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}
+.cover .facts div{background:var(--soft);border-radius:10px;padding:11px 14px;font-size:10.6px;color:var(--mute)}
+.cover .facts b{display:block;font-size:21px;color:var(--ink);line-height:1.3}
+.tag{display:inline-block;font-size:9.6px;font-weight:700;padding:1px 8px;border-radius:99px;letter-spacing:.04em;white-space:nowrap}
+.t-mvp{background:var(--ink);color:#fff}.t-p2{background:#dff5f2;color:#08796f}.t-p3{background:#e6edff;color:#2450c4}
+.t-hi{background:#ffe5e2;color:#c0392b}.t-mid{background:#fff1d6;color:#9a6200}.t-lo{background:#e8f5e9;color:#2e7d32}
+.note{border-left:3px solid var(--teal);background:var(--soft);padding:9px 13px;border-radius:0 8px 8px 0;font-size:11.4px;color:var(--ink2);line-height:1.65}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:11.4px}
+.kv dt{color:var(--mute)} .kv dd{color:var(--ink)}
+.fill{flex:1}
+
+/* cover */
+.cover{padding:0}
+.cover .hero{height:158mm;background:var(--grad);position:relative;overflow:hidden}
+.cover .tiles{position:absolute;right:-18mm;top:-14mm;display:grid;grid-template-columns:repeat(4,38mm);gap:5mm;transform:rotate(-12deg)}
+.cover .tiles i{display:block;height:38mm;border-radius:6mm;background:rgba(255,255,255,.13)}
+.cover .tiles i.b{background:rgba(255,255,255,.26)} .cover .tiles i.c{background:rgba(17,24,39,.16)}
+.cover .mark{position:absolute;left:18mm;top:18mm;display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:17px;letter-spacing:.08em}
+.cover .kicker{position:absolute;left:18mm;bottom:15mm;color:#fff}
+.cover .kicker .k1{font-size:12px;letter-spacing:.3em;opacity:.9;margin-bottom:8px}
+.cover .kicker .k2{font-size:58px;font-weight:700;line-height:1.05;letter-spacing:-.01em}
+.cover .kicker .k3{font-size:14px;margin-top:10px;opacity:.95;letter-spacing:.06em}
+.cover .lower{padding:16mm 18mm 0;flex:1;display:flex;flex-direction:column}
+.cover .ttl{font-size:25px;font-weight:700;line-height:1.5;letter-spacing:.02em}
+.cover .sub{font-size:13px;color:var(--ink2);margin-top:8px;max-width:150mm;line-height:1.85}
+.cover .meta{margin-top:auto;margin-bottom:16mm;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);padding-top:12px}
+.cover .meta div{font-size:11.5px} .cover .meta span{display:block;font-size:9px;letter-spacing:.14em;color:var(--mute);margin-bottom:2px}
+
+/* toc */
+.toc{list-style:none;margin-top:4px}
+.toc li{display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.toc .n{font-weight:700;color:var(--blue);width:26px;font-size:14px}
+.toc .t{font-size:13.6px;font-weight:600}
+.toc .d{font-size:10.6px;color:var(--mute)}
+.toc .p{margin-left:auto;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+
+/* wireframes */
+.wfrow{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+.wf{display:flex;flex-direction:column;align-items:center}
+.wf .cap{align-self:stretch;display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.wf .cap b{font-size:14px} .wf .cap span{font-size:10px;color:var(--mute);letter-spacing:.08em}
+.phone{width:248px;height:520px;border:2px solid var(--ink);border-radius:34px;padding:8px;background:#fff;position:relative;flex:none}
+.screen{height:100%;border-radius:25px;overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column;background:#fff;position:relative;font-size:9px;line-height:1.4;color:var(--ink)}
+.mk{position:absolute;width:19px;height:19px;border-radius:50%;background:var(--coral);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:5;box-shadow:0 0 0 2px #fff}
+.wf ol{list-style:none;align-self:stretch;margin-top:14px}
+.wf ol li{display:flex;gap:8px;font-size:11.2px;line-height:1.6;color:var(--ink2);margin-bottom:5px}
+.wf ol li i{font-style:normal;flex:none;width:17px;height:17px;border-radius:50%;background:var(--coral);color:#fff;font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ic{width:17px;height:17px;stroke:var(--ink);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.s{width:13px;height:13px}.ic.w{stroke:#fff}
+.bar{display:flex;align-items:center;padding:8px 11px;gap:9px;border-bottom:1px solid var(--line);flex:none}
+.bar .logo{font-weight:700;font-size:13px;letter-spacing:.04em;display:flex;align-items:center;gap:5px}
+.sp{margin-left:auto}
+.nav{display:flex;justify-content:space-around;align-items:center;padding:8px 6px;border-top:1px solid var(--line);margin-top:auto;flex:none;background:#fff}
+.av{border-radius:50%;background:#cfd6e0;flex:none}
+.ring{border-radius:50%;padding:2px;background:var(--grad);flex:none}.ring .av{border:2px solid #fff}
+.ring.seen{background:#d1d5db}
+.ph-img{background:linear-gradient(135deg,#e9eef4,#d3dbe6);display:flex;align-items:center;justify-content:center;position:relative;flex:none}
+.ph-img svg{width:34px;height:34px;stroke:#9aa6b6;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ln{height:5px;border-radius:3px;background:#d9dee6;margin:3px 0}
+.dots{display:flex;gap:3px;justify-content:center}.dots i{width:4px;height:4px;border-radius:50%;background:#cbd2dc}.dots i.on{background:var(--blue)}
+.row{display:flex;align-items:center;gap:7px}
+.btn{font-size:8.5px;font-weight:700;border-radius:6px;padding:4px 0;text-align:center;flex:1}
+.btn.p{background:var(--blue);color:#fff}.btn.g{background:#eef1f5}
+.gridp{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.gridp .ph-img{aspect-ratio:1}
+.gridp .ph-img svg{width:18px;height:18px}
+
+svg text{font-family:"Helvetica Neue","Hiragino Sans",sans-serif}
+</style>
+</head>
+<body>
+
+<!-- icon sprites (generic, originally drawn) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0bb8a9"/><stop offset=".62" stop-color="#2b6cf6"/><stop offset="1" stop-color="#4f46c8"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0bb8a9"/><stop offset="1" stop-color="#2b6cf6"/></linearGradient>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#374151"/></marker>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+    <symbol id="i-cmt" viewBox="0 0 24 24"><path d="M5 5h14v10H10l-4 4v-4H5z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M7 4h10v16l-5-4-5 4z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 8l9 6 9-6"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="18" cy="12" r="1"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M14 5l-7 7 7 7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 4 3 3-2 6 4"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M5 21V11a7 7 0 0 1 14 0v10z"/><path d="M5 15h14"/><circle cx="14.5" cy="10" r="1.6"/></symbol>
+  </defs>
+</svg>
+
+<!-- ===================== 1. COVER ===================== -->
+<section class="page cover">
+  <div class="hero">
+    <div class="tiles"><i></i><i class="b"></i><i></i><i class="c"></i><i class="b"></i><i></i><i class="c"></i><i></i><i></i><i class="c"></i><i class="b"></i><i></i><i class="c"></i><i></i><i></i><i class="b"></i><i></i><i class="b"></i><i></i><i class="c"></i></div>
+    <div class="mark"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-logo"/></svg>Mado</div>
+    <div class="kicker">
+      <div class="k1">PROJECT PROPOSAL ／ 企画書</div>
+      <div class="k2">Mado<span style="font-size:20px;font-weight:600;margin-left:10px;letter-spacing:.06em">（仮称）</span></div>
+      <div class="k3">日常を切り取る、小さな窓。</div>
+    </div>
+  </div>
+  <div class="lower">
+    <div class="ttl">写真共有SNSのUXを再現する<br>Webアプリケーション開発企画</div>
+    <div class="sub">フィード・ストーリー・複数写真投稿・いいね・コメント・フォローなど、写真共有SNSの主要な体験を個人開発で再現する学習・ポートフォリオプロジェクト。名称・ロゴ・配色はすべて独自に設計する。</div>
+    <div class="facts"><div><b>16</b>機能（MVPは8機能）</div><div><b>24週間</b>2026-11-23 〜 2027-05-09</div><div><b>4フェーズ</b>各フェーズ末にデプロイ</div><div><b>週10時間</b>個人開発・合計約230時間</div></div>
+    <div class="meta">
+      <div><span>作業名 / REPOSITORY</span>ohta-rh/insta-modoki</div>
+      <div><span>版 / VERSION</span>v1.0（承認前ドラフト）</div>
+      <div><span>作成日 / DATE</span>2026-11-20</div>
+      <div><span>位置づけ / TYPE</span>個人開発・非商用</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 2. TOC ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">00</span><h1>目次</h1><span class="en">Contents</span></header>
+  <div class="body">
+    <ul class="toc">
+      <li><span class="n">01</span><span class="t">背景と目的</span><span class="d">なぜ作るのか、何を範囲外とするか</span><span class="p">3</span></li>
+      <li><span class="n">02</span><span class="t">コンセプトとターゲット</span><span class="d">独自ブランドの方針、設計原則</span><span class="p">4</span></li>
+      <li><span class="n">03</span><span class="t">機能一覧と優先度</span><span class="d">MVP / Phase 2 / Phase 3 の切り分け</span><span class="p">5</span></li>
+      <li><span class="n">04</span><span class="t">主要画面のワイヤーフレーム</span><span class="d">フィード、プロフィール、投稿詳細、ストーリー</span><span class="p">6–7</span></li>
+      <li><span class="n">05</span><span class="t">情報設計・データモデル</span><span class="d">9エンティティの関係</span><span class="p">8</span></li>
+      <li><span class="n">06</span><span class="t">システム構成案</span><span class="d">技術スタックの提案と選定理由</span><span class="p">9</span></li>
+      <li><span class="n">07</span><span class="t">非機能要件</span><span class="d">性能、画像最適化、セキュリティ、アクセシビリティ</span><span class="p">10</span></li>
+      <li><span class="n">08</span><span class="t">開発ロードマップ</span><span class="d">24週間、4フェーズ</span><span class="p">11</span></li>
+      <li><span class="n">09</span><span class="t">リスクと対策</span><span class="d">知的財産・商標リスクを含む8項目</span><span class="p">12</span></li>
+      <li><span class="n">10</span><span class="t">成功指標</span><span class="d">計測方法つきの数値目標</span><span class="p">13</span></li>
+      <li><span class="n">11</span><span class="t">次のアクション</span><span class="d">承認事項と着手後2週間の作業</span><span class="p">13</span></li>
+    </ul>
+
+    <h2 style="margin-top:26px">この企画書の要点</h2>
+    <div class="grid3">
+      <div class="card soft"><h3>何を作るか</h3><p>写真共有SNSの主要機能16項目を、モバイル幅375pxを基準としたWebアプリとして実装する。MVPは8機能に固定する。</p></div>
+      <div class="card soft"><h3>どう進めるか</h3><p>週10時間・24週間（2026-11-23 〜 2027-05-09）。フェーズごとにデプロイ済みの動く状態で区切る。</p></div>
+      <div class="card soft"><h3>何を守るか</h3><p>再現するのはUXパターンと機能のみ。Instagram の名称・ロゴ・アイコン・フォント・Meta の素材は製品に使わない。</p></div>
+    </div>
+    <div class="fill"></div>
+    <div class="note"><b>表記について：</b>本書の技術スタック・プロダクト名・公開範囲はすべて「提案」であり、承認後に確定する。承認が必要な項目は 13 ページにまとめた。</div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 3. 背景と目的 ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">01</span><h1>背景と目的</h1><span class="en">Background &amp; Purpose</span></header>
+  <div class="body">
+    <p class="lead">写真共有SNSは、無限スクロール、24時間で消える投稿、押した瞬間に反映されるリアクション、端末に合わせた画像配信といった、Webアプリ開発の難所を1つの製品に集めた題材である。これを自分の手で再現し、設計判断を説明できる成果物として残す。</p>
+
+    <h2>背景</h2>
+    <div class="grid3">
+      <div class="card"><h3>CRUD練習では届かない領域</h3><p>ToDoやブログ規模の題材では、カーソルページネーション、メディアのアップロード経路、楽観的更新、通知の配信といった設計判断が発生しない。</p></div>
+      <div class="card"><h3>仕様が既知である利点</h3><p>完成形の体験を誰もが知っているため、「何を作るか」の検討を省き、「どう作るか」に時間を使える。出来栄えの比較基準も明確になる。</p></div>
+      <div class="card"><h3>制約のない出発点</h3><p>リポジトリ ohta-rh/insta-modoki はコミット0件の空の状態。既存コードの制約がなく、技術選定から記録を残せる。</p></div>
+    </div>
+
+    <h2>目的</h2>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="card" style="display:flex;gap:12px;align-items:flex-start"><span class="num">1</span><div><h3>主要UXを再現する</h3><p>フィード、ストーリー、複数写真投稿、いいね、コメント、フォロー、プロフィールグリッド、発見、DM、通知を、操作の手触り（タップ領域、遷移、反映速度）まで含めて実装する。</p></div></div>
+      <div class="card" style="display:flex;gap:12px;align-items:flex-start"><span class="num">2</span><div><h3>設計判断を記録に残す</h3><p>技術選定とデータモデルの判断を ADR（Architecture Decision Record）として docs/adr/ に残し、コードと同じ変更で管理する。</p></div></div>
+      <div class="card" style="display:flex;gap:12px;align-items:flex-start"><span class="num">3</span><div><h3>公開できる品質で仕上げる</h3><p>Core Web Vitals の「良好」基準、WCAG 2.2 AA、主要フローのE2Eテストを満たし、ポートフォリオとしてURLとソースコードの両方を提示できる状態にする。</p></div></div>
+    </div>
+
+    <h2>スコープ</h2>
+    <div class="grid2">
+      <div class="card soft"><h3>対象</h3><ul class="tight"><li>レスポンシブWebアプリ（モバイル幅を基準、デスクトップ対応）</li><li>写真投稿を中心とした16機能（5ページ参照）</li><li>招待制のデモ環境（想定利用者 10〜30名）</li></ul></div>
+      <div class="card soft"><h3>対象外</h3><ul class="tight"><li>iOS / Android ネイティブアプリ</li><li>広告、ショッピング、収益化、機械学習によるレコメンド</li><li>誰でも登録できる一般公開サービスとしての運用</li></ul></div>
+    </div>
+    <div class="fill"></div>
+    <div class="note"><b>位置づけ：</b>個人の学習・ポートフォリオを目的とした非商用プロジェクト。再現の対象は機能とUXパターンに限り、既存サービスの名称・ロゴ・素材は使わない（方針の詳細は4ページ、リスクは12ページ）。</div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 4. コンセプト ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">02</span><h1>コンセプトとターゲット</h1><span class="en">Concept &amp; Target</span></header>
+  <div class="body">
+    <div style="background:var(--grad);border-radius:14px;padding:20px 24px;color:#fff;display:flex;align-items:center;gap:20px;margin-bottom:6px">
+      <svg width="62" height="62" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-logo"/></svg>
+      <div>
+        <div style="font-size:10px;letter-spacing:.24em;opacity:.9">CONCEPT</div>
+        <div style="font-size:23px;font-weight:700;line-height:1.4">日常を切り取る、小さな窓。</div>
+        <div style="font-size:11.6px;opacity:.95;margin-top:2px">プロダクト名（提案）：<b>Mado</b> ― 写真を「窓」に見立てた独自名称。ロゴはアーチ窓と陽の光をモチーフにした独自デザイン。</div>
+      </div>
+    </div>
+
+    <h2>ターゲット</h2>
+    <div class="grid3">
+      <div class="card"><h3>利用者</h3><p>開発者本人と、招待した知人 10〜30名。写真を投稿し合い、実データで動作を確かめる。</p></div>
+      <div class="card"><h3>閲覧者</h3><p>ポートフォリオを見るエンジニア・採用担当者。デモアカウントでログインし、5分で主要機能を一巡できる導線を用意する。</p></div>
+      <div class="card"><h3>読者</h3><p>ソースコードとADRを読む開発者。設計判断の理由を追える構成にする。</p></div>
+    </div>
+
+    <h2>設計原則</h2>
+    <div class="grid3">
+      <div class="card soft"><h3>① モバイルが基準</h3><p>幅375pxで設計し、768px以上でサイドナビ付きの拡張レイアウトに切り替える。</p></div>
+      <div class="card soft"><h3>② 写真が主役</h3><p>UI部品は無彩色。アクセント色は「いいね済み」「未読」など状態の変化にだけ使う。</p></div>
+      <div class="card soft"><h3>③ 待たせない</h3><p>いいね・フォローは楽観的更新で即時反映。読み込み中は実寸のスケルトンを表示する。</p></div>
+    </div>
+
+    <h2>ブランドと知的財産の方針</h2>
+    <table>
+      <tr><th style="width:17%">区分</th><th style="width:41%">再現する（機能・UXパターン）</th><th>使わない（他社の資産）</th></tr>
+      <tr><td><b>名称</b></td><td>―</td><td>製品名・ドメイン・画面内表記に「Instagram」「Insta」「IG」を含めない。作業名 insta-modoki は公開前に改名する。</td></tr>
+      <tr><td><b>ロゴ・アイコン</b></td><td>ハート、吹き出し等の一般的な図形を自作またはOSSアイコン（Lucide、ISCライセンス）で用意</td><td>Instagram のロゴ、グリフ、アプリアイコン、グラデーション意匠、Meta の素材一式</td></tr>
+      <tr><td><b>フォント・配色</b></td><td>OS標準フォント＋Noto Sans JP。下記の独自パレット</td><td>Instagram Sans などの専用書体、紫〜橙のブランドグラデーション</td></tr>
+      <tr><td><b>画面・文言</b></td><td>縦型フィード、ストーリーの進行バー、3列グリッド等の一般的なレイアウト構造</td><td>画面のスクリーンショット、画像素材、UI文言の転用。CSSやコードの複製</td></tr>
+    </table>
+
+    <h2>独自カラーパレット</h2>
+    <div style="display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr 1fr;gap:10px">
+      <div><div style="height:44px;border-radius:8px;background:var(--grad)"></div><div class="sm" style="margin-top:4px"><b>Window Gradient</b> <span class="mute">#0BB8A9 → #2B6CF6 → #4F46C8</span></div></div>
+      <div><div style="height:44px;border-radius:8px;background:#111827"></div><div class="sm" style="margin-top:4px"><b>Ink</b> <span class="mute">#111827</span></div></div>
+      <div><div style="height:44px;border-radius:8px;background:#0bb8a9"></div><div class="sm" style="margin-top:4px"><b>Teal</b> <span class="mute">#0BB8A9</span></div></div>
+      <div><div style="height:44px;border-radius:8px;background:#ff6b5e"></div><div class="sm" style="margin-top:4px"><b>Coral</b> <span class="mute">#FF6B5E</span></div></div>
+      <div><div style="height:44px;border-radius:8px;background:#f4f6f9;border:1px solid var(--line)"></div><div class="sm" style="margin-top:4px"><b>Surface</b> <span class="mute">#F4F6F9</span></div></div>
+    </div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 5. 機能一覧 ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">03</span><h1>機能一覧と優先度</h1><span class="en">Features &amp; Priority</span></header>
+  <div class="body">
+    <p class="lead" style="margin-bottom:10px">16機能を3段階に分ける。MVPは「投稿して、見て、反応する」の一巡が成立する8機能に固定し、期間中は追加しない。</p>
+    <table class="compact">
+      <tr><th style="width:5%">#</th><th style="width:12%">領域</th><th style="width:25%">機能</th><th>内容</th><th style="width:11%">優先度</th></tr>
+      <tr><td>1</td><td>認証</td><td><b>サインアップ / ログイン</b></td><td>メール＋パスワード、GitHub OAuth。ユーザー名の重複チェック</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>2</td><td>プロフィール</td><td><b>表示・編集</b></td><td>アイコン、表示名、自己紹介（150字）、投稿の3列グリッド、投稿数・フォロワー数</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>3</td><td>投稿</td><td><b>複数写真投稿</b></td><td>1投稿あたり最大10枚、横スワイプのカルーセル、キャプション（2,200字）、1:1 / 4:5 の切り抜き、代替テキスト</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>4</td><td>フィード</td><td><b>ホームフィード</b></td><td>フォロー中ユーザーの投稿を新着順に表示。カーソル式の無限スクロール（12件ずつ）</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>5</td><td>リアクション</td><td><b>いいね</b></td><td>ボタンと写真のダブルタップ。楽観的更新、いいねしたユーザーの一覧</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>6</td><td>コメント</td><td><b>コメント・返信</b></td><td>1階層の返信、自分のコメントの削除、投稿者による削除</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>7</td><td>フォロー</td><td><b>フォロー / 解除</b></td><td>フォロワー一覧・フォロー中一覧。フィードへの即時反映</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>8</td><td>投稿詳細</td><td><b>パーマリンク</b></td><td>投稿ごとの固有URL、OGP画像。プロフィールグリッドからはモーダルで開く</td><td><span class="tag t-mvp">MVP</span></td></tr>
+      <tr><td>9</td><td>ストーリー</td><td><b>24時間で消える投稿</b></td><td>写真1枚または15秒以内の動画。5秒ごとの自動進行、未読リング、閲覧者一覧</td><td><span class="tag t-p2">Phase 2</span></td></tr>
+      <tr><td>10</td><td>発見</td><td><b>検索・発見タブ</b></td><td>ユーザー名検索、ハッシュタグ、直近7日間のいいね数順グリッド</td><td><span class="tag t-p2">Phase 2</span></td></tr>
+      <tr><td>11</td><td>通知</td><td><b>アクティビティ通知</b></td><td>いいね・コメント・フォローの一覧、未読バッジ。SSEによる画面内リアルタイム更新</td><td><span class="tag t-p2">Phase 2</span></td></tr>
+      <tr><td>12</td><td>保存</td><td><b>ブックマーク</b></td><td>投稿を非公開の保存一覧に追加</td><td><span class="tag t-p2">Phase 2</span></td></tr>
+      <tr><td>13</td><td>DM</td><td><b>ダイレクトメッセージ</b></td><td>1対1のテキスト・画像送信、既読表示、投稿の共有</td><td><span class="tag t-p3">Phase 3</span></td></tr>
+      <tr><td>14</td><td>安全</td><td><b>ブロック・通報・非公開</b></td><td>ユーザーのブロック、投稿の通報、非公開アカウント（フォロー承認制）</td><td><span class="tag t-p3">Phase 3</span></td></tr>
+      <tr><td>15</td><td>PWA</td><td><b>ホーム画面追加・プッシュ</b></td><td>Web App Manifest、Web Push による通知</td><td><span class="tag t-p3">Phase 3</span></td></tr>
+      <tr><td>16</td><td>動画</td><td><b>縦型動画フィード（任意）</b></td><td>60秒以内のMP4、スナップスクロール、画面内に入ると自動再生。残り工数で実施可否を判断</td><td><span class="tag t-p3">Phase 3</span></td></tr>
+    </table>
+
+    <h2 style="margin-top:18px">優先度の判断基準</h2>
+    <div class="grid3">
+      <div class="card"><h3><span class="tag t-mvp">MVP</span>　8機能</h3><p>これが欠けると「投稿 → 閲覧 → 反応」の一巡が成立しないもの。後続機能すべての土台になるデータモデルを含む。</p></div>
+      <div class="card"><h3><span class="tag t-p2">Phase 2</span>　4機能</h3><p>MVPのテーブルに追加するだけで成立し、滞在理由を増やすもの。期限付きデータと配信の仕組みを新たに扱う。</p></div>
+      <div class="card"><h3><span class="tag t-p3">Phase 3</span>　4機能</h3><p>双方向リアルタイム通信や動画配信など、新しい基盤を要するもの。#16 は任意とし、省略しても完了とみなす。</p></div>
+    </div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 6. WF 1 ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">04</span><h1>主要画面のワイヤーフレーム（1/2）</h1><span class="en">Wireframes</span></header>
+  <div class="body">
+    <p class="sm mute" style="margin-bottom:12px">本企画のために描き起こした構成図。配置と情報の優先順位を示すもので、色・写真・文言は仮のもの。</p>
+    <div class="wfrow">
+      <!-- FEED -->
+      <div class="wf">
+        <div class="cap"><b>A. ホームフィード</b><span>/</span></div>
+        <div class="phone">
+          <span class="mk" style="left:-11px;top:66px">1</span>
+          <span class="mk" style="right:-11px;top:215px">2</span>
+          <span class="mk" style="left:-11px;top:338px">3</span>
+          <span class="mk" style="right:-11px;top:478px">4</span>
+          <div class="screen">
+            <div class="bar"><div class="logo"><svg class="ic"><use href="#i-logo"/></svg>Mado</div><svg class="ic sp"><use href="#i-bell"/></svg><svg class="ic"><use href="#i-mail"/></svg></div>
+            <div class="row" style="padding:9px 11px;gap:10px;border-bottom:1px solid var(--line);flex:none">
+              <div style="text-align:center"><div class="av" style="width:38px;height:38px;border:1.5px dashed #9aa6b6;background:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;color:#9aa6b6">+</div><div style="font-size:7px;margin-top:2px">自分</div></div>
+              <div style="text-align:center"><div class="ring"><div class="av" style="width:34px;height:34px"></div></div><div style="font-size:7px;margin-top:2px">haru</div></div>
+              <div style="text-align:center"><div class="ring"><div class="av" style="width:34px;height:34px"></div></div><div style="font-size:7px;margin-top:2px">sora_k</div></div>
+              <div style="text-align:center"><div class="ring seen"><div class="av" style="width:34px;height:34px"></div></div><div style="font-size:7px;margin-top:2px">mio</div></div>
+              <div style="text-align:center"><div class="ring seen"><div class="av" style="width:34px;height:34px"></div></div><div style="font-size:7px;margin-top:2px">ken</div></div>
+            </div>
+            <div class="row" style="padding:7px 11px;flex:none"><div class="av" style="width:22px;height:22px"></div><b>haru</b><span class="mute" style="font-size:8px">・2時間前</span><svg class="ic s sp"><use href="#i-more"/></svg></div>
+            <div class="ph-img" style="height:200px"><svg><use href="#i-img"/></svg><span style="position:absolute;right:8px;top:8px;background:rgba(17,24,39,.7);color:#fff;font-size:8px;padding:1px 6px;border-radius:9px">1/3</span></div>
+            <div class="row" style="padding:7px 11px 3px;flex:none"><svg class="ic"><use href="#i-heart"/></svg><svg class="ic"><use href="#i-cmt"/></svg><svg class="ic"><use href="#i-share"/></svg><div class="dots" style="flex:1;margin-right:38px"><i class="on"></i><i></i><i></i></div><svg class="ic"><use href="#i-save"/></svg></div>
+            <div style="padding:0 11px;flex:none"><b>いいね 128件</b><div class="ln" style="width:92%"></div><div class="ln" style="width:60%"></div><div class="mute" style="font-size:8px;margin-top:2px">コメント12件をすべて見る</div></div>
+            <div class="row" style="padding:8px 11px 4px;flex:none;border-top:1px solid var(--line);margin-top:7px"><div class="av" style="width:22px;height:22px"></div><b>sora_k</b><span class="mute" style="font-size:8px">・5時間前</span></div>
+            <div class="nav"><svg class="ic" style="stroke:var(--blue)"><use href="#i-home"/></svg><svg class="ic"><use href="#i-search"/></svg><svg class="ic"><use href="#i-plus"/></svg><svg class="ic"><use href="#i-bell"/></svg><svg class="ic"><use href="#i-user"/></svg></div>
+          </div>
+        </div>
+        <ol>
+          <li><i>1</i><span><b>ストーリートレイ</b>：未読はグラデーションのリング、既読は灰色。先頭は自分の追加ボタン。横スクロール。</span></li>
+          <li><i>2</i><span><b>写真カルーセル</b>：横スワイプで切り替え、枚数バッジとドットで位置を示す。ダブルタップでいいね。</span></li>
+          <li><i>3</i><span><b>アクション列</b>：いいね・コメント・共有を左、保存を右に配置。タップ領域は44×44px以上。</span></li>
+          <li><i>4</i><span><b>下部ナビ</b>：ホーム・検索・投稿・通知・プロフィールの5項目。768px以上では左サイドナビに変わる。</span></li>
+        </ol>
+      </div>
+      <!-- PROFILE -->
+      <div class="wf">
+        <div class="cap"><b>B. プロフィール</b><span>/[username]</span></div>
+        <div class="phone">
+          <span class="mk" style="left:-11px;top:70px">1</span>
+          <span class="mk" style="right:-11px;top:152px">2</span>
+          <span class="mk" style="left:-11px;top:232px">3</span>
+          <span class="mk" style="right:-11px;top:330px">4</span>
+          <div class="screen">
+            <div class="bar"><svg class="ic s"><use href="#i-back"/></svg><b style="font-size:11px">haru</b><svg class="ic sp"><use href="#i-more"/></svg></div>
+            <div class="row" style="padding:12px 12px 6px;gap:14px;flex:none">
+              <div class="ring"><div class="av" style="width:54px;height:54px"></div></div>
+              <div style="display:flex;flex:1;justify-content:space-around;text-align:center"><div><b style="font-size:12px">86</b><div style="font-size:8px">投稿</div></div><div><b style="font-size:12px">1,204</b><div style="font-size:8px">フォロワー</div></div><div><b style="font-size:12px">312</b><div style="font-size:8px">フォロー中</div></div></div>
+            </div>
+            <div style="padding:0 12px 8px;flex:none"><b>Haru Aoki</b><div class="ln" style="width:78%"></div><div class="ln" style="width:52%"></div></div>
+            <div class="row" style="padding:0 12px 10px;flex:none"><div class="btn p">フォローする</div><div class="btn g">メッセージ</div></div>
+            <div style="display:flex;border-top:1px solid var(--line);flex:none"><div style="flex:1;text-align:center;padding:6px 0;border-bottom:2px solid var(--ink);font-weight:700">投稿</div><div style="flex:1;text-align:center;padding:6px 0;color:var(--mute)">保存済み</div></div>
+            <div class="gridp">
+              <div class="ph-img"><svg><use href="#i-img"/></svg></div><div class="ph-img"><svg><use href="#i-img"/></svg><span style="position:absolute;right:4px;top:3px;font-size:7px;background:rgba(17,24,39,.7);color:#fff;border-radius:6px;padding:0 4px">3</span></div><div class="ph-img"><svg><use href="#i-img"/></svg></div>
+              <div class="ph-img"><svg><use href="#i-img"/></svg></div><div class="ph-img"><svg><use href="#i-img"/></svg></div><div class="ph-img"><svg><use href="#i-img"/></svg><span style="position:absolute;right:4px;top:3px;font-size:7px;background:rgba(17,24,39,.7);color:#fff;border-radius:6px;padding:0 4px">5</span></div>
+              <div class="ph-img"><svg><use href="#i-img"/></svg></div><div class="ph-img"><svg><use href="#i-img"/></svg></div><div class="ph-img"><svg><use href="#i-img"/></svg></div>
+              <div class="ph-img"><svg><use href="#i-img"/></svg></div><div class="ph-img"><svg><use href="#i-img"/></svg></div><div class="ph-img"><svg><use href="#i-img"/></svg></div>
+            </div>
+            <div class="nav"><svg class="ic"><use href="#i-home"/></svg><svg class="ic"><use href="#i-search"/></svg><svg class="ic"><use href="#i-plus"/></svg><svg class="ic"><use href="#i-bell"/></svg><svg class="ic" style="stroke:var(--blue)"><use href="#i-user"/></svg></div>
+          </div>
+        </div>
+        <ol>
+          <li><i>1</i><span><b>ヘッダー</b>：アイコンと3つの数値。数値をタップするとフォロワー / フォロー中の一覧を開く。</span></li>
+          <li><i>2</i><span><b>主ボタン</b>：他人のページでは「フォローする / フォロー中」、自分のページでは「プロフィールを編集」。</span></li>
+          <li><i>3</i><span><b>タブ</b>：投稿と保存済み。保存済みは本人にのみ表示する（Phase 2）。</span></li>
+          <li><i>4</i><span><b>3列グリッド</b>：正方形サムネイル、間隔2px。複数枚の投稿は右上に枚数を表示。</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 7. WF 2 ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">04</span><h1>主要画面のワイヤーフレーム（2/2）</h1><span class="en">Wireframes</span></header>
+  <div class="body">
+    <p class="sm mute" style="margin-bottom:12px">投稿詳細はMVP、ストーリービューアはPhase 2で実装する。</p>
+    <div class="wfrow">
+      <!-- POST DETAIL -->
+      <div class="wf">
+        <div class="cap"><b>C. 投稿詳細</b><span>/p/[postId]</span></div>
+        <div class="phone">
+          <span class="mk" style="left:-11px;top:130px">1</span>
+          <span class="mk" style="right:-11px;top:262px">2</span>
+          <span class="mk" style="left:-11px;top:372px">3</span>
+          <span class="mk" style="right:-11px;top:478px">4</span>
+          <div class="screen">
+            <div class="bar"><svg class="ic s"><use href="#i-back"/></svg><b style="font-size:11px">投稿</b></div>
+            <div class="row" style="padding:7px 11px;flex:none"><div class="av" style="width:22px;height:22px"></div><b>haru</b><svg class="ic s sp"><use href="#i-more"/></svg></div>
+            <div class="ph-img" style="height:178px"><svg><use href="#i-img"/></svg><span style="position:absolute;right:8px;top:8px;background:rgba(17,24,39,.7);color:#fff;font-size:8px;padding:1px 6px;border-radius:9px">2/3</span></div>
+            <div class="row" style="padding:7px 11px 3px;flex:none"><svg class="ic" style="stroke:var(--coral);fill:var(--coral)"><use href="#i-heart"/></svg><svg class="ic"><use href="#i-cmt"/></svg><svg class="ic"><use href="#i-share"/></svg><div class="dots" style="flex:1;margin-right:38px"><i></i><i class="on"></i><i></i></div><svg class="ic"><use href="#i-save"/></svg></div>
+            <div style="padding:0 11px 6px;flex:none;border-bottom:1px solid var(--line)"><b>いいね 129件</b><div class="row" style="gap:5px"><b>haru</b><div class="ln" style="flex:1"></div></div><div class="ln" style="width:45%"></div><div class="mute" style="font-size:7.5px">2026年11月20日</div></div>
+            <div style="padding:7px 11px;display:flex;flex-direction:column;gap:7px;flex:none">
+              <div class="row" style="align-items:flex-start"><div class="av" style="width:20px;height:20px"></div><div style="flex:1"><b>sora_k</b> <span class="mute" style="font-size:7.5px">1時間前</span><div class="ln" style="width:85%"></div><div class="mute" style="font-size:7.5px">返信する</div></div><svg class="ic s" style="width:10px;height:10px"><use href="#i-heart"/></svg></div>
+              <div class="row" style="align-items:flex-start;padding-left:27px"><div class="av" style="width:16px;height:16px"></div><div style="flex:1"><b>haru</b> <span class="mute" style="font-size:7.5px">48分前</span><div class="ln" style="width:60%"></div></div></div>
+              <div class="row" style="align-items:flex-start"><div class="av" style="width:20px;height:20px"></div><div style="flex:1"><b>mio</b> <span class="mute" style="font-size:7.5px">30分前</span><div class="ln" style="width:70%"></div><div class="mute" style="font-size:7.5px">返信する</div></div><svg class="ic s" style="width:10px;height:10px"><use href="#i-heart"/></svg></div>
+            </div>
+            <div class="row" style="margin-top:auto;padding:8px 11px;border-top:1px solid var(--line);flex:none"><div class="av" style="width:22px;height:22px"></div><div style="flex:1;border:1px solid var(--line);border-radius:14px;padding:4px 10px;color:var(--mute)">コメントを追加…</div><b style="color:var(--blue)">投稿</b></div>
+          </div>
+        </div>
+        <ol>
+          <li><i>1</i><span><b>写真</b>：元の縦横比（1:1 または 4:5）で表示。幅・高さをDBに保存し、読み込み前から領域を確保する。</span></li>
+          <li><i>2</i><span><b>いいね</b>：押下と同時に色と件数を更新し、サーバー応答が失敗した場合のみ元に戻す。</span></li>
+          <li><i>3</i><span><b>コメント</b>：返信は1階層まで字下げして表示。20件ずつ追加読み込み。</span></li>
+          <li><i>4</i><span><b>入力欄</b>：画面下に固定。送信後は一覧の末尾へ即時に追加する。</span></li>
+        </ol>
+      </div>
+      <!-- STORIES -->
+      <div class="wf">
+        <div class="cap"><b>D. ストーリービューア</b><span>/stories/[username]</span></div>
+        <div class="phone">
+          <span class="mk" style="left:-11px;top:14px">1</span>
+          <span class="mk" style="right:-11px;top:46px">2</span>
+          <span class="mk" style="left:-11px;top:250px">3</span>
+          <span class="mk" style="right:-11px;top:478px">4</span>
+          <div class="screen" style="background:#1b2330;color:#fff;border-color:#1b2330">
+            <div style="position:absolute;inset:0;background:linear-gradient(160deg,#3b4a5f,#1b2330 70%)"></div>
+            <div style="position:relative;display:flex;gap:3px;padding:9px 9px 0;flex:none">
+              <div style="flex:1;height:2.5px;border-radius:2px;background:#fff"></div>
+              <div style="flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.35);overflow:hidden"><div style="width:55%;height:100%;background:#fff"></div></div>
+              <div style="flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.35)"></div>
+              <div style="flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.35)"></div>
+            </div>
+            <div class="row" style="position:relative;padding:9px 11px;flex:none"><div class="av" style="width:24px;height:24px;background:#8b97a8"></div><b>sora_k</b><span style="opacity:.7;font-size:8px">3時間前</span><svg class="ic w sp"><use href="#i-x"/></svg></div>
+            <div style="position:relative;flex:1;display:flex">
+              <div style="flex:1;border:1px dashed rgba(255,255,255,.45);margin:8px 3px 8px 9px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:8px;opacity:.85;text-align:center">◀ 前へ<br>（左 1/3）</div>
+              <div style="flex:2;border:1px dashed rgba(255,255,255,.45);margin:8px 9px 8px 3px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8px;opacity:.85;text-align:center"><svg style="width:34px;height:34px;stroke:#fff;fill:none;stroke-width:1.4;margin-bottom:6px"><use href="#i-img"/></svg>次へ ▶<br>（右 2/3）<br>長押しで一時停止</div>
+            </div>
+            <div class="row" style="position:relative;padding:9px 11px 11px;flex:none"><div style="flex:1;border:1px solid rgba(255,255,255,.6);border-radius:16px;padding:5px 12px;opacity:.9">メッセージを送信…</div><svg class="ic w"><use href="#i-heart"/></svg><svg class="ic w"><use href="#i-share"/></svg></div>
+          </div>
+        </div>
+        <ol>
+          <li><i>1</i><span><b>進行バー</b>：ストーリーの本数ぶんに分割。写真は5秒、動画は再生時間で進む。</span></li>
+          <li><i>2</i><span><b>投稿者と閉じる</b>：Escキーと下スワイプでも閉じる。閉じると元のスクロール位置に戻る。</span></li>
+          <li><i>3</i><span><b>タップ領域</b>：左1/3で前へ、右2/3で次へ。キーボードは ← / →。最後まで進むと次のユーザーへ。</span></li>
+          <li><i>4</i><span><b>返信欄</b>：送信内容はDMに届く（Phase 3）。Phase 2 ではいいねのみ有効。</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 8. DATA MODEL ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">05</span><h1>情報設計・データモデル</h1><span class="en">Data Model</span></header>
+  <div class="body">
+    <p class="lead" style="margin-bottom:8px">中心は User と Post の2つ。それ以外の7エンティティは、このどちらか（または両方）への外部キーを持つ。</p>
+    <svg id="er" viewBox="0 0 660 512" width="100%" style="display:block"></svg>
+    <div class="sm mute" style="margin:2px 0 10px;text-align:center">図：主要9エンティティの関係（1 → N）。<span style="color:#0a8f84;font-weight:700">PK</span> 主キー、<span style="color:#2b6cf6;font-weight:700">FK</span> 外部キー、<b>UQ</b> 一意制約。Like・Comment の User への参照線は省略。</div>
+    <div class="grid3">
+      <div class="card soft"><h3>設計上の判断</h3><ul class="tight"><li>主キーは時系列順に並ぶ UUIDv7。カーソルページネーションのキーに使う</li><li>Like と Follow は複合主キーで二重登録を防ぐ</li><li>like_count / comment_count は Post に非正規化して持つ</li></ul></div>
+      <div class="card soft"><h3>主要インデックス</h3><ul class="tight"><li>Post (author_id, created_at DESC)：フィードとプロフィール</li><li>Follow (followee_id)：フォロワー一覧</li><li>Story (author_id, expires_at)：有効なストーリーの抽出</li><li>Notification (recipient_id, created_at DESC)</li></ul></div>
+      <div class="card soft"><h3>図にない補助テーブル</h3><ul class="tight"><li>Conversation / ConversationMember（DM）</li><li>StoryView（閲覧者）</li><li>Save（ブックマーク）</li><li>Hashtag / PostHashtag</li><li>Session / Account（認証ライブラリ管理）</li></ul></div>
+    </div>
+    <div class="fill"></div>
+    <div class="note"><b>データの寿命：</b>Story は expires_at を過ぎた行を取得時に除外し、日次ジョブで行とメディアを削除する。Notification は作成から90日で削除する。Post の削除時は Media・Like・Comment を連鎖削除し、ストレージ上のファイルも同じ処理で消す。</div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 9. ARCHITECTURE ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">06</span><h1>システム構成案</h1><span class="en">Architecture — Proposal</span></header>
+  <div class="body">
+    <div class="note" style="margin-bottom:10px"><b>提案（承認待ち）：</b>Next.js + TypeScript を単一のデプロイ単位とし、データは PostgreSQL、メディアはオブジェクトストレージに分ける。各ライブラリは着手時点の最新安定版を採用し、バージョンは ADR に記録する。</div>
+    <svg viewBox="0 0 660 300" width="100%" style="display:block">
+      <!-- client -->
+      <rect x="8" y="64" width="142" height="84" rx="10" fill="#fff" stroke="#111827" stroke-width="1.4"/>
+      <text x="79" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">ブラウザ</text>
+      <text x="79" y="113" text-anchor="middle" font-size="9.5" fill="#6b7280">モバイル / デスクトップ</text>
+      <text x="79" y="128" text-anchor="middle" font-size="9.5" fill="#6b7280">React（Client Components）</text>
+      <!-- CI -->
+      <rect x="8" y="212" width="142" height="62" rx="10" fill="#f4f6f9" stroke="#cbd2dc"/>
+      <text x="79" y="238" text-anchor="middle" font-size="11.5" font-weight="700" fill="#111827">GitHub Actions</text>
+      <text x="79" y="254" text-anchor="middle" font-size="9.5" fill="#6b7280">型検査・テスト・E2E</text>
+      <!-- vercel -->
+      <rect x="204" y="34" width="250" height="256" rx="14" fill="#f4f6f9" stroke="url(#g1)" stroke-width="2"/>
+      <text x="220" y="56" font-size="11.5" font-weight="700" fill="#111827">Vercel ／ Next.js（App Router）</text>
+      <g font-size="10.5">
+        <rect x="218" y="66" width="222" height="46" rx="8" fill="#fff" stroke="#e5e7eb"/><text x="230" y="85" font-weight="700" fill="#111827">Server Components</text><text x="230" y="101" font-size="9.5" fill="#6b7280">画面の描画、初期データ取得</text>
+        <rect x="218" y="120" width="222" height="46" rx="8" fill="#fff" stroke="#e5e7eb"/><text x="230" y="139" font-weight="700" fill="#111827">Server Actions / Route Handlers</text><text x="230" y="155" font-size="9.5" fill="#6b7280">書き込み、ページング API、署名付きURL発行、SSE</text>
+        <rect x="218" y="174" width="222" height="46" rx="8" fill="#fff" stroke="#e5e7eb"/><text x="230" y="193" font-weight="700" fill="#111827">Better Auth</text><text x="230" y="209" font-size="9.5" fill="#6b7280">セッション管理（Cookie）、OAuth</text>
+        <rect x="218" y="228" width="222" height="46" rx="8" fill="#fff" stroke="#e5e7eb"/><text x="230" y="247" font-weight="700" fill="#111827">next/image</text><text x="230" y="263" font-size="9.5" fill="#6b7280">AVIF / WebP 変換、サイズ別生成、CDNキャッシュ</text>
+      </g>
+      <!-- R2 -->
+      <rect x="508" y="52" width="144" height="74" rx="10" fill="#fff" stroke="#111827" stroke-width="1.4"/>
+      <text x="580" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">Cloudflare R2</text>
+      <text x="580" y="97" text-anchor="middle" font-size="9.5" fill="#6b7280">写真・動画の原本</text>
+      <text x="580" y="111" text-anchor="middle" font-size="9.5" fill="#6b7280">（S3互換API）</text>
+      <!-- Neon -->
+      <rect x="508" y="170" width="144" height="74" rx="10" fill="#fff" stroke="#111827" stroke-width="1.4"/>
+      <text x="580" y="198" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">PostgreSQL（Neon）</text>
+      <text x="580" y="215" text-anchor="middle" font-size="9.5" fill="#6b7280">全エンティティ、セッション</text>
+      <text x="580" y="229" text-anchor="middle" font-size="9.5" fill="#6b7280">Drizzle ORM 経由</text>
+      <!-- arrows -->
+      <g stroke="#374151" stroke-width="1.3" fill="none">
+        <path d="M150 106H204" marker-end="url(#ar)" marker-start="url(#ar)"/>
+        <path d="M79 64V14H580V52" marker-end="url(#ar)" stroke-dasharray="5 3"/>
+        <path d="M454 89H508" marker-end="url(#ar)" marker-start="url(#ar)"/>
+        <path d="M454 207H508" marker-end="url(#ar)" marker-start="url(#ar)"/>
+        <path d="M150 243H204" marker-end="url(#ar)"/>
+      </g>
+      <g font-size="9.5" fill="#374151">
+        <text x="177" y="99" text-anchor="middle">HTTPS</text>
+        <text x="330" y="9" text-anchor="middle">署名付きURLでブラウザから直接アップロード（サーバーを経由しない）</text>
+        <text x="481" y="82" text-anchor="middle">取得</text>
+        <text x="481" y="200" text-anchor="middle">SQL</text>
+        <text x="177" y="236" text-anchor="middle">デプロイ</text>
+      </g>
+    </svg>
+
+    <h2 style="margin-top:12px">技術スタックの提案と選定理由</h2>
+    <table>
+      <tr><th style="width:13%">レイヤー</th><th style="width:22%">提案</th><th>選定理由</th><th style="width:17%">代替案</th></tr>
+      <tr><td>アプリ</td><td><b>Next.js（App Router）<br>+ TypeScript</b></td><td>サーバー側で描画し、初期表示のJavaScriptを減らせる。画面とAPIを1つのリポジトリ・1回のデプロイで扱える</td><td>React Router v7、SvelteKit</td></tr>
+      <tr><td>UI</td><td><b>Tailwind CSS<br>+ Radix UI</b></td><td>配色・余白のトークンを設定ファイル1か所に集約。モーダルやメニューのキーボード操作・フォーカス管理を部品側で担保</td><td>CSS Modules</td></tr>
+      <tr><td>データベース</td><td><b>PostgreSQL（Neon）</b></td><td>フォロー関係のJOINと複合インデックスが必須。ブランチ機能でプレビュー環境ごとにDBを分離できる</td><td>Supabase、Turso</td></tr>
+      <tr><td>ORM</td><td><b>Drizzle ORM</b></td><td>発行されるSQLを把握しやすい記法。スキーマ定義から型とマイグレーションSQLを生成</td><td>Prisma</td></tr>
+      <tr><td>認証</td><td><b>Better Auth</b></td><td>ユーザーとセッションを自前のPostgreSQLに保存でき、外部サービスに依存しない。メール認証とOAuthを同じ設定で扱える</td><td>Auth.js、Clerk</td></tr>
+      <tr><td>メディア</td><td><b>Cloudflare R2</b></td><td>下り転送量に課金がなく、画像配信中心のアプリで費用を見積もりやすい。S3互換APIのため移行も容易</td><td>Amazon S3、Vercel Blob</td></tr>
+      <tr><td>ホスティング</td><td><b>Vercel</b></td><td>プルリクエストごとにプレビューURLを発行。Next.js の機能を追加設定なしで利用できる</td><td>Cloudflare Workers</td></tr>
+      <tr><td>リアルタイム</td><td><b>SSE<br></b><span class="sm">（Phase 2 以降）</span></td><td>通知とDMの受信はサーバーからの片方向配信で足りる。接続時間に上限があるため自動再接続を前提とする</td><td>Ably、ポーリング</td></tr>
+      <tr><td>品質</td><td><b>Vitest + Playwright</b></td><td>ドメインロジックは単体テスト、主要フローはE2E。GitHub Actions でプルリクエストごとに実行</td><td>Jest、Cypress</td></tr>
+    </table>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 10. NFR ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">07</span><h1>非機能要件</h1><span class="en">Non-functional Requirements</span></header>
+  <div class="body">
+    <p class="lead" style="margin-bottom:10px">4つの領域それぞれに、計測できる基準を置く。基準を満たさない変更はCIで検出する。</p>
+    <div class="grid2" style="flex:1;grid-template-rows:1fr 1fr">
+      <div class="card" style="padding:12px 16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="num" style="background:var(--teal)">1</span><h3 style="font-size:15px;margin:0">パフォーマンス</h3></div>
+        <table class="compact" style="margin-bottom:8px">
+          <tr><th>指標</th><th style="width:34%">基準</th></tr>
+          <tr><td>LCP（最大コンテンツの描画）</td><td><b>2.5秒以内</b></td></tr>
+          <tr><td>INP（操作への応答）</td><td><b>200ms以内</b></td></tr>
+          <tr><td>CLS（レイアウトのずれ）</td><td><b>0.1以下</b></td></tr>
+          <tr><td>フィードAPI 応答時間（p95）</td><td><b>300ms以内</b></td></tr>
+          <tr><td>フィード画面の初期JS（gzip）</td><td><b>170KB以内</b></td></tr>
+        </table>
+        <ul class="tight"><li>計測は Lighthouse のモバイル設定（低速4G相当）で行う</li><li>API計測の条件：ユーザー1,000人・投稿10,000件のシードデータ</li><li>フィードはカーソル式ページング（1回12件）。OFFSET は使わない</li><li>画面外の画像は遅延読み込み、次ページはスクロール到達前に先読み</li></ul>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="num" style="background:var(--blue)">2</span><h3 style="font-size:15px;margin:0">画像の最適化</h3></div>
+        <table class="compact" style="margin-bottom:8px">
+          <tr><th>項目</th><th style="width:46%">仕様</th></tr>
+          <tr><td>アップロード上限</td><td><b>1枚 10MB、1投稿 10枚</b></td></tr>
+          <tr><td>受付形式</td><td><b>JPEG / PNG / WebP / HEIC</b></td></tr>
+          <tr><td>保存時の最大サイズ</td><td><b>長辺 2,048px</b></td></tr>
+          <tr><td>配信形式</td><td><b>AVIF 優先、WebP で代替</b></td></tr>
+          <tr><td>配信幅（srcset）</td><td><b>320 / 640 / 1,080px</b></td></tr>
+        </table>
+        <ul class="tight"><li>アップロード前にブラウザ側で縮小し、通信量を抑える</li><li>幅・高さをDBに保存し、読み込み前に表示領域を確保（CLS対策）</li><li>ぼかしプレースホルダー用の短い文字列（ThumbHash）を保存</li><li>EXIFの位置情報は保存前に削除する</li></ul>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="num" style="background:var(--indigo)">3</span><h3 style="font-size:15px;margin:0">セキュリティ</h3></div>
+        <table class="compact" style="margin-bottom:8px">
+          <tr><th>対象</th><th style="width:56%">対策</th></tr>
+          <tr><td>セッション</td><td><b>HttpOnly・Secure・SameSite=Lax の Cookie</b></td></tr>
+          <tr><td>署名付きURL</td><td><b>有効期限5分、形式とサイズを固定</b></td></tr>
+          <tr><td>ログイン試行</td><td><b>同一IPから1分あたり5回まで</b></td></tr>
+          <tr><td>投稿・コメント</td><td><b>1ユーザー1時間あたり30件 / 120件まで</b></td></tr>
+        </table>
+        <ul class="tight"><li>書き込み処理はすべてサーバー側で「本人か」「所有者か」を確認する</li><li>入力値は Zod のスキーマで検証し、SQLはORMのプレースホルダー経由</li><li>パスワードはハッシュ化して保存。平文・可逆暗号では保存しない</li><li>Content-Security-Policy を設定し、外部スクリプトの読み込みを禁止</li></ul>
+      </div>
+      <div class="card" style="padding:12px 16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="num" style="background:var(--coral)">4</span><h3 style="font-size:15px;margin:0">アクセシビリティ</h3></div>
+        <table class="compact" style="margin-bottom:8px">
+          <tr><th>項目</th><th style="width:46%">基準</th></tr>
+          <tr><td>準拠目標</td><td><b>WCAG 2.2 レベルAA</b></td></tr>
+          <tr><td>文字のコントラスト比</td><td><b>4.5 : 1 以上</b></td></tr>
+          <tr><td>タップ領域</td><td><b>44 × 44px 以上</b></td></tr>
+          <tr><td>axe-core の重大な違反</td><td><b>0件（CIで検査）</b></td></tr>
+        </table>
+        <ul class="tight"><li>投稿時に代替テキストの入力欄を設け、すべての写真に alt を出力</li><li>全機能をキーボードだけで操作可能にする（ストーリーは ← / → / Esc）</li><li>「視差効果を減らす」設定時は、ストーリーの自動進行とアニメーションを止める</li><li>いいね等の状態は色だけでなく形（塗りつぶし）と読み上げ文言でも伝える</li></ul>
+      </div>
+    </div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 11. ROADMAP ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">08</span><h1>開発ロードマップ</h1><span class="en">Roadmap</span></header>
+  <div class="body">
+    <p class="lead" style="margin-bottom:10px">前提は週10時間の個人開発。24週間（年末年始の1週を除く実働23週）・合計約230時間を4フェーズに分け、各フェーズの終わりにデプロイ済みの動く状態を置く。</p>
+    <svg id="gantt" viewBox="0 0 660 300" width="100%" style="display:block"></svg>
+
+    <h2 style="margin-top:14px">マイルストーンと完了条件</h2>
+    <table class="roomy">
+      <tr><th style="width:8%">#</th><th style="width:15%">期日</th><th style="width:22%">マイルストーン</th><th>完了条件</th></tr>
+      <tr><td><b>M0</b></td><td>2026-12-06</td><td><b>基盤完了</b></td><td>空のアプリが本番URLで表示され、プルリクエストごとに型検査・テスト・プレビューデプロイが動く。ADR 4件（アプリ構成、DB、認証、メディア）を記録</td></tr>
+      <tr><td><b>M1</b></td><td>2027-02-14</td><td><b>MVP公開（招待制）</b></td><td>機能 #1〜#8 が動作し、E2E 8シナリオが通る。デモアカウントとシードデータ（投稿300件）を用意</td></tr>
+      <tr><td><b>M2</b></td><td>2027-03-28</td><td><b>Phase 2 完了</b></td><td>機能 #9〜#12 が動作。期限切れストーリーが一覧に出ないこと、通知が5秒以内に画面へ届くことを確認</td></tr>
+      <tr><td><b>M3</b></td><td>2027-05-09</td><td><b>Phase 3 完了・公開</b></td><td>機能 #13〜#15 が動作（#16 は任意）。成功指標を全項目計測し、README と紹介ページを公開</td></tr>
+    </table>
+
+    <h2>フェーズ別の工数配分</h2>
+    <div style="display:grid;grid-template-columns:2fr 9fr 6fr 6fr;gap:4px;font-size:10.6px;color:#fff;font-weight:700;text-align:center">
+      <div style="background:#6b7280;border-radius:6px;padding:9px 0">20h</div>
+      <div style="background:var(--ink);border-radius:6px;padding:9px 0">MVP　90時間</div>
+      <div style="background:var(--teal);border-radius:6px;padding:9px 0">Phase 2　60時間</div>
+      <div style="background:var(--blue);border-radius:6px;padding:9px 0">Phase 3　60時間</div>
+    </div>
+    <div class="sm mute" style="margin-top:5px">左端は Phase 0（基盤、20時間）。年末年始（12/28〜1/3）は作業なしと見込み、MVP期間10週のうち実働を9週として計画に含めている。</div>
+    <div class="fill"></div>
+    <div class="note"><b>進め方：</b>2週間を1スプリントとし、終わりに「動くもの」をデプロイして振り返る。フェーズ末で計画より2週間以上遅れた場合は、次フェーズの機能を減らして期日を守る（#16 → #15 → #14 の順に見送る）。</div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 12. RISKS ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">09</span><h1>リスクと対策</h1><span class="en">Risks &amp; Mitigations</span></header>
+  <div class="body">
+    <div class="card" style="border:1.5px solid var(--coral);padding:14px 18px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span class="tag t-hi">最重要</span><h3 style="font-size:14.5px;margin:0">R1　知的財産・商標：既存サービスと混同される</h3></div>
+      <p style="margin-bottom:8px">名称・ロゴ・画面の見た目が Instagram と誤認されると、商標権・著作権・不正競争防止法上の指摘や、公開停止の要請を受ける可能性がある。機能やUXパターンの再現そのものではなく、<b>ブランド資産の流用と出所の混同</b>がリスクの本体である。</p>
+      <div class="grid2">
+        <ul class="tight"><li>製品名・ロゴ・配色・アイコンは独自に設計する（4ページの方針表に従う）</li><li>Instagram / Meta のロゴ、アイコン、フォント、画像、スクリーンショット、コードを使用しない</li><li>作業名 insta-modoki（リポジトリ名）は公開前に改名する</li></ul>
+        <ul class="tight"><li>名称の確定前に J-PlatPat で同一・類似商標を検索する（第9類・第42類・第45類）</li><li>README と画面フッターに「学習目的の非公式プロジェクトであり、Meta 社とは無関係」と明記する</li><li>公開範囲は招待制デモに限定し、広告・課金を行わない</li></ul>
+      </div>
+    </div>
+
+    <table class="roomy">
+      <tr><th style="width:5%">#</th><th style="width:21%">リスク</th><th style="width:8%">影響</th><th style="width:9%">可能性</th><th>対策</th></tr>
+      <tr><td><b>R2</b></td><td><b>スコープの肥大</b><br><span class="sm">機能を足し続けて完成しない</span></td><td><span class="tag t-mid">中</span></td><td><span class="tag t-hi">高</span></td><td>MVPを8機能に固定し、期間中に思いついた機能はIssueに記録するだけに留める。フェーズ末に遅延が2週間を超えたら次フェーズの機能を減らす</td></tr>
+      <tr><td><b>R3</b></td><td><b>投稿コンテンツ</b><br><span class="sm">第三者の著作物や不適切な画像の投稿</span></td><td><span class="tag t-hi">高</span></td><td><span class="tag t-lo">低</span></td><td>登録を招待制にする。通報と管理者による削除を用意（通報機能はPhase 3、それまでは管理者が直接削除）。シードデータは自分で撮影した写真かCC0素材に限る</td></tr>
+      <tr><td><b>R4</b></td><td><b>個人情報の扱い</b><br><span class="sm">メールアドレス、写真の位置情報</span></td><td><span class="tag t-mid">中</span></td><td><span class="tag t-lo">低</span></td><td>収集項目をメールアドレス・ユーザー名・表示名に限定。EXIFの位置情報を保存前に削除。アカウント削除時に投稿とメディアを物理削除する</td></tr>
+      <tr><td><b>R5</b></td><td><b>運用費の超過</b><br><span class="sm">ストレージ・DB・関数実行</span></td><td><span class="tag t-lo">低</span></td><td><span class="tag t-mid">中</span></td><td>各サービスの無料枠内で設計する。アップロード上限とレート制限で使用量を抑え、月額1,000円を超えた時点で通知する予算アラートを設定</td></tr>
+      <tr><td><b>R6</b></td><td><b>リアルタイム実装の難度</b><br><span class="sm">通知・DMの配信</span></td><td><span class="tag t-mid">中</span></td><td><span class="tag t-mid">中</span></td><td>最初は10秒間隔のポーリングで機能を完成させ、その後SSEに置き換える。DMはPhase 3に置き、通知で得た知見を使う</td></tr>
+      <tr><td><b>R7</b></td><td><b>開発の中断</b><br><span class="sm">本業との兼ね合いで時間が取れない</span></td><td><span class="tag t-mid">中</span></td><td><span class="tag t-mid">中</span></td><td>2週間ごとにデプロイ済みの状態で区切り、どの時点で止まっても動く成果物が残るようにする。再開時の手がかりとしてADRとIssueを残す</td></tr>
+      <tr><td><b>R8</b></td><td><b>依存サービスの仕様変更</b><br><span class="sm">無料枠の縮小、破壊的変更</span></td><td><span class="tag t-lo">低</span></td><td><span class="tag t-mid">中</span></td><td>DBは標準のPostgreSQL、メディアはS3互換APIに限定して使い、特定事業者の独自機能に依存しない。移行先の候補は9ページの代替案に記載</td></tr>
+    </table>
+    <div class="fill"></div>
+    <div class="note"><b>補足：</b>R1 の記述は一般的なリスク整理であり、法的助言ではない。招待制の範囲を超えて公開する場合は、事前に専門家へ確認する。</div>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<!-- ===================== 13. KPI + NEXT ===================== -->
+<section class="page">
+  <header class="ph"><span class="no">10</span><h1>成功指標</h1><span class="en">Success Metrics &amp; Next Actions</span></header>
+  <div class="body">
+    <table class="compact">
+      <tr><th style="width:15%">区分</th><th style="width:31%">指標</th><th style="width:22%">目標値</th><th>計測方法・時点</th></tr>
+      <tr><td rowspan="2"><b>完成度</b></td><td>MVP 8機能の完了</td><td><b>8 / 8（2027-02-14）</b></td><td>各機能の受け入れ条件をIssueで管理</td></tr>
+      <tr><td>全16機能の完了</td><td><b>15以上（2027-05-09）</b></td><td>#16 は任意のため15で達成</td></tr>
+      <tr><td rowspan="3"><b>品質</b></td><td>Lighthouse Performance（モバイル）</td><td><b>90点以上</b></td><td>フィード・プロフィール・投稿詳細の3画面</td></tr>
+      <tr><td>Core Web Vitals</td><td><b>3指標すべて「良好」</b></td><td>LCP 2.5秒 / INP 200ms / CLS 0.1</td></tr>
+      <tr><td>axe-core の重大な違反</td><td><b>0件</b></td><td>E2E内で主要8画面を検査</td></tr>
+      <tr><td rowspan="2"><b>信頼性</b></td><td>E2Eシナリオの成功</td><td><b>MVP 8本 → 最終 15本</b></td><td>Playwright、プルリクエストごとに実行</td></tr>
+      <tr><td>ドメインロジックの行カバレッジ</td><td><b>80%以上</b></td><td>Vitest のカバレッジ計測</td></tr>
+      <tr><td rowspan="2"><b>学習</b></td><td>ADRの件数</td><td><b>10件以上</b></td><td>docs/adr/ のファイル数</td></tr>
+      <tr><td>デモの一巡時間</td><td><b>5分以内</b></td><td>初見の利用者3名が、ログインから投稿・いいね・コメントまで完了する時間</td></tr>
+      <tr><td><b>運用</b></td><td>月額の運用費</td><td><b>1,000円以下</b></td><td>各サービスの請求画面で月次確認</td></tr>
+    </table>
+
+    <header class="ph" style="margin-top:14px;margin-bottom:12px"><span class="no">11</span><h1>次のアクション</h1></header>
+    <h2>承認をお願いしたい事項</h2>
+    <div class="grid2" style="gap:8px">
+      <div class="card" style="display:flex;gap:10px;padding:10px 12px"><span class="num">A</span><div><h3>スコープとフェーズ分け</h3><p>16機能・MVP 8機能・24週間の計画（5ページ、11ページ）</p></div></div>
+      <div class="card" style="display:flex;gap:10px;padding:10px 12px"><span class="num">B</span><div><h3>プロダクト名とブランド方針</h3><p>名称「Mado」（商標検索の後に確定）と独自パレット（4ページ）</p></div></div>
+      <div class="card" style="display:flex;gap:10px;padding:10px 12px"><span class="num">C</span><div><h3>技術スタック</h3><p>Next.js / PostgreSQL（Neon）/ Drizzle / Better Auth / R2 / Vercel（9ページ）</p></div></div>
+      <div class="card" style="display:flex;gap:10px;padding:10px 12px"><span class="num">D</span><div><h3>公開範囲</h3><p>招待制デモ（10〜30名）とし、一般公開はしない（3ページ、12ページ）</p></div></div>
+    </div>
+
+    <h2>承認後2週間の作業（Phase 0）</h2>
+    <table class="compact">
+      <tr><th style="width:5%">#</th><th>作業</th><th style="width:34%">成果物</th><th style="width:16%">期日</th></tr>
+      <tr><td>1</td><td>J-PlatPat で「Mado」の商標検索、名称の確定</td><td>検索結果の記録、確定した名称</td><td>2026-11-25</td></tr>
+      <tr><td>2</td><td>技術選定のADR 4件を作成</td><td>docs/adr/0001〜0004</td><td>2026-11-27</td></tr>
+      <tr><td>3</td><td>リポジトリ初期化、CI（型検査・Lint・テスト）の構築</td><td>初回コミット、GitHub Actions のワークフロー</td><td>2026-11-29</td></tr>
+      <tr><td>4</td><td>Vercel・Neon・R2 の接続、本番URLでの疎通確認</td><td>本番URL、プレビュー環境</td><td>2026-12-02</td></tr>
+      <tr><td>5</td><td>DBスキーマ（User / Post / Media / Like / Comment / Follow）と初回マイグレーション</td><td>スキーマ定義、マイグレーションSQL</td><td>2026-12-04</td></tr>
+      <tr><td>6</td><td>デザイントークン（色・余白・文字サイズ）とロゴの作成</td><td>Tailwind 設定、SVGロゴ</td><td>2026-12-06</td></tr>
+    </table>
+  </div>
+  <footer class="pf"><span>Mado（仮称）企画書 ／ insta-modoki</span><span class="pn"></span></footer>
+</section>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function el(p,n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;p.appendChild(e);return e}
+
+  /* ---------- ER diagram ---------- */
+  var er=document.getElementById('er'), W=172, HH=24, RH=15;
+  var ents=[
+    {n:'Follow',x:8,y:28,f:[['follower_id','PK FK'],['followee_id','PK FK'],['created_at','']]},
+    {n:'User',x:244,y:8,f:[['id','PK'],['username','UQ'],['email','UQ'],['display_name',''],['bio',''],['avatar_key',''],['created_at','']],hl:1},
+    {n:'Notification',x:480,y:8,f:[['id','PK'],['recipient_id','FK'],['actor_id','FK'],['type',''],['target_id',''],['read_at',''],['created_at','']]},
+    {n:'Story',x:8,y:192,f:[['id','PK'],['author_id','FK'],['storage_key',''],['media_type',''],['expires_at',''],['created_at','']]},
+    {n:'Post',x:244,y:192,f:[['id','PK'],['author_id','FK'],['caption',''],['like_count',''],['comment_count',''],['created_at','']],hl:1},
+    {n:'Message',x:480,y:192,f:[['id','PK'],['conversation_id','FK'],['sender_id','FK'],['body',''],['media_key',''],['created_at','']]},
+    {n:'Like',x:8,y:368,f:[['user_id','PK FK'],['post_id','PK FK'],['created_at','']]},
+    {n:'Media',x:244,y:368,f:[['id','PK'],['post_id','FK'],['storage_key',''],['type',''],['width / height',''],['alt_text',''],['position','']]},
+    {n:'Comment',x:480,y:368,f:[['id','PK'],['post_id','FK'],['author_id','FK'],['parent_id','FK'],['body',''],['created_at','']]}
+  ];
+  var lines=[
+    ['M244 58H180','238,53','186,53'],['M244 76H180','238,90','186,90'],
+    ['M416 58H480','422,53','474,53'],['M416 76H480','422,90','474,90'],
+    ['M330 145V192','338,158','338,187'],
+    ['M290 145V170H94V192','282,158','102,187'],
+    ['M370 145V170H566V192','378,158','574,187'],
+    ['M330 314V368','338,327','338,363'],
+    ['M290 314V344H94V368','282,327','102,363'],
+    ['M370 314V344H566V368','378,327','574,363']
+  ];
+  lines.forEach(function(l){
+    el(er,'path',{d:l[0],fill:'none',stroke:'#9aa6b6','stroke-width':1.4});
+    var a=l[1].split(','),b=l[2].split(',');
+    el(er,'text',{x:a[0],y:a[1],'font-size':9.5,'font-weight':700,fill:'#374151','text-anchor':'middle'},'1');
+    el(er,'text',{x:b[0],y:b[1],'font-size':9.5,'font-weight':700,fill:'#374151','text-anchor':'middle'},'N');
+  });
+  ents.forEach(function(e){
+    var h=HH+e.f.length*RH+8;
+    el(er,'rect',{x:e.x,y:e.y,width:W,height:h,rx:8,fill:'#fff',stroke:e.hl?'#2b6cf6':'#cbd2dc','stroke-width':e.hl?1.8:1.2});
+    el(er,'path',{d:'M'+e.x+' '+(e.y+HH)+'v-'+(HH-8)+'a8 8 0 0 1 8-8h'+(W-16)+'a8 8 0 0 1 8 8v'+(HH-8)+'z',fill:e.hl?'url(#g1)':'#111827'});
+    el(er,'text',{x:e.x+12,y:e.y+16.5,'font-size':11.5,'font-weight':700,fill:'#fff'},e.n);
+    e.f.forEach(function(f,i){
+      var y=e.y+HH+14+i*RH;
+      el(er,'text',{x:e.x+12,y:y,'font-size':10,fill:'#374151','font-family':'Menlo,monospace'},f[0]);
+      if(f[1]){
+        var parts=f[1].split(' '),x=e.x+W-10;
+        parts.reverse().forEach(function(p){
+          el(er,'text',{x:x,y:y,'font-size':8.5,'font-weight':700,'text-anchor':'end',fill:p=='PK'?'#0a8f84':p=='FK'?'#2b6cf6':'#111827'},p);
+          x-=19;
+        });
+      }
+    });
+  });
+
+  /* ---------- Gantt ---------- */
+  var g=document.getElementById('gantt'),L=150,WK=21,T=44,R=27;
+  function wx(w){return L+(w-1)*WK}
+  // month bands
+  var months=[['11月',0],['12月',8],['1月',39],['2月',70],['3月',98],['4月',129],['5月',159]],end=168;
+  months.forEach(function(m,i){
+    var x0=L+m[1]/7*WK,x1=L+(i+1<months.length?months[i+1][1]:end)/7*WK;
+    el(g,'rect',{x:x0,y:0,width:x1-x0-1,height:18,fill:i%2?'#eef1f5':'#f4f6f9',rx:3});
+    el(g,'text',{x:(x0+x1)/2,y:12.5,'font-size':9.5,'text-anchor':'middle',fill:'#374151','font-weight':700},(i==0?'2026 ':i==2?'2027 ':'')+m[0]);
+  });
+  for(var w=1;w<=24;w++){
+    el(g,'text',{x:wx(w)+WK/2,y:32,'font-size':8,'text-anchor':'middle',fill:'#6b7280'},w);
+    el(g,'line',{x1:wx(w),y1:38,x2:wx(w),y2:T+R*8,stroke:'#eef1f5'});
+  }
+  el(g,'text',{x:L-8,y:32,'font-size':8,'text-anchor':'end',fill:'#6b7280'},'週');
+  el(g,'line',{x1:wx(25),y1:38,x2:wx(25),y2:T+R*8,stroke:'#eef1f5'});
+  var rows=[
+    ['Phase 0　基盤',1,2,'#6b7280',1,'環境・CI・ADR'],
+    ['Phase 1　MVP',3,12,'#111827',1,'機能 #1〜#8'],
+    ['認証・プロフィール',3,5,'#9aa6b6',0,''],
+    ['投稿・メディア',5,8,'#9aa6b6',0,''],
+    ['フィード・いいね・コメント',8,11,'#9aa6b6',0,''],
+    ['仕上げ・E2E・シード',11,12,'#9aa6b6',0,''],
+    ['Phase 2　拡張',13,18,'#0bb8a9',1,'ストーリー・発見・通知・保存'],
+    ['Phase 3　発展',19,24,'#2b6cf6',1,'DM・安全・PWA・（動画）']
+  ];
+  rows.forEach(function(r,i){
+    var y=T+i*R;
+    if(r[4]) el(g,'rect',{x:0,y:y,width:660,height:R,fill:'#fafbfc'});
+    el(g,'text',{x:r[4]?4:16,y:y+17.5,'font-size':r[4]?10.5:9.5,'font-weight':r[4]?700:400,fill:r[4]?'#111827':'#6b7280'},r[0]);
+    var x=wx(r[1]),wd=(r[2]-r[1]+1)*WK;
+    el(g,'rect',{x:x+1,y:y+(r[4]?6:9),width:wd-2,height:r[4]?15:9,rx:r[4]?5:4,fill:r[3]});
+    if(r[5]){
+      if(wd>100) el(g,'text',{x:x+wd/2,y:y+17,'font-size':9,'text-anchor':'middle',fill:'#fff','font-weight':700},r[5]);
+      else el(g,'text',{x:x+wd+6,y:y+17,'font-size':9,fill:'#374151'},r[5]);
+    }
+  });
+  // milestones
+  var my=T+R*8+14;
+  el(g,'line',{x1:L,y1:my,x2:wx(25),y2:my,stroke:'#cbd2dc','stroke-width':1.2});
+  el(g,'text',{x:4,y:my+4,'font-size':10.5,'font-weight':700,fill:'#111827'},'マイルストーン');
+  [['M0',3,'12/6 基盤完了'],['M1',13,'2/14 MVP公開'],['M2',19,'3/28 P2完了'],['M3',25,'5/9 公開']].forEach(function(m){
+    var x=wx(m[1]);
+    el(g,'line',{x1:x,y1:T,x2:x,y2:my,stroke:'#ff6b5e','stroke-width':1,'stroke-dasharray':'3 3'});
+    el(g,'path',{d:'M'+x+' '+(my-7)+'l7 7l-7 7l-7-7z',fill:'#ff6b5e'});
+    var an=m[1]==25?'end':'middle', tx=m[1]==25?x+7:x;
+    el(g,'text',{x:tx,y:my+21,'font-size':9.5,'text-anchor':an,fill:'#111827','font-weight':700},m[0]+'　'+m[2]);
+  });
+
+  /* ---------- overflow check (QA aid) ---------- */
+  var rep=[];
+  document.querySelectorAll('.page').forEach(function(p,i){
+    var b=p.querySelector('.body');
+    if(b){
+      var last=b.lastElementChild,slack=Math.round(b.getBoundingClientRect().bottom-last.getBoundingClientRect().bottom);
+      rep.push((i+1)+':'+(b.scrollHeight>b.clientHeight+1?'OVER'+(b.scrollHeight-b.clientHeight):'ok')+'/slack'+slack);
+    } else rep.push((i+1)+':'+(p.scrollHeight>p.clientHeight+1?'OVER':'ok'));
+  });
+  document.documentElement.setAttribute('data-qa',rep.join(' '));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Worktrees for parallel PBIs (ADR-0007)
+.worktrees/
+
+# Secrets and per-slot env (ADR-0008)
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+
+# Local Cloudflare / build state
+.wrangler/
+node_modules/
+.next/
+.open-next/
+dist/
+coverage/
+test-results/
+playwright-report/
+
+# Proposal build by-products (docs/proposal/build.sh)
+docs/proposal/build.log
+docs/proposal/png/
+
+.DS_Store
