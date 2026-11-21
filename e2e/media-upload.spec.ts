@@ -201,7 +201,9 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   release();
 });
 
-test('保存した写真が 公開の配信元（別 origin）から 実際のブラウザで表示される', async ({ page }) => {
+test('保存した写真が 公開の配信元（別 origin）から 実際のブラウザで表示される', async ({
+  page,
+}) => {
   await start(page);
   const jpeg = await makeJpeg(page, 640, 480);
   await picker(page).setInputFiles([{ name: 'show.jpg', mimeType: 'image/jpeg', buffer: jpeg }]);
