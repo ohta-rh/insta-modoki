@@ -12,5 +12,6 @@ export function proxy(request: NextRequest): NextResponse {
   return response;
 }
 
-// Static files skip the Worker; public/_headers covers them.
-export const config = { matcher: '/((?!_next/static|_next/image|favicon.ico).*)' };
+// Every path runs through here. A static file that exists is served by Workers Static Assets
+// without the Worker, so public/_headers covers it; only the 404 for a missing file reaches this proxy.
+export const config = { matcher: '/:path*' };
