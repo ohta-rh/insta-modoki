@@ -12,6 +12,9 @@ export const listLikersInput = z.strictObject({
   cursor: z.string().optional(),
 });
 
+/** A post id is a UUID; anything else can never name a post, so it is NOT_FOUND without a query. */
+export const isPostId = (value: unknown): value is string => z.uuid().safeParse(value).success;
+
 export type LikeResult = { liked: boolean; likeCount: number };
 
 /** The page size of the likers list (docs/architecture/routes.md). */

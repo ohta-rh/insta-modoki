@@ -5,8 +5,7 @@ import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { likes, posts } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
-import { isPostId } from '../../post';
-import { likeInput, type LikeResult } from '../model/schema';
+import { isPostId, likeInput, type LikeResult } from '../model/schema';
 
 export type LikeDeps = { env?: AuthEnv; headers: Headers; now?: number };
 

@@ -6,8 +6,8 @@ import { getRequestEnv } from '../../../shared/db/request';
 import { likes, posts, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
 import { publicUrl, type StorageEnv } from '../../../shared/storage';
-import { isPostId, type UserSummary } from '../../post';
-import { LIKERS_PAGE_SIZE, listLikersInput } from '../model/schema';
+import type { UserSummary } from '../../post';
+import { isPostId, LIKERS_PAGE_SIZE, listLikersInput } from '../model/schema';
 
 export type ListLikersDeps = { env?: AuthEnv & StorageEnv };
 export type LikersPage = { items: UserSummary[]; nextCursor: string | null };
