@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import type { ComponentType, ReactNode } from 'react';
 import { FOOTER_NOTICE } from './brand';
 import { BellIcon, HomeIcon, PlusSquareIcon, SearchIcon, UserIcon, type IconProps } from './icons';
@@ -43,7 +42,7 @@ function NavLinks({ items, current, viewer, layout }: NavProps & { layout: 'side
         const Icon = ICONS[item.icon];
         const isHere = isCurrent(item, current, viewer);
         return (
-          <Link
+          <a
             key={item.key}
             href={item.href}
             aria-current={isHere ? 'page' : undefined}
@@ -55,7 +54,7 @@ function NavLinks({ items, current, viewer, layout }: NavProps & { layout: 'side
           >
             <Icon />
             <span>{item.label}</span>
-          </Link>
+          </a>
         );
       })}
     </>
@@ -69,9 +68,9 @@ function SideNav({ items, current, viewer }: NavProps) {
       data-nav="side"
       className="sticky top-0 hidden h-screen w-[244px] shrink-0 flex-col gap-1 border-r border-border p-3 nav:flex"
     >
-      <a href="/" className="mb-4 flex min-h-[var(--tap-min)] items-center px-3">
+      <div className="mb-4 flex min-h-[var(--tap-min)] items-center px-3">
         <Logo withName />
-      </a>
+      </div>
       <NavLinks items={items} current={current} viewer={viewer} layout="side" />
     </nav>
   );
