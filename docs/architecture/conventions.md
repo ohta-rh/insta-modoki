@@ -75,6 +75,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 
 - セッションの有効期限は 30 日。他の slice は `src/features/auth` の `getSessionUser()`（いなければ null）と `requireUser()`（いなければ UNAUTHENTICATED）だけを使い、認証ライブラリを直接呼ばない。
 - 利用者の IP は `cf-connecting-ip` のヘッダーから取り、無ければ `local` とする（`src/shared/security/client-ip.ts`）。
+- ログインが要る全てのサーバーの処理（Server Action・Route Handler）と、`(app)` の下の全てのデータの読み出しは、最初に `requireUser()`（または `getSessionUser()` と明示の判定）を呼ぶ。`(app)` のレイアウトの転送だけに頼らない。Next.js はページを切り替えるときにレイアウトを実行し直さず、Server Action はレイアウトを通らずに呼べるため（#26 のセキュリティレビュー。ADR-0031）。
 
 ## 画像の処理
 
