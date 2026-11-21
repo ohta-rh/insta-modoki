@@ -1,12 +1,12 @@
 import type { FormEvent, Ref } from 'react';
 import { charLength } from '../../../shared/text';
 import { addCommentFormAction } from '../api/actions';
+import { COMMENT_INPUT_ID } from './comment-input-id';
 import { MAX_BODY } from '../model/schema';
 import type { ReplyTarget } from '../model/thread';
 
 /** The counter shows from here on (the limit is 2,200). */
 const COUNTER_FROM = 2000;
-export const COMMENT_INPUT_ID = 'comment-input';
 
 /**
  * The comment box, fixed to the bottom of the screen (above the bottom nav on a narrow one). It is

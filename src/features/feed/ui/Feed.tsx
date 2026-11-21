@@ -1,30 +1,27 @@
 'use client';
 
-import type { PostView } from '../../post';
-import { FeedPostCard } from './FeedPostCard';
+import type { FeedCard } from './feed-cards';
 import { useInfiniteFeed } from './useInfiniteFeed';
 
 /**
- * The home feed. The first page comes from the server and works without JavaScript; while more
+ * The home feed. The first page is rendered by the server and works without JavaScript; while more
  * exist, a marker under the last post loads the next page as it nears the screen. A failed load
  * keeps the posts and offers a retry. At the end it says so.
  */
 export function Feed({
-  initialItems,
+  initialCards,
   initialCursor,
-  now,
 }: {
-  initialItems: PostView[];
+  /** The first page, rendered by the server (`renderFeedCards`). */
+  initialCards: FeedCard[];
   initialCursor: string | null;
-  /** The server's current time (epoch ms), so every card and the first paint agree. */
-  now: number;
 }) {
-  const { items, cursor, failed, loading, sentinel, retry } = useInfiniteFeed(
-    initialItems,
+  const { cards, cursor, failed, loading, sentinel, retry } = useInfiniteFeed(
+    initialCards,
     initialCursor,
   );
 
-  if (items.length === 0) {
+  if (cards.length === 0) {
     return (
       <p className="px-4 py-16 text-center text-text-secondary">
         フォローすると、その人の投稿がここに表示されます
@@ -34,8 +31,8 @@ export function Feed({
   return (
     <section aria-label="フィード" className="mx-auto w-full max-w-[600px]">
       <div className="flex flex-col gap-2">
-        {items.map((post, i) => (
-          <FeedPostCard key={post.id} post={post} now={now} priority={i === 0} />
+        {cards.map((card) => (
+          <div key={card.id}>{card.node}</div>
         ))}
       </div>
       {cursor !== null && !failed && (

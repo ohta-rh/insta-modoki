@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import { CommentIcon } from '../../../shared/ui/icons';
-import { COMMENT_INPUT_ID } from './CommentForm';
+import { COMMENT_INPUT_ID } from './comment-input-id';
 
 type Counter = { count: number; add: (delta: number) => void };
 const CountContext = createContext<Counter | null>(null);

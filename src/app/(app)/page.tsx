@@ -1,6 +1,6 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Feed, getFeed } from '@/features/feed';
+import { Feed, getFeed, renderFeedCards } from '@/features/feed';
 import { AppError } from '@/shared/errors';
 
 // The home feed: the first page is read here, the rest by the Feed's Server Action. The (app)
@@ -16,7 +16,10 @@ export default async function HomePage() {
   return (
     <div className="mx-auto w-full max-w-[var(--content-max)] py-4">
       <h1 className="sr-only">ホーム</h1>
-      <Feed initialItems={page.items} initialCursor={page.nextCursor} now={Date.now()} />
+      <Feed
+        initialCards={renderFeedCards(page.items, { now: Date.now(), firstPriority: true })}
+        initialCursor={page.nextCursor}
+      />
     </div>
   );
 }

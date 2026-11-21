@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { PostView } from '../../post';
 import { Feed } from './Feed';
+import { renderFeedCards } from './feed-cards';
 
 const NOW = Date.UTC(2026, 10, 21);
 const media = (n: number, altText = '') => ({
@@ -27,15 +28,17 @@ const post = (id: string, photos: number, over: Partial<PostView> = {}): PostVie
 /** The tags of the photos (the avatar has no srcset). */
 const photoTags = (html: string) => html.match(/<img [^>]*srcSet="[^>]*>/g) ?? [];
 
+const feed = (items: PostView[], cursor: string | null = null) =>
+  renderToStaticMarkup(
+    <Feed
+      initialCards={renderFeedCards(items, { now: NOW, firstPriority: true })}
+      initialCursor={cursor}
+    />,
+  );
+
 describe('Feed', () => {
   it('1 枚目だけ eager でほかは lazy で、width と height を持つ', () => {
-    const html = renderToStaticMarkup(
-      <Feed
-        initialItems={[post('a', 3), post('b', 1), post('c', 2)]}
-        initialCursor={null}
-        now={NOW}
-      />,
-    );
+    const html = feed([post('a', 3), post('b', 1), post('c', 2)]);
     const tags = photoTags(html);
     expect(tags).toHaveLength(6);
     expect(tags[0]).toContain('loading="eager"');
@@ -47,42 +50,37 @@ describe('Feed', () => {
     }
   });
 
-  it('各投稿は article で、alt は alt_text（空なら説明の代わりの文）を持つ', () => {
+  it('次のページのカードは先頭でも eager にしない', () => {
     const html = renderToStaticMarkup(
-      <Feed initialItems={[post('a', 1), post('b', 1)]} initialCursor={null} now={NOW} />,
+      <>{renderFeedCards([post('a', 1)], { now: NOW, firstPriority: false }).map((c) => c.node)}</>,
     );
+    expect(photoTags(html)[0]).toContain('loading="lazy"');
+  });
+
+  it('各投稿は article で、alt は alt_text（空なら説明の代わりの文）を持つ', () => {
+    const html = feed([post('a', 1), post('b', 1)]);
     expect(html.match(/<article/g)).toHaveLength(2);
     expect(photoTags(html)[0]).toContain('alt="猫"');
   });
 
   it('コメントがあるとき「コメント N 件をすべて見る」が /p/<id> へのリンクになる', () => {
-    const html = renderToStaticMarkup(
-      <Feed
-        initialItems={[post('a', 1, { commentCount: 5 }), post('b', 1)]}
-        initialCursor={null}
-        now={NOW}
-      />,
-    );
+    const html = feed([post('a', 1, { commentCount: 5 }), post('b', 1)]);
     expect(html).toMatch(/<a [^>]*href="\/p\/a"[^>]*>コメント 5 件をすべて見る<\/a>/);
     // Only the post with comments has the link (the icon link of every card is separate).
     expect(html.match(/をすべて見る/g)).toHaveLength(1);
   });
 
   it('投稿が 0 件のとき空の案内を出す', () => {
-    const html = renderToStaticMarkup(<Feed initialItems={[]} initialCursor={null} now={NOW} />);
+    const html = feed([]);
     expect(html).toContain('フォローすると、その人の投稿がここに表示されます');
     expect(html).not.toContain('ここまでです');
   });
 
   it('続きが無いとき「ここまでです」を出し、続きがあるときは見張りを出す', () => {
-    const last = renderToStaticMarkup(
-      <Feed initialItems={[post('a', 1)]} initialCursor={null} now={NOW} />,
-    );
+    const last = feed([post('a', 1)]);
     expect(last).toContain('ここまでです');
     expect(last).not.toContain('data-testid="feed-sentinel"');
-    const more = renderToStaticMarkup(
-      <Feed initialItems={[post('a', 1)]} initialCursor="abc" now={NOW} />,
-    );
+    const more = feed([post('a', 1)], 'abc');
     expect(more).not.toContain('ここまでです');
     expect(more).toContain('data-testid="feed-sentinel"');
   });

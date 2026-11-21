@@ -193,3 +193,30 @@ signedIn('JS が読み込まれる前でも ハートを押していいねでき
   await expect.poll(() => likeRows(posts[0]!.id)).toBe(1);
   release();
 });
+
+signedIn(
+  '投稿のあるフィードを開いても CSP 違反とコンソールのエラーが出ない',
+  async ({ page, me }) => {
+    followedAuthor(me, 13, 'ＣＳＰ');
+    const errors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error' && !/Failed to load resource/.test(message.text())) {
+        errors.push(message.text());
+      }
+    });
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.addInitScript(() => {
+      const w = window as unknown as { __csp: string[] };
+      w.__csp = [];
+      document.addEventListener('securitypolicyviolation', (e) => {
+        w.__csp.push(`${e.violatedDirective} ${e.blockedURI}`);
+      });
+    });
+    await page.goto('/');
+    await waitForHydration(page);
+    await page.getByTestId('feed-sentinel').scrollIntoViewIfNeeded();
+    await expect(articles(page)).toHaveCount(13);
+    expect(await page.evaluate(() => (window as unknown as { __csp: string[] }).__csp)).toEqual([]);
+    expect(errors).toEqual([]);
+  },
+);
