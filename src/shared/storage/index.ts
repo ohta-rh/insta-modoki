@@ -2,3 +2,4 @@ export { getStorageClient, objectUrl, type StorageClient, type StorageEnv } from
 export { presignPut, type PresignPutInput } from './presign';
 export { mediaSrcset, publicUrl } from './urls';
 export { removeObjects } from './remove';
+export { headObject, type ObjectInfo } from './head';

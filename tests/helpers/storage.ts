@@ -27,3 +27,26 @@ export async function headObject(
     contentType: res.headers.get('content-type') ?? '',
   };
 }
+
+/** PUT an object with the slot's own key (the way a presigned PUT would store it). */
+export async function putObject(
+  env: StorageEnv,
+  key: string,
+  body: Uint8Array<ArrayBuffer>,
+  contentType = 'image/webp',
+): Promise<void> {
+  const client = getStorageClient(env);
+  const res = await client.aws.fetch(objectUrl(client, key), {
+    method: 'PUT',
+    body,
+    headers: { 'Content-Type': contentType },
+  });
+  if (!res.ok) throw new Error(`PUT ${key}: ${res.status}`);
+}
+
+/** The four files `uploadImages` stores for one photo key. */
+export async function putPhoto(env: StorageEnv, key: string): Promise<void> {
+  for (const name of ['orig', 'w320', 'w640', 'w1080']) {
+    await putObject(env, `${key}/${name}.webp`, new Uint8Array([82, 73, 70, 70]));
+  }
+}
