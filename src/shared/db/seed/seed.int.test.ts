@@ -4,7 +4,6 @@ import { applyMigrations } from '../../../../tests/helpers/db';
 import { headObject, loadStorageEnv } from '../../../../tests/helpers/storage';
 import { verifyPassword } from '../../../features/auth/model/password';
 import { type StorageEnv } from '../../storage/client';
-import { PROFILES } from './profiles';
 import { runSeed, type SeedD1, type SeedEnv } from './seed';
 
 const SUFFIX = '@seed.invalid';
