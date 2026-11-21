@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from './support/hydration';
 import { signUpViaUi, type NewUser } from './support/auth';
 import { seedUser } from './support/db';
 import { getObject } from './support/storage';
@@ -35,6 +36,7 @@ test('写真をスワイプと矢印キーで切り替えられ 枚数バッジ�
   await page.goto(`/p/${post.id}`);
 
   await expect(carousel(page)).toBeVisible();
+  await waitForHydration(page);
   await expect(badge(page, '1/3')).toBeVisible();
   await expect(page.getByTestId('carousel-dot')).toHaveCount(3);
   expect(await activeDot(page)).toBe(0);
@@ -58,6 +60,7 @@ test('写真をスワイプと矢印キーで切り替えられ 枚数バッジ�
   expect(await activeDot(page)).toBe(1);
 
   // Arrow keys on the focused photos: right, right (end), then left back to the start.
+  await waitForHydration(page);
   await carousel(page).focus();
   await page.keyboard.press('ArrowRight');
   await expect(badge(page, '3/3')).toBeVisible();
@@ -174,6 +177,7 @@ signedIn('自分の投稿を確認ダイアログのあとで削除できる', a
   const post = insertPost({ authorUsername: username, mediaCount: 3, caption: '消す投稿' });
   const files = await putPostFiles(page, post);
   await page.goto(`/p/${post.id}`);
+  await waitForHydration(page);
 
   const open = page.getByRole('button', { name: '削除', exact: true });
   const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
@@ -201,6 +205,39 @@ signedIn('自分の投稿を確認ダイアログのあとで削除できる', a
   const gone = await page.goto(`/p/${post.id}`);
   expect(gone!.status()).toBe(404);
 });
+
+signedIn(
+  'JS が読み込まれる前でも 削除の確認ダイアログが開き Esc で閉じる',
+  async ({ page, me }) => {
+    const post = insertPost({ authorUsername: me.username, mediaCount: 1 });
+    await putPostFiles(page, post);
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route('**/_next/static/chunks/**', async (route) => {
+      await gate;
+      await route.continue();
+    });
+    await page.goto(`/p/${post.id}`, { waitUntil: 'commit' });
+
+    const open = page.getByRole('button', { name: '削除', exact: true });
+    await open.waitFor();
+    await open.focus();
+    await expect(open).toBeFocused();
+    await page.keyboard.press('Enter');
+    const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(open).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(dialog).toBeVisible();
+    // The dialog puts the focus on its first control, "キャンセル".
+    await expect(dialog.getByRole('button', { name: 'キャンセル' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(dialog).toBeHidden();
+    release();
+  },
+);
 
 signedIn('他人の投稿には削除が出ない', async ({ page }) => {
   const { post } = strangerPost({ mediaCount: 1 });
@@ -244,6 +281,7 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
     expect(box.width).toBeGreaterThanOrEqual(44);
     expect(box.height).toBeGreaterThanOrEqual(44);
   }
+  await waitForHydration(page);
   await focusByTab(page, carouselEl);
   await page.keyboard.press('ArrowRight');
   await expect(badge(page, '2/3')).toBeVisible();

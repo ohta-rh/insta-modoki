@@ -82,6 +82,10 @@ PBI の「検証」は、このファイル名と名前で書く。
 
 画像の縮小と変換はブラウザだけで行う。canvas で WebP（品質 0.82）に描き直し、長辺 2,048px の原本と 320 / 640 / 1,080px の幅を作る。元より大きくはしない。EXIF は描き直しで消える。
 
+## ハイドレーション
+
+最初のキー入力やクリックで動かなければならない操作（送信・遷移・ファイル選択・ダイアログを開く）は、ブラウザ自身の動作で作る（form、リンク、input、dialog と popover の呼び出し属性 `commandfor` / `command`）。JS だけで動く操作（カルーセルの矢印キー、スクロール位置の追跡など）は、JS の読み込み後に効けばよい強化として作る。ルートのレイアウトの `HydrationMarker`（`src/shared/ui/`）が、ハイドレーションの後に `html[data-hydrated="1"]` を付ける。E2E は JS だけで動く操作に触る前に `e2e/support/hydration.ts` の `waitForHydration(page)` を呼ぶ。JS の読み込みを止めた状態で操作できることは、`e2e/media-upload.spec.ts` と `e2e/post-detail.spec.ts` の「JS が読み込まれる前でも」の形のテストで確かめる。
+
 ## カーソル
 
 - 並びは既定で `(created_at DESC, id DESC)`。コメントと返信の一覧は古い順（`created_at ASC, id ASC`）。フォロワー・フォロー中・いいねした人の一覧は、`id` の位置に相手の利用者の id を入れる。カーソルは最後の行の `created_at` と `id` を `|` でつないで base64url にした文字列。OFFSET は使わない。

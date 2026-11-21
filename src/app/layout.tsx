@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactNode } from 'react';
 import { getSessionUser, isValidUsernameFormat } from '@/features/auth';
-import { AppShellClient } from '@/shared/ui';
+import { AppShellClient, HydrationMarker } from '@/shared/ui';
 import './globals.css';
 
 export const metadata = {
@@ -19,6 +19,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="ja">
       <body>
+        <HydrationMarker />
         <AppShellClient viewer={viewer}>{children}</AppShellClient>
       </body>
     </html>

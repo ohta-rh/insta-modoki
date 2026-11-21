@@ -20,11 +20,13 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
   const titleId = useId();
   const messageId = useId();
 
+  const dialogId = `delete-dialog-${postId}`;
+  // The trigger opens the dialog by itself (commandfor), so it works before hydration; this
+  // handler only clears an old error, and opens it where the command attribute is unsupported.
   const open = () => {
     setError(null);
-    dialog.current?.showModal();
+    if (dialog.current && !dialog.current.open) dialog.current.showModal();
   };
-  const close = () => dialog.current?.close();
 
   const confirm = async () => {
     setPending(true);
@@ -65,6 +67,8 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
       <button
         ref={trigger}
         type="button"
+        // Invoker commands are not in @types/react yet; React passes unknown attributes through.
+        {...({ commandfor: dialogId, command: 'show-modal' } as object)}
         onClick={open}
         className={`${secondary} text-text-secondary hover:bg-surface`}
       >
@@ -72,6 +76,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
       </button>
       <dialog
         ref={dialog}
+        id={dialogId}
         role="alertdialog"
         aria-labelledby={titleId}
         aria-describedby={messageId}
@@ -92,10 +97,9 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
             {error}
           </p>
         )}
-        <div className="mt-5 flex justify-end gap-2">
+        <form method="dialog" className="mt-5 flex justify-end gap-2">
           <button
-            type="button"
-            onClick={close}
+            type="submit"
             disabled={pending}
             className={`${secondary} border border-border hover:bg-surface disabled:opacity-50`}
           >
@@ -109,7 +113,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
           >
             {pending ? '削除中…' : '削除'}
           </button>
-        </div>
+        </form>
       </dialog>
     </>
   );
