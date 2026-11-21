@@ -16,6 +16,19 @@ const signedIn = test.extend<{ me: NewUser }>({
 
 const carousel = (page: Page) => page.locator('[aria-roledescription="carousel"]');
 const badge = (page: Page, text: string) => page.getByText(text, { exact: true });
+const scrollLeftOf = (page: Page) => carousel(page).evaluate((el) => el.scrollLeft);
+/** Lets two animation frames pass, so a scroll or state change the last input caused would have shown. */
+const nextFrames = (page: Page) =>
+  page.evaluate(
+    () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
+  );
+/** Waits until the strip has finished scrolling to slide `index`. */
+const expectAtSlide = (page: Page, index: number) =>
+  expect
+    .poll(() =>
+      carousel(page).evaluate((el, i) => Math.abs(el.scrollLeft - i * el.clientWidth), index),
+    )
+    .toBeLessThan(1);
 const activeDot = async (page: Page) =>
   page
     .getByTestId('carousel-dot')
@@ -64,16 +77,22 @@ test('写真をスワイプと矢印キーで切り替えられ 枚数バッジ�
   await carousel(page).focus();
   await page.keyboard.press('ArrowRight');
   await expect(badge(page, '3/3')).toBeVisible();
+  // At the last photo ArrowRight changes nothing: the strip stays where it is.
+  await expectAtSlide(page, 2);
+  const lastLeft = await scrollLeftOf(page);
   await page.keyboard.press('ArrowRight');
-  await page.waitForTimeout(400); // nothing may happen: there is no state to wait for
+  await nextFrames(page);
+  expect(await scrollLeftOf(page)).toBe(lastLeft);
   await expect(badge(page, '3/3')).toBeVisible();
   expect(await activeDot(page)).toBe(2);
   await page.keyboard.press('ArrowLeft');
   await expect(badge(page, '2/3')).toBeVisible();
   await page.keyboard.press('ArrowLeft');
   await expect(badge(page, '1/3')).toBeVisible();
+  await expectAtSlide(page, 0);
   await page.keyboard.press('ArrowLeft');
-  await page.waitForTimeout(400);
+  await nextFrames(page);
+  expect(await scrollLeftOf(page)).toBe(0);
   await expect(badge(page, '1/3')).toBeVisible();
   expect(await activeDot(page)).toBe(0);
 });
