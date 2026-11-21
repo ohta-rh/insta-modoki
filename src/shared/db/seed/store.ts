@@ -31,6 +31,15 @@ export function createStore(env: StorageEnv): Store {
               headers: { 'x-amz-copy-source': `/${env.S3_BUCKET}/${from}` },
             });
             if (!res.ok) throw new Error(`オブジェクトを複製できませんでした: ${to} ${res.status}`);
+            // CopyObject can answer 200 and still report a failure in an <Error> body.
+            const body = await res.text();
+            if (/<Error[\s>]/.test(body)) {
+              const code = /<Code>([^<]*)<\/Code>/.exec(body)?.[1] ?? '不明';
+              const message = /<Message>([^<]*)<\/Message>/.exec(body)?.[1] ?? '';
+              throw new Error(
+                `オブジェクトを複製できませんでした: ${to} ${code} ${message}`.trim(),
+              );
+            }
           }),
         );
       }
