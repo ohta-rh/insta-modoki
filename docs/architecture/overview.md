@@ -83,7 +83,7 @@ Next.js の App Router の規約に従い、`src/app/` に置く。ルートの�
 | `/[username]/followers` | `src/app/[username]/followers/page.tsx` |
 | `/[username]/following` | `src/app/[username]/following/page.tsx` |
 
-ログインが必要な画面は `src/app/(app)/`（ルートグループ。URL に出ない）の下に置く。その `layout.tsx` が未ログインを `/accounts/login` へ `redirect` する（[ADR-0029](../adr/0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md)）。
+ログインが必要な画面は `src/app/(app)/`（ルートグループ。URL に出ない）の下に置く。その `layout.tsx` が未ログインを `/accounts/login` へ `redirect` する（[ADR-0031](../adr/0031-login-only-screens-in-app-route-group.md)）。
 
 そのほかのファイル。
 
@@ -109,5 +109,5 @@ Next.js の App Router の規約に従い、`src/app/` に置く。ルートの�
 | #24 | CSS の方式・ルートのレイアウトのファイル | Tailwind CSS 4（`postcss.config.mjs` に `@tailwindcss/postcss`、`src/app/globals.css` に `@import "tailwindcss"`）と Radix UI Primitives。足りないときだけ CSS Modules。ルートのレイアウトは `src/app/layout.tsx`（`globals.css` を import） |
 | #25 | ミドルウェアの入口・静的ファイルにヘッダーを付ける方法・インラインのスクリプトに nonce が要るか | ミドルウェアは `src/proxy.ts`（Node.js ランタイム。OpenNext では実験的で、ビルドが警告を出すが workerd で動いた）。静的ファイルは Worker を通らないので `public/_headers` に書く（Worker が返す応答には効かない）。インラインのスクリプトは Next.js の水和用が出るので、`'unsafe-inline'` を許さないなら nonce が要る。`proxy.ts` が nonce を作って `Content-Security-Policy` に入れると Next.js が自分のスクリプトに付ける。その画面は動的な描画（`await connection()`）が要り、CPU 時間が増える |
 | #36 | TypeScript のスクリプトの実行方法・認証ライブラリでパスワードを登録する API | `node scripts/<name>.ts`（Node.js 26 が型を取り除いて実行する。相対の import に `.ts` の拡張子を付け、`@/` の別名は使えない）。バインディングは `wrangler` の `getPlatformProxy()` の `env`。パスワード付きのユーザーは `createAuth(env).api.signUpEmail({ body: { name, email, password } })`（`createAuth` は `src/features/auth/` の、`getCloudflareContext` を import しない関数） |
-| #45 | `getFeed` の HTTP の入口 | `GET /api/feed?cursor=<カーソル>` を `src/app/api/feed/route.ts` に置き、`getFeed` を呼んで `Page<PostView>` を JSON で返す。`/` の最初のページは `src/app/page.tsx`（サーバーコンポーネント）が `getFeed` を直接呼ぶ |
-| #26 | ログイン必須の画面の守り方・サインアップの書き込みと Cookie・認証のハンドラー | ルートグループ `(app)` のレイアウトで守る。`signUp` は `users`・`accounts`・`sessions` を 1 つの `db.batch` で書き、Cookie は Better Auth の署名の形式で作る（有効期間 30 日）。Better Auth の HTTP ハンドラーは #31 まで置かない（[ADR-0029](../adr/0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md)）。サーバーの処理は `src/features/auth/api/<name>.ts`（テストできる本体）と `actions.ts`（`"use server"` の薄い入口） |
+| #45 | `getFeed` の HTTP の入口 | `GET /api/feed?cursor=<カーソル>` を `src/app/api/feed/route.ts` に置き、`getFeed` を呼んで `Page<PostView>` を JSON で返す。`/` の最初のページは `src/app/(app)/page.tsx`（サーバーコンポーネント）が `getFeed` を直接呼ぶ |
+| #26 | ログイン必須の画面の守り方・サインアップの書き込みと Cookie・認証のハンドラー | ルートグループ `(app)` のレイアウトで守る。`signUp` は `users`・`accounts`・`sessions` を 1 つの `db.batch` で書き、Cookie は Better Auth の署名の形式で作る（有効期間 30 日）。Better Auth の HTTP ハンドラーは #31 まで置かない（[ADR-0029](../adr/0029-signup-writes-rows-in-one-db-batch.md)、[ADR-0030](../adr/0030-better-auth-session-and-rate-limit-rules.md)、[ADR-0031](../adr/0031-login-only-screens-in-app-route-group.md)）。サーバーの処理は `src/features/auth/api/<name>.ts`（テストできる本体）と `actions.ts`（`"use server"` の薄い入口） |

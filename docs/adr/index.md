@@ -26,14 +26,16 @@
 * [ADR-0016: 言語は TypeScript、UI は React にする（フレームワークは #18 で決める）](0016-typescript-and-react.md) - 採用
 * [ADR-0018: アプリは Next.js 16（App Router）を OpenNext で Cloudflare Workers に載せて動かす](0018-nextjs-on-workers-via-opennext.md) - 採用
 * [ADR-0019: DB は Cloudflare D1、ORM は Drizzle ORM にする](0019-d1-and-drizzle.md) - 採用
-* [ADR-0020: 認証は Better Auth（メールとパスワード、DB のセッション）にし、ハッシュは PBKDF2-SHA256 に差し替える](0020-better-auth-with-pbkdf2.md) - 採用
+* [ADR-0020: 認証は Better Auth（メールとパスワード、DB のセッション）にし、ハッシュは PBKDF2-SHA256 に差し替える](0020-better-auth-with-pbkdf2.md) - 置き換え: ADR-0030
 * [ADR-0021: 画像はブラウザで 3 幅の WebP を作り、署名付き PUT で R2 に直接置く。ローカルのストレージは Garage にする](0021-browser-made-webp-and-presigned-put.md) - 採用
 * [ADR-0022: テストは Vitest と Playwright、UI は Tailwind CSS と Radix UI、実行環境は Node.js 26 と pnpm 12 にする](0022-testing-ui-and-package-management.md) - 採用
 * [ADR-0028: 最初のマイグレーションは制約名と空白の扱いを固定し、DB の結合テストは D1 のメモリで流して `_test` の名前の DB にしか繋がない](0028-first-migration-conventions-and-test-db.md) - 採用
 * [ADR-0024: verify は scripts/verify.mjs が 7 つの手順を固定の順に流し、単体テストの行カバレッジ 80% を基準にする](0024-verify-command-and-coverage-gate.md) - 採用
 * [ADR-0026: CSP は src/proxy.ts が要求ごとの nonce で付け、静的ファイルは public/_headers で付ける](0026-csp-with-nonce-from-proxy-and-headers-file.md) - 採用
 * [ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする](0027-ci-runs-verify-and-docs-check.md) - 採用
-* [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、ログイン必須の画面はルートグループ (app) のレイアウトで守る](0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md) - 採用
+* [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、Better Auth の signUpEmail とその HTTP ハンドラーは使わない](0029-signup-writes-rows-in-one-db-batch.md) - 採用
+* [ADR-0030: 認証は Better Auth と PBKDF2-SHA256 + pepper のまま、セッションは 30 日・延長なしにし、users に email_verified を足す](0030-better-auth-session-and-rate-limit-rules.md) - 採用（ADR-0020 を置き換える）
+* [ADR-0031: ログインが必要な画面はルートグループ (app) に置き、そのレイアウトが未ログインを /accounts/login へ redirect する](0031-login-only-screens-in-app-route-group.md) - 採用
 
 # 環境とホスティング
 
@@ -41,7 +43,6 @@
 * [ADR-0008: compose のスタックを 1 つ共有し、スロットごとにポート・DB・バケットを分ける](0008-share-one-compose-stack-with-a-slot-per-worktree.md) - 置き換え: ADR-0023
 * [ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける](0023-slots-with-garage-and-d1-files.md) - 採用
 * [ADR-0011: デプロイ先は Cloudflare とし、無料枠に収めることを前提にする](0011-deploy-to-cloudflare-free-tier-first.md) - 採用
-* [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、ログイン必須の画面はルートグループ (app) のレイアウトで守る](0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md) - 採用
 
 # ひな形
 

@@ -52,7 +52,7 @@ DB は D1（SQLite）。Drizzle ORM の列の定義は右の列（[overview.md](
 | is_private | boolean | NOT NULL、既定値 false（M4 で使う） |
 | created_at / updated_at | timestamp | NOT NULL |
 
-`email_verified`（boolean、NOT NULL、既定値 false）は Better Auth の利用者モデルが要求する列（`migrations/0002_auth.sql` で足した）。パスワードのハッシュとセッションは Better Auth のテーブル（下）に置き、`users.id` を参照する（[ADR-0029](../adr/0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md)）。
+`email_verified`（boolean、NOT NULL、既定値 false）は Better Auth の利用者モデルが要求する列（`migrations/0002_auth.sql` で足した）。パスワードのハッシュとセッションは Better Auth のテーブル（下）に置き、`users.id` を参照する（[ADR-0030](../adr/0030-better-auth-session-and-rate-limit-rules.md)）。
 
 ### sessions / accounts / verifications
 

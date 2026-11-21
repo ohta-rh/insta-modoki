@@ -3,12 +3,13 @@ type: ADR
 title: "ADR-0020: 認証は Better Auth（メールとパスワード、DB のセッション）にし、ハッシュは PBKDF2-SHA256 に差し替える"
 description: "認証ライブラリは Better Auth 1.7.18。セッションは Cookie（HttpOnly・SameSite=Lax）と D1 のセッション、パスワードのハッシュは Web Crypto の PBKDF2-SHA256 100,000 回。Auth.js と自前の実装は退ける。"
 tags: [architecture, auth, security]
-status: stable
+status: deprecated
+superseded_by: ./0030-better-auth-session-and-rate-limit-rules.md
 ---
 
 # ADR-0020: 認証は Better Auth（メールとパスワード、DB のセッション）にし、ハッシュは PBKDF2-SHA256 に差し替える
 
-- ステータス: 採用
+- ステータス: 置き換え: [ADR-0030](0030-better-auth-session-and-rate-limit-rules.md)（セッションの有効期間を 30 日・延長なしにし、`users.email_verified` を足した。Better Auth と PBKDF2 + pepper の決定は引き継ぐ）
 - 日付: 2026-11-21
 - 決定者: エージェント（委任された判断）
 - 関連: [調査](../research/stack-selection.md)、#18、[ADR-0011](0011-deploy-to-cloudflare-free-tier-first.md)、[ADR-0018](0018-nextjs-on-workers-via-opennext.md)、[ADR-0019](0019-d1-and-drizzle.md)
