@@ -14,6 +14,7 @@ export const users = sqliteTable(
     role: text('role', { enum: ['user', 'admin'] })
       .notNull()
       .default('user'),
+    emailVerified: integer('email_verified', { mode: 'boolean' }).notNull().default(false),
     isPrivate: integer('is_private', { mode: 'boolean' }).notNull().default(false),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
@@ -32,6 +33,7 @@ export const users = sqliteTable(
     ),
     check('users_bio_check', sql`length(${t.bio}) <= 150`),
     check('users_role_check', sql`${t.role} IN ('user', 'admin')`),
+    check('users_email_verified_check', sql`${t.emailVerified} IN (0, 1)`),
     check('users_is_private_check', sql`${t.isPrivate} IN (0, 1)`),
   ],
 );

@@ -1,7 +1,18 @@
 import { getTableConfig } from 'drizzle-orm/sqlite-core';
 import { describe, expect, it } from 'vitest';
 import { applyMigrations, useTestDb } from '../../../tests/helpers/db';
-import { comments, follows, likes, media, posts, users } from './schema';
+import {
+  accounts,
+  comments,
+  follows,
+  likes,
+  media,
+  posts,
+  rateLimits,
+  sessions,
+  users,
+  verifications,
+} from './schema';
 
 const t = useTestDb();
 
@@ -63,7 +74,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 7 つのテーブルと 5 つの索引ができる', async () => {
+  it('マイグレーションで 10 個のテーブルと 5 つの索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -84,18 +95,29 @@ describe('マイグレーション', () => {
         'follows_followee_created_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(7);
+    expect(await names('table')).toHaveLength(10);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(7);
+    expect(before).toHaveLength(10);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {
-    for (const table of [users, posts, media, likes, comments, follows]) {
+    for (const table of [
+      users,
+      posts,
+      media,
+      likes,
+      comments,
+      follows,
+      rateLimits,
+      sessions,
+      accounts,
+      verifications,
+    ]) {
       const cfg = getTableConfig(table);
       const info = (
         await t.d1
