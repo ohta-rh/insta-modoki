@@ -134,3 +134,26 @@ test('ページを開いたとき外部オリジンへの通信が 0 件', async
   await page.waitForLoadState('networkidle');
   expect(external).toEqual([]);
 });
+
+test('404 の画面もナビつきで、nonce つきの CSP を持ち、コンソールのエラーが 0 件', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('console', (message) => {
+    // The browser logs the 404 document itself as a failed resource; that is not an app error.
+    if (
+      message.type() === 'error' &&
+      !message.location().url.endsWith('/this-page-does-not-exist')
+    ) {
+      errors.push(message.text());
+    }
+  });
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  const response = await page.goto('/this-page-does-not-exist');
+  expect(response?.status()).toBe(404);
+  expect(response?.headers()['content-security-policy']).toMatch(/'nonce-[^']+'/);
+  await expect(page.locator('nav[data-nav="side"], nav[data-nav="bottom"]').first()).toBeAttached();
+  await page.waitForLoadState('networkidle');
+  expect(errors).toEqual([]);
+});
