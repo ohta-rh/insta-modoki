@@ -1,0 +1,67 @@
+verify: typecheck ...
+verify: typecheck OK
+verify: lint ...
+verify: lint OK
+verify: format ...
+verify: format OK
+verify: docs ...
+verify: docs OK
+verify: unit ...
+ Test Files  62 passed (62)
+      Tests  385 passed (385)
+verify: unit OK
+verify: integration ...
+ Test Files  31 passed | 1 skipped (32)
+      Tests  226 passed | 4 skipped (230)
+verify: integration OK
+verify: build ...
+verify: build OK
+verify: e2e ...
+  ✓    4 [chromium] › e2e/feed.spec.ts:59:1 › 未ログインで / を開くとログイン画面へ移る (423ms)
+  ✓   10 [chromium] › e2e/feed.spec.ts:106:1 › フォローが 0 人のとき空の案内を出す (569ms)
+  ✓   15 [chromium] › e2e/follow.spec.ts:212:1 › 未ログインでボタンを押すとログイン画面へ移る (425ms)
+  ✓   13 [chromium] › e2e/feed.spec.ts:180:1 › JS が読み込まれる前でも ハートを押していいねできる (861ms)
+  ✓   12 [chromium] › e2e/feed.spec.ts:147:1 › フィードをキーボードで操れ、axe の重大な違反が 0 件 (1.6s)
+  ✓   11 [chromium] › e2e/feed.spec.ts:113:1 › 次ページの読み込みに失敗しても表示済みの投稿が残り、再読み込みできる (2.5s)
+  ✓   14 [chromium] › e2e/feed.spec.ts:197:1 › 投稿のあるフィードを開いても CSP 違反とコンソールのエラーが出ない (2.4s)
+  ✓    9 [chromium] › e2e/feed.spec.ts:64:1 › スクロールの手前で次の 12 件が重複なく読み込まれ、最後に「ここまでです」が出る (4.1s)
+  ✓   99 [chromium] › e2e/follow.spec.ts:134:1 › 通信が失敗すると ボタンと数が元に戻りエラーを出す (504ms)
+  ✓   98 [chromium] › e2e/follow.spec.ts:106:1 › JS が読み込まれる前でも ボタンを押してフォローでき 解除できる (582ms)
+  ✓  100 [chromium] › e2e/follow.spec.ts:152:1 › ヘッダーの数値から一覧を開き、21 人目が追加読み込みで出る (868ms)
+  ✓  104 [chromium] › e2e/follow.spec.ts:206:1 › 自分のプロフィールにはフォローボタンが出ない (278ms)
+  ✓   97 [chromium] › e2e/follow.spec.ts:61:1 › 他人のプロフィールでフォローすると、ボタンが「フォロー中」になりフォロワー数が 1 増える (1.2s)
+  ✓  103 [chromium] › e2e/follow.spec.ts:199:1 › 存在しない利用者の一覧は 404 になる (432ms)
+  ✓  102 [chromium] › e2e/follow.spec.ts:191:1 › 0 件のとき空の案内を出す (397ms)
+  ✓  101 [chromium] › e2e/follow.spec.ts:174:1 › フォロー中の数値から一覧を開き、フォローした相手が並ぶ (954ms)
+  ✓  105 [chromium] › e2e/follow.spec.ts:232:1 › フォローボタンをキーボードで切り替えられ、axe の重大な違反が 0 件 (1.6s)
+  117 passed (1.4m)
+verify: e2e OK
+verify: OK
+verify rc=0
+--- 1 回目（スロットに bench の seed が残っていた）---
+verify: typecheck ...
+verify: typecheck OK
+verify: lint ...
+verify: lint OK
+verify: format ...
+verify: format OK
+verify: docs ...
+verify: docs OK
+verify: unit ...
+ Test Files  62 passed (62)
+      Tests  385 passed (385)
+verify: unit OK
+verify: integration ...
+ Test Files  31 passed | 1 skipped (32)
+      Tests  226 passed | 4 skipped (230)
+verify: integration OK
+verify: build ...
+verify: build OK
+verify: e2e ...
+  ✘  116 [seed] › e2e/seed.spec.ts:12:1 › デモアカウントでログインできる (0ms)
+    "beforeAll" hook timeout of 120000ms exceeded.
+  1 failed
+  115 passed (2.5m)
+[ELIFECYCLE] Command failed with exit code 1.
+verify: FAIL e2e
+verify rc=1
