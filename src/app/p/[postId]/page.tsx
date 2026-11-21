@@ -46,12 +46,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PostPage({ params }: Props) {
-  const post = await loadPost((await params).postId);
+  const { postId } = await params;
   const requestHeaders = await headers();
-  const [viewer, comments] = await Promise.all([
-    getSessionUser(requestHeaders),
-    listComments({ postId: post.id }, { headers: requestHeaders }),
-  ]);
+  // The comments are read while the post is: a missing post is the post's NOT_FOUND (notFound()),
+  // so the comments' own rejection is only surfaced once the post has loaded.
+  const commentsRead = listComments({ postId }, { headers: requestHeaders });
+  commentsRead.catch(() => undefined);
+  const post = await loadPost(postId);
+  const [viewer, comments] = await Promise.all([getSessionUser(requestHeaders), commentsRead]);
   return (
     <PostDetail
       post={post}

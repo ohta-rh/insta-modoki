@@ -11,12 +11,12 @@ export default async function PostModalPage({ params }: { params: Promise<{ post
   const { postId } = await params;
   const requestHeaders = await headers();
   try {
+    // The same reads as the normal page (src/app/p/[postId]/page.tsx): the comments are read while
+    // the post is, and their rejection is only surfaced once the post has loaded.
+    const commentsRead = listComments({ postId }, { headers: requestHeaders });
+    commentsRead.catch(() => undefined);
     const post = await getPost({ postId }, { headers: requestHeaders });
-    // The same reads as the normal page (src/app/p/[postId]/page.tsx).
-    const [viewer, comments] = await Promise.all([
-      getSessionUser(requestHeaders),
-      listComments({ postId: post.id }, { headers: requestHeaders }),
-    ]);
+    const [viewer, comments] = await Promise.all([getSessionUser(requestHeaders), commentsRead]);
     return (
       <PostModal postId={postId}>
         <PostDetail
