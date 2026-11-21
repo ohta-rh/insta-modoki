@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import config from '../vitest.config.ts';
 import { COVERAGE_LINES, main, meetsCoverage, STEPS } from './verify.mjs';
 
 type Deps = Parameters<typeof main>[1];
@@ -81,6 +82,12 @@ describe('verify', () => {
     expect(meetsCoverage(80.0)).toBe(true);
     const unit = STEPS.find((s: { name: string }) => s.name === 'unit');
     expect(unit?.command).toContain('--coverage');
+  });
+
+  it('vitest の設定のカバレッジの基準と対象が ADR-0024 と同じ', () => {
+    const coverage = config.test?.coverage;
+    expect(coverage?.thresholds).toMatchObject({ lines: COVERAGE_LINES });
+    expect(coverage?.include).toEqual(['src/**/model/**', 'src/shared/config/**']);
   });
 
   it('結合テストが無いときは integration が 0 で終わる', () => {
