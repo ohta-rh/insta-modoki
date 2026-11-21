@@ -64,7 +64,24 @@ describe('.github/workflows/ci.yml', () => {
 
   it('全ての uses が 40 桁の commit SHA で固定されている', () => {
     const uses = lines.filter((l) => /^\s*(- )?uses:/.test(l));
-    expect(uses.length).toBeGreaterThanOrEqual(4);
+    expect(uses.length).toBeGreaterThanOrEqual(8); // verify + perf jobs
     for (const l of uses) expect(l).toMatch(/uses: [\w./-]+@[0-9a-f]{40}(\s+#.*)?\s*$/);
+  });
+
+  it('perf の job は main への push のときだけ動く', () => {
+    const i = lines.findIndex((l) => /^ {2}perf:\s*$/.test(l));
+    expect(i).toBeGreaterThan(0);
+    const next = lines.findIndex((l, n) => n > i && /^ {2}[a-z-]+:\s*$/.test(l));
+    const job = lines.slice(i, next === -1 ? undefined : next);
+    expect(job.some((l) => /^ {4}if: github\.event_name == 'push'\s*$/.test(l))).toBe(true);
+    // the whole workflow runs on push to main only for the push event, so the job never runs for a pull request
+    expect(ci).toMatch(/^ {2}push:\s*\n {4}branches: \[main\]\s*$/m);
+    const order = [
+      /run: pnpm build\s*$/,
+      /run: pnpm seed:bench\s*$/,
+      /run: node scripts\/verify\.mjs --only perf --with-perf\s*$/,
+    ].map((re) => job.findIndex((l) => re.test(l)));
+    expect(order.every((n) => n >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 });

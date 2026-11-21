@@ -58,7 +58,7 @@ describe('verify', () => {
     expect(main([], deps)).toBe(1);
   });
 
-  it('手順の順番は typecheck → lint → format → docs → unit → integration → build → e2e', () => {
+  it('手順の順番は typecheck → lint → format → docs → unit → integration → build → e2e → perf-budget', () => {
     expect(STEPS.map((s: { name: string }) => s.name)).toEqual([
       'typecheck',
       'lint',
@@ -68,6 +68,7 @@ describe('verify', () => {
       'integration',
       'build',
       'e2e',
+      'perf-budget',
     ]);
     const { lines, deps } = harness();
     expect(main(['--list'], deps)).toBe(0);
@@ -80,6 +81,7 @@ describe('verify', () => {
       'integration',
       'build',
       'e2e',
+      'perf-budget',
     ]);
   });
 
@@ -153,5 +155,32 @@ describe('verify', () => {
     const on = harness({ env: { SLOT_INT: '1' } });
     main(['--only', 'integration'], on.deps);
     expect(on.lines.some((l: string) => l.includes('SLOT_INT=1'))).toBe(false);
+  });
+
+  it('perf-budget が e2e の後にある', () => {
+    const names = STEPS.map((s: { name: string }) => s.name);
+    expect(names.indexOf('perf-budget')).toBe(names.indexOf('e2e') + 1);
+    expect(STEPS.find((s: { name: string }) => s.name === 'perf-budget')?.command).toBe(
+      'node scripts/perf/bundle.mjs',
+    );
+  });
+
+  it('--with-perf を付けたときだけ perf が足される', () => {
+    const plain = harness();
+    main(['--list'], plain.deps);
+    expect(plain.lines).not.toContain('perf');
+    const withPerf = harness();
+    expect(main(['--list', '--with-perf'], withPerf.deps)).toBe(0);
+    expect(withPerf.lines.at(-1)).toBe('perf');
+    expect(withPerf.lines.slice(0, -1)).toEqual(plain.lines);
+  });
+
+  it('--only perf は --with-perf が無いと不明な手順で 2、あれば run.mjs だけを流す', () => {
+    const off = harness();
+    expect(main(['--only', 'perf'], off.deps)).toBe(2);
+    expect(off.executed).toEqual([]);
+    const on = harness();
+    expect(main(['--only', 'perf', '--with-perf'], on.deps)).toBe(0);
+    expect(on.executed).toEqual(['node scripts/perf/run.mjs']);
   });
 });

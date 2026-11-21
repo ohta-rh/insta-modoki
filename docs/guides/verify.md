@@ -24,6 +24,7 @@ status: stable
 | `integration` | `pnpm exec vitest run --passWithNoTests .int.test.ts` | 結合テストの失敗（`src/`・`scripts/`・`tests/` の `*.int.test.ts` が 1 つも無いときは `integration: テストなし` を出して成功） |
 | `build` | `pnpm build` | OpenNext のビルドの失敗 |
 | `e2e` | `pnpm e2e` | Playwright の失敗（ビルドの成果物を `pnpm start` で workerd に載せて開く） |
+| `perf-budget` | `node scripts/perf/bundle.mjs` | `/` を最初に開いたときの初期 JS が gzip で 170,000 バイトを超えた（`perf: FAIL initialJsGzipBytes / <値> > 170000`）。[性能の基準](#性能の基準) |
 
 ## 使い方
 
@@ -32,7 +33,17 @@ status: stable
 - 1 手順だけ流す: `node scripts/verify.mjs --only unit`
 - スロットのポートを渡す: `PORT=3101 node scripts/verify.mjs`（E2E の `webServer` と `start` がこのポートを使う。未設定は 3100。スロット N は `3100 + N`）
 
+`perf-budget` も `build` の成果物を使う（アプリが `PORT` で動いていなければ自分で `pnpm start` を起動して止める）。
+
 `e2e` は `build` の成果物を使うので、単独で流す前に `pnpm build` が要る。Chromium は初回に `pnpm exec playwright install chromium` で入れる。
+
+## 性能の基準
+
+基準は `scripts/perf/thresholds.mjs` の `THRESHOLDS`（[ADR-0046](../adr/0046-performance-budget-in-verify-and-ci.md)）: Lighthouse（モバイル）の点数 90 以上、LCP 2,500ms・INP 200ms・CLS 0.1・フィード API の p95 300ms・初期 JS（gzip）170,000 バイト以内。割れると `perf: FAIL <指標> <画面> <値> <|> <基準>` を出して 1 で終わる。
+
+- `perf-budget`（既定の手順の最後）: `node scripts/perf/bundle.mjs`。速い。
+- `perf`（`--with-perf` を付けたときだけ足される。`--list --with-perf` で見える）: `node scripts/perf/run.mjs`。遅い（Lighthouse 9 回・INP・フィード 220 回）。先に `pnpm build` と、スロットでの `pnpm seed:bench`（`SEED_DEMO_PASSWORD` を決めて渡す）が要る。`node scripts/verify.mjs --only perf --with-perf` で単独で流す。結果は `perf-results/*.json`（git に入れない）。他のスロットの重い処理が動いていないときに流す。
+- CI は `main` への push のときだけ job `perf` で後者を流す。
 
 ## docs の検査
 
@@ -48,7 +59,7 @@ status: stable
 
 ## CI
 
-`.github/workflows/ci.yml` の job `verify` が、`main` への push と pull request で動く。`docker compose up -d --wait`（Garage だけ）→ `node scripts/slot.mjs prepare 0` → `pnpm exec playwright install --with-deps chromium` → `PORT=3100 SLOT_INT=1 node scripts/verify.mjs` を流し、失敗したら `playwright-report` を残す。失敗した E2E のトレース（操作・DOM・ネットワーク）は `playwright-report` の中にあり、ダウンロードして `pnpm exec playwright show-report <dir>` で開き、失敗したテストの「Traces」から見る。使う action は 40 桁の commit SHA で固定する（[ADR-0027](../adr/0027-ci-runs-verify-and-docs-check.md)）。
+`.github/workflows/ci.yml` の job `verify` が、`main` への push と pull request で動く（job `perf` は `main` への push のときだけ。「性能の基準」）。`docker compose up -d --wait`（Garage だけ）→ `node scripts/slot.mjs prepare 0` → `pnpm exec playwright install --with-deps chromium` → `PORT=3100 SLOT_INT=1 node scripts/verify.mjs` を流し、失敗したら `playwright-report` を残す。失敗した E2E のトレース（操作・DOM・ネットワーク）は `playwright-report` の中にあり、ダウンロードして `pnpm exec playwright show-report <dir>` で開き、失敗したテストの「Traces」から見る。使う action は 40 桁の commit SHA で固定する（[ADR-0027](../adr/0027-ci-runs-verify-and-docs-check.md)）。
 
 ## 出力と終了コード
 

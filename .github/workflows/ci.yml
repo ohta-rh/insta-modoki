@@ -42,3 +42,35 @@ jobs:
           name: playwright-report
           path: playwright-report
           if-no-files-found: ignore
+
+  # Performance budget (ADR-0046): slow, so only after a merge to main, never for a pull request.
+  perf:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: docker compose up -d --wait
+      - run: node scripts/slot.mjs prepare 0
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      # The demo password is made here, for this run only; it is never written to the repository.
+      - run: echo "SEED_DEMO_PASSWORD=$(openssl rand -hex 8)" >> "$GITHUB_ENV"
+      - run: pnpm seed:bench
+      - run: node scripts/verify.mjs --only perf --with-perf
+        env:
+          PORT: 3100
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: perf-results
+          path: perf-results
+          if-no-files-found: ignore

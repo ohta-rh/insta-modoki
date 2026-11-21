@@ -26,7 +26,12 @@ export const STEPS = [
   },
   { name: 'build', command: 'pnpm build' },
   { name: 'e2e', command: 'pnpm e2e' },
+  // Fast (one page load): the initial JS stays within budget. Needs the build (ADR-0046).
+  { name: 'perf-budget', command: 'node scripts/perf/bundle.mjs' },
 ];
+
+/** Added only by `--with-perf` (slow: Lighthouse x 9, INP, 220 feed requests; needs `seed:bench`). */
+export const PERF_STEP = { name: 'perf', command: 'node scripts/perf/run.mjs' };
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 
@@ -59,19 +64,22 @@ export function main(argv, deps = defaultDeps) {
   const { exec, log, hasIntegrationTests, env } = { ...defaultDeps, ...deps };
   let only = null;
   let list = false;
+  let withPerf = false;
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--list') list = true;
+    else if (argv[i] === '--with-perf') withPerf = true;
     else if (argv[i] === '--only' && argv[i + 1] !== undefined) only = argv[++i];
     else {
       log(`verify: 不明な引数: ${argv[i]}`);
       return 2;
     }
   }
+  const all = withPerf ? [...STEPS, PERF_STEP] : STEPS;
   if (list) {
-    for (const step of STEPS) log(step.name);
+    for (const step of all) log(step.name);
     return 0;
   }
-  const steps = only === null ? STEPS : STEPS.filter((s) => s.name === only);
+  const steps = only === null ? all : all.filter((s) => s.name === only);
   if (only !== null && steps.length === 0) {
     log(`verify: 不明な手順: ${only}`);
     return 2;
