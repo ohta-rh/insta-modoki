@@ -28,3 +28,12 @@ export async function waitUntilSecondOfMinute(second: number): Promise<void> {
     .poll(() => new Date().getUTCSeconds(), { timeout: 65_000, intervals: [50] })
     .toBe(second);
 }
+
+/**
+ * Last octet (1-250) of the private IP 198.51.100.x one login test counts under. Test 0 uses
+ * 1-125 and test 1 uses 126-250, so two tests never share a counter even when they start on
+ * opposite sides of a minute boundary; the repeat index and the minute keep runs apart.
+ */
+export function ownIpLastOctet(testNo: 0 | 1, repeatEachIndex: number, minute: number): number {
+  return 1 + testNo * 125 + ((repeatEachIndex + minute) % 125);
+}

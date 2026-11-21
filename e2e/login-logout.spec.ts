@@ -2,16 +2,17 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { clearRateLimits } from './support/db';
-import { startInFreshWindow, waitUntilSecondOfMinute } from './support/rate-window';
+import { ownIpLastOctet, startInFreshWindow, waitUntilSecondOfMinute } from './support/rate-window';
 
 const submit = (page: Page) => page.getByRole('button', { name: 'ログイン' });
 
 /**
  * A private IP for one test, so other specs sharing "local" do not count against it. Distinct per
- * test and per --repeat-each run (a random pick collided and shared one counter), and per minute.
+ * test and per --repeat-each run (a random pick collided and shared one counter), and per minute;
+ * the two tests draw from disjoint halves of the range.
  */
-const ownIp = (testNo: number) =>
-  `198.51.100.${1 + ((test.info().repeatEachIndex * 2 + testNo + Math.floor(Date.now() / 60_000)) % 250)}`;
+const ownIp = (testNo: 0 | 1) =>
+  `198.51.100.${ownIpLastOctet(testNo, test.info().repeatEachIndex, Math.floor(Date.now() / 60_000))}`;
 
 /** Signs a user up, then drops the session so the user is registered but signed out. */
 async function registeredUser(page: Page) {
