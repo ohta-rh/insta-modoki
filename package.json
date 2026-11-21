@@ -16,10 +16,12 @@
     "format:check": "prettier . --check",
     "test": "vitest run",
     "e2e": "playwright test",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "db:migrate": "wrangler d1 migrations apply DB --local"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "1.20.16",
+    "drizzle-orm": "0.45.4",
     "next": "16.4.5",
     "react": "19.3.1",
     "react-dom": "19.3.1",
