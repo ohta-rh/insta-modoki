@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [ADR-0048](adr/0048-tick-ac-on-evidence-and-retest-epics-after-later-changes.md)（確かめた AC はその場で issue のチェックを付け、PASS した EPIC の画面に後から触れたら総合試験をやり直す）を追加した。
 * **Creation**: [EPIC #7 の総合試験のレポート](test-reports/epic-0007-mvp-quality.md)（1 回目、PASS）と、その写真・記録（`test-reports/evidence/epic-0007/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #5 の総合試験のレポート](test-reports/epic-0005-follow-feed.md)（1 回目、PASS）と、その写真・記録（`test-reports/evidence/epic-0005/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Update**: [design-system.md](architecture/design-system.md) に「アクセシビリティ」の節（検査の一覧と、直した違反の規則・画面・箇所）を足した（#46）。

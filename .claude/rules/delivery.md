@@ -62,7 +62,9 @@ TDD → impl → code-review ∥ security-review → E2E → verify
 4. **Verify** (implementer, then Director): the full verify command exits 0 in the worktree.
    The Director then checks each AC by its 確認方法 and each DoD item against evidence (run
    checks through `check-runner` / captured logs, not raw output). Anything unmet → back to
-   step 1.
+   step 1. **Tick each AC's checkbox on the issue as soon as it holds on evidence (ADR-0048)** —
+   an unticked AC means "not verified". If the test an AC names was renamed, fix the 確認方法
+   in the issue first (dated note at the top of the body), then tick.
 
 Bugs found anywhere in the loop are fixed inside the PBI, test-first. Adjacent improvements
 are filed as new PBIs, not folded in.
@@ -81,7 +83,7 @@ and EPIC test. The user merges.
    `git push origin main`; confirm `git status -sb` shows no `ahead`. Do not push the next
    integration until the CI run of this push has **completed**: a newer push cancels the running
    one, and on 2026-11-21 six consecutive pushes left the gate with no completed run at all.
-3. On the issue: tick DoD, comment with the commit SHA, the verify result and the review
+3. On the issue: confirm every AC box is ticked (§3 step 4), tick DoD, comment with the commit SHA, the verify result and the review
    verdicts; close; tick it in the EPIC.
 4. Clean up by exact name: `git worktree remove .worktrees/pbi-<N>`, `git branch -d pbi/<N>`,
    drop the slot's databases/bucket, free the slot. Then re-evaluate the ready set (§2).
@@ -101,13 +103,20 @@ When the last child PBI of an EPIC is closed, the EPIC is **not** closed yet:
    writes the same report.
 3. `PASS` → verify the report against the EPIC's AC (every AC has screenshots; console and
    network clean), integrate the report and evidence like a PBI (§4: rebase, ff-merge, push),
-   tick the EPIC's DoD, comment with the report link and SHA, close the EPIC.
+   tick each EPIC AC the report shows PASS, tick the EPIC's DoD, comment with the report link and
+   SHA, close the EPIC.
 4. `FAIL` → integrate the report anyway (the failure is evidence), file one bug PBI per root
    cause under the EPIC (`.claude/rules/issue-authoring.md`), deliver them through §3, then
    rerun the whole integrated test on the new `main`. Repeat until `PASS`.
+5. **Retest after later changes (ADR-0048).** Once an EPIC has passed, any change integrated
+   afterwards that touches code behind that EPIC's screens (a refactor or `/simplify` included)
+   reruns that EPIC's integrated test, with evidence, before the PR is handed over (marked ready
+   for review). Every EPIC whose screens use a touched file is retested; verify and headless E2E
+   do not substitute. Reports of reruns are suffixed `-r<N>`.
 
 ## 6. Never
 
+- Close an issue, or hand over a PR containing one, with an unticked AC (ADR-0048).
 - Close an issue with an unmet AC, a missing review approval, a skipped gate, or no E2E for a
   screen-observable AC.
 - Close an EPIC without a `PASS` integrated test run in real Chrome whose report and screenshots

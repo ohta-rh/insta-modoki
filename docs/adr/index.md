@@ -49,6 +49,7 @@
 * [ADR-0043: プロフィールのグリッドからのモーダルは、Next.js の intercepting routes と parallel routes で作る](0043-profile-grid-modal-by-intercepting-route.md) - 採用
 * [ADR-0045: chrome-devtools の MCP が使えないとき、epic-tester は画面ありの Google Chrome を CDP で操作して総合試験を行う](0045-epic-test-may-drive-headed-chrome-over-cdp.md) - 採用
 * [ADR-0046: 性能の基準は THRESHOLDS に 1 か所で定め、初期 JS は verify の既定の手順で、Lighthouse・INP・フィード API の p95 は --with-perf と main への push の CI で検査する](0046-performance-budget-in-verify-and-ci.md) - 採用
+* [ADR-0048: 確かめた AC はその場で issue のチェックを付け、PASS した EPIC の画面に後から触れたら総合試験をやり直す](0048-tick-ac-on-evidence-and-retest-epics-after-later-changes.md) - 採用
 
 # ひな形
 
