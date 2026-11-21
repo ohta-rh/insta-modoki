@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-21
+* **Creation**: [ADR-0017](adr/0017-milestone-on-an-integration-branch-when-a-pr-is-requested.md)（M1 を統合ブランチ `m1/local-mvp` に入れ、main への PR を 1 つ出す）を追加した。
 * **Creation**: [architecture/](architecture/)（[データモデル](architecture/data-model.md)・[URL とサーバーの処理](architecture/routes.md)・[実装の共通の決まり](architecture/conventions.md)）を追加した。
 * **Creation**: [ADR-0015](adr/0015-pbis-follow-the-global-write-pbi-standard.md)（PBI をグローバルの write-pbi の水準で書く）と [ADR-0016](adr/0016-typescript-and-react.md)（TypeScript と React）を追加し、PBI 51 と EPIC 17 の本文を書き直した。
 

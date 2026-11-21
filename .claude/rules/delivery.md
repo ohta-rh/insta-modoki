@@ -69,6 +69,12 @@ are filed as new PBIs, not folded in.
 
 ## 4. Integration (Director, one PBI at a time)
 
+**When the user asked for a PR (ADR-0017):** replace `main` / `origin/main` below with the
+milestone's integration branch `m<N>/<slug>` (worktrees are cut from it, PBIs fast-forward into
+it, it is pushed after every merge). Issues get their DoD ticked and the comment, but are not
+closed: the single draft PR to `main` lists `Closes #N` for each and is updated after every PBI
+and EPIC test. The user merges.
+
 1. `git -C .worktrees/pbi-<N> rebase origin/main` (after `git fetch`). If the rebase changed
    anything, re-run verify in the worktree; green from before the rebase does not carry over.
 2. In the main checkout: `git merge --ff-only pbi/<N>`, `git diff --check origin/main..HEAD`,
