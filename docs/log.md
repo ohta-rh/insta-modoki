@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [EPIC #7 の総合試験のレポート](test-reports/epic-0007-mvp-quality.md)（1 回目、PASS）と、その写真・記録（`test-reports/evidence/epic-0007/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #5 の総合試験のレポート](test-reports/epic-0005-follow-feed.md)（1 回目、PASS）と、その写真・記録（`test-reports/evidence/epic-0005/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Update**: [design-system.md](architecture/design-system.md) に「アクセシビリティ」の節（検査の一覧と、直した違反の規則・画面・箇所）を足した（#46）。
 * **Creation**: [EPIC #4 の総合試験のレポート（2 回目）](test-reports/epic-0004-post-create-detail-r2.md)（PASS。#74 の修正で「削除」の警告が消えた。「いいねした人」の一覧を開く手順を足した）と、その写真・記録（`test-reports/evidence/epic-0004-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

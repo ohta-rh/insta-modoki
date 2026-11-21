@@ -12,6 +12,7 @@ EPIC の総合試験（実ブラウザ）のレポート。書き方は [ADR-001
 * [EPIC #4 投稿の総合試験（2 回目、PASS）](epic-0004-post-create-detail-r2.md) - 2f2e1c4。#74 の修正で「削除」の警告が消え、6 つの AC が全て PASS。コンソールの警告・エラーと失敗した通信は 0（想定した 404 を除く）
 * [EPIC #6 リアクションの総合試験（1 回目、PASS）](epic-0006-reactions-like-comment.md) - 18c2158。7 つの AC が全て PASS。コンソールの警告・エラーと失敗した通信は 0（AC-3 で起こした失敗を除く）
 * [EPIC #5 フィードとフォローの総合試験（1 回目、PASS）](epic-0005-follow-feed.md) - 2f2e1c4。7 つの AC が全て PASS。コンソールの警告・エラーと失敗した通信は 0（失敗の経路で起こした分を除く）
+* [EPIC #7 MVP の品質の総合試験（1 回目、PASS）](epic-0007-mvp-quality.md) - 9cd035f。6 つの AC が全て PASS（AC-1・4・5・6 は実 Chrome 157、AC-2・3 は同梱の Chromium の計測）。コンソールの警告・エラーと失敗した通信は 0（AC-1 で起こした 404 を除く）
 
 # 計測
 
