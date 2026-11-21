@@ -28,22 +28,22 @@ verify: unit ...
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 -------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   94.65 |    83.39 |   92.36 |    95.4 |                   
- ...res/auth/model |     100 |     97.1 |     100 |     100 |                   
-  schema.ts        |     100 |    93.54 |     100 |     100 | 81-83             
- .../comment/model |   87.34 |       60 |   91.66 |    87.5 |                   
-  schema.ts        |   57.14 |        0 |   66.66 |   63.15 | 41-48             
-  thread.ts        |   98.24 |    64.28 |   96.66 |   97.72 | 81                
- ...a-upload/model |   87.94 |    74.54 |   79.31 |   89.25 |                   
-  process-image.ts |   92.68 |       90 |   66.66 |   94.73 | 63-64             
-  upload-images.ts |      75 |    51.85 |   71.42 |   76.59 | ...76,100,132-136 
- ...t-create/model |     100 |       90 |     100 |     100 |                   
-  crop.ts          |     100 |    83.33 |     100 |     100 | 59                
- ...res/post/model |   96.29 |    83.33 |   83.33 |     100 |                   
-  og.ts            |     100 |       75 |     100 |     100 | 29-34             
-  schema.ts        |   66.66 |      100 |       0 |     100 |                   
+All files          |   94.65 |    83.39 |   92.36 |    95.4 |
+ ...res/auth/model |     100 |     97.1 |     100 |     100 |
+  schema.ts        |     100 |    93.54 |     100 |     100 | 81-83
+ .../comment/model |   87.34 |       60 |   91.66 |    87.5 |
+  schema.ts        |   57.14 |        0 |   66.66 |   63.15 | 41-48
+  thread.ts        |   98.24 |    64.28 |   96.66 |   97.72 | 81
+ ...a-upload/model |   87.94 |    74.54 |   79.31 |   89.25 |
+  process-image.ts |   92.68 |       90 |   66.66 |   94.73 | 63-64
+  upload-images.ts |      75 |    51.85 |   71.42 |   76.59 | ...76,100,132-136
+ ...t-create/model |     100 |       90 |     100 |     100 |
+  crop.ts          |     100 |    83.33 |     100 |     100 | 59
+ ...res/post/model |   96.29 |    83.33 |   83.33 |     100 |
+  og.ts            |     100 |       75 |     100 |     100 | 29-34
+  schema.ts        |   66.66 |      100 |       0 |     100 |
 -------------------|---------|----------|---------|---------|-------------------
 
 =============================== Coverage summary ===============================
@@ -92,9 +92,9 @@ Using secrets defined in .dev.vars
   Finished TypeScript in 2.2s ...
   Collecting page data using 15 workers ...
   Generating static pages using 15 workers (0/10) ...
-  Generating static pages using 15 workers (2/10) 
-  Generating static pages using 15 workers (4/10) 
-  Generating static pages using 15 workers (7/10) 
+  Generating static pages using 15 workers (2/10)
+  Generating static pages using 15 workers (4/10)
+  Generating static pages using 15 workers (7/10)
 ✓ Generating static pages using 15 workers (10/10) in 122ms
   Finalizing page optimization ...
 
