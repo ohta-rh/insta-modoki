@@ -5,7 +5,7 @@ import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { follows, posts, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
-import { publicUrl, type StorageEnv } from '../../../shared/storage';
+import { avatarUrl, type StorageEnv } from '../../../shared/storage';
 import type { ProfileView } from '../model/schema';
 import { lookupUsername } from '../model/username';
 
@@ -51,7 +51,7 @@ export async function getProfile(input: unknown, deps: GetProfileDeps): Promise<
   return {
     username: user.username,
     displayName: user.displayName,
-    avatarUrl: user.avatarKey ? publicUrl(env, `${user.avatarKey}/w320.webp`) : null,
+    avatarUrl: avatarUrl(env, user.avatarKey),
     bio: user.bio,
     postCount: postRows[0]?.n ?? 0,
     followerCount: followerRows[0]?.n ?? 0,

@@ -23,3 +23,8 @@ export function mediaSrcset(
     w1080: publicUrl(env, `${storageKey}/w1080.webp`),
   };
 }
+
+/** The 320 px URL of a user's icon, or null when the user has none. */
+export function avatarUrl(env: UrlEnv, avatarKey: string | null): string | null {
+  return avatarKey ? publicUrl(env, `${avatarKey}/w320.webp`) : null;
+}

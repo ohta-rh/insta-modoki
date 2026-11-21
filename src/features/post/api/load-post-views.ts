@@ -1,7 +1,7 @@
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import type { Db } from '../../../shared/db/client';
 import { likes, media, posts, users } from '../../../shared/db/schema';
-import { mediaSrcset, publicUrl, type StorageEnv } from '../../../shared/storage';
+import { avatarUrl, mediaSrcset, type StorageEnv } from '../../../shared/storage';
 import type { MediaView, PostView } from '../model/schema';
 
 /** Ids per `IN`: a D1 statement binds at most 100 variables (docs/architecture/conventions.md). */
@@ -77,7 +77,7 @@ export async function loadPostViews(
         author: {
           username: post.username,
           displayName: post.displayName,
-          avatarUrl: post.avatarKey ? publicUrl(env, `${post.avatarKey}/w320.webp`) : null,
+          avatarUrl: avatarUrl(env, post.avatarKey),
         },
         caption: post.caption,
         media: mediaOf.get(post.id) ?? [],

@@ -5,7 +5,7 @@ import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { follows, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
-import { publicUrl, type StorageEnv } from '../../../shared/storage';
+import { avatarUrl, type StorageEnv } from '../../../shared/storage';
 import type { UserSummary } from '../../post';
 import { lookupUsername } from '../../profile';
 import { FOLLOW_PAGE_SIZE, listFollowInput } from '../model/schema';
@@ -61,7 +61,7 @@ export async function listFollow(
     items: page.items.map((r) => ({
       username: r.username,
       displayName: r.displayName,
-      avatarUrl: r.avatarKey ? publicUrl(env, `${r.avatarKey}/w320.webp`) : null,
+      avatarUrl: avatarUrl(env, r.avatarKey),
     })),
     nextCursor: page.nextCursor,
   };

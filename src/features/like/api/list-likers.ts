@@ -5,9 +5,9 @@ import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { likes, posts, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
-import { publicUrl, type StorageEnv } from '../../../shared/storage';
-import type { UserSummary } from '../../post';
-import { isPostId, LIKERS_PAGE_SIZE, listLikersInput } from '../model/schema';
+import { avatarUrl, type StorageEnv } from '../../../shared/storage';
+import { isPostId, type UserSummary } from '../../post';
+import { LIKERS_PAGE_SIZE, listLikersInput } from '../model/schema';
 
 export type ListLikersDeps = { env?: AuthEnv & StorageEnv };
 export type LikersPage = { items: UserSummary[]; nextCursor: string | null };
@@ -49,7 +49,7 @@ export async function listLikers(input: unknown, deps: ListLikersDeps = {}): Pro
     items: page.items.map((r) => ({
       username: r.username,
       displayName: r.displayName,
-      avatarUrl: r.avatarKey ? publicUrl(env, `${r.avatarKey}/w320.webp`) : null,
+      avatarUrl: avatarUrl(env, r.avatarKey),
     })),
     nextCursor: page.nextCursor,
   };

@@ -1,5 +1,5 @@
 import { comments, users } from '../../../shared/db/schema';
-import { publicUrl, type StorageEnv } from '../../../shared/storage';
+import { avatarUrl, type StorageEnv } from '../../../shared/storage';
 import type { CommentView } from '../model/schema';
 
 /** The columns of a comment joined with its author, as every read selects them. */
@@ -38,7 +38,7 @@ export function toCommentView(
     author: {
       username: row.username,
       displayName: row.displayName,
-      avatarUrl: row.avatarKey ? publicUrl(env, `${row.avatarKey}/w320.webp`) : null,
+      avatarUrl: avatarUrl(env, row.avatarKey),
     },
     body: row.body,
     parentId: row.parentId,

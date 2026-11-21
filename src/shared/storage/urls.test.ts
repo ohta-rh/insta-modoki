@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mediaSrcset, publicUrl } from './urls';
+import { avatarUrl, mediaSrcset, publicUrl } from './urls';
 
 const base = { S3_ENDPOINT: 'http://localhost:3910', S3_BUCKET: 'insta-s3' };
 
@@ -32,5 +32,17 @@ describe('publicUrl / mediaSrcset', () => {
     expect(mediaSrcset(env, 'media/u/k').w640).toBe(
       'http://insta-s3.web.localhost:3912/media/u/k/w640.webp',
     );
+  });
+});
+
+describe('avatarUrl', () => {
+  it('キーがあるとき 320 幅の公開 URL を返す', () => {
+    expect(avatarUrl(base, 'avatars/u/k')).toBe(
+      'http://localhost:3910/insta-s3/avatars/u/k/w320.webp',
+    );
+  });
+
+  it('キーが null のとき null を返す', () => {
+    expect(avatarUrl(base, null)).toBeNull();
   });
 });
