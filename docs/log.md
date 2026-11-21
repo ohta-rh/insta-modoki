@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-21
+* **Creation**: [ADR-0027](adr/0027-ci-runs-verify-and-docs-check.md)（CI は 1 つの job で verify を流し、docs の検査は依存の無い `scripts/check-docs.mjs`）を追加し、[guides/verify.md](guides/verify.md) に `docs` の手順・docs の検査・CI の節を足した（#22）。
 * **Creation**: [ADR-0023](adr/0023-slots-with-garage-and-d1-files.md)（compose は Garage だけ、スロットは D1 のファイル・バケット・.dev.vars）と [guides/](guides/)（[ローカル開発の手順](guides/local-development.md)）を追加し、[ADR-0008](adr/0008-share-one-compose-stack-with-a-slot-per-worktree.md) を置き換えた（#20）。
 * **Creation**: [ADR-0026](adr/0026-csp-with-nonce-from-proxy-and-headers-file.md)（CSP は `src/proxy.ts` の nonce と `public/_headers`）を追加した（#25）。
 * **Creation**: [architecture/design-system.md](architecture/design-system.md)（トークン・自作のロゴとアイコン・禁止語・色の使い方・画面の骨格）を追加し、[architecture/index.md](architecture/index.md) に載せた（#24）。

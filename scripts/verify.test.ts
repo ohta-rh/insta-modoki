@@ -58,11 +58,12 @@ describe('verify', () => {
     expect(main([], deps)).toBe(1);
   });
 
-  it('手順の順番は typecheck → lint → format → unit → integration → build → e2e', () => {
+  it('手順の順番は typecheck → lint → format → docs → unit → integration → build → e2e', () => {
     expect(STEPS.map((s: { name: string }) => s.name)).toEqual([
       'typecheck',
       'lint',
       'format',
+      'docs',
       'unit',
       'integration',
       'build',
@@ -70,7 +71,25 @@ describe('verify', () => {
     ]);
     const { lines, deps } = harness();
     expect(main(['--list'], deps)).toBe(0);
-    expect(lines).toEqual(['typecheck', 'lint', 'format', 'unit', 'integration', 'build', 'e2e']);
+    expect(lines).toEqual([
+      'typecheck',
+      'lint',
+      'format',
+      'docs',
+      'unit',
+      'integration',
+      'build',
+      'e2e',
+    ]);
+  });
+
+  it('docs の手順が format の次にあり、check-docs を流す', () => {
+    const names = STEPS.map((s: { name: string }) => s.name);
+    expect(names.indexOf('docs')).toBe(names.indexOf('format') + 1);
+    expect(names.indexOf('docs')).toBe(names.indexOf('unit') - 1);
+    expect(STEPS.find((s: { name: string }) => s.name === 'docs')?.command).toBe(
+      'node scripts/check-docs.mjs docs',
+    );
   });
 
   it('verify.md の表が手順の一覧と同じ', () => {

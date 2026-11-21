@@ -5,7 +5,8 @@ const port = Number(process.env.PORT ?? 3100);
 export default defineConfig({
   testDir: 'e2e',
   fullyParallel: true,
-  reporter: 'list',
+  // CI keeps an HTML report so a failed run can upload it (ADR-0027).
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: { baseURL: `http://localhost:${port}` },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {

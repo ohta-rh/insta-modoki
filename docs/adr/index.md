@@ -31,6 +31,7 @@
 * [ADR-0022: テストは Vitest と Playwright、UI は Tailwind CSS と Radix UI、実行環境は Node.js 26 と pnpm 12 にする](0022-testing-ui-and-package-management.md) - 採用
 * [ADR-0024: verify は scripts/verify.mjs が 7 つの手順を固定の順に流し、単体テストの行カバレッジ 80% を基準にする](0024-verify-command-and-coverage-gate.md) - 採用
 * [ADR-0026: CSP は src/proxy.ts が要求ごとの nonce で付け、静的ファイルは public/_headers で付ける](0026-csp-with-nonce-from-proxy-and-headers-file.md) - 採用
+* [ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする](0027-ci-runs-verify-and-docs-check.md) - 採用
 
 # 環境とホスティング
 

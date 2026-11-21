@@ -14,6 +14,7 @@ export const STEPS = [
   { name: 'typecheck', command: 'pnpm typecheck' },
   { name: 'lint', command: 'pnpm lint' },
   { name: 'format', command: 'pnpm format:check' },
+  { name: 'docs', command: 'node scripts/check-docs.mjs docs' },
   {
     name: 'unit',
     command: 'pnpm exec vitest run --coverage --exclude "**/*.int.test.ts"',
