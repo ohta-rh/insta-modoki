@@ -227,6 +227,25 @@ signedIn('自分の投稿を確認ダイアログのあとで削除できる', a
 });
 
 signedIn(
+  '削除を押すと確認のダイアログが 1 度だけ開き コンソールに警告が出ない',
+  async ({ page, me }) => {
+    const post = insertPost({ authorUsername: me.username, mediaCount: 1, caption: '警告の確認' });
+    await putPostFiles(page, post);
+    const logs: string[] = [];
+    page.on('console', (m) => {
+      if (m.type() === 'warning' || m.type() === 'error') logs.push(m.text());
+    });
+    page.on('pageerror', (e) => logs.push(e.message));
+    await page.goto(`/p/${post.id}`);
+    await waitForHydration(page);
+
+    await page.getByRole('button', { name: '削除', exact: true }).click();
+    await expect(page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' })).toBeVisible();
+    expect(logs).toEqual([]);
+  },
+);
+
+signedIn(
   'JS が読み込まれる前でも 削除の確認ダイアログが開き Esc で閉じる',
   async ({ page, me }) => {
     const post = insertPost({ authorUsername: me.username, mediaCount: 1 });

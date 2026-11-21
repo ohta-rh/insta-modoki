@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useId, useRef, useState, type KeyboardEvent } from 'react';
+import { supportsCommandInvokers } from '../../../shared/ui/supports-command-invokers';
 import { deletePostAction } from '../api/actions';
 import { usePostDeletedHandler } from './PostDeletedContext';
 
@@ -27,7 +28,11 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
   // handler only clears an old error, and opens it where the command attribute is unsupported.
   const open = () => {
     setError(null);
-    if (dialog.current && !dialog.current.open) dialog.current.showModal();
+    // Where commands are supported the browser opens it after this click; opening here too would
+    // be a second, already-open showModal (a console warning).
+    if (!supportsCommandInvokers() && dialog.current && !dialog.current.open) {
+      dialog.current.showModal();
+    }
   };
 
   const confirm = async () => {

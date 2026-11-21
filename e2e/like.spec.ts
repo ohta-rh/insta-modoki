@@ -307,6 +307,22 @@ signedIn('件数から一覧を開き、21 人目が追加読み込みで出て�
   await expect(rows).toHaveCount(20);
 });
 
+signedIn('件数を押すと一覧のダイアログが 1 度だけ開き コンソールに警告が出ない', async ({ page }) => {
+  const post = await strangerPost(page);
+  seedLikers(post.id, 2);
+  const logs: string[] = [];
+  page.on('console', (m) => {
+    if (m.type() === 'warning' || m.type() === 'error') logs.push(m.text());
+  });
+  page.on('pageerror', (e) => logs.push(e.message));
+  await page.goto(`/p/${post.id}`);
+  await waitForHydration(page);
+
+  await countLink(page, 2).click();
+  await expect(likersDialog(page)).toBeVisible();
+  expect(logs).toEqual([]);
+});
+
 signedIn('いいねが 0 件のとき 一覧に「まだいいねはありません」が出る', async ({ page }) => {
   const post = await strangerPost(page);
   await page.goto(`/p/${post.id}`);

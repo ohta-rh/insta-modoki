@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
+import { supportsCommandInvokers } from '../../../shared/ui/supports-command-invokers';
 import { listLikersAction } from '../api/actions';
 import { useLikeScope } from './LikeScope';
 
@@ -107,7 +108,10 @@ export function LikersDialog() {
         type="button"
         {...({ commandfor: dialogId, command: 'show-modal' } as object)}
         onClick={() => {
-          if (dialog.current && !dialog.current.open) dialog.current.showModal();
+          // The browser opens it via `command` where supported; only open here where it is not.
+          if (!supportsCommandInvokers() && dialog.current && !dialog.current.open) {
+            dialog.current.showModal();
+          }
           restart();
         }}
         className="min-h-[var(--tap-min)] rounded-lg px-2 text-[length:var(--font-size-sm)] font-bold hover:bg-surface"
