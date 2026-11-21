@@ -37,24 +37,17 @@ export function buildOgMeta(post: PostView, origin: string): OgMeta {
   };
 }
 
-const FALLBACK_ORIGIN = 'http://localhost';
-
 /**
- * The origin the request came to, from its Host and x-forwarded-proto headers. Without a
- * protocol, localhost is http and anything else https. A missing or malformed host gives
- * http://localhost, so a forged header can only change the tags of the response it was sent with.
+ * The origin of the app's configured URL (BETTER_AUTH_URL), used for absolute links in the
+ * social tags. It comes from configuration, never from a request header, so a forged Host
+ * header cannot change what a shared link or a cache points to.
  */
-export function requestOrigin(headers: Pick<Headers, 'get'>): string {
-  const host = headers.get('host');
-  if (!host) return FALLBACK_ORIGIN;
-  const forwarded = headers.get('x-forwarded-proto')?.split(',')[0]?.trim();
-  const local = /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host);
-  const proto =
-    forwarded === 'http' || forwarded === 'https' ? forwarded : local ? 'http' : 'https';
+export function appOrigin(configuredUrl: string): string {
   try {
-    const url = new URL(`${proto}://${host}`);
-    return url.host === host.toLowerCase() ? `${proto}://${url.host}` : FALLBACK_ORIGIN;
+    const url = new URL(configuredUrl);
+    if (url.protocol === 'http:' || url.protocol === 'https:') return url.origin;
   } catch {
-    return FALLBACK_ORIGIN;
+    // falls through to the error below
   }
+  throw new Error('BETTER_AUTH_URL は http(s) の URL で指定してください');
 }

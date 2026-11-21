@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildOgMeta, requestOrigin } from './og';
+import { appOrigin, buildOgMeta } from './og';
 import type { PostView } from './schema';
 
 const post = (
@@ -84,25 +84,16 @@ describe('buildOgMeta', () => {
   });
 });
 
-describe('requestOrigin', () => {
-  const headers = (init: Record<string, string>) => new Headers(init);
-
-  it('host と x-forwarded-proto から origin を作る', () => {
-    expect(requestOrigin(headers({ host: 'mado.example', 'x-forwarded-proto': 'https' }))).toBe(
-      'https://mado.example',
-    );
+describe('appOrigin', () => {
+  it('設定された URL の origin を返し パスや末尾の / は落とす', () => {
+    expect(appOrigin('https://mado.example')).toBe('https://mado.example');
+    expect(appOrigin('https://mado.example/')).toBe('https://mado.example');
+    expect(appOrigin('http://localhost:3102/some/path?x=1')).toBe('http://localhost:3102');
   });
 
-  it('プロトコルが無いとき localhost は http それ以外は https にする', () => {
-    expect(requestOrigin(headers({ host: 'localhost:3102' }))).toBe('http://localhost:3102');
-    expect(requestOrigin(headers({ host: 'mado.example' }))).toBe('https://mado.example');
-  });
-
-  it('host が無いか壊れているとき http://localhost にする', () => {
-    expect(requestOrigin(headers({}))).toBe('http://localhost');
-    expect(requestOrigin(headers({ host: 'a b/c' }))).toBe('http://localhost');
-    expect(requestOrigin(headers({ host: 'x', 'x-forwarded-proto': 'javascript' }))).toBe(
-      'https://x',
-    );
+  it('URL でない値のとき 例外を投げる', () => {
+    expect(() => appOrigin('')).toThrow('BETTER_AUTH_URL');
+    expect(() => appOrigin('not a url')).toThrow('BETTER_AUTH_URL');
+    expect(() => appOrigin('javascript:alert(1)')).toThrow('BETTER_AUTH_URL');
   });
 });

@@ -3,7 +3,9 @@ import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { getSessionUser } from '@/features/auth';
-import { buildOgMeta, getPost, PostDetail, requestOrigin } from '@/features/post';
+import { getRequestEnv } from '@/shared/db/request';
+import { appOrigin, buildOgMeta, getPost, PostDetail } from '@/features/post';
+import type { AuthEnv } from '@/features/auth/api/auth-env';
 import { AppError } from '@/shared/errors';
 
 // Anyone may open a post, so this route is outside the (app) group (ADR-0031). The page and
@@ -21,7 +23,7 @@ type Props = { params: Promise<{ postId: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await loadPost((await params).postId);
-  const og = buildOgMeta(post, requestOrigin(await headers()));
+  const og = buildOgMeta(post, appOrigin((await getRequestEnv<AuthEnv>()).BETTER_AUTH_URL));
   const images = og.image.url ? [og.image] : undefined;
   return {
     title: og.title,
