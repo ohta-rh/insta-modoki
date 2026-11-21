@@ -13,9 +13,6 @@ import {
 import { isPostId } from '../model/schema';
 
 const VARIANTS = ['orig', 'w320', 'w640', 'w1080'] as const;
-/** At most this many files are deleted at once, so a failure points at a small set of keys. */
-const CHUNK = 8;
-
 export type DeletePostDeps = {
   env?: AuthEnv & StorageEnv;
   headers: Headers;
@@ -74,28 +71,17 @@ export async function deletePost(input: unknown, deps: DeletePostDeps): Promise<
   return { deleted: true };
 }
 
-/** Removes the files; returns the keys that could not be removed. Never throws. */
+/** Removes the files in one request; returns the keys that could not be removed. Never throws. */
 async function removeFiles(
   env: StorageEnv,
   keys: string[],
   remove: typeof removeStoredObjects,
 ): Promise<string[]> {
   if (keys.length === 0) return [];
-  let client;
   try {
-    client = getStorageClient(env);
-  } catch {
+    return await remove(getStorageClient(env), keys);
+  } catch (error) {
+    console.error('storage delete failed', error instanceof Error ? error.name : 'unknown');
     return keys;
   }
-  const failed: string[] = [];
-  for (let i = 0; i < keys.length; i += CHUNK) {
-    const chunk = keys.slice(i, i + CHUNK);
-    try {
-      await remove(client, chunk);
-    } catch (error) {
-      console.error('storage delete failed', error instanceof Error ? error.name : 'unknown');
-      failed.push(...chunk);
-    }
-  }
-  return failed;
 }

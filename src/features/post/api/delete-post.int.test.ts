@@ -118,4 +118,22 @@ describe('deletePost', () => {
     // The files are still there: only the rows went away.
     for (const key of keys) expect(await headObject(storage, key), key).not.toBeNull();
   });
+
+  it('1 つのキーだけ消せなかったとき そのキーだけを storage_orphans に記録する', async () => {
+    const { env, owner, post, keys } = await setup();
+    const headers = await sessionHeadersFor(t.db, env, owner);
+    const seen: string[][] = [];
+    const oneFails = vi.fn(async (_client: unknown, requested: string[]) => {
+      seen.push(requested);
+      return [requested[3]!];
+    });
+
+    await deletePost({ postId: post.id }, { env, headers, removeObjects: oneFails as never });
+
+    expect(seen).toHaveLength(1);
+    expect([...seen[0]!].sort()).toEqual([...keys].sort());
+    const orphans = await t.db.select().from(storageOrphans);
+    expect(orphans.map((o) => o.storageKey)).toEqual([seen[0]![3]]);
+    expect(orphans[0]!.attempts).toBe(0);
+  });
 });

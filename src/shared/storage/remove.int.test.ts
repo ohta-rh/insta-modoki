@@ -25,12 +25,33 @@ describe('removeObjects', () => {
     const [a, b, keep] = [`${dir}/a.webp`, `${dir}/b.webp`, `${dir}/keep.webp`];
     await Promise.all([putObject(a), putObject(b), putObject(keep)]);
 
-    await removeObjects(client, [a, b, `${dir}/missing.webp`]);
+    expect(await removeObjects(client, [a, b, `${dir}/missing.webp`])).toEqual([]);
     expect(await headObject(env, a)).toBeNull();
     expect(await headObject(env, b)).toBeNull();
     expect(await headObject(env, keep)).not.toBeNull();
 
-    await removeObjects(client, []);
-    await removeObjects(client, [keep]);
+    expect(await removeObjects(client, [])).toEqual([]);
+    expect(await removeObjects(client, [keep])).toEqual([]);
+  });
+
+  it('12 個のキーを 1 回の要求で消す', async () => {
+    const dir = `media/remove-test/${crypto.randomUUID()}`;
+    const keys = Array.from({ length: 12 }, (_, i) => `${dir}/k${i} 日本.webp`);
+    for (const key of keys) await putObject(key);
+    const seen: string[] = [];
+    const counting: StorageClient = {
+      ...client,
+      aws: {
+        fetch: (url: string, init?: RequestInit) => {
+          seen.push(`${init?.method} ${url}`);
+          return client.aws.fetch(url, init);
+        },
+      } as StorageClient['aws'],
+    };
+
+    expect(await removeObjects(counting, keys)).toEqual([]);
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toMatch(/^POST .*\?delete$/);
+    for (const key of keys) expect(await headObject(env, key), key).toBeNull();
   });
 });
