@@ -49,7 +49,10 @@ test('存在しない静的ファイルの 404 にも 4 つのヘッダーが付
   }
 });
 
-test('存在する静的ファイルは Worker を通らず _headers のヘッダーで返る', async ({ page, request }) => {
+test('存在する静的ファイルは Worker を通らず _headers のヘッダーで返る', async ({
+  page,
+  request,
+}) => {
   const css: string[] = [];
   page.on('response', (response) => {
     const pathname = new URL(response.url()).pathname;
