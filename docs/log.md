@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-21
+* **Creation**: [EPIC #2 の総合試験のレポート](test-reports/epic-0002-account-signup-login.md)（1 回目。AC-1・2・3・5 は PASS、AC-4 の Secure は判定待ち）と、その写真・記録（`test-reports/evidence/epic-0002/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [ADR-0045](adr/0045-epic-test-may-drive-headed-chrome-over-cdp.md)（chrome-devtools の MCP が使えないとき、epic-tester は画面ありの Google Chrome を CDP で操作して総合試験を行う。EPIC #1 の総合試験で MCP のプロファイルが別のセッションに握られていた）を追加し、`.claude/rules/delivery.md` §5 と `.claude/agents/epic-tester.md` を直した。
 * **Creation**: [EPIC #1 の総合試験のレポート](test-reports/epic-0001-dev-foundation.md)（1 回目、FAIL。AC-6 の原因はバグの PBI #72）と、その写真・記録（`test-reports/evidence/epic-0001/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Update**: [conventions.md](architecture/conventions.md) に「D1 の 1 つの文の上限」（バインド変数は 100 個まで。複数行の INSERT は分ける）を足した（#34 で見つかった制約）。

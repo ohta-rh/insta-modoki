@@ -1,0 +1,177 @@
+{
+  "chrome": "157.0.8103.80",
+  "steps": [
+    {
+      "name": "signup bad input",
+      "alerts": [
+        "入力を確認してください",
+        ""
+      ],
+      "text": "入力を確認してください\n\nメールアドレス\n\nメールアドレスの形式を確認してください\n\nユーザー名\n表示名\nパスワード\n\nパスワードは 8〜72 字で入力してください\n\nサインアップ"
+    },
+    {
+      "name": "signup success",
+      "url": "http://localhost:3103/"
+    },
+    {
+      "name": "duplicate username",
+      "message": true,
+      "submitDisabled": true,
+      "stillOnSignup": "http://localhost:3103/accounts/signup"
+    },
+    {
+      "name": "username freed",
+      "submitDisabled": false,
+      "dupMsgGone": true
+    },
+    {
+      "name": "duplicate email submit",
+      "url": "http://localhost:3103/accounts/signup",
+      "text": "入力を確認してください\n\nメールアドレス\n\nこのメールアドレスは登録済みです\n\nユーザー名\n表示名\nパスワード\nサインアップ"
+    },
+    {
+      "name": "after logout",
+      "url": "http://localhost:3103/accounts/login",
+      "cookiesAfter": []
+    },
+    {
+      "name": "logged out open /",
+      "url": "http://localhost:3103/accounts/login"
+    },
+    {
+      "name": "logged out open /create",
+      "url": "http://localhost:3103/accounts/login"
+    },
+    {
+      "name": "login wrong password",
+      "alerts": [
+        ""
+      ]
+    },
+    {
+      "name": "relogin",
+      "url": "http://localhost:3103/",
+      "cookies": [
+        "better-auth.session_token"
+      ]
+    }
+  ],
+  "cookie": {
+    "cookies": [
+      {
+        "name": "better-auth.session_token",
+        "httpOnly": true,
+        "secure": false,
+        "sameSite": "Lax",
+        "path": "/",
+        "expires": 1797860680.594849,
+        "expiresISO": "2026-12-21T13:44:40.594Z"
+      }
+    ],
+    "nowISO": "2026-11-21T13:44:41.447Z",
+    "documentCookieNames": []
+  },
+  "keyboard": {
+    "signup-1280": {
+      "order": [
+        "a:本文へ移動",
+        "input:メールアドレス",
+        "input:ユーザー名",
+        "input:表示名",
+        "input:パスワード",
+        "button:サインアップ"
+      ],
+      "focusedSubmit": "サインアップ",
+      "landed": "http://localhost:3103/"
+    },
+    "logout-1280": {
+      "order": [
+        "a:本文へ移動",
+        "a:ホーム",
+        "a:検索",
+        "a:投稿",
+        "a:通知",
+        "a:プロフィール",
+        "button:ログアウト",
+        "body"
+      ],
+      "landed": "http://localhost:3103/accounts/login"
+    },
+    "login-1280": {
+      "order": [
+        "a:本文へ移動",
+        "input:メールアドレス",
+        "input:パスワード",
+        "button:ログイン",
+        "a:サインアップ",
+        "a:本文へ移動"
+      ],
+      "landed": "http://localhost:3103/"
+    },
+    "overflow-1280": false,
+    "signup-375": {
+      "order": [
+        "a:本文へ移動",
+        "input:メールアドレス",
+        "input:ユーザー名",
+        "input:表示名",
+        "input:パスワード",
+        "button:サインアップ"
+      ],
+      "focusedSubmit": "サインアップ",
+      "landed": "http://localhost:3103/"
+    },
+    "logout-375": {
+      "order": [
+        "a:本文へ移動",
+        "button:ログアウト",
+        "a:ホーム",
+        "a:検索",
+        "a:投稿",
+        "a:通知",
+        "a:プロフィール",
+        "body"
+      ],
+      "landed": "http://localhost:3103/accounts/login"
+    },
+    "login-375": {
+      "order": [
+        "a:本文へ移動",
+        "input:メールアドレス",
+        "input:パスワード",
+        "button:ログイン",
+        "a:サインアップ",
+        "a:本文へ移動"
+      ],
+      "landed": "http://localhost:3103/"
+    },
+    "overflow-375": false
+  },
+  "rate": {
+    "registered": {
+      "start": "2026-11-21T13:45:00.006Z",
+      "end": "2026-11-21T13:45:03.704Z",
+      "texts": [
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "操作が多すぎます。しばらくしてからもう一度お試しください"
+      ]
+    },
+    "unregistered": {
+      "start": "2026-11-21T13:46:00.043Z",
+      "end": "2026-11-21T13:46:03.770Z",
+      "texts": [
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "メールアドレスまたはパスワードが違います",
+        "操作が多すぎます。しばらくしてからもう一度お試しください"
+      ]
+    }
+  },
+  "events": []
+}
