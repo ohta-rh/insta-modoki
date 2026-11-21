@@ -1,8 +1,9 @@
 import { eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 import { useTestDb } from '../../../../tests/helpers/db';
+import { createPost, createLike } from '../../../../tests/helpers/posts';
 import { createUser } from '../../../../tests/helpers/users';
-import { follows, media, posts, rateLimits, users } from '../../../shared/db/schema';
+import { follows, likes, media, posts, rateLimits, users } from '../../../shared/db/schema';
 import { operationSchema, runOperation, type Operation } from './operations';
 
 const t = useTestDb();
@@ -101,5 +102,71 @@ describe('E2E ハーネスの操作', () => {
     await run({ op: 'clearRateLimits' });
     const left = (await t.db.select().from(rateLimits)).map((r) => r.key).sort();
     expect(left).toEqual(['login:ip:198.51.100.7', 'post:user:abc']);
+  });
+
+  it('seedLikers が利用者と いいねの行と like_count を一緒に書き 時刻の順に並べられる', async () => {
+    const author = await createUser(t.db);
+    const post = await createPost(t.db, author.id);
+    const likedAt = Date.UTC(2026, 10, 1);
+    await run({
+      op: 'seedLikers',
+      postId: post.id,
+      likers: [0, 1, 2].map((i) => ({
+        username: `liker_${i}`,
+        email: `liker_${i}@example.com`,
+        likedAt: likedAt + i * 1000,
+      })),
+    });
+    const rows = await t.db.select().from(likes).where(eq(likes.postId, post.id));
+    expect(rows.map((r) => r.createdAt.getTime()).sort()).toEqual([
+      likedAt,
+      likedAt + 1000,
+      likedAt + 2000,
+    ]);
+    expect((await t.db.select().from(users).where(eq(users.username, 'liker_1'))).length).toBe(1);
+    const [row] = await t.db.select().from(posts).where(eq(posts.id, post.id));
+    expect(row!.likeCount).toBe(3);
+  });
+
+  it('seedLikers が既にいいねのある投稿でも like_count を行の数に合わせる', async () => {
+    const author = await createUser(t.db);
+    const fan = await createUser(t.db);
+    const post = await createPost(t.db, author.id);
+    await createLike(t.db, fan.id, post.id);
+    await run({
+      op: 'seedLikers',
+      postId: post.id,
+      likers: [{ username: 'liker_x', email: 'liker_x@example.com', likedAt: 1 }],
+    });
+    const [row] = await t.db.select().from(posts).where(eq(posts.id, post.id));
+    expect(row!.likeCount).toBe(2);
+  });
+
+  it('seedLikers が途中で失敗すると何も残さない', async () => {
+    const author = await createUser(t.db);
+    const post = await createPost(t.db, author.id);
+    await expect(
+      run({
+        op: 'seedLikers',
+        postId: post.id,
+        likers: [
+          { username: 'dup_a', email: 'dup_a@example.com', likedAt: 1 },
+          { username: 'dup_a', email: 'dup_b@example.com', likedAt: 2 },
+        ],
+      }),
+    ).rejects.toThrow();
+    expect(await t.db.select().from(likes)).toEqual([]);
+    expect((await t.db.select().from(users).where(eq(users.username, 'dup_a'))).length).toBe(0);
+  });
+
+  it('deletePost が投稿と いいね・写真を消す', async () => {
+    const author = await createUser(t.db);
+    const fan = await createUser(t.db);
+    const post = await createPost(t.db, author.id, { mediaCount: 2 });
+    await createLike(t.db, fan.id, post.id);
+    await run({ op: 'deletePost', postId: post.id });
+    expect(await t.db.select().from(posts)).toEqual([]);
+    expect(await t.db.select().from(likes)).toEqual([]);
+    expect(await t.db.select().from(media)).toEqual([]);
   });
 });

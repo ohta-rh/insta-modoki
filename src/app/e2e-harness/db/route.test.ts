@@ -70,6 +70,20 @@ describe('/e2e-harness/db', () => {
       { op: 'seedUser', username: 'x'.repeat(200), email: 'a@example.com' },
       { op: 'insertPost', id: 'a', authorId: 'b', caption: '', createdAt: 1, media: [] },
       { op: 'seedUser', username: 'abc', email: 'a@example.com', sql: 'DELETE FROM users' },
+      { op: 'seedLikers', postId: 'p', likers: [] },
+      {
+        op: 'seedLikers',
+        postId: 'p',
+        likers: Array.from({ length: 51 }, () => ({ username: 'u', email: 'e', likedAt: 1 })),
+      },
+      {
+        op: 'seedLikers',
+        postId: 'p',
+        likers: [{ username: 'u', email: 'e', likedAt: 1, sql: 'x' }],
+      },
+      { op: 'seedLikers', likers: [{ username: 'u', email: 'e', likedAt: 1 }] },
+      { op: 'deletePost' },
+      { op: 'deletePost', postId: 'p', all: true },
       'not json',
       [],
     ]) {

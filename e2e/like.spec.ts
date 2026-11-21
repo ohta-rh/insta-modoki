@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 import { expect, test as base, type BrowserContext } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { seedUser, withDb } from './support/db';
+import { harness } from './support/harness';
 import { waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
 
@@ -63,34 +64,17 @@ const storedLikeCount = (postId: string) =>
       (db.prepare('SELECT like_count AS n FROM posts WHERE id = ?').get(postId) as { n: number }).n,
   );
 
-/**
- * Makes `n` users like the post, the i-th at a later time than the one before. One transaction, so
- * the app's own writes are held up for as short a time as possible.
- */
+/** Makes `n` users like the post, the i-th at a later time than the one before (written by the app). */
 function seedLikers(postId: string, n: number): string[] {
-  const names: string[] = [];
   const start = Date.now() - 3_600_000;
   const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-  withDb((db) => {
-    db.exec('BEGIN');
-    for (let i = 0; i < n; i += 1) {
-      const username = `e2e_f${stamp}${i}`;
-      const id = crypto.randomUUID();
-      const now = Date.now();
-      db.prepare(
-        'INSERT INTO users (id, username, display_name, email, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
-      ).run(id, username, username, `${username}@example.com`, now, now);
-      db.prepare('INSERT INTO likes (user_id, post_id, created_at) VALUES (?, ?, ?)').run(
-        id,
-        postId,
-        start + i * 1000,
-      );
-      names.push(username);
-    }
-    db.prepare('UPDATE posts SET like_count = ? WHERE id = ?').run(n, postId);
-    db.exec('COMMIT');
-  });
-  return names;
+  const likers = Array.from({ length: n }, (_, i) => ({
+    username: `e2e_f${stamp}${i}`,
+    email: `e2e_f${stamp}${i}@example.com`,
+    likedAt: start + i * 1000,
+  }));
+  harness({ op: 'seedLikers', postId, likers });
+  return likers.map((l) => l.username);
 }
 
 signedIn(
@@ -210,7 +194,7 @@ signedIn('サーバーが失敗を返すと表示が元に戻りエラーを出�
   const gone = await strangerPost(page);
   await page.goto(`/p/${gone.id}`);
   await waitForHydration(page);
-  withDb((db) => db.prepare('DELETE FROM posts WHERE id = ?').run(gone.id));
+  harness({ op: 'deletePost', postId: gone.id });
 
   await heart(page).click();
   await expect(alert(page)).toHaveText('ページが見つかりません');

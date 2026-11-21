@@ -1,7 +1,7 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { getDb, type DbEnv } from '../../../shared/db/client';
-import { follows, media, posts, rateLimits, users } from '../../../shared/db/schema';
+import { follows, likes, media, posts, rateLimits, users } from '../../../shared/db/schema';
 
 // The setup writes of the E2E suite, done by the Worker through its own D1 binding. A second
 // process writing to the same SQLite file made the app fail with SQLITE_BUSY (ADR-0041). Every
@@ -42,6 +42,15 @@ export const operationSchema = z.discriminatedUnion('op', [
     userId: id,
     count: z.number().int().min(0).max(1000),
   }),
+  z.strictObject({
+    op: z.literal('seedLikers'),
+    postId: id,
+    likers: z
+      .array(z.strictObject({ username: text(30), email: text(254), likedAt: ms }))
+      .min(1)
+      .max(50),
+  }),
+  z.strictObject({ op: z.literal('deletePost'), postId: id }),
   z.strictObject({ op: z.literal('clearRateLimits') }),
 ]);
 
@@ -77,6 +86,42 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
             operation.media.map((m) => ({ ...m, postId: operation.id, type: 'image' as const })),
           ),
       ]);
+      return;
+    }
+    case 'seedLikers': {
+      // New users, their likes and the counter in one batch, so like_count always equals the rows.
+      const now = new Date();
+      const people = operation.likers.map((l) => ({ ...l, id: crypto.randomUUID() }));
+      await db.batch([
+        db.insert(users).values(
+          people.map((p) => ({
+            id: p.id,
+            username: p.username,
+            email: p.email,
+            displayName: p.username,
+            createdAt: now,
+            updatedAt: now,
+          })),
+        ),
+        db.insert(likes).values(
+          people.map((p) => ({
+            userId: p.id,
+            postId: operation.postId,
+            createdAt: new Date(p.likedAt),
+          })),
+        ),
+        db
+          .update(posts)
+          .set({
+            likeCount: sql`(SELECT count(*) FROM ${likes} WHERE ${likes.postId} = ${posts.id})`,
+          })
+          .where(eq(posts.id, operation.postId)),
+      ]);
+      return;
+    }
+    case 'deletePost': {
+      // Media, likes and comments go with the post by ON DELETE CASCADE.
+      await db.delete(posts).where(eq(posts.id, operation.postId));
       return;
     }
     case 'follow': {
