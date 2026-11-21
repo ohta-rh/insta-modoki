@@ -1,12 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { applySecurityHeaders, readSecurityConfig, type SecurityConfig } from '@/shared/security';
-
-// The environment does not change while the Worker runs, so it is read once.
-let securityConfig: SecurityConfig | undefined;
+import { applySecurityHeaders, readSecurityConfig } from '@/shared/security';
 
 export function proxy(request: NextRequest): NextResponse {
-  securityConfig ??= readSecurityConfig(process.env);
-  const options = { ...securityConfig, nonce: btoa(crypto.randomUUID()) };
+  const options = { ...readSecurityConfig(process.env), nonce: btoa(crypto.randomUUID()) };
 
   // Next.js reads the nonce from the request's CSP and puts it on its own inline scripts.
   const requestHeaders = new Headers(request.headers);
