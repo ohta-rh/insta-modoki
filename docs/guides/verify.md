@@ -63,3 +63,5 @@ status: stable
 ## 手順を足す
 
 後の PBI は `STEPS` に 1 行足し、この表にも同じ行を足す。
+
+使い捨ての確認用の壊れたリンク: [存在しない文書](does-not-exist-for-ci-check.md)
