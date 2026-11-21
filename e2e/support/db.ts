@@ -82,3 +82,8 @@ export function mediaRows(postId: string): Record<string, unknown>[] {
 export function rateRows(key: string): Record<string, unknown>[] {
   return withDb((db) => db.prepare('SELECT * FROM rate_limits WHERE key = ?').all(key));
 }
+
+/** Sets the user's upload counter (300 an hour is the limit), or (count 0) clears it. */
+export function setUploadCount(userId: string, count: number): void {
+  harness({ op: 'setUploadCount', userId, count });
+}

@@ -187,3 +187,18 @@ describe('E2E ハーネスの操作', () => {
     expect(await t.db.select().from(media)).toEqual([]);
   });
 });
+
+describe('E2E ハーネスの操作（setUploadCount）', () => {
+  it('setUploadCount が n のとき 現在の 1 時間の窓の 1 行を置き換え 0 のとき消す', async () => {
+    const user = await createUser(t.db);
+    const key = `upload:user:${user.id}`;
+    await run({ op: 'setUploadCount', userId: user.id, count: 300 });
+    await run({ op: 'setUploadCount', userId: user.id, count: 7 });
+    let rows = await t.db.select().from(rateLimits).where(eq(rateLimits.key, key));
+    expect(rows.map((r) => r.count)).toEqual([7]);
+    expect(rows[0]!.windowStart).toBe(Math.floor(Date.now() / 3_600_000) * 3_600_000);
+    await run({ op: 'setUploadCount', userId: user.id, count: 0 });
+    rows = await t.db.select().from(rateLimits).where(eq(rateLimits.key, key));
+    expect(rows).toEqual([]);
+  });
+});

@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import type { ProfileView } from '../model/schema';
+import { EditProfileLink } from './EditProfileLink';
 
 /**
  * The profile's top: avatar (or the first letter in a circle), the names, the bio and the three
  * counts. The counts are plain text here (the lists they open come with the follow PBI).
- * `actions` is the slot beside the names for the edit button (own profile) and the follow
- * button (someone else's); this slice renders nothing in it.
+ * `actions` is the slot beside the names; when it is empty your own profile gets the edit link
+ * (the follow PBI fills it for someone else's).
  */
 export function ProfileHeader({ profile, actions }: { profile: ProfileView; actions?: ReactNode }) {
   const counts = [
@@ -42,7 +43,7 @@ export function ProfileHeader({ profile, actions }: { profile: ProfileView; acti
               @{profile.username}
             </p>
           </div>
-          {actions}
+          {actions ?? (profile.isMe ? <EditProfileLink /> : null)}
         </div>
         <ul className="mt-3 flex gap-5 text-[length:var(--font-size-sm)]">
           {counts.map((c) => (

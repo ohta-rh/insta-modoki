@@ -6,3 +6,4 @@ export { PROFILE_PAGE_SIZE, type Page, type PostThumb, type ProfileView } from '
 export { PostGrid } from './ui/PostGrid';
 export { ProfileEmptyState } from './ui/ProfileEmptyState';
 export { ProfileHeader } from './ui/ProfileHeader';
+export { EditProfileForm } from './edit/EditProfileForm';

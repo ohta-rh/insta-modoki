@@ -52,6 +52,11 @@ export const operationSchema = z.discriminatedUnion('op', [
   }),
   z.strictObject({ op: z.literal('deletePost'), postId: id }),
   z.strictObject({ op: z.literal('clearRateLimits') }),
+  z.strictObject({
+    op: z.literal('setUploadCount'),
+    userId: id,
+    count: z.number().int().min(0).max(1000),
+  }),
 ]);
 
 export type Operation = z.infer<typeof operationSchema>;
@@ -158,6 +163,20 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
             sql`${rateLimits.key} NOT LIKE 'post:user:%'`,
           ),
         );
+      return;
+    }
+    case 'setUploadCount': {
+      const key = `upload:user:${operation.userId}`;
+      const windowStart = Math.floor(Date.now() / 3_600_000) * 3_600_000;
+      const statements = [db.delete(rateLimits).where(eq(rateLimits.key, key))] as const;
+      if (operation.count === 0) {
+        await db.batch(statements);
+      } else {
+        await db.batch([
+          ...statements,
+          db.insert(rateLimits).values({ key, windowStart, count: operation.count }),
+        ]);
+      }
       return;
     }
   }
