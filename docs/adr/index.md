@@ -12,6 +12,7 @@
 * [ADR-0009: TDD → 実装 → レビュー → E2E → verify を AC と DoD を満たすまで繰り返す](0009-tdd-review-e2e-verify-loop.md) - 採用
 * [ADR-0010: コードレビューとセキュリティレビューを独立した sonnet のサブエージェントで行う](0010-independent-code-and-security-review.md) - 採用
 * [ADR-0012: EPIC が完了したら実ブラウザで総合試験を行い、エビデンスを commit する](0012-epic-integrated-test-in-real-browser.md) - 採用
+* [ADR-0015: PBI と EPIC はグローバルの write-pbi スキルの水準で書き、このリポジトリの DoR・DoD を写す](0015-pbis-follow-the-global-write-pbi-standard.md) - 採用
 
 # 製品と計画
 
@@ -21,6 +22,7 @@
 # アーキテクチャ
 
 * [ADR-0014: コードは機能ごとの slice（src/features/<name>/）と共有の部分（src/shared/）に分ける](0014-code-in-feature-slices.md) - 採用
+* [ADR-0016: 言語は TypeScript、UI は React にする（フレームワークは #18 で決める）](0016-typescript-and-react.md) - 採用
 
 # 環境とホスティング
 

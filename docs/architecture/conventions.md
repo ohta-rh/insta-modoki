@@ -1,0 +1,107 @@
+---
+type: Architecture
+title: 実装の共通の決まり
+description: slice の中の構成、テストの置き場所と名前、エラーの形と文言、カーソル、上限とレート制限、削除、画面に返す形。PBI の実装方針と検証はこの決まりを前提に書く。
+tags: [architecture, conventions]
+status: stable
+---
+
+# 実装の共通の決まり
+
+言語と UI は TypeScript と React（[ADR-0016](../adr/0016-typescript-and-react.md)）。フレームワーク・DB・ORM・認証は #18 で決まる。
+
+## slice の中の構成（[ADR-0014](../adr/0014-code-in-feature-slices.md)）
+
+```
+src/features/<slice>/
+  index.ts            # 外に見せる入口（他の slice はここだけを import する）
+  api/<name>.ts       # サーバーの処理 1 つ（routes.md の処理名）
+  model/schema.ts     # 入力の Zod スキーマと型
+  model/*.ts          # 純粋なロジック
+  db/                 # その slice のテーブルの定義と問い合わせ（スキーマの入口には 1 行で登録する）
+  ui/<Component>.tsx  # React の部品
+src/shared/
+  db/                 # 接続、スキーマの入口、トランザクション
+  storage/            # S3 互換のストレージ（ローカル）と R2（本番）
+  ui/                 # トークン・アイコン・ナビ・共通の部品
+  security/           # ヘッダー・CSP・レート制限
+  errors.ts           # AppError と変換
+```
+
+## テスト
+
+| 種類 | 置き場所 | 名前 | 実行 |
+|---|---|---|---|
+| 単体 | `src/**/<file>.test.ts(x)` | `describe('<対象>')` / `it('<条件> のとき <結果>')`（日本語） | verify の単体テスト |
+| 結合（DB・ストレージを使う） | `src/**/<file>.int.test.ts` | 同上 | スロットのテスト用 DB（`.claude/rules/local-environment.md`） |
+| E2E | `e2e/<feature>.spec.ts` | `test('<利用者の操作> と <結果>')` | Playwright、スロットのポート |
+
+PBI の「検証」は、このファイル名と名前で書く。
+
+## エラー
+
+サーバーの処理は、失敗を `AppError { code, message, fieldErrors?, retryAfterSec? }` で返す。`message` は画面にそのまま出す日本語。
+
+| code | HTTP | 既定の文言 |
+|---|---|---|
+| `UNAUTHENTICATED` | 401 | ログインしてください（ログインの失敗は「メールアドレスまたはパスワードが違います」） |
+| `FORBIDDEN` | 403 | この操作はできません |
+| `NOT_FOUND` | 404 | ページが見つかりません |
+| `VALIDATION` | 422 | 入力を確認してください（`fieldErrors` に項目ごとの文言） |
+| `CONFLICT` | 409 | このユーザー名は使われています / このメールアドレスは登録済みです |
+| `RATE_LIMITED` | 429 | 操作が多すぎます。しばらくしてからもう一度お試しください（`retryAfterSec`） |
+| `PAYLOAD_TOO_LARGE` | 413 | ファイルが大きすぎます（1 枚 10MB まで） |
+
+内部の例外の内容（SQL・スタック・ファイルのパス）は画面にも応答にも出さない。
+
+## 入力の検証
+
+- 文字数は Unicode のコードポイントで数える。上限のある文字の項目は、前後の空白を除いてから数える。
+- VALIDATION の `fieldErrors` には、項目ごとに「<項目名>は N 文字以内で入力してください」「<項目名>を入力してください」の形の文言を入れる。
+
+## 認証とセッション
+
+- セッションの有効期限は 30 日。他の slice は `src/features/auth` の `getSessionUser()`（いなければ null）と `requireUser()`（いなければ UNAUTHENTICATED）だけを使い、認証ライブラリを直接呼ばない。
+- 利用者の IP は `cf-connecting-ip` のヘッダーから取り、無ければ `local` とする（`src/shared/security/client-ip.ts`）。
+
+## 画像の処理
+
+画像の縮小と変換はブラウザだけで行う。canvas で WebP（品質 0.82）に描き直し、長辺 2,048px の原本と 320 / 640 / 1,080px の幅を作る。元より大きくはしない。EXIF は描き直しで消える。
+
+## カーソル
+
+- 並びは既定で `(created_at DESC, id DESC)`。コメントと返信の一覧は古い順（`created_at ASC, id ASC`）。フォロワー・フォロー中・いいねした人の一覧は、`id` の位置に相手の利用者の id を入れる。カーソルは最後の行の `created_at` と `id` を `|` でつないで base64url にした文字列。OFFSET は使わない。
+- 応答は `Page<T> = { items: T[], nextCursor: string | null }`。壊れたカーソルは VALIDATION。
+
+## 画面に返す形
+
+- `UserSummary = { username, displayName, avatarUrl | null }`
+- `ProfileView = UserSummary & { bio, postCount, followerCount, followingCount, isMe, isFollowing }`
+- `MediaView = { type, width, height, altText, thumbhash, srcset: { w320, w640, w1080 } }`
+- `PostView = { id, author: UserSummary, caption, media: MediaView[], likeCount, commentCount, likedByMe, createdAt }`
+- `PostThumb = { id, cover: MediaView, mediaCount }`
+- `CommentView = { id, author: UserSummary, body, parentId | null, createdAt, canDelete, replies?: CommentView[], replyCount? }`
+
+`email`・`role`・パスワード・ストレージのキーは、どの形にも入れない。
+
+## 上限とレート制限
+
+| 対象 | 上限 |
+|---|---|
+| 画像 | 1 枚 10MB、1 投稿 10 枚、JPEG / PNG / WebP / HEIC、長辺 2,048px に縮小 |
+| 文字 | キャプション 2,200 字、コメント 2,200 字、自己紹介 150 字、表示名 30 字、代替テキスト 500 字 |
+| ログインの試行 | 同じ IP から 1 分あたり 5 回 |
+| サインアップ | 同じ IP から 1 時間あたり 10 回 |
+| 投稿 | 1 ユーザー 1 時間あたり 30 件 |
+| コメント | 1 ユーザー 1 時間あたり 120 件 |
+| アップロード URL の発行 | 1 ユーザー 1 時間あたり 300 枚 |
+
+レート制限は固定の窓で数え、`src/shared/security/rate-limit.ts` の `consume(key, limit, windowSec, cost = 1)` で行い、`rate_limits` テーブルに記録する（[data-model.md](data-model.md)）。
+
+## 書き込みの再送
+
+`createPost` と `addComment` は `clientRequestId`（UUID）を受け取り、同じ利用者の同じ値の 2 回目は 1 回目と同じ結果を返す（新しい行を作らない）。いいねとフォローは「状態にする」処理なので、何度呼んでも同じ結果になる。
+
+## 削除
+
+投稿・利用者の削除は、DB の行を消すトランザクションが成功した後に、ストレージのキーをまとめて消す。ファイルの削除に失敗しても行は戻さず、`storage_orphans`（M3 の掃除のジョブで再試行）に記録する。

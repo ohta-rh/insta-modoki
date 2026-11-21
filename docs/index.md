@@ -16,6 +16,7 @@ description: 写真共有 SNS の UX を独自ブランドで再現する Web �
 # ディレクトリ
 
 * [proposal/](proposal/) - 企画書
+* [architecture/](architecture/) - データモデル・URL とサーバーの処理・実装の共通の決まり
 * [adr/](adr/) - 決定とその理由
 * [test-reports/](test-reports/) - EPIC の総合試験のレポートとエビデンス
 
