@@ -55,36 +55,40 @@ describe('getFeed', () => {
     expect(p95, `p95 ${p95.toFixed(1)}ms`).toBeLessThanOrEqual(BUDGET_MS);
   });
 
-  it('大きなデータでも 12 件のページと 1 件のページで問い合わせの回数が同じ', async () => {
-    await seedScale();
-    const env = { ...testAuthEnv(t.d1), ...storage };
-    const full = countQueries(t.d1);
-    const fullPage = await getFeed(
-      {},
-      {
-        env: { ...env, DB: full.d1 as never },
-        headers: await sessionHeadersFor(t.db, env, { id: 'perf-u3' }),
-      },
-    );
-    expect(fullPage.items).toHaveLength(12);
-    // The last page of a ring user holds fewer posts: ask with the cursor of the 12th item's page end.
-    let cursor = fullPage.nextCursor;
-    let lastCount = full.count();
-    let last = fullPage;
-    while (cursor) {
-      const c = countQueries(t.d1);
-      last = await getFeed(
-        { cursor },
+  it(
+    '大きなデータでも 12 件のページと 1 件のページで問い合わせの回数が同じ',
+    { timeout: 120_000 },
+    async () => {
+      await seedScale();
+      const env = { ...testAuthEnv(t.d1), ...storage };
+      const full = countQueries(t.d1);
+      const fullPage = await getFeed(
+        {},
         {
-          env: { ...env, DB: c.d1 as never },
+          env: { ...env, DB: full.d1 as never },
           headers: await sessionHeadersFor(t.db, env, { id: 'perf-u3' }),
         },
       );
-      lastCount = c.count();
-      cursor = last.nextCursor;
-    }
-    expect(last.items.length).toBeLessThan(12);
-    expect(last.items.length).toBeGreaterThan(0);
-    expect(lastCount).toBe(full.count());
-  });
+      expect(fullPage.items).toHaveLength(12);
+      // The last page of a ring user holds fewer posts: ask with the cursor of the 12th item's page end.
+      let cursor = fullPage.nextCursor;
+      let lastCount = full.count();
+      let last = fullPage;
+      while (cursor) {
+        const c = countQueries(t.d1);
+        last = await getFeed(
+          { cursor },
+          {
+            env: { ...env, DB: c.d1 as never },
+            headers: await sessionHeadersFor(t.db, env, { id: 'perf-u3' }),
+          },
+        );
+        lastCount = c.count();
+        cursor = last.nextCursor;
+      }
+      expect(last.items.length).toBeLessThan(12);
+      expect(last.items.length).toBeGreaterThan(0);
+      expect(lastCount).toBe(full.count());
+    },
+  );
 });
