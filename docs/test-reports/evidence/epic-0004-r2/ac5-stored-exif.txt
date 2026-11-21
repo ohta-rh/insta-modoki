@@ -1,0 +1,6 @@
+post: 01a1fea9-8594-7000-8fe8-84534860b7f1
+objects added: 4
+01a1fea9-8557-7000-93be-5ae5d8d6045c/orig.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={"exif":false}; 'Exif'/'GPS' bytes found=false
+01a1fea9-8557-7000-93be-5ae5d8d6045c/w1080.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={"exif":false}; 'Exif'/'GPS' bytes found=false
+01a1fea9-8557-7000-93be-5ae5d8d6045c/w320.webp: webp 320x320 750B via media origin; metadata().exif=absent; parsed={"exif":false}; 'Exif'/'GPS' bytes found=false
+01a1fea9-8557-7000-93be-5ae5d8d6045c/w640.webp: webp 640x640 1296B via media origin; metadata().exif=absent; parsed={"exif":false}; 'Exif'/'GPS' bytes found=false
