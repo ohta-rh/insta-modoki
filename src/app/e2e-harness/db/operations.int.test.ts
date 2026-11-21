@@ -3,7 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { useTestDb } from '../../../../tests/helpers/db';
 import { createPost, createLike } from '../../../../tests/helpers/posts';
 import { createUser } from '../../../../tests/helpers/users';
-import { follows, likes, media, posts, rateLimits, users } from '../../../shared/db/schema';
+import {
+  comments,
+  follows,
+  likes,
+  media,
+  posts,
+  rateLimits,
+  users,
+} from '../../../shared/db/schema';
 import { operationSchema, runOperation, type Operation } from './operations';
 
 const t = useTestDb();
@@ -200,5 +208,44 @@ describe('E2E ハーネスの操作（setUploadCount）', () => {
     await run({ op: 'setUploadCount', userId: user.id, count: 0 });
     rows = await t.db.select().from(rateLimits).where(eq(rateLimits.key, key));
     expect(rows).toEqual([]);
+  });
+});
+
+describe('E2E ハーネスの操作（コメント）', () => {
+  it('insertComments がコメントと返信を順に書き 投稿の commentCount を件数だけ増やす', async () => {
+    const author = await createUser(t.db);
+    const post = await createPost(t.db, author.id);
+    const parent = crypto.randomUUID();
+    const rows = [
+      { id: parent, parentId: null, body: '親', createdAt: Date.UTC(2026, 10, 1) },
+      { id: crypto.randomUUID(), parentId: parent, body: '返信', createdAt: Date.UTC(2026, 10, 2) },
+    ].map((r) => ({ ...r, postId: post.id, authorId: author.id }));
+    await run({ op: 'insertComments', comments: rows });
+    const saved = await t.db.select().from(comments).orderBy(comments.createdAt);
+    expect(saved.map((c) => [c.body, c.parentId])).toEqual([
+      ['親', null],
+      ['返信', parent],
+    ]);
+    expect(saved[0]!.createdAt.getTime()).toBe(Date.UTC(2026, 10, 1));
+    const [after] = await t.db.select().from(posts).where(eq(posts.id, post.id));
+    expect(after!.commentCount).toBe(2);
+  });
+
+  it('insertComments は失敗すると 行も commentCount も残さない', async () => {
+    const author = await createUser(t.db);
+    const post = await createPost(t.db, author.id);
+    const id = crypto.randomUUID();
+    const row = {
+      id,
+      postId: post.id,
+      authorId: author.id,
+      parentId: null,
+      body: 'a',
+      createdAt: 1,
+    };
+    await expect(run({ op: 'insertComments', comments: [row, row] })).rejects.toThrow();
+    expect(await t.db.select().from(comments)).toEqual([]);
+    const [after] = await t.db.select().from(posts).where(eq(posts.id, post.id));
+    expect(after!.commentCount).toBe(0);
   });
 });

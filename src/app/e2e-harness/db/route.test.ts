@@ -91,3 +91,20 @@ describe('/e2e-harness/db', () => {
     }
   });
 });
+
+describe('/e2e-harness/db（コメントの操作）', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('insertComments の壊れた入力のとき 422 にする', async () => {
+    enable();
+    const row = { id: 'a', postId: 'b', authorId: 'c', parentId: null, body: 'x', createdAt: 1 };
+    for (const body of [
+      { op: 'insertComments', comments: [] },
+      { op: 'insertComments', comments: Array.from({ length: 101 }, () => row) },
+      { op: 'insertComments', comments: [{ ...row, body: '' }] },
+      { op: 'insertComments', comments: [{ ...row, sql: 'DELETE FROM users' }] },
+    ]) {
+      expect((await post(body)).status, JSON.stringify(body).slice(0, 60)).toBe(422);
+    }
+  });
+});

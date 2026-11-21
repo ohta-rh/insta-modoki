@@ -1,7 +1,15 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { getDb, type DbEnv } from '../../../shared/db/client';
-import { follows, likes, media, posts, rateLimits, users } from '../../../shared/db/schema';
+import {
+  comments,
+  follows,
+  likes,
+  media,
+  posts,
+  rateLimits,
+  users,
+} from '../../../shared/db/schema';
 
 // The setup writes of the E2E suite, done by the Worker through its own D1 binding. A second
 // process writing to the same SQLite file made the app fail with SQLITE_BUSY (ADR-0041). Every
@@ -56,6 +64,23 @@ export const operationSchema = z.discriminatedUnion('op', [
     op: z.literal('setUploadCount'),
     userId: id,
     count: z.number().int().min(0).max(1000),
+  }),
+  // Comments and replies (#35): a parent is listed before its replies; the posts' counts follow.
+  z.strictObject({
+    op: z.literal('insertComments'),
+    comments: z
+      .array(
+        z.strictObject({
+          id,
+          postId: id,
+          authorId: id,
+          parentId: id.nullable(),
+          body: text(2200),
+          createdAt: ms,
+        }),
+      )
+      .min(1)
+      .max(100),
   }),
 ]);
 
@@ -177,6 +202,22 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
           db.insert(rateLimits).values({ key, windowStart, count: operation.count }),
         ]);
       }
+      return;
+    }
+    case 'insertComments': {
+      const perPost = new Map<string, number>();
+      for (const c of operation.comments) perPost.set(c.postId, (perPost.get(c.postId) ?? 0) + 1);
+      await db.batch([
+        ...operation.comments.map((c) =>
+          db.insert(comments).values({ ...c, createdAt: new Date(c.createdAt) }),
+        ),
+        ...[...perPost].map(([postId, n]) =>
+          db
+            .update(posts)
+            .set({ commentCount: sql`${posts.commentCount} + ${n}` })
+            .where(eq(posts.id, postId)),
+        ),
+      ] as unknown as Parameters<typeof db.batch>[0]);
       return;
     }
   }
