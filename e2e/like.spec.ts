@@ -1,10 +1,35 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { expect, test as base } from '@playwright/test';
-import { test as signedIn } from './support/auth';
-import { seedUser, userRow, withDb } from './support/db';
+import { expect, test as base, type BrowserContext } from '@playwright/test';
+import { signUpViaUi } from './support/auth';
+import { seedUser, withDb } from './support/db';
 import { waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
+
+/**
+ * `page` signed in. One user signs up per worker and every test of the worker reuses that session
+ * (a likes test only needs a session, and each sign-up is a burst of writes to the shared D1 file).
+ */
+const signedIn = base.extend<
+  object,
+  { session: Awaited<ReturnType<BrowserContext['storageState']>> }
+>({
+  session: [
+    async ({ browser }, use) => {
+      const context = await browser.newContext({
+        baseURL: `http://localhost:${process.env.PORT ?? 3100}`,
+      });
+      await signUpViaUi(await context.newPage());
+      const state = await context.storageState();
+      await context.close();
+      await use(state);
+    },
+    { scope: 'worker' },
+  ],
+  storageState: async ({ session }, use) => {
+    await use(session);
+  },
+});
 
 const heart = (page: Page) => page.getByRole('button', { name: 'いいね', exact: true });
 const countLink = (page: Page, n: number) =>
@@ -38,24 +63,33 @@ const storedLikeCount = (postId: string) =>
       (db.prepare('SELECT like_count AS n FROM posts WHERE id = ?').get(postId) as { n: number }).n,
   );
 
-/** Makes `n` users like the post, the i-th at a later time than the one before. */
+/**
+ * Makes `n` users like the post, the i-th at a later time than the one before. One transaction, so
+ * the app's own writes are held up for as short a time as possible.
+ */
 function seedLikers(postId: string, n: number): string[] {
   const names: string[] = [];
   const start = Date.now() - 3_600_000;
-  for (let i = 0; i < n; i += 1) {
-    const username = `e2e_f${Date.now().toString(36)}${i}${Math.random().toString(36).slice(2, 5)}`;
-    seedUser(username, `${username}@example.com`);
-    const id = userRow(username)!.id as string;
-    withDb((db) => {
+  const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  withDb((db) => {
+    db.exec('BEGIN');
+    for (let i = 0; i < n; i += 1) {
+      const username = `e2e_f${stamp}${i}`;
+      const id = crypto.randomUUID();
+      const now = Date.now();
+      db.prepare(
+        'INSERT INTO users (id, username, display_name, email, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+      ).run(id, username, username, `${username}@example.com`, now, now);
       db.prepare('INSERT INTO likes (user_id, post_id, created_at) VALUES (?, ?, ?)').run(
         id,
         postId,
         start + i * 1000,
       );
-    });
-    names.push(username);
-  }
-  withDb((db) => db.prepare('UPDATE posts SET like_count = ? WHERE id = ?').run(n, postId));
+      names.push(username);
+    }
+    db.prepare('UPDATE posts SET like_count = ? WHERE id = ?').run(n, postId);
+    db.exec('COMMIT');
+  });
   return names;
 }
 
@@ -312,6 +346,10 @@ signedIn(
   async ({ page }) => {
     const post = await strangerPost(page);
     seedLikers(post.id, 2);
+    let finished = 0;
+    page.on('requestfinished', (r) => {
+      if (r.method() === 'POST' && new URL(r.url()).pathname === `/p/${post.id}`) finished += 1;
+    });
     await page.goto(`/p/${post.id}`);
     await waitForHydration(page);
     await expect(page.locator('[aria-roledescription="carousel"] img').first()).toBeVisible();
@@ -342,7 +380,9 @@ signedIn(
     await expect(
       page.locator('[aria-live="polite"]').filter({ hasText: 'いいねを取り消しました' }),
     ).toHaveText('いいねを取り消しました（2 件）');
-    await expect.poll(() => likeRowCount(post.id)).toBe(2);
+    // Both requests (like, then unlike) have ended.
+    await expect.poll(() => finished).toBe(2);
+    expect(likeRowCount(post.id)).toBe(2);
 
     // Tab goes on to the count, which opens the dialog; the focus stays inside it.
     await focusByTab(page, countLink(page, 2));
