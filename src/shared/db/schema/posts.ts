@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { check, index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 import { users } from './users';
 
 export const posts = sqliteTable(
@@ -10,6 +10,8 @@ export const posts = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     caption: text('caption').notNull().default(''),
+    // Nullable because SQLite cannot add a NOT NULL column to a table that has rows (0004); the app always sets it.
+    clientRequestId: text('client_request_id'),
     likeCount: integer('like_count').notNull().default(0),
     commentCount: integer('comment_count').notNull().default(0),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
@@ -21,6 +23,7 @@ export const posts = sqliteTable(
       sql`${t.id} DESC`,
     ),
     index('posts_created_at_id_idx').on(sql`${t.createdAt} DESC`, sql`${t.id} DESC`),
+    uniqueIndex('posts_author_id_client_request_id_unique').on(t.authorId, t.clientRequestId),
     check('posts_caption_check', sql`length(${t.caption}) <= 2200`),
     check('posts_like_count_check', sql`${t.likeCount} >= 0`),
     check('posts_comment_count_check', sql`${t.commentCount} >= 0`),

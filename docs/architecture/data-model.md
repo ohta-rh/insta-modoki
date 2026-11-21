@@ -71,7 +71,7 @@ DB は D1（SQLite）。Drizzle ORM の列の定義は右の列（[overview.md](
 | id | text | PK |
 | author_id | text | NOT NULL、FK users ON DELETE CASCADE |
 | caption | text | NOT NULL、既定値 `''`、0〜2,200 字 |
-| client_request_id | text | NOT NULL。UNIQUE `(author_id, client_request_id)`（再送の判定。[conventions.md](conventions.md) の「書き込みの再送」） |
+| client_request_id | text | NULL 可（SQLite は既存の表に NOT NULL の列をそのまま足せないため。アプリは常に値を入れる）。UNIQUE `(author_id, client_request_id)`（再送の判定。NULL は重複を許す。[conventions.md](conventions.md) の「書き込みの再送」） |
 | like_count | integer | NOT NULL、既定値 0、0 以上 |
 | comment_count | integer | NOT NULL、既定値 0、0 以上 |
 | created_at | timestamp | NOT NULL |
