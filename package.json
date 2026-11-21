@@ -8,9 +8,9 @@
     "node": ">=26"
   },
   "scripts": {
-    "dev": "next dev --port ${PORT:-3000}",
+    "dev": "next dev --port ${PORT:-3100}",
     "build": "opennextjs-cloudflare build",
-    "start": "opennextjs-cloudflare preview --port ${PORT:-3000}",
+    "start": "opennextjs-cloudflare preview --port ${PORT:-3100}",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format:check": "prettier . --check",

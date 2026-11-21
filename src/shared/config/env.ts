@@ -6,7 +6,7 @@ const envSchema = z.object({
     .regex(/^\d+$/)
     .transform(Number)
     .pipe(z.number().int().min(1).max(65535))
-    .default(3000),
+    .default(3100),
   APP_ENV: z.enum(['local', 'test', 'production']).default('local'),
 });
 

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { loadEnv } from './env.ts';
 
 describe('loadEnv', () => {
-  it('未設定のとき、PORT は 3000、APP_ENV は local になる', () => {
-    expect(loadEnv({})).toEqual({ port: 3000, appEnv: 'local' });
+  it('未設定のとき、PORT は 3100、APP_ENV は local になる', () => {
+    expect(loadEnv({})).toEqual({ port: 3100, appEnv: 'local' });
   });
 
   it('PORT が 65535 のとき通る', () => {

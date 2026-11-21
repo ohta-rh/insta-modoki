@@ -29,7 +29,7 @@ status: stable
 - 全部流す: `node scripts/verify.mjs`
 - 手順の一覧: `node scripts/verify.mjs --list`
 - 1 手順だけ流す: `node scripts/verify.mjs --only unit`
-- スロットのポートを渡す: `PORT=3001 node scripts/verify.mjs`（E2E の `webServer` と `start` がこのポートを使う。未設定は 3000。スロット N は `3000 + N`）
+- スロットのポートを渡す: `PORT=3101 node scripts/verify.mjs`（E2E の `webServer` と `start` がこのポートを使う。未設定は 3100。スロット N は `3100 + N`）
 
 `e2e` は `build` の成果物を使うので、単独で流す前に `pnpm build` が要る。Chromium は初回に `pnpm exec playwright install chromium` で入れる。
 
