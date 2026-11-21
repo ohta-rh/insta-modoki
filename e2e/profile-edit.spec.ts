@@ -266,3 +266,68 @@ test('キーボードだけで編集でき axe の重大な違反が無い', asy
   expect(row.bio).toBe('キーボードで書いた');
   expect(row.avatar_key).not.toBeNull();
 });
+
+/** Opens /accounts/edit with every script chunk held back, so the page stays un-hydrated. */
+async function openWithoutJs(page: Page): Promise<() => void> {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  await page.route('**/_next/static/chunks/**', async (route) => {
+    await gate;
+    await route.continue();
+  });
+  await page.goto('/accounts/edit', { waitUntil: 'commit' });
+  await nameField(page).waitFor();
+  return release;
+}
+
+/** Presses 保存 with the keyboard: the held-back stylesheet stops the page painting, so a click would wait for a frame. */
+async function pressSave(page: Page) {
+  await save(page).focus();
+  await page.keyboard.press('Enter');
+}
+
+test('JS が読み込まれる前でも 保存を押すと 保存されてプロフィールに移る', async ({ page }) => {
+  const user = await signUpViaUi(page);
+  const release = await openWithoutJs(page);
+  try {
+    await nameField(page).fill('JS なしの名前');
+    await bioField(page).fill('JS なしの自己紹介');
+    await pressSave(page);
+
+    await expect(page).toHaveURL(new RegExp(`/${user.username}$`));
+    await expect(page.getByRole('heading', { level: 1, name: 'JS なしの名前' })).toBeVisible();
+    await expect(page.getByText('JS なしの自己紹介')).toBeVisible();
+    const row = userRow(user.username)!;
+    expect(row.display_name).toBe('JS なしの名前');
+    expect(row.bio).toBe('JS なしの自己紹介');
+  } finally {
+    release();
+  }
+});
+
+test('JS が読み込まれる前でも 不正な値は欄の下に理由が出て 入力が残る', async ({ page }) => {
+  const user = await signUpViaUi(page);
+  const release = await openWithoutJs(page);
+  try {
+    await nameField(page).fill('   ');
+    await bioField(page).fill('あ'.repeat(151));
+    await pressSave(page);
+
+    await expect(alerts(page).filter({ hasText: NAME_MESSAGE })).toHaveCount(1);
+    await expect(page).toHaveURL(/\/accounts\/edit$/);
+    await expect(nameField(page)).toHaveValue('   ');
+    await expect(bioField(page)).toHaveValue('あ'.repeat(151));
+    const row = userRow(user.username)!;
+    expect(row.display_name).toBe('E2E 利用者');
+    expect(row.bio).toBe('');
+
+    // A bio over the limit alone is refused with its own message and the name is kept.
+    await nameField(page).fill('名前だけ');
+    await pressSave(page);
+    await expect(alerts(page).filter({ hasText: BIO_MESSAGE })).toHaveCount(1);
+    await expect(nameField(page)).toHaveValue('名前だけ');
+    expect(userRow(user.username)!.display_name).toBe('E2E 利用者');
+  } finally {
+    release();
+  }
+});

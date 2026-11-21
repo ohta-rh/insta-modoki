@@ -1,6 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { AppError, toErrorResponse, type ErrorBody } from '../../../shared/errors';
 import type { Page, PostThumb, ProfileView } from '../model/schema';
 import { listProfilePosts } from './list-profile-posts';
@@ -34,4 +35,46 @@ export async function updateProfileAction(input: unknown): Promise<UpdateProfile
     }
     return { ok: false, error: toErrorResponse(error).body };
   }
+}
+
+export type EditFormState = {
+  message: string;
+  fieldErrors: Record<string, string[]>;
+  /** What was submitted, so the screen shows it again next to the message. */
+  values: { displayName: string; bio: string };
+} | null;
+
+const asText = (v: FormDataEntryValue | null): string => (typeof v === 'string' ? v : '');
+
+/**
+ * The edit form's own submit, so 保存 works before any script has loaded: the browser posts the
+ * form, a good save redirects to the profile, a refusal re-renders the form with the messages
+ * and what was typed. The JS-enhanced path (new icon) calls `updateProfileAction` instead.
+ */
+export async function updateProfileFormAction(
+  _previous: EditFormState,
+  formData: FormData,
+): Promise<EditFormState> {
+  const displayName = asText(formData.get('displayName'));
+  const bio = asText(formData.get('bio'));
+  const avatarKey = asText(formData.get('avatarKey'));
+  let username: string;
+  try {
+    ({ username } = await updateProfile(
+      { displayName, bio, avatarKey: avatarKey === '' ? undefined : avatarKey },
+      { headers: await headers() },
+    ));
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'UNAUTHENTICATED') redirect('/accounts/login');
+    if (!(error instanceof AppError)) {
+      console.error('updateProfile failed', error instanceof Error ? error.name : 'unknown');
+    }
+    const body = toErrorResponse(error).body;
+    return {
+      message: body.message,
+      fieldErrors: body.fieldErrors ?? {},
+      values: { displayName, bio },
+    };
+  }
+  redirect(`/${username}`);
 }
