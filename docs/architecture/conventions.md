@@ -117,6 +117,10 @@ PBI の「検証」は、このファイル名と名前で書く。
 
 レート制限は固定の窓で数え、`src/shared/security/rate-limit.ts` の `consume(key, limit, windowSec, cost = 1, deps?)` で行い（1 回の upsert。`deps` は `{ db, now }` でテストが差し替える。窓の始まりは `now` を `windowSec` で切り捨てたミリ秒）、`rate_limits` テーブルに記録する（[data-model.md](data-model.md)）。
 
+## D1 の 1 つの文の上限
+
+D1 は 1 つの SQL の文に渡せるバインド変数が 100 個まで。複数行の INSERT（`values([...])`）は、列の数 × 行の数が 100 を超えないように分けるか、1 行 1 文にして同じ `db.batch` に入れる。超えると `D1_ERROR: too many SQL variables` で失敗する（#34 の E2E の準備で、7 列 × 50 行の INSERT が 500 になった）。
+
 ## 書き込みの再送
 
 `createPost` と `addComment` は `clientRequestId`（UUID）を受け取り、同じ利用者の同じ値の 2 回目は 1 回目と同じ結果を返す（新しい行を作らない）。いいねとフォローは「状態にする」処理なので、何度呼んでも同じ結果になる。
