@@ -26,7 +26,10 @@ status: stable
 - 変換サービスは使わない。ブラウザが `canvas.toBlob(cb, "image/webp", q)` で `w320`・`w640`・`w1080`（拡大はしない）と、長辺 2,048 px の原本の WebP を作る。`blob.type` が `image/webp` でなければ投稿を止める。
 - `requestUploadUrls` は、Worker が aws4fetch で署名付き PUT の URL（期限 5 分）を発行する。ブラウザが R2 に直接 PUT する。R2 のバケットには、ブラウザの PUT を許す CORS を設定する。
 - 署名は `{ aws: { signQuery: true, allHeaders: true } }` で `content-type: image/webp` と、宣言した `content-length`（`variantSizes` と原本の大きさ）を含める。ブラウザは同じ `Content-Type` で送る。違う `Content-Type`（例 `text/html`）や違う長さの PUT は 403 で止まる（試作: MinIO と Garage で確認。R2 は Content-Type だけ文書で確認し、Content-Length を縛れるかは未確認なので、これには頼らない）。
-- 署名では中身が WebP かを縛れないので、書き込みの後にサーバーが確かめる。`createPost` と `updateProfile`（アバター）は、参照する全てのオブジェクトを `HEAD` し、`Content-Type` が `image/webp`、実際の大きさが宣言した大きさ以下で、宣言した大きさが [conventions.md](../architecture/conventions.md) の上限（1 枚 10MB）以下でなければ `VALIDATION` で拒否する。拒否したキーは消す。
+- 署名では中身が WebP かを縛れないので、書き込みの後にサーバーが確かめる。`createPost` と `updateProfile`（アバター）は、参照する全てのオブジェクトを `HEAD` し、`Content-Type` が `image/webp`、実際の大きさが宣言した大きさ以下で、宣言した大きさが [conventions.md](../architecture/conventions.md) の上限（1 枚 10MB）以下でなければ `VALIDATION` で拒否する。
+- 所有の検査（`HEAD` の前に行う）。`createPost` の `media[].key` と `updateProfile` の `avatarKey` は、どれも次の形で、`<userId>` がセッションの利用者の `id` と一致しなければならない。`^media/<セッションの userId>/<UUIDv7>(/(orig|w320|w640|w1080)\.webp)?$`（`media.storage_key` の基本のキーの形。基本のキーを受け取り、4 つの派生は `requestUploadUrls` が決めた名前で補う）。さらに、そのキーが他の `media` の行や他の `users.avatar_key` に既に参照されていてはならない。どれかに当てはまらなければ、何も消さずに `VALIDATION` を返す。`HEAD` の検査に落ちたときに消してよいのは、この所有の検査を通ったキーだけで、他の利用者のオブジェクトは決して消さない。
+- `pending_uploads` のような発行の記録のテーブルは置かない。キーの接頭辞（利用者の `id`）と「まだ参照されていない」ことの検査で、他人のキーの参照と削除を止められ、UUIDv7 のキーは推測しにくい。記録を足すと書き込みが増え、無料枠の書き込み（1 日 100,000 行）を使う。
+- `HEAD` の検査は完全性の保証ではない。検査の後も、5 分の署名付き PUT の URL が有効なら、同じキーに上書きできる。影響は、署名した `Content-Type`、アプリと分けた配信のオリジン、`nosniff` で抑える。
 - どの行からも参照されないままのオブジェクト（投稿せずに離脱した、拒否した）は、`storage_orphans` を使う M3 の掃除のジョブが `media/<userId>/` の下で作成から 24 時間を過ぎ、`media`・`users.avatar_key` に無いものを消す（[conventions.md](../architecture/conventions.md) の「削除」）。
 - 配信は、バケットの公開の URL から `storage_key` を足した URL で行う。署名付き URL は書き込みにだけ使う。配信のオリジンはアプリのオリジンと別にする（開発は `r2.dev` かローカルの Garage の別ポート、本番は専用のメディア用ホスト名。アプリと別の登録可能なドメインが望ましく、少なくとも別のオリジンにする）。Cookie とアプリの権限を同じオリジンで共有させない。
 - 配信の応答に `X-Content-Type-Options: nosniff` を付ける（本番は R2 の独自ドメインに対する Cloudflare のルールで付ける。これは M2 で設定して確かめる。ローカルの Garage には付けられないので、アプリの側では `Content-Type` が `image/webp` のオブジェクトだけを参照する）。
@@ -47,6 +50,6 @@ status: stable
 ## 結果
 
 - R2 の認証情報の作成と CORS・配信用のホスト名・`nosniff` のルールの設定は、ユーザーの操作が要る M2 で行う。
-- [routes.md](../architecture/routes.md) の `requestUploadUrls` は、署名に型と大きさを含める。`createPost` と `updateProfile` は `HEAD` の検査の `VALIDATION` を返す。
+- [routes.md](../architecture/routes.md) の `requestUploadUrls` は、署名に型と大きさを含める。`createPost` と `updateProfile` は所有の検査と `HEAD` の検査の `VALIDATION` を返す。
 - #20 は Garage のサービスと、スロットごとのバケット `insta-s<N>` の作成を足す。
 - アプリのテストは、期限切れの HTTP のコードに依存させない。

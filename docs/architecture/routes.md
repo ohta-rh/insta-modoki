@@ -46,9 +46,9 @@ status: stable
 | `logOut` | auth | – | セッションを消す | – |
 | `getProfile` | profile | username | `ProfileView`（[conventions.md](conventions.md)） | NOT_FOUND |
 | `listProfilePosts` | profile | username, cursor? | `Page<PostThumb>`（12 件） | NOT_FOUND |
-| `updateProfile` | profile | displayName, bio, avatarKey? | `ProfileView`（`avatarKey` があれば `HEAD` で `image/webp` と大きさを確かめる） | UNAUTHENTICATED、VALIDATION |
+| `updateProfile` | profile | displayName, bio, avatarKey? | `ProfileView`（`avatarKey` があれば、`createPost` と同じ所有の検査の後に `HEAD` で `image/webp` と大きさを確かめる） | UNAUTHENTICATED、VALIDATION |
 | `requestUploadUrls` | media-upload | files: `{ contentType, size, width, height, variantSizes: { w320, w640, w1080 } }[]`（1〜10。size は縮小後の WebP のバイト数） | `{ uploads: { key, putUrls: { orig, w320, w640, w1080 } }[] }`（有効期限 5 分。署名に `Content-Type: image/webp` と宣言した長さを含める） | UNAUTHENTICATED、VALIDATION、PAYLOAD_TOO_LARGE、RATE_LIMITED |
-| `createPost` | post-create | caption, media: `{ key, width, height, altText, thumbhash }[]`（1〜10）, clientRequestId | `{ postId }`（参照する全てのオブジェクトを `HEAD` し、`image/webp` でない・宣言より大きいものは拒否） | UNAUTHENTICATED、VALIDATION、RATE_LIMITED |
+| `createPost` | post-create | caption, media: `{ key, width, height, altText, thumbhash }[]`（1〜10）, clientRequestId | `{ postId }`（`media[].key` は `^media/<セッションの userId>/<UUIDv7>$` の形で、他の行に参照済みでないこと。違えば何も消さずに VALIDATION。通ったキーを `HEAD` し、`image/webp` でない・宣言より大きいものは拒否して消す） | UNAUTHENTICATED、VALIDATION、RATE_LIMITED |
 | `getPost` | post | postId | `PostView` | NOT_FOUND |
 | `deletePost` | post | postId | `{ deleted: true }`（既に無い投稿には、ログインしていれば誰にでも同じ結果を返す。持ち主を確かめる対象が無いため） | UNAUTHENTICATED、FORBIDDEN、NOT_FOUND |
 | `likePost` / `unlikePost` | like | postId | `{ liked, likeCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、NOT_FOUND |

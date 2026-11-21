@@ -48,6 +48,7 @@ flowchart LR
 | `S3_ENDPOINT` | S3 互換のエンドポイント（R2 は `https://<account>.r2.cloudflarestorage.com`） | `http://localhost:3900` |
 | `S3_BUCKET` | バケット名 | `insta-s1` |
 | `S3_ACCESS_KEY` / `S3_SECRET_KEY` | 署名付き URL を作る認証情報 | 実行時に生成。コミットしない |
+| `AUTH_PEPPER` | パスワードのハッシュに掛ける HMAC の鍵（32 バイトの乱数。シークレット）。ローカルの値は #20 のスロットのスクリプトが `.dev.vars` に生成し、コミットしない。ローテーションはハッシュの形式の版を足して行う（[ADR-0020](../adr/0020-better-auth-with-pbkdf2.md)） | 実行時に生成 |
 | `S3_PUBLIC_BASE_URL` | 画像を配信する公開の URL（`storage_key` を足して使う） | `http://localhost:3900/insta-s1` |
 | `PORT` | `dev` と `start` が使うポート（既定 3000、スロット N は `3000 + N`） | `3001` |
 
