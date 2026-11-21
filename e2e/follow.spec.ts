@@ -1,37 +1,10 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { expect, test as base, type BrowserContext } from '@playwright/test';
-import { signUpViaUi, type NewUser } from './support/auth';
+import { expect, test as base } from '@playwright/test';
+import { signedIn } from './support/auth';
 import { seedFollow, seedFollowers, seedUser, userRow, withDb } from './support/db';
 import { holdScripts, waitForHydration } from './support/hydration';
 import { tabTo } from './support/keys';
-
-/**
- * `page` signed in. One user signs up per worker and every test of the worker reuses that session
- * (each sign-up is a burst of writes to the shared D1 file). `me` is that user.
- */
-const signedIn = base.extend<
-  object,
-  {
-    account: { state: Awaited<ReturnType<BrowserContext['storageState']>>; me: NewUser };
-  }
->({
-  account: [
-    async ({ browser }, use) => {
-      const context = await browser.newContext({
-        baseURL: `http://localhost:${process.env.PORT ?? 3100}`,
-      });
-      const me = await signUpViaUi(await context.newPage());
-      const state = await context.storageState();
-      await context.close();
-      await use({ state, me });
-    },
-    { scope: 'worker' },
-  ],
-  storageState: async ({ account }, use) => {
-    await use(account.state);
-  },
-});
 
 const followButton = (page: Page) =>
   page.getByRole('button', { name: /^(フォローする|フォロー中)$/ });

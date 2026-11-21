@@ -1,37 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { expect, test as base, type BrowserContext } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { expect, test as base } from '@playwright/test';
+import { signedIn } from './support/auth';
 import { seedUser, withDb } from './support/db';
 import { harness } from './support/harness';
 import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
 import { tabTo } from './support/keys';
-
-/**
- * `page` signed in. One user signs up per worker and every test of the worker reuses that session
- * (a likes test only needs a session, and each sign-up is a burst of writes to the shared D1 file).
- */
-const signedIn = base.extend<
-  object,
-  { session: Awaited<ReturnType<BrowserContext['storageState']>> }
->({
-  session: [
-    async ({ browser }, use) => {
-      const context = await browser.newContext({
-        baseURL: `http://localhost:${process.env.PORT ?? 3100}`,
-      });
-      await signUpViaUi(await context.newPage());
-      const state = await context.storageState();
-      await context.close();
-      await use(state);
-    },
-    { scope: 'worker' },
-  ],
-  storageState: async ({ session }, use) => {
-    await use(session);
-  },
-});
 
 const heart = (page: Page) => page.getByRole('button', { name: 'いいね', exact: true });
 const countLink = (page: Page, n: number) =>

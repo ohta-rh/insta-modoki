@@ -1,6 +1,9 @@
 import { randomInt } from 'node:crypto';
-import { test as base, expect, type Page } from '@playwright/test';
+import { test as base, expect, type BrowserContext, type Page } from '@playwright/test';
 import { rateRows } from './db';
+
+/** The origin the app under test listens on (`PORT`, 3100 by default). */
+export const baseURL = () => `http://localhost:${process.env.PORT ?? 3100}`;
 
 export type NewUser = { username: string; email: string; displayName: string; password: string };
 
@@ -57,6 +60,30 @@ export const test = base.extend({
   page: async ({ page }, use) => {
     await signUpViaUi(page);
     await use(page);
+  },
+});
+/**
+ * `page` signed in. One user signs up per worker and every test of the worker reuses that session
+ * (each sign-up is a burst of writes to the shared D1 file). `account.me` is that user.
+ */
+export const signedIn = base.extend<
+  object,
+  {
+    account: { state: Awaited<ReturnType<BrowserContext['storageState']>>; me: NewUser };
+  }
+>({
+  account: [
+    async ({ browser }, use) => {
+      const context = await browser.newContext({ baseURL: baseURL() });
+      const me = await signUpViaUi(await context.newPage());
+      const state = await context.storageState();
+      await context.close();
+      await use({ state, me });
+    },
+    { scope: 'worker' },
+  ],
+  storageState: async ({ account }, use) => {
+    await use(account.state);
   },
 });
 export { expect };

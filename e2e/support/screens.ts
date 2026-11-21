@@ -1,5 +1,5 @@
 import { test as base, type Browser, type BrowserContext, type Page } from '@playwright/test';
-import { signUpViaUi, type NewUser } from './auth';
+import { baseURL, signUpViaUi, type NewUser } from './auth';
 import { seedFollow, seedUser, userRow } from './db';
 import { waitForHydration } from './hydration';
 import { insertPost, putPostFiles } from './posts';
@@ -36,8 +36,6 @@ export const SCREENS: Screen[] = [
   { name: '投稿詳細', path: (w) => `/p/${w.detailPostId}`, loggedIn: true },
   { name: 'フォロワーの一覧', path: (w) => `/${w.author}/followers`, loggedIn: true },
 ];
-
-export const baseURL = () => `http://localhost:${process.env.PORT ?? 3100}`;
 
 /** Signs a viewer up and gives an author they follow three posts with real photo files. */
 async function createWorld(browser: Browser): Promise<World> {
