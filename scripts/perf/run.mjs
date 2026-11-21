@@ -37,6 +37,7 @@ export async function main() {
       chromiumVersion: lighthouse.chromiumVersion,
       lighthouseRuns: lighthouse.runs,
       inpRuns: inp.runs,
+      feedApiSamples: feed.samples,
     });
     console.log(table(measurements));
     const violations = evaluate(measurements);
