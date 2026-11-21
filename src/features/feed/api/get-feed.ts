@@ -1,8 +1,8 @@
-import { and, desc, eq, inArray, lt, or } from 'drizzle-orm';
+import { and, desc, eq, inArray, or } from 'drizzle-orm';
 import { requireUser } from '../../auth';
 import type { AuthEnv } from '../../auth/api/auth-env';
 import { loadPostViews, type PostView } from '../../post';
-import { encodeCursor } from '../../../shared/db/cursor';
+import { keysetBefore, toPage } from '../../../shared/db/cursor';
 import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { follows, posts } from '../../../shared/db/schema';
@@ -39,22 +39,12 @@ export async function getFeed(input: unknown, deps: GetFeedDeps): Promise<Page<P
               .where(eq(follows.followerId, viewer.id)),
           ),
         ),
-        cursor
-          ? or(
-              lt(posts.createdAt, cursor.createdAt),
-              and(eq(posts.createdAt, cursor.createdAt), lt(posts.id, cursor.id)),
-            )
-          : undefined,
+        keysetBefore(posts.createdAt, posts.id, cursor),
       ),
     )
     .orderBy(desc(posts.createdAt), desc(posts.id))
     .limit(FEED_PAGE_SIZE + 1);
-  const pageRows = rows.slice(0, FEED_PAGE_SIZE);
-  const last = pageRows[pageRows.length - 1];
-  const nextCursor =
-    rows.length > FEED_PAGE_SIZE && last
-      ? encodeCursor({ createdAt: last.createdAt, id: last.id })
-      : null;
+  const { items: pageRows, nextCursor } = toPage(rows, FEED_PAGE_SIZE);
   const items = await loadPostViews(
     db,
     env,

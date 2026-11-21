@@ -1,6 +1,6 @@
-import { and, desc, eq, lt, or } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import type { AuthEnv } from '../../auth/api/auth-env';
-import { decodeCursor, encodeCursor } from '../../../shared/db/cursor';
+import { keysetBefore, readCursor, toPage } from '../../../shared/db/cursor';
 import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { likes, posts, users } from '../../../shared/db/schema';
@@ -22,7 +22,7 @@ export async function listLikers(input: unknown, deps: ListLikersDeps = {}): Pro
   const parsed = listLikersInput.safeParse(input);
   if (!parsed.success) throw new AppError('VALIDATION');
   const { postId, cursor } = parsed.data;
-  const after = cursor === undefined ? null : decodeCursor(cursor);
+  const after = readCursor(cursor);
   if (!isPostId(postId)) throw new AppError('NOT_FOUND');
 
   const db = getDb(env);
@@ -38,33 +38,19 @@ export async function listLikers(input: unknown, deps: ListLikersDeps = {}): Pro
       })
       .from(likes)
       .innerJoin(users, eq(users.id, likes.userId))
-      .where(
-        and(
-          eq(likes.postId, postId),
-          after
-            ? or(
-                lt(likes.createdAt, after.createdAt),
-                and(eq(likes.createdAt, after.createdAt), lt(likes.userId, after.id)),
-              )
-            : undefined,
-        ),
-      )
+      .where(and(eq(likes.postId, postId), keysetBefore(likes.createdAt, likes.userId, after)))
       .orderBy(desc(likes.createdAt), desc(likes.userId))
       .limit(LIKERS_PAGE_SIZE + 1),
   ]);
   if (postRows.length === 0) throw new AppError('NOT_FOUND');
 
-  const page = rows.slice(0, LIKERS_PAGE_SIZE);
-  const last = page[page.length - 1];
+  const page = toPage(rows, LIKERS_PAGE_SIZE, (r) => ({ createdAt: r.createdAt, id: r.userId }));
   return {
-    items: page.map((r) => ({
+    items: page.items.map((r) => ({
       username: r.username,
       displayName: r.displayName,
       avatarUrl: r.avatarKey ? publicUrl(env, `${r.avatarKey}/w320.webp`) : null,
     })),
-    nextCursor:
-      rows.length > LIKERS_PAGE_SIZE && last
-        ? encodeCursor({ createdAt: last.createdAt, id: last.userId })
-        : null,
+    nextCursor: page.nextCursor,
   };
 }

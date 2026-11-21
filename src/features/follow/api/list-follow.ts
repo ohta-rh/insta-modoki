@@ -1,6 +1,6 @@
-import { and, desc, eq, lt, or } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import type { AuthEnv } from '../../auth/api/auth-env';
-import { decodeCursor, encodeCursor } from '../../../shared/db/cursor';
+import { keysetBefore, readCursor, toPage } from '../../../shared/db/cursor';
 import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { follows, users } from '../../../shared/db/schema';
@@ -28,7 +28,7 @@ export async function listFollow(
   const env = deps.env ?? (await getRequestEnv<AuthEnv & StorageEnv>());
   const parsed = listFollowInput.safeParse(input);
   if (!parsed.success) throw new AppError('VALIDATION');
-  const after = parsed.data.cursor === undefined ? null : decodeCursor(parsed.data.cursor);
+  const after = readCursor(parsed.data.cursor);
   const username = lookupUsername(parsed.data.username);
   if (username === null) throw new AppError('NOT_FOUND');
 
@@ -52,31 +52,17 @@ export async function listFollow(
     })
     .from(follows)
     .innerJoin(users, eq(users.id, listed))
-    .where(
-      and(
-        eq(owner, ownerRow.id),
-        after
-          ? or(
-              lt(follows.createdAt, after.createdAt),
-              and(eq(follows.createdAt, after.createdAt), lt(listed, after.id)),
-            )
-          : undefined,
-      ),
-    )
+    .where(and(eq(owner, ownerRow.id), keysetBefore(follows.createdAt, listed, after)))
     .orderBy(desc(follows.createdAt), desc(listed))
     .limit(FOLLOW_PAGE_SIZE + 1);
 
-  const page = rows.slice(0, FOLLOW_PAGE_SIZE);
-  const last = page[page.length - 1];
+  const page = toPage(rows, FOLLOW_PAGE_SIZE);
   return {
-    items: page.map((r) => ({
+    items: page.items.map((r) => ({
       username: r.username,
       displayName: r.displayName,
       avatarUrl: r.avatarKey ? publicUrl(env, `${r.avatarKey}/w320.webp`) : null,
     })),
-    nextCursor:
-      rows.length > FOLLOW_PAGE_SIZE && last
-        ? encodeCursor({ createdAt: last.createdAt, id: last.id })
-        : null,
+    nextCursor: page.nextCursor,
   };
 }
