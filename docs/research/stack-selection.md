@@ -77,7 +77,7 @@ status: stable
 
 | 候補 | 要点 | 一次情報 |
 |---|---|---|
-| ブラウザで作る 3 幅の WebP と、署名付き PUT で R2 に直接置く | `canvas.toBlob(cb, "image/webp", q)` で作る。非対応のブラウザは PNG になるので `blob.type` を確かめる。R2 は GET・HEAD・PUT・DELETE の署名付き URL に対応し（POST は不可）、期限は 1 秒から 7 日。ブラウザからの PUT には CORS の設定が要り、署名付き URL は独自ドメインでは使えない。Workers の R2 バインディングは署名付き URL を作れないので、署名には `aws4fetch`（または AWS SDK）を使う | https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob 、https://developers.cloudflare.com/r2/api/s3/presigned-urls/ 確認日: 2026-11-21 |
+| ブラウザで作る 3 幅の WebP と、署名付き PUT で R2 に直接置く | `canvas.toBlob(cb, "image/webp", q)` で作る。非対応のブラウザは PNG になるので `blob.type` を確かめる。R2 は GET・HEAD・PUT・DELETE の署名付き URL に対応し（POST は不可）、期限は 1 秒から 7 日。ブラウザからの PUT には CORS の設定が要り、署名付き URL は独自ドメインでは使えない。Content-Type は署名に含められ（aws4fetch は `allHeaders: true` が要る）、違う値の PUT は `403 / SignatureDoesNotMatch` になる。Content-Length を縛る記述は無い。Workers の R2 バインディングは署名付き URL を作れないので、署名には `aws4fetch`（または AWS SDK）を使う | https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob 、https://developers.cloudflare.com/r2/api/s3/presigned-urls/ 確認日: 2026-11-21 |
 | Cloudflare の変換サービス（Images transformations） | 無料のプランで 1 か月に一意の変換 5,000 件まで。超えた新しい変換は `9422` のエラーになり、課金は無い。使うにはゾーンで有効にする。同じゾーンの画像が既定の元になる | https://developers.cloudflare.com/images/pricing/ 、https://developers.cloudflare.com/images/transform-images/ 確認日: 2026-11-21 |
 
 ## ローカルの S3 互換ストレージ
@@ -217,6 +217,29 @@ PUT after 6 min => HTTP 403
 PUT with fresh URL (control) => HTTP 200
 ```
 
+### Content-Type と長さを署名に含める（レビューの指摘への対応）
+
+最初の署名は `X-Amz-SignedHeaders=host` だけで、型も大きさも縛れなかった（公開のバケットから HTML や SVG を配信できてしまう）。aws4fetch は `content-type` と `content-length` を既定で署名から外すので、`{ aws: { signQuery: true, allHeaders: true } }` で署名に含め、`content-type: image/webp` と宣言した `content-length` を付けて署名した。署名のヘッダーは `content-length;content-type;host` になり、署名と違う PUT は 403 で止まった（MinIO と Garage で同じ結果。R2 はローカルで試せず、Content-Type を縛れることは文書で確認、Content-Length は文書に記述が無い）。
+
+```
+== MinIO (signed: content-type=image/webp, content-length=70)
+X-Amz-SignedHeaders=content-length%3Bcontent-type%3Bhost
+PUT Content-Type: image/webp, 1x1.png (control)         => HTTP 200
+PUT Content-Type: text/html, evil.html                   => HTTP 403
+PUT Content-Type: image/webp, different length body       => HTTP 403
+content-type signed only, text/html sent                  => HTTP 403
+content-type signed only, image/webp, large body          => HTTP 200
+== Garage (signed: content-type=image/webp, content-length=70)
+X-Amz-SignedHeaders=content-length%3Bcontent-type%3Bhost
+PUT Content-Type: image/webp, 1x1.png (control)         => HTTP 200
+PUT Content-Type: text/html, evil.html                   => HTTP 403
+PUT Content-Type: image/webp, different length body       => HTTP 403
+content-type signed only, text/html sent                  => HTTP 403
+content-type signed only, image/webp, large body          => HTTP 200
+```
+
+Content-Type だけを署名した URL は、大きな本体を `image/webp` として送ると通る。大きさは、署名に含められる場合も、R2 で縛れるかを確かめていないので、サーバーが `HEAD` で確かめる（ADR-0021）。なお、署名した型は `image/webp` という宣言で、中身が WebP かは縛れない。
+
 MinIO はアーカイブされているので（比較の表）、compose に入れる候補の Garage v2.5.0（コンテナ `insta-spike-garage`、`s3_region = "auto"`）でも同じ署名で確かめた。
 
 ```
@@ -287,7 +310,7 @@ in-memory D1 rows: 1
 
 ## 後片付け
 
-試作のコンテナ `insta-spike-s3` と `insta-spike-garage` は確認の後に削除した。試作のコードと `.dev.vars` はリポジトリに入れていない。
+試作のコンテナ `insta-spike-s3` と `insta-spike-garage` は、確認の後（Content-Type の確認の後にも）に削除した。試作のコードと `.dev.vars` はリポジトリに入れていない。
 
 # 決定の一覧
 

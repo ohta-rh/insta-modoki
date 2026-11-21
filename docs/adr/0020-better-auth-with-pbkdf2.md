@@ -24,18 +24,23 @@ Workers の無料のプランは 1 リクエストの CPU 時間が 10 ms。Bett
 - パスワードのハッシュは、`emailAndPassword.password.hash` と `verify` で Web Crypto の PBKDF2-SHA256、反復 100,000 回、16 バイトのソルトに差し替える。形式は `pbkdf2-sha256$<反復>$<ソルト>$<ハッシュ>`（base64）。既定の scrypt は使わない。
 - Better Auth のテーブルは `users`・`sessions`・`accounts`・`verifications` の名前で D1 に置き、`users.id` を参照させる（[data-model.md](../architecture/data-model.md)）。`username` などの列は `additionalFields` で足す。
 - スクリプトからのユーザーの登録は `auth.api.signUpEmail({ body: { name, email, password } })`。
+- ハッシュには秘密の pepper を足す。OWASP の Password Storage Cheat Sheet に従い、PBKDF2 の出力をさらに `HMAC-SHA256(鍵 = 環境変数 AUTH_PEPPER, データ = PBKDF2 の出力)` にして保存する（ハッシュの形式は `pbkdf2-sha256-hmac$<反復>$<ソルト>$<ハッシュ>`）。pepper は DB に置かず、DB だけが漏れた場合にオフラインの総当たりを止める補完の対策にする。`AUTH_PEPPER` を変えると既存のパスワードが検証できなくなるので、ローテーションは形式の版を足して行う。pepper の動作は試作では試していない。
+- 反復の 100,000 回は、OWASP の推奨（PBKDF2-HMAC-SHA256 で 600,000 回）からの外れを承知で受け入れる。理由は無料枠の CPU 時間 10 ms。M2 の実測で CPU 時間に余裕があれば、反復を増やす（ハッシュに反復が入っているので古いものも検証できる）。この規則は、反復を上げられるときに上げる、と読む。
+- Better Auth の組み込みのレート制限（メモリ上）は無効にする。Workers では isolate ごとにメモリが分かれて効かないため。ログインとサインアップの制限は、[conventions.md](../architecture/conventions.md) の「上限とレート制限」の `consume()`（D1 の `rate_limits` テーブル）で、認証のルートハンドラーの前に行う。
 - Better Auth の POST は `Origin` の検査があるので、`baseURL` を環境変数 `BETTER_AUTH_URL` で渡す。
 
 ## 検討した選択肢
 
 | 選択肢 | 長所 | 短所 |
 |---|---|---|
-| Better Auth + PBKDF2 に差し替え（採用） | 試作で動いた。DB のセッション・メールとパスワード・スクリプトからの登録の API がある。ハッシュを差し替えられる | 反復が 100,000 回で、一般に推奨される回数より少ない（試作で確かめた値。10 ms に収める必要から選んだ）。サインアップとログインのリクエスト全体はローカルで約 11 ms と 10 ms に届く |
+| Better Auth + PBKDF2 に差し替え + pepper（採用） | 試作で動いた。DB のセッション・メールとパスワード・スクリプトからの登録の API がある。ハッシュを差し替えられる。pepper で DB だけの漏洩に備える | 反復が 100,000 回で、OWASP の推奨 600,000 回より少ない（承知の外れ）。サインアップとログインのリクエスト全体はローカルで約 11 ms と 10 ms に届く |
 | Better Auth の既定の scrypt | 既定のまま使える | 無料枠の CPU 時間 10 ms を超える（37 ms 以上） |
 | Auth.js | 広く使われている | Credentials プロバイダーは既定でデータを DB に持たず、公式はパスワードより OAuth・メールのリンク・Passkey を勧める。このプロジェクトはパスワードのログインが要る |
 | Web Crypto での自前 | 依存が無く、CPU 時間を最小にできる | セッション・Cookie・CSRF・レート制限を全て自作し、セキュリティの欠陥を自分で抱える |
 
 ## 結果
+
+- OWASP の推奨との差と pepper の根拠: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html 確認日: 2026-11-21（PBKDF2-HMAC-SHA256 は 600,000 回が推奨、pepper は HMAC で後から掛ける方法）。
 
 - M2 のデプロイで、サインアップとログインの CPU 時間を `wrangler tail` などで実測する。10 ms を超えるなら、反復を減らすか有料のプランにするかの判断になり、どちらも ADR-0011 を超えるのでユーザーが決める。
 - 反復の回数を変えるときは、保存したハッシュに反復を含めてあるので、古いハッシュはそのまま検証できる。
