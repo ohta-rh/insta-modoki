@@ -1,7 +1,7 @@
 ---
 type: TestReport
 title: EPIC #2 アカウント（サインアップ・ログイン・ログアウト）の総合試験（1 回目）
-description: 統合ブランチ m1/local-mvp の 379a2fb で、EPIC #2 の 5 つの受け入れ条件を実ブラウザ（Google Chrome 157）で確かめた。AC-1・2・3・5 は満たす。AC-4 は http のローカルで Secure が付かない事実を記録し、判定は Director に委ねる。
+description: 統合ブランチ m1/local-mvp の 379a2fb で、EPIC #2 の 5 つの受け入れ条件を実ブラウザ（Google Chrome 157）で確かめた。5 つとも満たし PASS。AC-4 の Secure は ADR-0030 により https のときだけで、https での付与は結合テストで確かめた（Director の判定）。
 tags: [epic-test]
 ---
 
@@ -20,7 +20,7 @@ tags: [epic-test]
 
 ## 結果
 
-試験の結果としては AC-1・2・3・5 が PASS。AC-4 は事実の記録のみで、`Secure` と `__Secure-` が http のローカルでは付かない（[ADR-0030](../adr/0030-better-auth-session-and-rate-limit-rules.md)）ため、判定は Director に委ねる。見つけた問題（製品の不具合）は無い。
+PASS。AC-1・2・3・5 は実ブラウザで満たした。AC-4 は Director の判定で PASS（下の「AC-4 の判定」）。見つけた問題（製品の不具合）は無い。
 
 ## 受け入れ条件
 
@@ -29,7 +29,7 @@ tags: [epic-test]
 | AC-1 | 未ログインで `/accounts/signup` を開き、メール・ユーザー名・表示名・パスワードを入れてサインアップ。別の画面（Cookie 無し）で、使われているユーザー名を入れて表示名へ移る（ユーザー名の入力欄から離れる） | PASS。サインアップで `/` に移り、ログイン済み（左・下のナビが出る）。重複は送信の前に「このユーザー名は使われています」が出て、サインアップのボタンが無効のまま（URL は `/accounts/signup` のまま）。ユーザー名を直すと表示が消えてボタンが有効に戻る。失敗の経路: 形式の違うメールと 8 字未満のパスワードは「入力を確認してください」と項目ごとの文言、使われているメールの送信は「このメールアドレスは登録済みです」 | [空の画面 1280](evidence/epic-0002/ac1-signup-empty-1280.png)・[768](evidence/epic-0002/ac1-signup-empty-768.png)・[375](evidence/epic-0002/ac1-signup-empty-375.png)、[不正な入力 1280](evidence/epic-0002/ac1-signup-badinput-1280.png)・[768](evidence/epic-0002/ac1-signup-badinput-768.png)・[375](evidence/epic-0002/ac1-signup-badinput-375.png)、[サインアップ後の `/` 1280](evidence/epic-0002/ac1-signup-home-1280.png)・[768](evidence/epic-0002/ac1-signup-home-768.png)・[375](evidence/epic-0002/ac1-signup-home-375.png)、[ユーザー名の重複 1280](evidence/epic-0002/ac1-duplicate-username-1280.png)・[768](evidence/epic-0002/ac1-duplicate-username-768.png)・[375](evidence/epic-0002/ac1-duplicate-username-375.png)、[メールの重複 1280](evidence/epic-0002/ac1-duplicate-email-1280.png)・[768](evidence/epic-0002/ac1-duplicate-email-768.png)・[375](evidence/epic-0002/ac1-duplicate-email-375.png) |
 | AC-2 | `/accounts/logout` の確認画面でログアウトし、`/` と `/create` を開く。同じメールとパスワードでログインする。失敗の経路として、間違ったパスワードを 1 回送る | PASS。ログアウト後に Cookie が消え `/accounts/login` に移る。`/`・`/create` はどちらも `/accounts/login` に移る。間違ったパスワードは「メールアドレスまたはパスワードが違います」。正しい組み合わせで `/` に戻り、Cookie が再び付く | [ログアウト確認 1280](evidence/epic-0002/ac2-logout-confirm-1280.png)・[768](evidence/epic-0002/ac2-logout-confirm-768.png)・[375](evidence/epic-0002/ac2-logout-confirm-375.png)、[ログアウト後 1280](evidence/epic-0002/ac2-after-logout-login-1280.png)・[768](evidence/epic-0002/ac2-after-logout-login-768.png)・[375](evidence/epic-0002/ac2-after-logout-login-375.png)、[`/` → ログイン 1280](evidence/epic-0002/ac2-logged-out-home-1280.png)・[768](evidence/epic-0002/ac2-logged-out-home-768.png)・[375](evidence/epic-0002/ac2-logged-out-home-375.png)、[`/create` → ログイン 1280](evidence/epic-0002/ac2-logged-out-create-1280.png)・[768](evidence/epic-0002/ac2-logged-out-create-768.png)・[375](evidence/epic-0002/ac2-logged-out-create-375.png)、[誤りのパスワード 1280](evidence/epic-0002/ac2-login-wrong-1280.png)・[768](evidence/epic-0002/ac2-login-wrong-768.png)・[375](evidence/epic-0002/ac2-login-wrong-375.png)、[再ログイン後 1280](evidence/epic-0002/ac2-relogin-home-1280.png)・[768](evidence/epic-0002/ac2-relogin-home-768.png)・[375](evidence/epic-0002/ac2-relogin-home-375.png) |
 | AC-3 | 分の境目の直後（秒が 4 未満）から、専用の `cf-connecting-ip` で、登録済みのメールに間違ったパスワードを 6 回送る。同じ手順で、未登録のメールも | PASS。登録済み（13:45:00〜13:45:03 UTC）も未登録（13:46:00〜13:46:03 UTC）も、1〜5 回目は「メールアドレスまたはパスワードが違います」、6 回目は「操作が多すぎます。しばらくしてからもう一度お試しください」。文言は 2 つの場合で同じ。窓の跨ぎは無い | [登録済み 5 回目 1280](evidence/epic-0002/ac3-registered-attempt5-1280.png)・[768](evidence/epic-0002/ac3-registered-attempt5-768.png)・[375](evidence/epic-0002/ac3-registered-attempt5-375.png)、[6 回目 1280](evidence/epic-0002/ac3-registered-attempt6-1280.png)・[768](evidence/epic-0002/ac3-registered-attempt6-768.png)・[375](evidence/epic-0002/ac3-registered-attempt6-375.png)、[未登録 5 回目 1280](evidence/epic-0002/ac3-unregistered-attempt5-1280.png)・[768](evidence/epic-0002/ac3-unregistered-attempt5-768.png)・[375](evidence/epic-0002/ac3-unregistered-attempt5-375.png)、[6 回目 1280](evidence/epic-0002/ac3-unregistered-attempt6-1280.png)・[768](evidence/epic-0002/ac3-unregistered-attempt6-768.png)・[375](evidence/epic-0002/ac3-unregistered-attempt6-375.png) |
-| AC-4 | サインアップ直後に `context.cookies()` で属性を読む（値は記録しない） | 事実のみ（判定は Director）。下の「AC-4 の事実」を参照 | [Cookie の属性の表 1280](evidence/epic-0002/ac4-cookie-attrs-1280.png)（DevTools の Application の画面ではなく、`context.cookies()` の値を表にして撮った写真） |
+| AC-4 | サインアップ直後に `context.cookies()` で属性を読む（値は記録しない） | PASS（Director の判定）。`HttpOnly`・`SameSite=Lax`・30 日は実ブラウザで確かめた。`Secure` と `__Secure-` は https のときだけ（ADR-0030）で、結合テストで確かめた。下の「AC-4 の事実」と「AC-4 の判定」を参照 | [Cookie の属性の表 1280](evidence/epic-0002/ac4-cookie-attrs-1280.png)（DevTools の Application の画面ではなく、`context.cookies()` の値を表にして撮った写真） |
 | AC-5 | サインアップ・ログイン・ログアウト確認の 3 画面を、375px と 1280px で、Tab・文字入力・Enter だけで操作した | PASS。3 画面とも 375・1280px で最後まで操作できた（サインアップ → `/`、ログアウト確認 → `/accounts/login`、ログイン → `/`）。Tab の順は下に記す。どの幅も横のスクロールは無い。コンソールのエラー・警告と失敗した通信は全体で 0 | [サインアップ 1280](evidence/epic-0002/ac5-signup-keyboard-1280.png)・[375](evidence/epic-0002/ac5-signup-keyboard-375.png)、[ログアウト確認 1280](evidence/epic-0002/ac5-logout-keyboard-1280.png)・[375](evidence/epic-0002/ac5-logout-keyboard-375.png)、[ログイン 1280](evidence/epic-0002/ac5-login-keyboard-1280.png)・[375](evidence/epic-0002/ac5-login-keyboard-375.png) |
 
 ### AC-4 の事実
@@ -49,6 +49,12 @@ tags: [epic-test]
 | サインアップ | 本文へ移動 → メールアドレス → ユーザー名 → 表示名 → パスワード → サインアップ（ボタン） | 同じ |
 | ログアウト確認 | 本文へ移動 → ホーム・検索・投稿・通知・プロフィール（左のナビ）→ ログアウト（ボタン）→ 末尾 | 本文へ移動 → ログアウト（ボタン）→ ホーム・検索・投稿・通知・プロフィール（下のナビ）→ 末尾 |
 | ログイン | 本文へ移動 → メールアドレス → パスワード → ログイン（ボタン）→ サインアップ（リンク）→ 先頭に戻る | 同じ |
+
+### AC-4 の判定（Director、2026-11-21）
+
+- AC-4 の文（「`HttpOnly`・`Secure`・`SameSite=Lax` が付く」）は、[ADR-0030](../adr/0030-better-auth-session-and-rate-limit-rules.md) の前に書かれた。ADR-0030 は、`Secure` と `__Secure-` の接頭辞を `BETTER_AUTH_URL` が https のときだけ付けると決めている。M1 はローカルの http で動かす（[ADR-0006](../adr/0006-first-milestone-runs-locally-on-docker-compose.md)）ので、http で `Secure` が付かないのは決定どおり。
+- https のときに付くことは、`src/features/auth/api/sign-up.int.test.ts` › `パスワードの平文を保存せず Cookie に HttpOnly Secure SameSite=Lax を付ける`、`src/features/auth/model/session-cookie.test.ts` › `HttpOnly と SameSite=Lax と Max-Age と Path を付け secure のとき Secure を付ける`、`src/features/auth/api/log-out.int.test.ts` が確かめている（回帰の verify で全て通った）。
+- よって AC-4 は PASS とする。本物の https で Chrome から確かめるのは、M2 のデプロイの PBI（#30）で行う。EPIC #2 の本文の AC-4 に、この読み方を日付つきで書いた。
 
 ## ブラウザの状態
 
@@ -74,4 +80,4 @@ tags: [epic-test]
 
 なし。
 
-補足（問題ではない）: AC-4 の `Secure` は、ローカルが http であることで付かない。AC の文は「`HttpOnly`・`Secure`・`SameSite=Lax` が付く」で、http のローカルの総合試験では `Secure` を実ブラウザで確かめられない。Director が、https での単体・結合のテストをもって足りるとするか、AC の文を直すかを決める。
+補足（問題ではない）: AC-4 の `Secure` は、ローカルが http であることで付かない。決定どおりで、判定は上の「AC-4 の判定」。
