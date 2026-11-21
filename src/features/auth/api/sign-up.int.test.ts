@@ -119,16 +119,20 @@ describe('signUp', () => {
 
   it('同じ IP の 11 回目のサインアップが RATE_LIMITED になる', async () => {
     const e = env();
+    // Fixed clock: the fixed-window count must not depend on when the test runs.
+    const now = Date.UTC(2026, 0, 1, 0, 30, 0);
     for (let i = 0; i < 10; i += 1) {
       await signUp(input({ username: `user${i}x`, email: `u${i}@example.com` }), {
         env: e,
         headers: ipHeaders('203.0.113.1'),
+        now,
       });
     }
     const err = await rejection(() =>
       signUp(input({ username: 'user11x', email: 'u11@example.com' }), {
         env: e,
         headers: ipHeaders('203.0.113.1'),
+        now,
       }),
     );
     expect(err.code).toBe('RATE_LIMITED');
@@ -136,6 +140,7 @@ describe('signUp', () => {
     const other = await signUp(input({ username: 'user12x', email: 'u12@example.com' }), {
       env: e,
       headers: ipHeaders('203.0.113.2'),
+      now,
     });
     expect(other.username).toBe('user12x');
   });
