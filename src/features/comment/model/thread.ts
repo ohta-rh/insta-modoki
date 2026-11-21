@@ -154,7 +154,8 @@ export function removeComment(
 ): { state: ThreadState; removed: number } {
   const parent = state.items.find((c) => c.id === id);
   if (parent) {
-    const { [id]: _gone, ...replyCursors } = state.replyCursors;
+    const replyCursors = { ...state.replyCursors };
+    delete replyCursors[id];
     return {
       state: { ...state, items: state.items.filter((c) => c.id !== id), replyCursors },
       removed: 1 + (parent.replyCount ?? parent.replies?.length ?? 0),

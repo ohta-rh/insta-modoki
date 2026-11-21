@@ -110,10 +110,10 @@ PK `(user_id, post_id)`。インデックス `(post_id, created_at DESC)`（い�
 | author_id | text | NOT NULL、FK users ON DELETE CASCADE |
 | parent_id | text | NULL 可、FK comments ON DELETE CASCADE。返信は 1 階層だけ: 返信への返信は、親の `parent_id` に付け替えて保存する |
 | body | text | NOT NULL、1〜2,200 字（前後の空白を除いた長さ） |
-| client_request_id | text | NOT NULL。UNIQUE `(author_id, client_request_id)` |
+| client_request_id | text | NULL 可（`posts` と同じ理由。`migrations/0006_comments_client_request_id.sql` で足した。アプリは常に値を入れる）。UNIQUE `(author_id, client_request_id)`（再送の判定。NULL は重複を許す。[conventions.md](conventions.md) の「書き込みの再送」） |
 | created_at | timestamp | NOT NULL |
 
-インデックス `(post_id, parent_id, created_at, id)`。
+インデックス `(post_id, parent_id, created_at, id)`。`posts.comment_count` は返信も数える。コメントの行の追加・削除と同じ `db.batch` で増減し、親を消すときは、消える行（親と返信）の数を同じ文の中で数えて減らす（0 を下回らない）。
 
 ### follows
 

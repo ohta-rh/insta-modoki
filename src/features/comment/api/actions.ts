@@ -27,17 +27,23 @@ async function run<T>(
   }
 }
 
-export const addCommentAction = (input: unknown): Promise<ActionResult<CommentView>> =>
-  run('addComment', (h) => addComment(input, { headers: h }));
+export async function addCommentAction(input: unknown): Promise<ActionResult<CommentView>> {
+  return run('addComment', (h) => addComment(input, { headers: h }));
+}
 
-export const deleteCommentAction = (input: unknown): Promise<ActionResult<{ deleted: true }>> =>
-  run('deleteComment', (h) => deleteComment(input, { headers: h }));
+export async function deleteCommentAction(
+  input: unknown,
+): Promise<ActionResult<{ deleted: true }>> {
+  return run('deleteComment', (h) => deleteComment(input, { headers: h }));
+}
 
-export const listCommentsAction = (input: unknown): Promise<ActionResult<Page<CommentView>>> =>
-  run('listComments', (h) => listComments(input, { headers: h }));
+export async function listCommentsAction(input: unknown): Promise<ActionResult<Page<CommentView>>> {
+  return run('listComments', (h) => listComments(input, { headers: h }));
+}
 
-export const listRepliesAction = (input: unknown): Promise<ActionResult<Page<CommentView>>> =>
-  run('listReplies', (h) => listReplies(input, { headers: h }));
+export async function listRepliesAction(input: unknown): Promise<ActionResult<Page<CommentView>>> {
+  return run('listReplies', (h) => listReplies(input, { headers: h }));
+}
 
 const text = (data: FormData, name: string): string => {
   const v = data.get(name);

@@ -29,7 +29,7 @@ status: stable
 | `/direct` / `/direct/[conversationId]` | DM の一覧 / 会話 | 要 | M4 |
 | `/reels` | 縦型動画（任意） | 要 | M4 |
 | `/e2e-harness/upload` | 写真の選択部品の確認用（E2E 用。`E2E_HARNESS=1`（Playwright の webServer だけが渡す）で、かつ `APP_ENV` が `production` でないときだけ表示。それ以外は 404） | 不要 | M1 |
-| `/e2e-harness/db`（POST） | E2E の準備の書き込み（利用者・投稿・フォロー・回数制限の行）を、アプリ自身の D1 の束縛で行う。JSON で名前つきの操作を 1 つ受け取り、SQL は受け取らない。`/e2e-harness/upload` と同じ条件（`E2E_HARNESS=1` で、かつ `APP_ENV` が `production` でない）のときだけ動き、それ以外は 404（[ADR-0041](../adr/0041-e2e-setup-writes-go-through-the-app.md)） | 不要 | M1 |
+| `/e2e-harness/db`（POST） | E2E の準備の書き込み（利用者・投稿・フォロー・コメント・回数制限の行）を、アプリ自身の D1 の束縛で行う。JSON で名前つきの操作を 1 つ受け取り、SQL は受け取らない。`/e2e-harness/upload` と同じ条件（`E2E_HARNESS=1` で、かつ `APP_ENV` が `production` でない）のときだけ動き、それ以外は 404（[ADR-0041](../adr/0041-e2e-setup-writes-go-through-the-app.md)） | 不要 | M1 |
 | `/about` | 紹介 | 不要 | M4 |
 
 ### 予約したユーザー名
@@ -55,10 +55,10 @@ status: stable
 | `deletePost` | post | postId | `{ deleted: true }`（既に無い投稿には、ログインしていれば誰にでも同じ結果を返す。持ち主を確かめる対象が無いため） | UNAUTHENTICATED、FORBIDDEN、NOT_FOUND |
 | `likePost` / `unlikePost` | like | postId | `{ liked, likeCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、NOT_FOUND |
 | `listLikers` | like | postId, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
-| `listReplies` | comment | commentId, cursor? | `Page<CommentView>`（20 件、古い順） | NOT_FOUND |
+| `listReplies` | comment | commentId（親のコメントの ID）, cursor? | `Page<CommentView>`（20 件、古い順）。親でない・存在しないコメントは NOT_FOUND、壊れたカーソルは VALIDATION | NOT_FOUND、VALIDATION |
 | `listComments` | comment | postId, cursor? | `Page<CommentView>`（親 20 件、返信は親ごとに最初の 3 件と件数） | NOT_FOUND |
-| `addComment` | comment | postId, body, parentId?, clientRequestId | `CommentView` | UNAUTHENTICATED、VALIDATION、NOT_FOUND、RATE_LIMITED |
-| `deleteComment` | comment | commentId | `{ deleted: true }` | UNAUTHENTICATED、FORBIDDEN（本人でも投稿者でもない）、NOT_FOUND |
+| `addComment` | comment | postId, body（前後の空白を除いて 1〜2,200 字）, parentId?（同じ投稿のコメント。返信への返信は親の `parent_id` に付け替える）, clientRequestId | `CommentView`（同じ `clientRequestId` の 2 回目は 1 回目と同じ結果で、回数制限を消費しない） | UNAUTHENTICATED、VALIDATION、NOT_FOUND、RATE_LIMITED |
+| `deleteComment` | comment | commentId | `{ deleted: true }`（親を消すと返信も消え、`comment_count` は消えた行の数だけ減る） | UNAUTHENTICATED、FORBIDDEN（本人でも投稿者でもない）、NOT_FOUND |
 | `follow` / `unfollow` | follow | username | `{ following, followerCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、VALIDATION（自分自身）、NOT_FOUND |
 | `listFollowers` / `listFollowing` | follow | username, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
 | `getFeed` | feed | cursor? | `Page<PostView>`（12 件） | UNAUTHENTICATED |

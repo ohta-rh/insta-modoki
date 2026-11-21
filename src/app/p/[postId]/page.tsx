@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { getSessionUser } from '@/features/auth';
 import { getRequestEnv } from '@/shared/db/request';
+import { listComments } from '@/features/comment';
 import { appOrigin, buildOgMeta, getPost, PostDetail } from '@/features/post';
 import type { AuthEnv } from '@/features/auth/api/auth-env';
 import { AppError } from '@/shared/errors';
@@ -46,6 +47,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const post = await loadPost((await params).postId);
-  const viewer = await getSessionUser(await headers());
-  return <PostDetail post={post} isOwner={viewer?.username === post.author.username} />;
+  const requestHeaders = await headers();
+  const [viewer, comments] = await Promise.all([
+    getSessionUser(requestHeaders),
+    listComments({ postId: post.id }, { headers: requestHeaders }),
+  ]);
+  return (
+    <PostDetail
+      post={post}
+      isOwner={viewer?.username === post.author.username}
+      viewer={viewer ? { username: viewer.username } : null}
+      comments={comments}
+      requestId={crypto.randomUUID()}
+    />
+  );
 }

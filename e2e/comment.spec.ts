@@ -9,9 +9,13 @@ import { insertPost, putPostFiles } from './support/posts';
 
 /** `page` signed in as a new user, who is `me`. */
 const signedIn = test.extend<{ me: NewUser }>({
-  me: async ({ page }, use) => {
-    await use(await signUpViaUi(page));
-  },
+  // `auto`: every test starts signed in, also those that never name `me`.
+  me: [
+    async ({ page }, use) => {
+      await use(await signUpViaUi(page));
+    },
+    { auto: true },
+  ],
 });
 
 const newName = (prefix: string) =>
@@ -264,7 +268,9 @@ signedIn('JS が読み込まれる前でも コメントを送れる', async ({ 
   await input(page).waitFor();
   await expect(send(page)).toBeEnabled();
   await input(page).fill('スクリプトなしで送る');
-  await send(page).click();
+  // Enter in the box submits the form the browser's own way (a click waits for a stable box, which
+  // a page that is still loading may not give).
+  await input(page).press('Enter');
   await expect(page.getByText('スクリプトなしで送る', { exact: true })).toBeVisible();
   release();
   expect(commentRows(post.id)).toHaveLength(1);

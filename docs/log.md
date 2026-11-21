@@ -2,6 +2,7 @@
 
 ## 2026-11-21
 * **Update**: [conventions.md](architecture/conventions.md) に「D1 の 1 つの文の上限」（バインド変数は 100 個まで。複数行の INSERT は分ける）を足した（#34 で見つかった制約）。
+* **Update**: コメントと返信（#35）に合わせて、[data-model.md](architecture/data-model.md) の「comments」に `client_request_id`（NULL 可・UNIQUE `(author_id, client_request_id)`。`migrations/0006`）と `comment_count` の増減の決まりを書き、[routes.md](architecture/routes.md) の `addComment`・`listReplies`・`deleteComment` の入力と結果を具体にし、`/e2e-harness/db` の操作にコメントを足した。
 * **Creation**: [ADR-0041](adr/0041-e2e-setup-writes-go-through-the-app.md)（E2E の準備の書き込みは、テストのプロセスから D1 の SQLite を直接書かず、アプリの `/e2e-harness/db` を通す。SQLITE_BUSY で並列の E2E が落ちていた）を追加し、[routes.md](architecture/routes.md) に載せた（#32）。
 * **Creation**: [ADR-0039](adr/0039-like-counter-moves-by-changes-in-one-db-batch.md)（いいねの件数は 1 つの `db.batch` の中で `changes()` だけ増減。件数はダイアログを開くボタン）を追加した（#34）。
 * **Creation**: [ADR-0037](adr/0037-serve-local-media-from-garage-web-endpoint.md)（ローカルの画像は Garage のウェブ用エンドポイント 3912 から別 origin で配信。[ADR-0023](adr/0023-slots-with-garage-and-d1-files.md) を置き換え）を追加し、[overview.md](architecture/overview.md)・[ローカル開発の手順](guides/local-development.md) を更新した（#20）。
