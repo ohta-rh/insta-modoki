@@ -8,7 +8,7 @@ status: stable
 
 # ローカル開発の手順
 
-決定は [ADR-0023](../adr/0023-slots-with-garage-and-d1-files.md)、ルールは `.claude/rules/local-environment.md`。
+決定は [ADR-0037](../adr/0037-serve-local-media-from-garage-web-endpoint.md)、ルールは `.claude/rules/local-environment.md`。
 
 # 共有のスタック（Director だけが行う）
 
@@ -19,7 +19,7 @@ docker compose up -d --wait
 docker compose ps --format '{{.Service}} {{.Health}}'   # s3 healthy
 ```
 
-S3 API はホストの `http://localhost:3910`。止める・作り直すのは Director だけで、worktree からは行わない。
+S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DELETE）、画像の配信（匿名の GET）はウェブ用エンドポイントの `http://insta-s<N>.web.localhost:3912`（Chrome は `*.localhost` を 127.0.0.1 に解決する）。止める・作り直すのは Director だけで、worktree からは行わない。
 
 # スロット
 
@@ -27,7 +27,7 @@ S3 API はホストの `http://localhost:3910`。止める・作り直すのは 
 
 | コマンド | することと結果 |
 |---|---|
-| `node scripts/slot.mjs prepare <N>` | バケット `insta-s<N>` と鍵 `insta-local` を無ければ作り、`.dev.vars` を書く。`migrations/` があれば D1 に流す。何回流しても、データと秘密の値は残る |
+| `node scripts/slot.mjs prepare <N>` | バケット `insta-s<N>` と鍵 `insta-local` を無ければ作り、バケットをウェブ公開にし、`.dev.vars` を書く。`migrations/` があれば D1 に流す。何回流しても、データと秘密の値は残る |
 | `node scripts/slot.mjs reset <N>` | `.wrangler/state` を消し、バケットを空にして、`prepare` と同じに整える |
 | `node scripts/slot.mjs drop <N>` | バケットを削除し、`.wrangler/state` を消す。`.dev.vars` は残す |
 
@@ -47,4 +47,5 @@ S3 API はホストの `http://localhost:3910`。止める・作り直すのは 
 # うまくいかないとき
 
 * 「共有のスタックが起動していません」 - Director に `docker compose up -d --wait` を頼む
+* ホストの 3912 番が使われている - `compose.yaml` の `ports` と `SLOT_MEDIA_PORT`（スクリプト）を合わせて変える（Director の仕事）
 * ホストの 3910 番が使われている - `compose.yaml` の `ports` と `SLOT_S3_ENDPOINT`（スクリプト）、`S3_ENDPOINT` を合わせて変える（Director の仕事）

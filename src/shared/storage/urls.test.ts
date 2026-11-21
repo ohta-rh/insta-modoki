@@ -26,4 +26,11 @@ describe('publicUrl / mediaSrcset', () => {
       w1080: 'http://localhost:3910/insta-s3/media/u/k/w1080.webp',
     });
   });
+
+  it('ローカルのウェブ配信（バケットがホスト名）の基底でも バケットの段を足さない', () => {
+    const env = { ...base, S3_PUBLIC_BASE_URL: 'http://insta-s3.web.localhost:3912' };
+    expect(mediaSrcset(env, 'media/u/k').w640).toBe(
+      'http://insta-s3.web.localhost:3912/media/u/k/w640.webp',
+    );
+  });
 });

@@ -41,7 +41,8 @@
 
 * [ADR-0006: マイルストーン 1 はローカルの docker compose で動かす](0006-first-milestone-runs-locally-on-docker-compose.md) - 採用
 * [ADR-0008: compose のスタックを 1 つ共有し、スロットごとにポート・DB・バケットを分ける](0008-share-one-compose-stack-with-a-slot-per-worktree.md) - 置き換え: ADR-0023
-* [ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける](0023-slots-with-garage-and-d1-files.md) - 採用
+* [ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける](0023-slots-with-garage-and-d1-files.md) - 置き換え: ADR-0037
+* [ADR-0037: ローカルの画像は Garage のウェブ用エンドポイント（3912）から別 origin で配信する](0037-serve-local-media-from-garage-web-endpoint.md) - 採用
 * [ADR-0011: デプロイ先は Cloudflare とし、無料枠に収めることを前提にする](0011-deploy-to-cloudflare-free-tier-first.md) - 採用
 
 # ひな形

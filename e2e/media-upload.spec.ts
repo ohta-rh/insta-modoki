@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { userRow } from './support/db';
 import { hasExif, makeJpeg, padTo, webpSize, withGps } from './support/fixtures';
-import { getObject } from './support/storage';
+import { getObject, mediaUrl } from './support/storage';
 
 const PAGE_PATH = '/e2e-harness/upload';
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
@@ -199,4 +199,30 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   await page.keyboard.press('Enter');
   await chooser;
   release();
+});
+
+test('保存した写真が 公開の配信元（別 origin）から 実際のブラウザで表示される', async ({ page }) => {
+  await start(page);
+  const jpeg = await makeJpeg(page, 640, 480);
+  await picker(page).setInputFiles([{ name: 'show.jpg', mimeType: 'image/jpeg', buffer: jpeg }]);
+  await upload(page).click();
+  await expect(page.getByTestId('result')).toContainText('"key"');
+  const [r] = await results(page);
+
+  // No page.route stub: the request goes to the real media origin, under the page's CSP.
+  const src = mediaUrl(`${r!.key}/w640.webp`);
+  expect(new URL(src).origin).not.toBe(new URL(page.url()).origin);
+  const loaded = await page.evaluate(
+    (url) =>
+      new Promise<{ ok: boolean; width: number }>((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve({ ok: true, width: img.naturalWidth });
+        img.onerror = () => resolve({ ok: false, width: 0 });
+        img.src = url;
+        document.body.append(img);
+      }),
+    src,
+  );
+  expect(loaded).toEqual({ ok: true, width: 640 });
+  await expect(page.locator(`img[src="${src}"]`)).toHaveJSProperty('naturalWidth', 640);
 });

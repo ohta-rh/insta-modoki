@@ -3,12 +3,13 @@ type: ADR
 title: "ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける"
 description: "共有の compose スタックは Garage v2.5.0 だけを置く。DB は D1 で worktree の .wrangler/state のファイル。スロットは scripts/slot.mjs が .dev.vars・バケット insta-s<N>・.wrangler/state を準備・初期化・削除する。ADR-0008 の DB の名前の規則を置き換える。"
 tags: [environment, parallel, docker, storage]
-status: stable
+status: deprecated
+superseded_by: 0037-serve-local-media-from-garage-web-endpoint.md
 ---
 
 # ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける
 
-- ステータス: 採用
+- ステータス: 置き換え: [ADR-0037](0037-serve-local-media-from-garage-web-endpoint.md)（ローカルの画像をウェブ用エンドポイントから配信する。他の決定は引き継ぐ）
 - 日付: 2026-11-21
 - 決定者: エージェント（委任された判断）
 - 関連: [ADR-0006](0006-first-milestone-runs-locally-on-docker-compose.md)、[ADR-0008](0008-share-one-compose-stack-with-a-slot-per-worktree.md)（これで置き換える）、[ADR-0019](0019-d1-and-drizzle.md)、[ADR-0021](0021-browser-made-webp-and-presigned-put.md)、#20

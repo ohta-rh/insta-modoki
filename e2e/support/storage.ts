@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { AwsClient } from 'aws4fetch';
 
 // The app under test and these helpers share one slot: its bucket and key come from .dev.vars.
-type Settings = { endpoint: string; bucket: string; aws: AwsClient };
+type Settings = { endpoint: string; bucket: string; aws: AwsClient; mediaBase: string };
 
 function settings(): Settings {
   const vars: Record<string, string> = {};
@@ -14,6 +14,7 @@ function settings(): Settings {
   return {
     endpoint: vars.S3_ENDPOINT!.replace(/\/+$/, ''),
     bucket: vars.S3_BUCKET!,
+    mediaBase: vars.S3_PUBLIC_BASE_URL!.replace(/\/+$/, ''),
     aws: new AwsClient({
       accessKeyId: vars.S3_ACCESS_KEY!,
       secretAccessKey: vars.S3_SECRET_KEY!,
@@ -36,3 +37,6 @@ export async function getObject(
     contentType: res.headers.get('content-type') ?? '',
   };
 }
+
+/** Where a browser reads an object from: the slot's public media origin, the same URL the app renders. */
+export const mediaUrl = (key: string): string => `${settings().mediaBase}/${key}`;

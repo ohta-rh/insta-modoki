@@ -11,6 +11,9 @@ import { pathToFileURL } from 'node:url';
 
 const S3_ENDPOINT = process.env.SLOT_S3_ENDPOINT ?? 'http://localhost:3910';
 const S3_REGION = 'auto';
+// Garage's web endpoint (published on host 3912) serves a bucket at <bucket>.web.localhost; the S3 API
+// refuses anonymous GET, so images are read here (ADR-0037). Chrome resolves *.localhost to 127.0.0.1.
+const MEDIA_PORT = process.env.SLOT_MEDIA_PORT ?? '3912';
 const KEY_NAME = 'insta-local';
 const COMPOSE_PROJECT = 'insta-modoki';
 const STACK_DOWN =
@@ -28,6 +31,7 @@ export function slotNames(n) {
 
 export function renderEnv(n, { accessKey, secretKey, authPepper, authSecret }) {
   const { bucket, port } = slotNames(n);
+  const mediaOrigin = `http://${bucket}.web.localhost:${MEDIA_PORT}`;
   return (
     [
       ['SLOT', n],
@@ -40,8 +44,8 @@ export function renderEnv(n, { accessKey, secretKey, authPepper, authSecret }) {
       ['S3_BUCKET', bucket],
       ['S3_ACCESS_KEY', accessKey],
       ['S3_SECRET_KEY', secretKey],
-      ['S3_PUBLIC_BASE_URL', `${S3_ENDPOINT}/${bucket}`],
-      ['MEDIA_ORIGIN', new URL(S3_ENDPOINT).origin],
+      ['S3_PUBLIC_BASE_URL', mediaOrigin],
+      ['MEDIA_ORIGIN', mediaOrigin],
     ]
       .map(([k, v]) => `${k}=${v}`)
       .join('\n') + '\n'
@@ -237,7 +241,7 @@ export async function run(argv, deps = {}) {
       const r = garage('bucket', 'create', names.bucket);
       if (r.status !== 0) return r;
     }
-    return garage(
+    const allowed = garage(
       'bucket',
       'allow',
       '--read',
@@ -247,6 +251,9 @@ export async function run(argv, deps = {}) {
       '--key',
       KEY_NAME,
     );
+    if (allowed.status !== 0) return allowed;
+    // Anonymous reads go through the web endpoint; allowing it again is a no-op.
+    return garage('bucket', 'website', '--allow', names.bucket);
   };
   const state = join(cwd, '.wrangler', 'state');
   const envFile = join(cwd, '.dev.vars');

@@ -1,4 +1,4 @@
-# Shared local stack for Milestone 1 (ADR-0006, ADR-0008, ADR-0023).
+# Shared local stack for Milestone 1 (ADR-0006, ADR-0008, ADR-0037).
 # Started once from the main checkout by the Director. Worktrees never start their own.
 # The DB is D1 (files under .wrangler/state in each worktree), so the only service is
 # S3-compatible storage standing in for R2.
@@ -11,6 +11,8 @@ services:
     ports:
       # Host port 3910 (container 3900): 3900 is commonly taken by another Garage on a dev machine.
       - '127.0.0.1:3910:3900'
+      # Web endpoint (anonymous reads of website-enabled buckets, ADR-0037). 3902 is also commonly taken.
+      - '127.0.0.1:3912:3902'
     volumes:
       - s3-meta:/var/lib/garage/meta
       - s3-data:/var/lib/garage/data
@@ -41,6 +43,12 @@ configs:
       [s3_api]
       s3_region = "auto"
       api_bind_addr = "0.0.0.0:3900"
+
+      # The S3 API refuses anonymous GET; this endpoint serves <bucket>.web.localhost to browsers.
+      [s3_web]
+      bind_addr = "0.0.0.0:3902"
+      root_domain = ".web.localhost"
+      index = "index.html"
 
 volumes:
   s3-meta:

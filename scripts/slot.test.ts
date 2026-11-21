@@ -89,8 +89,9 @@ test('renderEnv が slot 3 の値を全て出す', () => {
   assert.equal(map.S3_BUCKET, 'insta-s3');
   assert.equal(map.S3_REGION, 'auto');
   assert.equal(map.S3_ENDPOINT, 'http://localhost:3910');
-  assert.equal(map.MEDIA_ORIGIN, 'http://localhost:3910');
-  assert.equal(map.S3_PUBLIC_BASE_URL, 'http://localhost:3910/insta-s3');
+  // Media is served by Garage's web endpoint: its own origin, bucket as the host, no bucket segment.
+  assert.equal(map.MEDIA_ORIGIN, 'http://insta-s3.web.localhost:3912');
+  assert.equal(map.S3_PUBLIC_BASE_URL, 'http://insta-s3.web.localhost:3912');
   assert.equal(map.S3_ACCESS_KEY, secrets.accessKey);
   assert.equal(map.S3_SECRET_KEY, secrets.secretKey);
   assert.equal(map.AUTH_PEPPER, secrets.authPepper);
@@ -149,4 +150,28 @@ test('corsXml がスロットのアプリの origin だけに PUT・GET・HEAD �
   assert.doesNotMatch(xml, /DELETE|POST|\*<\/AllowedOrigin>/);
   assert.match(xml, /<AllowedHeader>content-type<\/AllowedHeader>/);
   assert.match(xml, /<AllowedHeader>content-length<\/AllowedHeader>/);
+});
+
+test('prepare が スロットのバケットのウェブ公開を許可する（reset も同じ手順を通る）', async () => {
+  for (const command of ['prepare', 'prepare']) {
+    const dir = mkdtempSync(join(tmpdir(), 'slot-unit-'));
+    const garage: string[] = [];
+    const code = await run([command, '2'], {
+      exec: (cmd: string, args: string[]) => {
+        if (cmd === 'docker' && args[0] === 'ps') return { status: 0, stdout: 'cid\n', stderr: '' };
+        if (cmd === 'docker') garage.push(args.slice(3).join(' '));
+        return { status: 0, stdout: 'Key ID:  GK\nSecret key:  sek\n', stderr: '' };
+      },
+      cwd: dir,
+      putCors: async () => '',
+      stderr: () => {},
+      stdout: () => {},
+    });
+    rmSync(dir, { recursive: true, force: true });
+    assert.equal(code, 0);
+    assert.ok(
+      garage.includes('bucket website --allow insta-s2'),
+      `${command}: ${garage.join(' | ')}`,
+    );
+  }
 });
