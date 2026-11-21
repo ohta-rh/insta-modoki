@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { userRow, withDb } from './db';
+import { harness } from './harness';
 import { putObject } from './storage';
 
 const THUMBHASH = 'YJqGPQw7sFlslqhFafSE+Q6oJ1h2iHB2Rw==';
@@ -14,6 +15,8 @@ export function insertPost(options: {
   width?: number;
   height?: number;
   altTexts?: string[];
+  /** Epoch ms; default two hours ago. */
+  createdAt?: number;
 }): InsertedPost {
   const author = userRow(options.authorUsername);
   if (!author) throw new Error(`利用者がいません: ${options.authorUsername}`);
@@ -23,28 +26,21 @@ export function insertPost(options: {
     { length: count },
     () => `media/${author.id as string}/${crypto.randomUUID()}`,
   );
-  withDb((db) => {
-    db.prepare('INSERT INTO posts (id, author_id, caption, created_at) VALUES (?, ?, ?, ?)').run(
-      id,
-      author.id as string,
-      options.caption ?? '',
-      Date.now() - 2 * 60 * 60 * 1000,
-    );
-    storageKeys.forEach((key, position) => {
-      db.prepare(
-        'INSERT INTO media (id, post_id, position, type, storage_key, width, height, alt_text, thumbhash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      ).run(
-        crypto.randomUUID(),
-        id,
-        position,
-        'image',
-        key,
-        options.width ?? 1200,
-        options.height ?? 800,
-        options.altTexts?.[position] ?? '',
-        THUMBHASH,
-      );
-    });
+  harness({
+    op: 'insertPost',
+    id,
+    authorId: author.id as string,
+    caption: options.caption ?? '',
+    createdAt: options.createdAt ?? Date.now() - 2 * 60 * 60 * 1000,
+    media: storageKeys.map((storageKey, position) => ({
+      id: crypto.randomUUID(),
+      position,
+      storageKey,
+      width: options.width ?? 1200,
+      height: options.height ?? 800,
+      altText: options.altTexts?.[position] ?? '',
+      thumbhash: THUMBHASH,
+    })),
   });
   return { id, storageKeys };
 }

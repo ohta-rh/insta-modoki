@@ -29,6 +29,7 @@ status: stable
 | `/direct` / `/direct/[conversationId]` | DM の一覧 / 会話 | 要 | M4 |
 | `/reels` | 縦型動画（任意） | 要 | M4 |
 | `/e2e-harness/upload` | 写真の選択部品の確認用（E2E 用。`E2E_HARNESS=1`（Playwright の webServer だけが渡す）で、かつ `APP_ENV` が `production` でないときだけ表示。それ以外は 404） | 不要 | M1 |
+| `/e2e-harness/db`（POST） | E2E の準備の書き込み（利用者・投稿・フォロー・回数制限の行）を、アプリ自身の D1 の束縛で行う。JSON で名前つきの操作を 1 つ受け取り、SQL は受け取らない。`/e2e-harness/upload` と同じ条件（`E2E_HARNESS=1` で、かつ `APP_ENV` が `production` でない）のときだけ動き、それ以外は 404（[ADR-0041](../adr/0041-e2e-setup-writes-go-through-the-app.md)） | 不要 | M1 |
 | `/about` | 紹介 | 不要 | M4 |
 
 ### 予約したユーザー名

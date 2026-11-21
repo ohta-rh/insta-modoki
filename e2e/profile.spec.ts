@@ -2,21 +2,18 @@ import AxeBuilder from '@axe-core/playwright';
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
-import { seedUser, userRow, withDb } from './support/db';
+import { seedFollow, seedUser, userRow } from './support/db';
 import { waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles, type InsertedPost } from './support/posts';
 
 /** A user nobody is signed in as. */
 function newProfileUser(options: { displayName?: string; bio?: string } = {}) {
   const username = `e2e_p${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-  seedUser(username, `${username}@example.com`);
-  const id = userRow(username)!.id as string;
-  withDb((db) =>
-    db
-      .prepare('UPDATE users SET display_name = ?, bio = ? WHERE id = ?')
-      .run(options.displayName ?? '表示名', options.bio ?? '', id),
-  );
-  return { username, id };
+  seedUser(username, `${username}@example.com`, {
+    displayName: options.displayName ?? '表示名',
+    bio: options.bio ?? '',
+  });
+  return { username, id: userRow(username)!.id as string };
 }
 
 /** A post made `minutesAgo` minutes ago, with real photo files in storage. */
@@ -26,22 +23,13 @@ async function postAt(
   minutesAgo: number,
   options: { mediaCount?: number; altTexts?: string[] } = {},
 ): Promise<InsertedPost> {
-  const post = insertPost({ authorUsername: username, ...options });
-  withDb((db) =>
-    db
-      .prepare('UPDATE posts SET created_at = ? WHERE id = ?')
-      .run(Date.now() - minutesAgo * 60_000, post.id),
-  );
+  const post = insertPost({
+    authorUsername: username,
+    createdAt: Date.now() - minutesAgo * 60_000,
+    ...options,
+  });
   await putPostFiles(page, post);
   return post;
-}
-
-function follow(followerId: string, followeeId: string): void {
-  withDb((db) =>
-    db
-      .prepare('INSERT INTO follows (follower_id, followee_id, created_at) VALUES (?, ?, ?)')
-      .run(followerId, followeeId, Date.now()),
-  );
 }
 
 const grid = (page: Page) => page.getByTestId('post-grid');
@@ -62,9 +50,9 @@ test('他人のプロフィールを開くと ヘッダーと投稿のグリッ�
   const fan1 = newProfileUser();
   const fan2 = newProfileUser();
   const friend = newProfileUser();
-  follow(fan1.id, haru.id);
-  follow(fan2.id, haru.id);
-  follow(haru.id, friend.id);
+  seedFollow(fan1.id, haru.id);
+  seedFollow(fan2.id, haru.id);
+  seedFollow(haru.id, friend.id);
   const a = await postAt(page, haru.username, 30, { altTexts: ['写真A'] });
   const b = await postAt(page, haru.username, 20, { altTexts: ['写真B'] });
   const c = await postAt(page, haru.username, 10, { altTexts: ['写真C'] });
