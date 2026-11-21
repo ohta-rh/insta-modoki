@@ -6,7 +6,8 @@ import type { AuthEnv } from './auth-env';
 /** Sessions last 30 days from sign-in (docs/architecture/conventions.md "認証とセッション"). */
 export const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 30;
 
-const isSecure = (env: AuthEnv): boolean => env.BETTER_AUTH_URL.startsWith('https://');
+export const sessionSecure = (env: AuthEnv): boolean => env.BETTER_AUTH_URL.startsWith('https://');
+const isSecure = sessionSecure;
 
 /** Better Auth prefixes the cookie with __Secure- when the app URL is https. */
 export const sessionCookieName = (env: AuthEnv): string =>

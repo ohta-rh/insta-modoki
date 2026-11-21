@@ -3,3 +3,5 @@ export { getSessionUser, requireUser, type SessionUser } from './api/session-use
 export { isProtectedPath } from './model/protected-paths';
 export { isValidUsernameFormat } from './model/schema';
 export { SignUpForm } from './ui/SignUpForm';
+export { LogInForm } from './ui/LogInForm';
+export { LogOutConfirm } from './ui/LogOutConfirm';

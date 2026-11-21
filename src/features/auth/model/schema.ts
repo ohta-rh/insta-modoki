@@ -12,6 +12,8 @@ export const MESSAGES = {
   usernameReserved: 'このユーザー名は使えません',
   displayName: '表示名は 1〜30 字で入力してください',
   password: 'パスワードは 8〜72 字で入力してください',
+  loginEmail: 'メールアドレスを入力してください',
+  loginPassword: 'パスワードを入力してください',
 } as const;
 
 const USERNAME_SHAPE = /^[a-z0-9_]([a-z0-9._]*[a-z0-9_])?$/;
@@ -53,6 +55,19 @@ const password = z
   .string({ error: MESSAGES.password })
   .refine((v) => charLength(v) >= 8 && charLength(v) <= 72, { error: MESSAGES.password });
 
+// Log-in only checks that something sensible was typed; the stored hash is the real judge.
+// The length caps keep a hostile body from reaching the (costly) hash.
+const loginEmail = z
+  .string({ error: MESSAGES.loginEmail })
+  .transform((v) => v.trim().toLowerCase())
+  .refine((v) => v.length >= 1 && v.length <= 254 && !hasControlChars(v), MESSAGES.loginEmail);
+
+const loginPassword = z
+  .string({ error: MESSAGES.loginPassword })
+  .refine((v) => v.length >= 1 && v.length <= 1024, { error: MESSAGES.loginPassword });
+
+const logInSchema = z.object({ email: loginEmail, password: loginPassword });
+
 const signUpSchema = z.object({ email, username, displayName, password });
 const usernameOnlySchema = z.object({ username });
 
@@ -71,6 +86,7 @@ function parse<S extends z.ZodType>(schema: S, input: unknown): ParseResult<z.ou
 }
 
 export const parseSignUp = (input: unknown) => parse(signUpSchema, input);
+export const parseLogIn = (input: unknown) => parse(logInSchema, input);
 export const parseUsername = (input: unknown) => parse(usernameOnlySchema, input);
 
 /** True only for a username that parseUsername would accept unchanged (safe to put in a URL path). */

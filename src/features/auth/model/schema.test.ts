@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isValidUsernameFormat, parseSignUp, parseUsername } from './schema';
+import { isValidUsernameFormat, parseLogIn, parseSignUp, parseUsername } from './schema';
 
 const valid = {
   email: 'Haru@Example.com',
@@ -118,5 +118,31 @@ describe('isValidUsernameFormat', () => {
     expect(isValidUsernameFormat('Haru')).toBe(false);
     expect(isValidUsernameFormat('ab')).toBe(false);
     expect(isValidUsernameFormat('admin')).toBe(false);
+  });
+});
+
+describe('parseLogIn', () => {
+  it('メールを小文字にし パスワードはそのまま通す', () => {
+    const r = parseLogIn({ email: 'HARU@Example.com', password: ' x ' });
+    expect(r).toEqual({ ok: true, data: { email: 'haru@example.com', password: ' x ' } });
+  });
+
+  it('空のメールと空のパスワードを項目ごとの文言で拒む', () => {
+    const r = parseLogIn({ email: '', password: '' });
+    expect(r).toEqual({
+      ok: false,
+      fieldErrors: {
+        email: ['メールアドレスを入力してください'],
+        password: ['パスワードを入力してください'],
+      },
+    });
+  });
+
+  it('NUL と制御文字を含むメールを拒み 文字列でない値も拒む', () => {
+    for (const email of ['a\u0000@example.com', 'a\u0007@example.com']) {
+      expect(parseLogIn({ email, password: 'x' }).ok, JSON.stringify(email)).toBe(false);
+    }
+    expect(parseLogIn({ email: 1, password: null }).ok).toBe(false);
+    expect(parseLogIn(undefined).ok).toBe(false);
   });
 });

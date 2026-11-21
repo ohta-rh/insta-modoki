@@ -25,3 +25,31 @@ export function serializeSessionCookie(c: SessionCookie): string {
     c.secure ? '; Secure' : ''
   }; SameSite=Lax`;
 }
+
+/**
+ * The session token in a Cookie header, or null when the cookie is missing, malformed or its
+ * signature does not match (so a forged value never reaches the database).
+ */
+export async function readSessionToken(
+  cookieHeader: string | null,
+  name: string,
+  secret: string,
+): Promise<string | null> {
+  if (!cookieHeader) return null;
+  for (const part of cookieHeader.split(';')) {
+    const eq = part.indexOf('=');
+    if (eq < 0 || part.slice(0, eq).trim() !== name) continue;
+    let decoded: string;
+    try {
+      decoded = decodeURIComponent(part.slice(eq + 1).trim());
+    } catch {
+      return null;
+    }
+    const dot = decoded.lastIndexOf('.');
+    if (dot < 1) return null;
+    const token = decoded.slice(0, dot);
+    const expected = decodeURIComponent(await signCookieValue(token, secret));
+    return expected === decoded ? token : null;
+  }
+  return null;
+}

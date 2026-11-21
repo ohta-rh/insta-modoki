@@ -6,6 +6,8 @@ import { AppError, toErrorResponse } from '../../../shared/errors';
 import { getRequestEnv } from '../../../shared/db/request';
 import type { AuthEnv } from './auth-env';
 import { checkUsername } from './check-username';
+import { logIn } from './log-in';
+import { logOut } from './log-out';
 import { signUp } from './sign-up';
 
 export type SignUpState = {
@@ -64,4 +66,52 @@ export async function checkUsernameAction(
     }
     return { error: toErrorResponse(error).body.message };
   }
+}
+
+export type LogInState = {
+  message?: string;
+  fieldErrors?: Record<string, string[]>;
+  /** The email the user typed, so the form can keep it (never the password). */
+  values?: { email: string };
+};
+
+type CookieParts = { name: string; value: string; maxAgeSec: number; secure: boolean };
+
+async function applyCookie(cookie: CookieParts): Promise<void> {
+  (await cookies()).set(cookie.name, decodeURIComponent(cookie.value), {
+    httpOnly: true,
+    secure: cookie.secure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: cookie.maxAgeSec,
+  });
+}
+
+/** The log-in form's Server Action. Success sets a fresh session cookie and redirects to `/`. */
+export async function logInAction(_prev: LogInState, data: FormData): Promise<LogInState> {
+  const email = text(data, 'email');
+  try {
+    const { cookie } = await logIn(
+      { email, password: text(data, 'password') },
+      { env: await getRequestEnv<AuthEnv>(), headers: await headers() },
+    );
+    await applyCookie(cookie);
+  } catch (error) {
+    if (error instanceof AppError) {
+      return { message: error.message, fieldErrors: error.fieldErrors, values: { email } };
+    }
+    console.error('logIn failed', error instanceof Error ? error.name : 'unknown');
+    return { message: toErrorResponse(error).body.message, values: { email } };
+  }
+  redirect('/');
+}
+
+/** The log-out confirmation's Server Action (POST only). Ends the session, then goes to the log-in screen. */
+export async function logOutAction(): Promise<void> {
+  const { cookie } = await logOut({
+    env: await getRequestEnv<AuthEnv>(),
+    headers: await headers(),
+  });
+  await applyCookie(cookie);
+  redirect('/accounts/login');
 }

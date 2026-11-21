@@ -6,6 +6,7 @@ describe('isProtectedPath', () => {
     expect(isProtectedPath('/')).toBe(true);
     expect(isProtectedPath('/create')).toBe(true);
     expect(isProtectedPath('/accounts/edit')).toBe(true);
+    expect(isProtectedPath('/accounts/logout')).toBe(true);
     expect(isProtectedPath('/p/abc')).toBe(false);
     expect(isProtectedPath('/haru')).toBe(false);
   });

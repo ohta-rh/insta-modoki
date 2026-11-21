@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { serializeSessionCookie, signCookieValue } from './session-cookie';
+import { readSessionToken, serializeSessionCookie, signCookieValue } from './session-cookie';
 
 const secret = crypto.randomUUID();
 
@@ -28,5 +28,23 @@ describe('serializeSessionCookie', () => {
     const s = serializeSessionCookie(base);
     expect(s).toBe('n=v; Max-Age=2592000; Path=/; HttpOnly; Secure; SameSite=Lax');
     expect(serializeSessionCookie({ ...base, secure: false })).not.toContain('Secure');
+  });
+});
+
+describe('readSessionToken', () => {
+  const name = '__Secure-better-auth.session_token';
+
+  it('署名が合う Cookie から token を取り出す', async () => {
+    const value = await signCookieValue('tok.en-1', secret);
+    expect(await readSessionToken(`a=b; ${name}=${value}; c=d`, name, secret)).toBe('tok.en-1');
+  });
+
+  it('Cookie が無い 署名が違う 形が壊れているときは null を返す', async () => {
+    const value = await signCookieValue('tok', secret);
+    expect(await readSessionToken(null, name, secret)).toBeNull();
+    expect(await readSessionToken('a=b', name, secret)).toBeNull();
+    expect(await readSessionToken(`${name}=${value}`, name, `${secret}x`)).toBeNull();
+    expect(await readSessionToken(`${name}=%E0%A4%A`, name, secret)).toBeNull();
+    expect(await readSessionToken(`${name}=nodot`, name, secret)).toBeNull();
   });
 });

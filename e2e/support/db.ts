@@ -31,9 +31,13 @@ function withDb<T>(run: (db: DatabaseSync) => T): T {
   }
 }
 
-/** Sign-up is limited to 10 per hour per IP and every local request shares the IP "local". */
+/**
+ * Sign-up is limited to 10 per hour per IP and every local request shares the IP "local".
+ * Counters of the documentation range 198.51.100.x are kept: a spec that counts attempts from
+ * its own IP (login-logout) must not be reset by another spec running in parallel.
+ */
 export function clearRateLimits(): void {
-  withDb((db) => db.exec('DELETE FROM rate_limits'));
+  withDb((db) => db.exec("DELETE FROM rate_limits WHERE key NOT LIKE 'login:ip:198.51.100.%'"));
 }
 
 /** Inserts a user row directly (no password), so a test can collide with it. */
