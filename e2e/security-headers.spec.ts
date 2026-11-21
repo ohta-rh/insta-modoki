@@ -1,4 +1,4 @@
-import type { Response } from '@playwright/test';
+import type { APIResponse, Response } from '@playwright/test';
 import { expect, test } from './support/auth';
 
 const HEADERS = [
@@ -8,7 +8,7 @@ const HEADERS = [
   'permissions-policy',
 ];
 
-function expectSecurityHeaders(response: Response, label: string): void {
+function expectSecurityHeaders(response: Response | APIResponse, label: string): void {
   const headers = response.headers();
   for (const name of HEADERS) {
     expect(headers[name], `${label}: ${name}`).toBeTruthy();
@@ -39,6 +39,34 @@ test('トップページと 404 と静的ファイルの全ての応答に 4 つ
 
   expect(staticResponses.length).toBeGreaterThan(0);
   expectSecurityHeaders(staticResponses[0]!, 'static');
+});
+
+test('存在しない静的ファイルの 404 にも 4 つのヘッダーが付く', async ({ request }) => {
+  for (const path of ['/favicon.ico', '/_next/static/does-not-exist.js']) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(404);
+    expectSecurityHeaders(response, path);
+  }
+});
+
+test('存在する静的ファイルは Worker を通らず _headers のヘッダーで返る', async ({ page, request }) => {
+  const css: string[] = [];
+  page.on('response', (response) => {
+    const pathname = new URL(response.url()).pathname;
+    if (pathname.startsWith('/_next/static/') && pathname.endsWith('.css')) css.push(pathname);
+  });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  expect(css.length).toBeGreaterThan(0);
+
+  for (const path of ['/brand/favicon.svg', css[0]!]) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(200);
+    expectSecurityHeaders(response, path);
+    expect(response.headers()['content-security-policy'], `${path}: no nonce`).not.toContain(
+      'nonce-',
+    );
+  }
 });
 
 test('外部のスクリプトとインラインのスクリプトを差し込んでも実行されない', async ({ page }) => {
