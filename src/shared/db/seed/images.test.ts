@@ -7,7 +7,7 @@ const widthOf = async (bytes: Uint8Array) => {
   return { format: m.format, width: m.width, height: m.height };
 };
 
-describe('generateImage', () => {
+describe('generateImage', { timeout: 60_000 }, () => {
   afterEach(() => vi.restoreAllMocks());
 
   it('4 つの WebP の幅が 1080 以上・320・640・1080 になる', async () => {

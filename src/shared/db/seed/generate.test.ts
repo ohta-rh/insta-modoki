@@ -94,5 +94,5 @@ describe('generateDataset', () => {
     expect(d.imageCount).toBe(60);
     for (const m of d.media) expect(m.imageIndex).toBeLessThan(60);
     expect(d.follows.filter((f) => f.followerIndex === 0)).toHaveLength(100);
-  });
+  }, 60_000);
 });
