@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { getSessionUser } from '@/features/auth';
+import { listComments } from '@/features/comment';
 import { getPost, PostDetail } from '@/features/post';
 import { PostModal } from '@/features/profile';
 import { AppError } from '@/shared/errors';
@@ -11,10 +12,20 @@ export default async function PostModalPage({ params }: { params: Promise<{ post
   const requestHeaders = await headers();
   try {
     const post = await getPost({ postId }, { headers: requestHeaders });
-    const viewer = await getSessionUser(requestHeaders);
+    // The same reads as the normal page (src/app/p/[postId]/page.tsx).
+    const [viewer, comments] = await Promise.all([
+      getSessionUser(requestHeaders),
+      listComments({ postId: post.id }, { headers: requestHeaders }),
+    ]);
     return (
       <PostModal postId={postId}>
-        <PostDetail post={post} isOwner={viewer?.username === post.author.username} />
+        <PostDetail
+          post={post}
+          isOwner={viewer?.username === post.author.username}
+          viewer={viewer ? { username: viewer.username } : null}
+          comments={comments}
+          requestId={crypto.randomUUID()}
+        />
       </PostModal>
     );
   } catch (error) {

@@ -333,3 +333,20 @@ test('JS が読み込まれる前にグリッドの投稿を押すと 通常の�
   await expect(dialog(page)).toHaveCount(0);
   expect(userRow(username)).toBeDefined();
 });
+
+test('モーダルの中でコメントを送ると 一覧にすぐ出て 件数のリンクが増える', async ({ page }) => {
+  await signUpViaUi(page);
+  const { username, ids } = await strangerWithPosts(page, 3);
+  await page.goto(`/${username}`);
+  await waitForHydration(page);
+  await tile(page, ids[0]!).click();
+  await expect(dialog(page)).toBeVisible();
+
+  await dialog(page).getByLabel('コメントを追加').fill('モーダルからのコメント');
+  await dialog(page).getByRole('button', { name: '投稿', exact: true }).click();
+
+  await expect(
+    dialog(page).getByRole('listitem').filter({ hasText: 'モーダルからのコメント' }),
+  ).toBeVisible();
+  await expect(dialog(page).getByRole('link', { name: 'コメント 1 件' })).toBeVisible();
+});
