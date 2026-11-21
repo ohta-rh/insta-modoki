@@ -2,10 +2,12 @@ import { getStorageClient, objectUrl, type StorageEnv } from '../../storage/clie
 
 export type Store = {
   put(key: string, body: Uint8Array, contentType: string): Promise<void>;
+  /** Server-side copy of many objects: `[from, to]` pairs. */
+  copy(pairs: [string, string][]): Promise<void>;
   remove(keys: string[]): Promise<void>;
 };
 
-const CONCURRENCY = 8;
+const CONCURRENCY = 16;
 
 /** Writes and deletes objects in the slot's bucket (`S3_BUCKET`) only. */
 export function createStore(env: StorageEnv): Store {
@@ -19,6 +21,19 @@ export function createStore(env: StorageEnv): Store {
         headers: { 'content-type': contentType },
       });
       if (!res.ok) throw new Error(`オブジェクトを書けませんでした: ${key} ${res.status}`);
+    },
+    async copy(pairs) {
+      for (let i = 0; i < pairs.length; i += CONCURRENCY) {
+        await Promise.all(
+          pairs.slice(i, i + CONCURRENCY).map(async ([from, to]) => {
+            const res = await send(objectUrl(client, to), {
+              method: 'PUT',
+              headers: { 'x-amz-copy-source': `/${env.S3_BUCKET}/${from}` },
+            });
+            if (!res.ok) throw new Error(`オブジェクトを複製できませんでした: ${to} ${res.status}`);
+          }),
+        );
+      }
     },
     async remove(keys) {
       for (let i = 0; i < keys.length; i += CONCURRENCY) {

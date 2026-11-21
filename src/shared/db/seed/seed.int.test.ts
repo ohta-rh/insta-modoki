@@ -219,7 +219,16 @@ describe('seed:bench', () => {
     expect(code).toBe(0);
     expect(lines.at(-1)).toBe('seed: bench OK users=1000 posts=10000');
     expect(await one(`SELECT count(*) AS n FROM users WHERE email LIKE '%${SUFFIX}'`)).toBe(1000);
-    expect(await one('SELECT count(DISTINCT storage_key) AS n FROM media')).toBe(60);
+    // media.storage_key is UNIQUE: a pooled image is copied under each row's own key.
+    expect(await one('SELECT count(DISTINCT storage_key) AS n FROM media')).toBe(
+      await one('SELECT count(*) AS n FROM media'),
+    );
+    const [{ k }] = (await rows<{ k: string }>(
+      'SELECT storage_key AS k FROM media ORDER BY storage_key DESC LIMIT 1',
+    )) as [{ k: string }];
+    for (const name of ['orig', 'w320', 'w640', 'w1080']) {
+      expect(await headObject(storage, `${k}/${name}.webp`)).not.toBeNull();
+    }
     expect(
       await one(
         "SELECT count(*) AS n FROM follows WHERE follower_id = (SELECT id FROM users WHERE username = 'demo')",

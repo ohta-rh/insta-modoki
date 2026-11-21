@@ -41,6 +41,7 @@ const INSERT_ROWS = 500;
 // D1 rejects a statement over 100 KB; the size is counted in UTF-8 bytes.
 const INSERT_BYTES = 80_000;
 const BATCH_STATEMENTS = 20;
+const VARIANTS = ['orig', 'w320', 'w640', 'w1080'] as const;
 const IMAGE_CONCURRENCY = 8;
 const PASSWORD_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -122,9 +123,7 @@ async function cleanup(d1: SeedD1, store: Store): Promise<void> {
       .all<{ k: string }>()
   ).results.map((r) => r.k);
   await d1.prepare(`DELETE FROM users WHERE id IN (${SEED_USERS})`).run();
-  await store.remove(
-    keys.flatMap((k) => ['orig', 'w320', 'w640', 'w1080'].map((n) => `${k}/${n}.webp`)),
-  );
+  await store.remove(keys.flatMap((k) => VARIANTS.map((n) => `${k}/${n}.webp`)));
 }
 
 export async function runSeed(argv: string[], deps: SeedDeps): Promise<number> {
@@ -160,14 +159,19 @@ export async function runSeed(argv: string[], deps: SeedDeps): Promise<number> {
   const userIds = data.users.map(() => newId());
   const postIds = data.posts.map(() => newId());
 
-  // One key per generated image, under the user who first uses it (the demo user for a shared pool).
+  // media.storage_key is UNIQUE, so every media row has its own key under its post's author. The
+  // first row of an image holds the uploaded files; a pooled image's later rows get server-side copies.
   const keyOf = new Array<string>(data.imageCount);
+  const rowKeys: string[] = [];
+  const copies: [string, string][] = [];
   for (const m of data.media) {
-    const owner =
-      profile.imagePool === undefined
-        ? userIds[data.posts[m.postIndex]!.authorIndex]!
-        : userIds[0]!;
-    keyOf[m.imageIndex] ??= `media/${owner}/${newId()}`;
+    const owner = userIds[data.posts[m.postIndex]!.authorIndex]!;
+    const key = `media/${owner}/${newId()}`;
+    rowKeys.push(key);
+    if (keyOf[m.imageIndex] === undefined) keyOf[m.imageIndex] = key;
+    else
+      for (const n of VARIANTS)
+        copies.push([`${keyOf[m.imageIndex]}/${n}.webp`, `${key}/${n}.webp`]);
   }
 
   const images = new Array<Awaited<ReturnType<typeof generateImage>>>(data.imageCount);
@@ -190,6 +194,8 @@ export async function runSeed(argv: string[], deps: SeedDeps): Promise<number> {
       }),
     );
   }
+
+  await store.copy(copies);
 
   const demoHash = await hashPassword(password, env.AUTH_PEPPER);
   const now = Date.now();
@@ -234,14 +240,14 @@ export async function runSeed(argv: string[], deps: SeedDeps): Promise<number> {
         'alt_text',
         'thumbhash',
       ],
-      data.media.map((m) => {
+      data.media.map((m, i) => {
         const image = images[m.imageIndex]!;
         return [
           newId(),
           postIds[m.postIndex]!,
           m.position,
           'image',
-          keyOf[m.imageIndex]!,
+          rowKeys[i]!,
           image.width,
           image.height,
           image.altText,
