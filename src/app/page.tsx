@@ -1,12 +1,8 @@
-import { connection } from 'next/server';
-
-// Placeholder page; #24 replaces it with the app shell.
-export default async function HomePage() {
-  // Opt out of static rendering: the CSP nonce from src/proxy.ts is per request (ADR-0026).
-  await connection();
+// Placeholder page; the feed replaces it. The shell comes from the root layout.
+export default function HomePage() {
   return (
-    <main>
-      <h1>Mado（仮称）</h1>
-    </main>
+    <div className="p-4">
+      <h1 className="text-[length:var(--font-size-xl)] font-bold">Mado（仮称）</h1>
+    </div>
   );
 }
