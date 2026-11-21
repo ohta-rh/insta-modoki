@@ -10,3 +10,4 @@ next-env.d.ts
 docs/
 .claude/
 CLAUDE.md
+.tmp_*/

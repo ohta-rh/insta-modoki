@@ -27,3 +27,6 @@ docs/proposal/png/
 # TypeScript / Next.js generated
 *.tsbuildinfo
 next-env.d.ts
+
+# Agent scratch logs inside worktrees (never committed, never formatted)
+.tmp_*/
