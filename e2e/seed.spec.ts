@@ -5,6 +5,7 @@ import { ensureDemoSeed, loginAsDemo } from './support/demo';
 test.describe.configure({ mode: 'serial', timeout: 180_000 });
 
 test.beforeAll(async () => {
+  test.setTimeout(180_000);
   await ensureDemoSeed();
 });
 

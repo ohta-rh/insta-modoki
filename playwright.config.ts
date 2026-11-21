@@ -9,7 +9,16 @@ export default defineConfig({
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   // CI keeps the trace of a failed test; the HTML report embeds it (open it from the report).
   use: { baseURL: `http://localhost:${port}`, trace: process.env.CI ? 'retain-on-failure' : 'off' },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: '**/seed.spec.ts' },
+    // Seeding holds the slot's database busy for about 20 seconds, so it runs after everything else.
+    {
+      name: 'seed',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: '**/seed.spec.ts',
+      dependencies: ['chromium'],
+    },
+  ],
   webServer: {
     // E2E_HARNESS reaches the Worker only as a wrangler --var (a shell variable does not), and only here.
     command: 'pnpm start --var E2E_HARNESS:1',
