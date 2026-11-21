@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { charLength } from '../../../shared/text';
 import type { Focus, Ratio, Size } from '../model/crop';
-import { ALT_TEXT_MESSAGE, MAX_ALT_TEXT } from '../model/schema';
+import { ALT_TEXT_MESSAGE, MAX_ALT_TEXT } from '../model/limits';
 import { CropFrame } from './CropFrame';
 
 export type PhotoItem = {

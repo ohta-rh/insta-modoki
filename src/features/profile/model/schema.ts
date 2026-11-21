@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { MediaView, UserSummary } from '../../post';
 import { charLength, hasControlChars } from '../../../shared/text';
+import { BIO_MESSAGE, DISPLAY_NAME_MESSAGE, MAX_BIO, MAX_DISPLAY_NAME } from './limits';
 
 /** Photos a profile page shows per request (docs/architecture/routes.md `listProfilePosts`). */
 export const PROFILE_PAGE_SIZE = 12;
@@ -19,10 +20,7 @@ export type ProfileView = UserSummary & {
 
 export type PostThumb = { id: string; cover: MediaView; mediaCount: number };
 
-export const MAX_DISPLAY_NAME = 30;
-export const MAX_BIO = 150;
-export const DISPLAY_NAME_MESSAGE = '表示名は 1〜30 字で入力してください';
-export const BIO_MESSAGE = '自己紹介は 150 字までです';
+export { BIO_MESSAGE, DISPLAY_NAME_MESSAGE, MAX_BIO, MAX_DISPLAY_NAME };
 export const AVATAR_MESSAGE = '画像を選び直してください';
 
 export type UpdateProfileInput = { displayName: string; bio: string; avatarKey?: string };

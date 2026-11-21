@@ -7,7 +7,7 @@ import type { UploadedImage } from '../../media-upload';
 import { charLength } from '../../../shared/text';
 import { createPostAction } from '../api/actions';
 import { CENTER, cropRect, RATIOS, type Focus, type Ratio } from '../model/crop';
-import { MAX_ALT_TEXT, MAX_CAPTION, MAX_PHOTOS } from '../model/schema';
+import { MAX_ALT_TEXT, MAX_CAPTION, MAX_PHOTOS } from '../model/limits';
 import { CaptionField } from './CaptionField';
 import { PhotoList, type PhotoAction, type PhotoItem } from './PhotoList';
 

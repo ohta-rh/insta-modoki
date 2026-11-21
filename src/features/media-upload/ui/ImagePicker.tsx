@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { MAX_FILES } from '../model/schema';
+import { MAX_FILES } from '../model/limits';
 import { uploadImages, type UploadedImage } from '../model/upload-images';
 import { validateFile } from '../model/validate-file';
 

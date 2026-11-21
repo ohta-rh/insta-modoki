@@ -2,7 +2,7 @@ import type { FormEvent, Ref } from 'react';
 import { charLength } from '../../../shared/text';
 import { addCommentFormAction } from '../api/actions';
 import { COMMENT_INPUT_ID } from './comment-input-id';
-import { MAX_BODY } from '../model/schema';
+import { MAX_BODY } from '../model/limits';
 import type { ReplyTarget } from '../model/thread';
 
 /** The counter shows from here on (the limit is 2,200). */

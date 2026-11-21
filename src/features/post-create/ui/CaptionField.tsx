@@ -1,7 +1,7 @@
 'use client';
 
 import { charLength } from '../../../shared/text';
-import { CAPTION_MESSAGE, MAX_CAPTION } from '../model/schema';
+import { CAPTION_MESSAGE, MAX_CAPTION } from '../model/limits';
 
 export type CaptionFieldProps = {
   value: string;

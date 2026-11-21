@@ -1,15 +1,13 @@
 import { z } from 'zod';
 import { charLength } from '../../../shared/text';
 
-export const MAX_PHOTOS = 10;
-export const MAX_CAPTION = 2200;
-export const MAX_ALT_TEXT = 500;
+import { ALT_TEXT_MESSAGE, CAPTION_MESSAGE, MAX_ALT_TEXT, MAX_CAPTION, MAX_PHOTOS } from './limits';
+
+export { ALT_TEXT_MESSAGE, CAPTION_MESSAGE, MAX_ALT_TEXT, MAX_CAPTION, MAX_PHOTOS };
 /** The long edge of a stored original (`media-upload` shrinks to this). */
 const MAX_EDGE = 2048;
 
 export const MEDIA_MESSAGE = `写真は 1 枚から ${MAX_PHOTOS} 枚までです`;
-export const CAPTION_MESSAGE = 'キャプションは 2,200 字までです';
-export const ALT_TEXT_MESSAGE = '代替テキストは 500 字までです';
 export const NOT_UPLOADED_MESSAGE = '写真のアップロードが完了していません';
 
 export type CreatePostInput = {

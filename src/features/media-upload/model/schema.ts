@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MAX_FILES } from './limits';
 import { MAX_EDGE } from './resize';
 import { ALLOWED_CONTENT_TYPES, MAX_FILE_BYTES } from './validate-file';
 
@@ -14,7 +15,7 @@ export type ParsedUploadRequest =
   | { ok: true; data: { files: UploadFile[] } }
   | { ok: false; code: 'VALIDATION' | 'PAYLOAD_TOO_LARGE'; fieldErrors?: Record<string, string[]> };
 
-export const MAX_FILES = 10;
+export { MAX_FILES };
 
 // A byte count has no upper bound here: an oversized one is PAYLOAD_TOO_LARGE, not VALIDATION.
 const bytes = z.number().int().min(1);

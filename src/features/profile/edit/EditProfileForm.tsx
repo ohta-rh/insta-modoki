@@ -6,13 +6,8 @@ import { useActionState, useState } from 'react';
 import { UploadError, uploadImages } from '../../media-upload';
 import { charLength } from '../../../shared/text';
 import { updateProfileAction, updateProfileFormAction } from '../api/actions';
-import {
-  BIO_MESSAGE,
-  DISPLAY_NAME_MESSAGE,
-  MAX_BIO,
-  MAX_DISPLAY_NAME,
-  type ProfileView,
-} from '../model/schema';
+import { BIO_MESSAGE, DISPLAY_NAME_MESSAGE, MAX_BIO, MAX_DISPLAY_NAME } from '../model/limits';
+import type { ProfileView } from '../model/schema';
 import { AvatarField, type PickedAvatar } from './AvatarField';
 
 const UPLOAD_FAILED = 'アップロードに失敗しました。もう一度お試しください';

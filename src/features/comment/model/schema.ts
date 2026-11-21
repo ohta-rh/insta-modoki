@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { charLength } from '../../../shared/text';
+import { MAX_BODY } from './limits';
 
-export const MAX_BODY = 2200;
+export { MAX_BODY };
 export const PAGE_SIZE = 20;
 /** How many replies each parent carries in `listComments`; the rest come from `listReplies`. */
 export const INLINE_REPLIES = 3;
