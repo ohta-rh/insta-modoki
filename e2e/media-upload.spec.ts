@@ -22,6 +22,8 @@ async function start(page: Page): Promise<string> {
   return user.username;
 }
 
+// Next.js has its own role=alert (the route announcer); these are the picker's.
+const alerts = (page: Page) => page.locator('[role="alert"]:not(#__next-route-announcer__)');
 const picker = (page: Page) => page.locator('input[type="file"]');
 const upload = (page: Page) => page.getByRole('button', { name: 'アップロード' });
 const results = async (page: Page): Promise<Result[]> =>
@@ -43,8 +45,8 @@ test('大きすぎる写真と許可外の形式は 送信前に理由つきで�
     { name: 'note.jpg', mimeType: 'text/plain', buffer: Buffer.from('hello') },
   ]);
 
-  const alerts = page.getByRole('alert').getByRole('listitem');
-  await expect(alerts).toHaveText([
+  const items = alerts(page).getByRole('listitem');
+  await expect(items).toHaveText([
     'over.jpg: ファイルが大きすぎます（1 枚 10MB まで）',
     'anim.gif: この形式は使えません（JPEG・PNG・WebP・HEIC）',
     'note.jpg: この形式は使えません（JPEG・PNG・WebP・HEIC）',
@@ -54,7 +56,7 @@ test('大きすぎる写真と許可外の形式は 送信前に理由つきで�
 
   // Picking again clears the earlier rejections.
   await picker(page).setInputFiles([{ name: 'ok.jpg', mimeType: 'image/jpeg', buffer: jpeg }]);
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(alerts(page)).toHaveCount(0);
   await expect(page.getByText('ok.jpg')).toBeVisible();
   expect(sent).toEqual([]);
 });
@@ -137,14 +139,14 @@ test('アップロードが失敗したら 理由が表示され やり直せる
   await page.route('**/media/**', (route) => route.abort());
   await picker(page).setInputFiles([{ name: 'retry.jpg', mimeType: 'image/jpeg', buffer: jpeg }]);
   await upload(page).click();
-  await expect(page.getByRole('alert')).toHaveText(FAILED);
+  await expect(alerts(page)).toHaveText(FAILED);
   await expect(page.getByText('retry.jpg')).toBeVisible();
   expect(urlRequests).toHaveLength(1);
 
   await page.unroute('**/media/**');
   await upload(page).click();
   await expect(page.getByTestId('result')).toContainText('"key"');
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(alerts(page)).toHaveCount(0);
   expect(urlRequests).toHaveLength(2);
 });
 

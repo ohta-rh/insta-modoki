@@ -28,6 +28,7 @@ status: stable
 | `/stories/create` / `/stories/[username]` | ストーリーの投稿 / ビューア | 要 | M3 |
 | `/direct` / `/direct/[conversationId]` | DM の一覧 / 会話 | 要 | M4 |
 | `/reels` | 縦型動画（任意） | 要 | M4 |
+| `/e2e-harness/upload` | 写真の選択部品の確認用（E2E 用。`APP_ENV` が `production` のとき 404） | 不要 | M1 |
 | `/about` | 紹介 | 不要 | M4 |
 
 ### 予約したユーザー名
@@ -47,7 +48,7 @@ status: stable
 | `getProfile` | profile | username | `ProfileView`（[conventions.md](conventions.md)） | NOT_FOUND |
 | `listProfilePosts` | profile | username, cursor? | `Page<PostThumb>`（12 件） | NOT_FOUND |
 | `updateProfile` | profile | displayName, bio, avatarKey? | `ProfileView`（`avatarKey` があれば、`createPost` と同じ所有の検査の後に `HEAD` で `image/webp` と大きさを確かめる） | UNAUTHENTICATED、VALIDATION |
-| `requestUploadUrls` | media-upload | files: `{ contentType, size, width, height, variantSizes: { w320, w640, w1080 } }[]`（1〜10。size は縮小後の WebP のバイト数） | `{ uploads: { key, putUrls: { orig, w320, w640, w1080 } }[] }`（有効期限 5 分。署名に `Content-Type: image/webp` と宣言した長さを含める） | UNAUTHENTICATED、VALIDATION、PAYLOAD_TOO_LARGE、RATE_LIMITED |
+| `requestUploadUrls` | media-upload | files: `{ contentType, size, width, height, variantSizes: { orig, w320, w640, w1080 } }[]`（1〜10。`contentType`・`size` は選んだ元の写真の形式と大きさ、`width`・`height` は縮小後の原本の画素数、`variantSizes` は変換後の WebP のバイト数。`key` は入力に無く、サーバーが作る） | `{ uploads: { key, putUrls: { orig, w320, w640, w1080 } }[] }`（有効期限 5 分。署名に `Content-Type: image/webp` と宣言した長さを含める） | UNAUTHENTICATED、VALIDATION、PAYLOAD_TOO_LARGE、RATE_LIMITED |
 | `createPost` | post-create | caption, media: `{ key, width, height, altText, thumbhash }[]`（1〜10）, clientRequestId | `{ postId }`（`media[].key` は `^media/<セッションの userId>/<UUIDv7>$` の形で、他の行に参照済みでないこと。違えば何も消さずに VALIDATION。通ったキーを `HEAD` し、`image/webp` でない・宣言より大きいものは拒否して消す） | UNAUTHENTICATED、VALIDATION、RATE_LIMITED |
 | `getPost` | post | postId | `PostView` | NOT_FOUND |
 | `deletePost` | post | postId | `{ deleted: true }`（既に無い投稿には、ログインしていれば誰にでも同じ結果を返す。持ち主を確かめる対象が無いため） | UNAUTHENTICATED、FORBIDDEN、NOT_FOUND |

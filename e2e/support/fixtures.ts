@@ -75,9 +75,22 @@ export function withGps(jpeg: Buffer): Buffer {
   return Buffer.concat([jpeg.subarray(0, 2), gpsExifSegment(), jpeg.subarray(2)]);
 }
 
-/** Whether the bytes carry an Exif APP1 or any GPS tag block. */
+/** The chunk ids of a RIFF WebP, in order. */
+function webpChunks(bytes: Buffer): string[] {
+  const ids: string[] = [];
+  for (let at = 12; at + 8 <= bytes.length;) {
+    ids.push(bytes.toString('ascii', at, at + 4));
+    at += 8 + bytes.readUInt32LE(at + 4) + (bytes.readUInt32LE(at + 4) % 2);
+  }
+  return ids;
+}
+
+/** Whether the file carries Exif (a JPEG APP1 Exif segment, or a WebP `EXIF` / `XMP ` chunk). */
 export function hasExif(bytes: Buffer): boolean {
-  return bytes.includes(Buffer.from('Exif\0\0')) || bytes.includes(Buffer.from('EXIF'));
+  if (bytes.toString('ascii', 0, 4) === 'RIFF') {
+    return webpChunks(bytes).some((id) => id === 'EXIF' || id === 'XMP ');
+  }
+  return bytes.includes(Buffer.from('Exif\0\0'));
 }
 
 /** A JPEG padded with zero bytes after the end marker to exactly `size` bytes. */
@@ -85,10 +98,16 @@ export function padTo(jpeg: Buffer, size: number): Buffer {
   return Buffer.concat([jpeg, Buffer.alloc(size - jpeg.length)]);
 }
 
-/** The pixel size stored in a lossy WebP (`VP8 ` chunk), or null when the file is not that. */
+/** The pixel size stored in a WebP (`VP8X` extended header or a lossy `VP8 ` chunk), or null. */
 export function webpSize(bytes: Buffer): { width: number; height: number } | null {
   if (bytes.toString('ascii', 0, 4) !== 'RIFF' || bytes.toString('ascii', 8, 12) !== 'WEBP')
     return null;
-  if (bytes.toString('ascii', 12, 16) !== 'VP8 ') return null;
-  return { width: bytes.readUInt16LE(26) & 0x3fff, height: bytes.readUInt16LE(28) & 0x3fff };
+  const chunk = bytes.toString('ascii', 12, 16);
+  if (chunk === 'VP8X') {
+    return { width: bytes.readUIntLE(24, 3) + 1, height: bytes.readUIntLE(27, 3) + 1 };
+  }
+  if (chunk === 'VP8 ') {
+    return { width: bytes.readUInt16LE(26) & 0x3fff, height: bytes.readUInt16LE(28) & 0x3fff };
+  }
+  return null;
 }
