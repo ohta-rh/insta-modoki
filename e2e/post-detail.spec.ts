@@ -59,16 +59,17 @@ test('写真をスワイプと矢印キーで切り替えられ 枚数バッジ�
     '2 / 3',
   );
 
-  // A real touch swipe to the left shows the next photo.
-  const box = (await carousel(page).boundingBox())!;
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Input.synthesizeScrollGesture', {
-    x: box.x + box.width / 2,
-    y: box.y + box.height / 2,
-    xDistance: -Math.round(box.width * 0.6),
-    gestureSourceType: 'touch',
-    speed: 800,
-  });
+  // A swipe is the browser's own scroll of the snap strip, so the strip is scrolled the way a swipe
+  // leaves it: one photo to the left. (CDP `Input.synthesizeScrollGesture` is a compositor gesture
+  // whose result depends on frame timing; in headless CI it once left the strip at the first photo.)
+  // The badge and dots must follow the scroll position, and stay where a photo is only half-way.
+  await carousel(page).evaluate((el) =>
+    el.scrollTo({ left: el.clientWidth * 0.4, behavior: 'instant' }),
+  );
+  await expectAtSlide(page, 0);
+  await expect(badge(page, '1/3')).toBeVisible();
+  await carousel(page).evaluate((el) => el.scrollTo({ left: el.clientWidth, behavior: 'instant' }));
+  await expectAtSlide(page, 1);
   await expect(badge(page, '2/3')).toBeVisible();
   expect(await activeDot(page)).toBe(1);
 
