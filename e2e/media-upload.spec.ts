@@ -147,6 +147,9 @@ test('アップロードが失敗したら 理由が表示され やり直せる
 });
 
 test('写真の選択部品をキーボードだけで操作でき axe の重大な違反が無い', async ({ page }) => {
+  // Arm the chooser interception long before the key press: Playwright enables it asynchronously,
+  // and a chooser that opens first is the browser's own and never reaches the test.
+  const chooser = page.waitForEvent('filechooser');
   await start(page);
   const jpeg = await makeJpeg(page, 320, 240);
 
@@ -162,7 +165,6 @@ test('写真の選択部品をキーボードだけで操作でき axe の重大
     await page.keyboard.press('Tab');
   }
   await expect(choose).toBeFocused();
-  const chooser = page.waitForEvent('filechooser');
   await page.keyboard.press('Enter');
   await (await chooser).setFiles([{ name: 'kb.jpg', mimeType: 'image/jpeg', buffer: jpeg }]);
   await expect(page.getByText('kb.jpg')).toBeVisible();
