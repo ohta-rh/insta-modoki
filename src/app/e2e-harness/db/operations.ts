@@ -92,31 +92,32 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
       // New users, their likes and the counter in one batch, so like_count always equals the rows.
       const now = new Date();
       const people = operation.likers.map((l) => ({ ...l, id: crypto.randomUUID() }));
-      await db.batch([
-        db.insert(users).values(
-          people.map((p) => ({
+      // One insert per row: D1 allows 100 bound variables in one statement.
+      const counter = db
+        .update(posts)
+        .set({
+          likeCount: sql`(SELECT count(*) FROM ${likes} WHERE ${likes.postId} = ${posts.id})`,
+        })
+        .where(eq(posts.id, operation.postId));
+      const rows = [
+        ...people.map((p) =>
+          db.insert(users).values({
             id: p.id,
             username: p.username,
             email: p.email,
             displayName: p.username,
             createdAt: now,
             updatedAt: now,
-          })),
+          }),
         ),
-        db.insert(likes).values(
-          people.map((p) => ({
-            userId: p.id,
-            postId: operation.postId,
-            createdAt: new Date(p.likedAt),
-          })),
+        ...people.map((p) =>
+          db
+            .insert(likes)
+            .values({ userId: p.id, postId: operation.postId, createdAt: new Date(p.likedAt) }),
         ),
-        db
-          .update(posts)
-          .set({
-            likeCount: sql`(SELECT count(*) FROM ${likes} WHERE ${likes.postId} = ${posts.id})`,
-          })
-          .where(eq(posts.id, operation.postId)),
-      ]);
+      ];
+      // The counter runs last, after every row is in. The array is never empty (min 1 liker).
+      await db.batch([...rows, counter] as unknown as Parameters<typeof db.batch>[0]);
       return;
     }
     case 'deletePost': {

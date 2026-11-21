@@ -128,6 +128,23 @@ describe('E2E ハーネスの操作', () => {
     expect(row!.likeCount).toBe(3);
   });
 
+  it('seedLikers が上限の 50 人でも書ける（D1 は 1 つの文の束縛が 100 まで）', async () => {
+    const author = await createUser(t.db);
+    const post = await createPost(t.db, author.id);
+    await run({
+      op: 'seedLikers',
+      postId: post.id,
+      likers: Array.from({ length: 50 }, (_, i) => ({
+        username: `many_${i}`,
+        email: `many_${i}@example.com`,
+        likedAt: 1000 + i,
+      })),
+    });
+    const [row] = await t.db.select().from(posts).where(eq(posts.id, post.id));
+    expect(row!.likeCount).toBe(50);
+    expect(await t.db.select().from(likes)).toHaveLength(50);
+  });
+
   it('seedLikers が既にいいねのある投稿でも like_count を行の数に合わせる', async () => {
     const author = await createUser(t.db);
     const fan = await createUser(t.db);
