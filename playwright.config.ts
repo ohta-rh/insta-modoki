@@ -7,7 +7,8 @@ export default defineConfig({
   fullyParallel: true,
   // CI keeps an HTML report so a failed run can upload it (ADR-0027).
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
-  use: { baseURL: `http://localhost:${port}` },
+  // CI keeps the trace of a failed test; the HTML report embeds it (open it from the report).
+  use: { baseURL: `http://localhost:${port}`, trace: process.env.CI ? 'retain-on-failure' : 'off' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     // E2E_HARNESS reaches the Worker only as a wrangler --var (a shell variable does not), and only here.

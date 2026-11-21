@@ -48,7 +48,7 @@ status: stable
 
 ## CI
 
-`.github/workflows/ci.yml` の job `verify` が、`main` への push と pull request で動く。`docker compose up -d --wait`（Garage だけ）→ `node scripts/slot.mjs prepare 0` → `pnpm exec playwright install --with-deps chromium` → `PORT=3100 SLOT_INT=1 node scripts/verify.mjs` を流し、失敗したら `playwright-report` を残す。使う action は 40 桁の commit SHA で固定する（[ADR-0027](../adr/0027-ci-runs-verify-and-docs-check.md)）。
+`.github/workflows/ci.yml` の job `verify` が、`main` への push と pull request で動く。`docker compose up -d --wait`（Garage だけ）→ `node scripts/slot.mjs prepare 0` → `pnpm exec playwright install --with-deps chromium` → `PORT=3100 SLOT_INT=1 node scripts/verify.mjs` を流し、失敗したら `playwright-report` を残す。失敗した E2E のトレース（操作・DOM・ネットワーク）は `playwright-report` の中にあり、ダウンロードして `pnpm exec playwright show-report <dir>` で開き、失敗したテストの「Traces」から見る。使う action は 40 桁の commit SHA で固定する（[ADR-0027](../adr/0027-ci-runs-verify-and-docs-check.md)）。
 
 ## 出力と終了コード
 
