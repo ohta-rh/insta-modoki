@@ -1,5 +1,6 @@
+import { randomInt } from 'node:crypto';
 import { test as base, expect, type Page } from '@playwright/test';
-import { clearRateLimits } from './db';
+import { rateRows } from './db';
 
 export type NewUser = { username: string; email: string; displayName: string; password: string };
 
@@ -23,11 +24,31 @@ export async function fillSignUp(page: Page, user: NewUser): Promise<void> {
 
 /** Signs a new user up through the real screen; the page ends on `/` signed in. */
 export async function signUpViaUi(page: Page, user: NewUser = newUser()): Promise<NewUser> {
-  clearRateLimits();
+  // Locally every request has the IP "local", so parallel workers would share one `signup:ip:local`
+  // counter (10 an hour) and a sign-up could be refused with "操作が多すぎます". A private-range IP of
+  // its own per sign-up keeps each worker's counter separate (the production limit is unchanged), so
+  // no rows are deleted here: a DELETE from this process while the app upserts `rate_limits` made the
+  // app fail with SQLITE_BUSY_SNAPSHOT ("database is locked") and the sign-up with a 500.
+  await page.context().setExtraHTTPHeaders({
+    'cf-connecting-ip': `10.${randomInt(256)}.${randomInt(256)}.${1 + randomInt(254)}`,
+  });
   await page.goto('/accounts/signup');
   await fillSignUp(page, user);
   await page.getByRole('button', { name: 'サインアップ' }).click();
-  await expect(page).toHaveURL(/\/$/);
+  try {
+    await expect(page).toHaveURL(/\/$/);
+  } catch (error) {
+    // Say what the screen showed and the counter state, so a flake leaves its own evidence.
+    const shown = (await page.locator('body').innerText()).replace(/\s+/g, ' ').slice(0, 400);
+    throw new Error(
+      `sign-up stayed on ${page.url()}: ${shown} | signup:ip:local=${JSON.stringify(rateRows('signup:ip:local'))}`,
+      { cause: error },
+    );
+  } finally {
+    // Only the sign-up carries the header: later requests to other origins (the storage PUTs) must
+    // not, or the browser would need a CORS preflight for it.
+    await page.context().setExtraHTTPHeaders({});
+  }
   return user;
 }
 

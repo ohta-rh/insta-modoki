@@ -37,12 +37,13 @@ function withDb<T>(run: (db: DatabaseSync) => T): T {
  * its own IP (login-logout) must not be reset by another spec running in parallel.
  */
 export function clearRateLimits(): void {
-  withDb((db) =>
-    // `post:user:<id>` counters belong to one test's own user, so another spec's sign-up keeps them.
-    db.exec(
-      "DELETE FROM rate_limits WHERE key NOT LIKE 'login:ip:198.51.100.%' AND key NOT LIKE 'post:user:%'",
-    ),
-  );
+  // `post:user:<id>` counters belong to one test's own user, so they are kept.
+  const keep = "key NOT LIKE 'login:ip:198.51.100.%' AND key NOT LIKE 'post:user:%'";
+  withDb((db) => {
+    // Read first: a write from this process can make the app's own upsert fail with SQLITE_BUSY.
+    const row = db.prepare(`SELECT 1 AS found FROM rate_limits WHERE ${keep} LIMIT 1`).get();
+    if (row) db.exec(`DELETE FROM rate_limits WHERE ${keep}`);
+  });
 }
 
 /** Makes the user's next post over the hourly limit, or (count 0) clears the counter. */
@@ -87,4 +88,9 @@ export function mediaRows(postId: string): Record<string, unknown>[] {
   return withDb((db) =>
     db.prepare('SELECT * FROM media WHERE post_id = ? ORDER BY position').all(postId),
   );
+}
+
+/** The rate-limit rows of a key (for a failure message that says why a sign-up was refused). */
+export function rateRows(key: string): Record<string, unknown>[] {
+  return withDb((db) => db.prepare('SELECT * FROM rate_limits WHERE key = ?').all(key));
 }
