@@ -50,3 +50,8 @@ export async function putPhoto(env: StorageEnv, key: string): Promise<void> {
     await putObject(env, `${key}/${name}.webp`, new Uint8Array([82, 73, 70, 70]));
   }
 }
+
+/** Stores a few bytes under each key with the slot's own key. */
+export async function putObjects(env: StorageEnv, keys: string[]): Promise<void> {
+  for (const key of keys) await putObject(env, key, new Uint8Array(5));
+}
