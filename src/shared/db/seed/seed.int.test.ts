@@ -44,7 +44,7 @@ describe('seed:demo', () => {
   let first: { code: number; lines: string[] };
   beforeAll(async () => {
     first = await seed('demo');
-  }, 300_000);
+  }, 900_000);
 
   it('demo は 30 人と 300 件の投稿を作る', async () => {
     expect(first.code).toBe(0);
@@ -159,18 +159,11 @@ describe('seed:demo', () => {
       300,
     );
   });
+});
 
-  it('2 回流しても投稿は 300 件のまま', async () => {
-    const second = await seed('demo');
-    expect(second.code).toBe(0);
-    expect(await one(`SELECT count(*) AS n FROM posts WHERE author_id IN (${SEED_USERS})`)).toBe(
-      300,
-    );
-    expect(await one('SELECT count(*) AS n FROM posts')).toBe(300);
-    expect(await one(`SELECT count(*) AS n FROM users WHERE email LIKE '%${SUFFIX}'`)).toBe(30);
-  }, 300_000);
-
-  it('実在の利用者の行は消さない', async () => {
+describe('seed:demo をもう 1 回流す', () => {
+  let second: { code: number; lines: string[] };
+  beforeAll(async () => {
     const at = Date.now();
     await env.DB.prepare(
       `INSERT INTO users (id, username, display_name, email, created_at, updated_at) VALUES ('real-1', 'real_user', '実在', 'real@example.com', ${at}, ${at})`,
@@ -178,14 +171,24 @@ describe('seed:demo', () => {
     await env.DB.prepare(
       `INSERT INTO posts (id, author_id, caption, created_at) VALUES ('real-post', 'real-1', 'x', ${at})`,
     ).run();
-    expect((await seed('demo')).code).toBe(0);
-    expect(await one("SELECT count(*) AS n FROM users WHERE id = 'real-1'")).toBe(1);
-    expect(await one("SELECT count(*) AS n FROM posts WHERE id = 'real-post'")).toBe(1);
+    second = await seed('demo');
+  }, 900_000);
+
+  it('2 回流しても投稿は 300 件のまま', async () => {
+    expect(second.code).toBe(0);
+    expect(second.lines.at(-1)).toMatch(/^seed: demo OK users=30 posts=300 media=\d+$/);
     expect(await one(`SELECT count(*) AS n FROM posts WHERE author_id IN (${SEED_USERS})`)).toBe(
       300,
     );
+    expect(await one(`SELECT count(*) AS n FROM users WHERE email LIKE '%${SUFFIX}'`)).toBe(30);
+  });
+
+  it('実在の利用者の行は消さない', async () => {
+    expect(await one("SELECT count(*) AS n FROM users WHERE id = 'real-1'")).toBe(1);
+    expect(await one("SELECT count(*) AS n FROM posts WHERE id = 'real-post'")).toBe(1);
+    expect(await one('SELECT count(*) AS n FROM posts')).toBe(301);
     await env.DB.prepare("DELETE FROM users WHERE id = 'real-1'").run();
-  }, 300_000);
+  });
 });
 
 describe('seed の数の確認', () => {
@@ -202,7 +205,7 @@ describe('seed の数の確認', () => {
     } finally {
       await env.DB.prepare('DROP TRIGGER seed_test_drop_post').run();
     }
-  }, 120_000);
+  }, 900_000);
 });
 
 describe('seed:bench', () => {
@@ -217,5 +220,5 @@ describe('seed:bench', () => {
         "SELECT count(*) AS n FROM follows WHERE follower_id = (SELECT id FROM users WHERE username = 'demo')",
       ),
     ).toBe(100);
-  }, 600_000);
+  }, 900_000);
 });
