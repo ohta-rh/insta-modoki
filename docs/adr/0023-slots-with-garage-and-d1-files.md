@@ -53,4 +53,4 @@ Garage の `dxflrs/garage:v2.5.0` は `/garage` の実行ファイルだけの i
 - ADR-0008 は置き換える。共有のスタックを 1 つにすること、ポートとバケットの名前の規則、Director だけがスタックを動かすこと、`compose.yaml` を変える PBI を単独の Wave にすることは引き継ぐ。DB の名前と `.env.local` は引き継がない。
 - `compose.yaml` の config や image の版を変えたら、Director が共有のスタックに反映する。
 - スロットのスクリプトのテストは Vitest で書く（[ADR-0022](0022-testing-ui-and-package-management.md)）。`scripts/slot.test.ts` は単体、`scripts/slot.int.test.ts` は結合で、`verify` の `integration` が `src/` と `scripts/` の `*.int.test.ts` から見つけて流す。
-- 結合テスト（`scripts/slot.int.test.ts`）はスロットを初期化・削除するので、他の worktree が使っていないスロット（既定は 0 と 4）で流す。`SLOT_INT_A` と `SLOT_INT_B` で変える。
+- 結合テスト（`scripts/slot.int.test.ts`）は `SLOT_INT=1` のときだけ流す（無いときは「skipped」の 1 行を出して飛ばす）。スロット 0 と 4 のバケットを空にするので、2 つの worktree の `verify` が同時に流すと互いを壊すため。main のチェックアウトと CI だけが `SLOT_INT=1` を付ける。また、他の worktree が使っていないスロット（既定は 0 と 4）で流す。`SLOT_INT_A` と `SLOT_INT_B` で変える。

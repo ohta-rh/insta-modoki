@@ -48,12 +48,14 @@ export function findIntegrationTests(dir) {
 const defaultDeps = {
   exec: (command) => spawnSync(command, { shell: true, stdio: 'inherit', cwd: root }).status,
   log: (line) => console.log(line),
+  /** @type {Record<string, string | undefined>} */
+  env: process.env,
   hasIntegrationTests: () => INTEGRATION_DIRS.some((d) => findIntegrationTests(join(root, d))),
 };
 
 /** Returns the process exit code: 0 ok, the failed command's code (or 1), 2 for bad arguments. */
 export function main(argv, deps = defaultDeps) {
-  const { exec, log, hasIntegrationTests } = { ...defaultDeps, ...deps };
+  const { exec, log, hasIntegrationTests, env } = { ...defaultDeps, ...deps };
   let only = null;
   let list = false;
   for (let i = 0; i < argv.length; i += 1) {
@@ -78,6 +80,11 @@ export function main(argv, deps = defaultDeps) {
     if (step.skipUnlessIntegrationTests && !hasIntegrationTests()) {
       log(`${step.name}: テストなし`);
     } else {
+      if (step.name === 'integration' && env.SLOT_INT !== '1') {
+        log(
+          'integration: scripts/slot.int.test.ts は SLOT_INT=1 が無いので飛ばします（スロットのバケットを空にするため。ADR-0023）',
+        );
+      }
       const status = exec(step.command);
       if (status !== 0) {
         log(`verify: FAIL ${step.name}`);

@@ -38,8 +38,10 @@ The Director assigns each in-flight PBI a slot `N` in `1..4` (`0` = the main che
     says so; only the Director starts it.
 - At dispatch the Director runs `prepare` (or `reset`); at cleanup, `drop`, so each PBI starts
   empty and leaves nothing behind.
-- `scripts/slot.int.test.ts` resets and drops two slots (default 0 and 4; `SLOT_INT_A`,
-  `SLOT_INT_B`): run it only on slots no other worktree is using.
+- `scripts/slot.int.test.ts` runs only with `SLOT_INT=1` (verify skips it otherwise): run
+  `SLOT_INT=1 PORT=3100 node scripts/verify.mjs` in the main checkout / CI only. It resets and
+  drops two slots (default 0 and 4; `SLOT_INT_A`, `SLOT_INT_B`): run it only on slots no other
+  worktree is using.
 - Steps and troubleshooting: `docs/guides/local-development.md`.
 
 ## Changing the shared stack

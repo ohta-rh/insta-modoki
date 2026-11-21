@@ -16,6 +16,9 @@ const COMPOSE_PROJECT = 'insta-modoki';
 const STACK_DOWN =
   '共有のスタックが起動していません。Director が docker compose up -d --wait を実行してください';
 
+/** The slot integration test empties buckets of shared slots, so it runs only on request (ADR-0023). */
+export const slotIntEnabled = (env) => env.SLOT_INT === '1';
+
 export function slotNames(n) {
   const text = String(n);
   if (!/^[0-4]$/.test(text)) throw new Error('slot は 0〜4 の整数です');

@@ -39,8 +39,8 @@ S3 API はホストの `http://localhost:3910`。止める・作り直すのは 
 
 # テスト
 
-* `node --test scripts/slot.test.ts` - スタック不要
-* `node --test scripts/slot.int.test.ts` - スタックが起動していること。スロットを初期化・削除するので、他の worktree が使っていないスロットで流す（既定は 0 と 4。`SLOT_INT_A`・`SLOT_INT_B` で変える）
+* `pnpm exec vitest run scripts/slot.test.ts` - スタック不要
+* `SLOT_INT=1 pnpm exec vitest run scripts/slot.int.test.ts` - スタックが起動していること。`SLOT_INT=1` が無いと飛ばす（`verify` も同じ）。`SLOT_INT=1 PORT=3100 node scripts/verify.mjs` は main のチェックアウトと CI だけで流す。スロットを初期化・削除するので、他の worktree が使っていないスロットで流す（既定は 0 と 4。`SLOT_INT_A`・`SLOT_INT_B` で変える）
 
 # うまくいかないとき
 

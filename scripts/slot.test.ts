@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'vitest';
-import { renderEnv, run, slotNames } from './slot.mjs';
+import { renderEnv, run, slotIntEnabled, slotNames } from './slot.mjs';
 
 const secrets = {
   accessKey: 'access-key-for-test',
@@ -131,4 +131,10 @@ test('key create が既存で失敗したら key info を 1 回やり直す', as
   rmSync(dir, { recursive: true, force: true });
   assert.equal(code, 0);
   assert.equal(infoCalls, 2);
+});
+
+test('結合テストは SLOT_INT=1 のときだけ流す', () => {
+  assert.equal(slotIntEnabled({}), false);
+  assert.equal(slotIntEnabled({ SLOT_INT: '0' }), false);
+  assert.equal(slotIntEnabled({ SLOT_INT: '1' }), true);
 });

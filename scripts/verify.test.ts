@@ -23,6 +23,7 @@ function harness(overrides: Partial<NonNullable<Deps>> = {}) {
     },
     log: (line: string) => lines.push(line),
     hasIntegrationTests: () => true,
+    env: {},
     ...overrides,
   };
   return { lines, executed, deps };
@@ -123,5 +124,14 @@ describe('verify', () => {
     const root = join(import.meta.dirname, '..');
     expect(INTEGRATION_DIRS).toContain('scripts');
     expect(findIntegrationTests(join(root, 'scripts'))).toBe(true);
+  });
+
+  it('SLOT_INT=1 が無いとき、integration でスロットの結合テストを飛ばすと 1 行出す', () => {
+    const off = harness({ env: {} });
+    main(['--only', 'integration'], off.deps);
+    expect(off.lines.filter((l: string) => l.includes('SLOT_INT=1'))).toHaveLength(1);
+    const on = harness({ env: { SLOT_INT: '1' } });
+    main(['--only', 'integration'], on.deps);
+    expect(on.lines.some((l: string) => l.includes('SLOT_INT=1'))).toBe(false);
   });
 });
