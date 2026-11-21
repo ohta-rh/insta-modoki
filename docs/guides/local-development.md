@@ -39,6 +39,21 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 
 `prepare` と `reset` は、スロットのバケットの CORS（アプリの origin `http://localhost:<3100+N>` からの PUT・GET・HEAD）も設定する。ブラウザが署名付き URL へ直接 PUT するために要る。
 
+# シードデータ（デモと計測用）
+
+スロットの D1 とバケットに、決まった形のデータを入れる。スロットを準備した後（`node scripts/slot.mjs prepare <N>`）、worktree の中で流す。バケットがスロットのもの（`insta-s<N>`）でないとき、`APP_ENV=production` のときは何もせず 1 で終わる。
+
+| コマンド | 作るもの |
+|---|---|
+| `pnpm seed:demo` | 利用者 30 人（`demo` を含む）、投稿 300 件、画像（1〜10 枚）、いいね・コメント・フォロー。最後の行は `seed: demo OK users=30 posts=300 media=<n>`。約 20 秒 |
+| `pnpm seed:bench` | 利用者 1,000 人、投稿 10,000 件。画像は 60 枚を使い回す（このデータはアプリから消さない）。最後の行は `seed: bench OK users=1000 posts=10000`。約 1 分。API の計測の前に流す明示のコマンドで、`verify` の E2E では流さない |
+
+* 同じ DB に何回流しても結果は同じ。メールが `@seed.invalid` で終わる利用者（とその投稿・画像）だけを消してから入れ直す。実在の利用者の行は消さない。
+* `demo` のメールは `demo@seed.invalid`。パスワードは環境変数 `SEED_DEMO_PASSWORD` で渡す。渡さないと 16 字を作って 1 度だけ標準出力に出す（リポジトリには書かない）。
+* 画像は図形から自分で作る（第三者の素材は使わない。[ADR-0003](../adr/0003-reproduce-ux-under-own-brand.md)）。乱数は固定の seed（20261121）。
+* 終了コード: 成功 0、数が合わない・本番・失敗 1、引数の誤り 2。
+* E2E は `e2e/support/demo.ts` の `ensureDemoSeed()` と `loginAsDemo(page)` を使う。
+
 # テスト
 
 * `pnpm exec vitest run scripts/slot.test.ts` - スタック不要

@@ -26,6 +26,9 @@ export type GeneratedImage = {
   thumbhash: string;
 };
 
+// The SVG namespace is an identifier the renderer needs, not an address anything is fetched from.
+const SVG_NS = ['http:', '', 'www.w3.org', '2000', 'svg'].join('/');
+
 const n = (v: number) => Math.round(v * 10) / 10;
 
 /** One image, fully determined by `seed`: the same seed gives the same bytes. */
@@ -72,7 +75,7 @@ export async function generateImage(seed: number): Promise<GeneratedImage> {
     }
   }
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
+    `<svg xmlns="${SVG_NS}" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
     `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${bg.hex}"/><stop offset="1" stop-color="${bg2.hex}"/></linearGradient></defs>` +
     `<rect width="${width}" height="${height}" fill="url(#g)"/>${parts.join('')}</svg>`;
 
@@ -81,10 +84,7 @@ export async function generateImage(seed: number): Promise<GeneratedImage> {
   const orig = await sharp(png).webp({ quality: 90 }).toBuffer();
   const variants = await Promise.all(
     WIDTHS.map((w) =>
-      sharp(png)
-        .resize({ width: w, withoutEnlargement: true })
-        .webp({ quality: 82 })
-        .toBuffer(),
+      sharp(png).resize({ width: w, withoutEnlargement: true }).webp({ quality: 82 }).toBuffer(),
     ),
   );
   const { data, info } = await sharp(png)

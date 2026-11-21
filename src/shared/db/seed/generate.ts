@@ -142,7 +142,12 @@ const COMMENTS = [
   'ほっとする一枚です',
   '細かいところまで素敵です',
 ] as const;
-const REPLIES = ['ありがとうございます', 'ぜひ行ってみてください', 'うれしいです', 'また撮ります'] as const;
+const REPLIES = [
+  'ありがとうございます',
+  'ぜひ行ってみてください',
+  'うれしいです',
+  'また撮ります',
+] as const;
 
 /** The count of media in each post: mostly 1, some 2-5, and about 1% with the maximum of 10. */
 function mediaCounts(rng: Rng, posts: number): number[] {
