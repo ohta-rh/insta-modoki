@@ -1,8 +1,8 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
-import { AppError, toErrorResponse, type ErrorBody } from '../../../shared/errors';
+import { failure, formFailure } from '../../../shared/action';
+import { AppError, type ErrorBody } from '../../../shared/errors';
 import { follow } from './follow';
 import type { FollowPage } from './list-follow';
 import { listFollowers } from './list-followers';
@@ -13,13 +13,6 @@ export type FollowActionResult =
   { ok: true; following: boolean; followerCount: number } | { ok: false; error: ErrorBody };
 export type FollowListActionResult =
   { ok: true; page: FollowPage } | { ok: false; error: ErrorBody };
-
-const failure = (error: unknown, name: string) => {
-  if (!(error instanceof AppError)) {
-    console.error(`${name} failed`, error instanceof Error ? error.name : 'unknown');
-  }
-  return { ok: false as const, error: toErrorResponse(error).body };
-};
 
 /**
  * The Server Action the follow button calls once the page is hydrated: it puts the follow into the
@@ -36,7 +29,7 @@ export async function followAction(input: {
     const run = following ? follow : unfollow;
     return { ok: true, ...(await run({ username }, { headers: await headers() })) };
   } catch (error) {
-    return failure(error, 'follow');
+    return failure('follow', error);
   }
 }
 
@@ -46,25 +39,20 @@ export async function followAction(input: {
  * A visitor who is not signed in goes to the login page.
  */
 export async function followFormAction(formData: FormData): Promise<void> {
-  let outcome: 'done' | 'login' | 'missing' = 'done';
   try {
     const username = formData.get('username');
     const run = formData.get('follow') === '1' ? follow : unfollow;
     await run({ username }, { headers: await headers() });
   } catch (error) {
-    if (error instanceof AppError && error.code === 'UNAUTHENTICATED') outcome = 'login';
-    else if (error instanceof AppError && error.code === 'NOT_FOUND') outcome = 'missing';
-    else throw error instanceof AppError ? error : new Error('follow failed');
+    formFailure(error, 'follow');
   }
-  if (outcome === 'login') redirect('/accounts/login');
-  if (outcome === 'missing') notFound();
 }
 
 export async function listFollowersAction(input: unknown): Promise<FollowListActionResult> {
   try {
     return { ok: true, page: await listFollowers(input) };
   } catch (error) {
-    return failure(error, 'listFollowers');
+    return failure('listFollowers', error);
   }
 }
 
@@ -72,6 +60,6 @@ export async function listFollowingAction(input: unknown): Promise<FollowListAct
   try {
     return { ok: true, page: await listFollowing(input) };
   } catch (error) {
-    return failure(error, 'listFollowing');
+    return failure('listFollowing', error);
   }
 }

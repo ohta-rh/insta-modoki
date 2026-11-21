@@ -1,7 +1,8 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { AppError, toErrorResponse, type ErrorBody } from '../../../shared/errors';
+import { failure } from '../../../shared/action';
+import type { ErrorBody } from '../../../shared/errors';
 import { renderFeedCards, type FeedCard } from '../ui/feed-cards';
 import { getFeed } from './get-feed';
 
@@ -18,9 +19,6 @@ export async function getFeedAction(input: unknown): Promise<GetFeedResult> {
     const cards = renderFeedCards(page.items, { now: Date.now(), firstPriority: false });
     return { ok: true, cards, nextCursor: page.nextCursor };
   } catch (error) {
-    if (!(error instanceof AppError)) {
-      console.error('getFeed failed', error instanceof Error ? error.name : 'unknown');
-    }
-    return { ok: false, error: toErrorResponse(error).body };
+    return failure('getFeed', error);
   }
 }

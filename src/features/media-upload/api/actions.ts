@@ -1,7 +1,8 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { AppError, toErrorResponse, type ErrorBody } from '../../../shared/errors';
+import { failure } from '../../../shared/action';
+import type { ErrorBody } from '../../../shared/errors';
 import { requestUploadUrls, type UploadSlot } from './request-upload-urls';
 
 export type RequestUploadUrlsResult =
@@ -12,9 +13,6 @@ export async function requestUploadUrlsAction(input: unknown): Promise<RequestUp
   try {
     return { ok: true, ...(await requestUploadUrls(input, { headers: await headers() })) };
   } catch (error) {
-    if (!(error instanceof AppError)) {
-      console.error('requestUploadUrls failed', error instanceof Error ? error.name : 'unknown');
-    }
-    return { ok: false, error: toErrorResponse(error).body };
+    return failure('requestUploadUrls', error);
   }
 }

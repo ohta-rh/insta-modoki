@@ -2,6 +2,7 @@
 
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { failure, logUnexpected } from '../../../shared/action';
 import { AppError, toErrorResponse, type ErrorBody } from '../../../shared/errors';
 import type { Page, PostThumb, ProfileView } from '../model/schema';
 import { listProfilePosts } from './list-profile-posts';
@@ -15,10 +16,7 @@ export async function listProfilePostsAction(input: unknown): Promise<ListProfil
   try {
     return { ok: true, page: await listProfilePosts(input) };
   } catch (error) {
-    if (!(error instanceof AppError)) {
-      console.error('listProfilePosts failed', error instanceof Error ? error.name : 'unknown');
-    }
-    return { ok: false, error: toErrorResponse(error).body };
+    return failure('listProfilePosts', error);
   }
 }
 
@@ -30,10 +28,7 @@ export async function updateProfileAction(input: unknown): Promise<UpdateProfile
   try {
     return { ok: true, profile: await updateProfile(input, { headers: await headers() }) };
   } catch (error) {
-    if (!(error instanceof AppError)) {
-      console.error('updateProfile failed', error instanceof Error ? error.name : 'unknown');
-    }
-    return { ok: false, error: toErrorResponse(error).body };
+    return failure('updateProfile', error);
   }
 }
 
@@ -66,9 +61,7 @@ export async function updateProfileFormAction(
     ));
   } catch (error) {
     if (error instanceof AppError && error.code === 'UNAUTHENTICATED') redirect('/accounts/login');
-    if (!(error instanceof AppError)) {
-      console.error('updateProfile failed', error instanceof Error ? error.name : 'unknown');
-    }
+    logUnexpected('updateProfile', error);
     const body = toErrorResponse(error).body;
     return {
       message: body.message,

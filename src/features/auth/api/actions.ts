@@ -2,6 +2,7 @@
 
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { logUnexpected } from '../../../shared/action';
 import { AppError, toErrorResponse } from '../../../shared/errors';
 import { getRequestEnv } from '../../../shared/db/request';
 import type { AuthEnv } from './auth-env';
@@ -48,7 +49,7 @@ export async function signUpAction(_prev: SignUpState, data: FormData): Promise<
     if (error instanceof AppError) {
       return { message: error.message, fieldErrors: error.fieldErrors, values };
     }
-    console.error('signUp failed', error instanceof Error ? error.name : 'unknown');
+    logUnexpected('signUp', error);
     return { message: toErrorResponse(error).body.message, values };
   }
   redirect('/');
@@ -100,7 +101,7 @@ export async function logInAction(_prev: LogInState, data: FormData): Promise<Lo
     if (error instanceof AppError) {
       return { message: error.message, fieldErrors: error.fieldErrors, values: { email } };
     }
-    console.error('logIn failed', error instanceof Error ? error.name : 'unknown');
+    logUnexpected('logIn', error);
     return { message: toErrorResponse(error).body.message, values: { email } };
   }
   redirect('/');

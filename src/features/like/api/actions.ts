@@ -1,8 +1,8 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { notFound, redirect } from 'next/navigation';
-import { AppError, toErrorResponse, type ErrorBody } from '../../../shared/errors';
+import { failure, formFailure } from '../../../shared/action';
+import { AppError, type ErrorBody } from '../../../shared/errors';
 import { likePost } from './like-post';
 import { listLikers, type LikersPage } from './list-likers';
 import { unlikePost } from './unlike-post';
@@ -10,13 +10,6 @@ import { unlikePost } from './unlike-post';
 export type LikeActionResult =
   { ok: true; liked: boolean; likeCount: number } | { ok: false; error: ErrorBody };
 export type LikersActionResult = { ok: true; page: LikersPage } | { ok: false; error: ErrorBody };
-
-const failure = (error: unknown, name: string) => {
-  if (!(error instanceof AppError)) {
-    console.error(`${name} failed`, error instanceof Error ? error.name : 'unknown');
-  }
-  return { ok: false as const, error: toErrorResponse(error).body };
-};
 
 /**
  * The Server Action the like button calls once the page is hydrated: it puts the like into the
@@ -33,7 +26,7 @@ export async function likeAction(input: {
     const run = liked ? likePost : unlikePost;
     return { ok: true, ...(await run({ postId }, { headers: await headers() })) };
   } catch (error) {
-    return failure(error, 'like');
+    return failure('like', error);
   }
 }
 
@@ -43,24 +36,19 @@ export async function likeAction(input: {
  * A visitor who is not signed in goes to the login page.
  */
 export async function likeFormAction(formData: FormData): Promise<void> {
-  let outcome: 'done' | 'login' | 'missing' = 'done';
   try {
     const postId = formData.get('postId');
     const run = formData.get('like') === '1' ? likePost : unlikePost;
     await run({ postId }, { headers: await headers() });
   } catch (error) {
-    if (error instanceof AppError && error.code === 'UNAUTHENTICATED') outcome = 'login';
-    else if (error instanceof AppError && error.code === 'NOT_FOUND') outcome = 'missing';
-    else throw error instanceof AppError ? error : new Error('like failed');
+    formFailure(error, 'like');
   }
-  if (outcome === 'login') redirect('/accounts/login');
-  if (outcome === 'missing') notFound();
 }
 
 export async function listLikersAction(input: unknown): Promise<LikersActionResult> {
   try {
     return { ok: true, page: await listLikers(input) };
   } catch (error) {
-    return failure(error, 'listLikers');
+    return failure('listLikers', error);
   }
 }
