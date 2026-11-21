@@ -78,7 +78,9 @@ and EPIC test. The user merges.
 1. `git -C .worktrees/pbi-<N> rebase origin/main` (after `git fetch`). If the rebase changed
    anything, re-run verify in the worktree; green from before the rebase does not carry over.
 2. In the main checkout: `git merge --ff-only pbi/<N>`, `git diff --check origin/main..HEAD`,
-   `git push origin main`; confirm `git status -sb` shows no `ahead`.
+   `git push origin main`; confirm `git status -sb` shows no `ahead`. Do not push the next
+   integration until the CI run of this push has **completed**: a newer push cancels the running
+   one, and on 2026-11-21 six consecutive pushes left the gate with no completed run at all.
 3. On the issue: tick DoD, comment with the commit SHA, the verify result and the review
    verdicts; close; tick it in the EPIC.
 4. Clean up by exact name: `git worktree remove .worktrees/pbi-<N>`, `git branch -d pbi/<N>`,
