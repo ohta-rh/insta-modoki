@@ -23,7 +23,7 @@ describe('msUntilFreshWindow', () => {
 
 describe('ownIpLastOctet', () => {
   it('2 つのテストの IP は 繰り返しと分がどう組み合わさっても重ならない', () => {
-    const octets = (testNo: number) => {
+    const octets = (testNo: 0 | 1) => {
       const out = new Set<number>();
       for (let repeat = 0; repeat < 20; repeat += 1) {
         for (const minute of [29_000_000, 29_000_001])
