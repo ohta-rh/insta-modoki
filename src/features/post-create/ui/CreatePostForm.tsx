@@ -43,7 +43,6 @@ async function readSize(file: File): Promise<{ width: number; height: number }> 
 export function CreatePostForm() {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
-  const chooseButton = useRef<HTMLButtonElement>(null);
   const [clientRequestId] = useState(() => crypto.randomUUID());
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [ratio, setRatio] = useState<Ratio>('1:1');
@@ -120,7 +119,7 @@ export function CreatePostForm() {
     setPhotos(rest);
     const neighbour = rest[Math.min(at, rest.length - 1)];
     if (neighbour) setFocusRequest({ id: neighbour.id, action: 'remove' });
-    else chooseButton.current?.focus();
+    else input.current?.focus();
   }
 
   async function post() {
@@ -175,24 +174,21 @@ export function CreatePostForm() {
       <h1 className="text-[length:var(--font-size-xl)] font-bold">投稿を作成</h1>
       <fieldset disabled={locked} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <input
-            ref={input}
-            type="file"
-            accept="image/*"
-            multiple
-            hidden
-            aria-label="写真のファイル"
-            onChange={(e) => void pick(e.currentTarget.files)}
-          />
           <div className="flex items-center gap-3">
-            <button
-              ref={chooseButton}
-              type="button"
-              className={SECONDARY}
-              onClick={() => input.current?.click()}
+            {/* The real file input is the keyboard target, so the chooser opens even before hydration. */}
+            <label
+              className={`${SECONDARY} inline-flex cursor-pointer items-center has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:disabled]:cursor-default`}
             >
+              <input
+                ref={input}
+                type="file"
+                accept="image/*"
+                multiple
+                className="sr-only"
+                onChange={(e) => void pick(e.currentTarget.files)}
+              />
               写真を選ぶ
-            </button>
+            </label>
             <span className="text-[length:var(--font-size-sm)] text-text-muted">
               {photos.length} / {MAX_PHOTOS} 枚
             </span>
