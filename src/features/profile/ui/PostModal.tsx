@@ -3,11 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { PostDeletedProvider } from '../../post';
-import { wrapFocus } from '../model/focus-trap';
+import { trapTab } from '../../../shared/ui/focus-trap';
 import { useDeletedPosts } from './ProfilePostsProvider';
-
-const FOCUSABLE =
-  'a[href], button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
 /**
  * A post opened from the profile grid, over the grid (an intercepting route). Closing is one
@@ -41,20 +38,8 @@ export function PostModal({ postId, children }: { postId: string; children: Reac
       if (e.key === 'Escape') {
         e.preventDefault();
         close();
-      } else if (e.key === 'Tab' && modal.current) {
-        const items = Array.from(modal.current.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-          (el) => el.getClientRects().length > 0,
-        );
-        const active = document.activeElement as HTMLElement | null;
-        const target = wrapFocus(
-          items,
-          active && modal.current.contains(active) ? active : null,
-          e.shiftKey,
-        );
-        if (target) {
-          e.preventDefault();
-          target.focus();
-        }
+      } else if (modal.current) {
+        trapTab(e, modal.current);
       }
     };
     const onFocusIn = (e: FocusEvent) => {

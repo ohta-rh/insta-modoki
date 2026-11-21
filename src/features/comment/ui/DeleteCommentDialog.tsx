@@ -1,22 +1,12 @@
 import type { KeyboardEvent, Ref } from 'react';
+import { trapTab } from '../../../shared/ui/focus-trap';
 
 const button =
   'min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-4 text-[length:var(--font-size-sm)] font-bold';
 
 /** Tab and Shift+Tab wrap inside the dialog. */
 function trapFocus(e: KeyboardEvent<HTMLDialogElement>) {
-  if (e.key !== 'Tab') return;
-  const items = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled)'));
-  const first = items[0];
-  const last = items[items.length - 1];
-  if (!first || !last) return;
-  if (e.shiftKey && document.activeElement === first) {
-    e.preventDefault();
-    last.focus();
-  } else if (!e.shiftKey && document.activeElement === last) {
-    e.preventDefault();
-    first.focus();
-  }
+  trapTab(e, e.currentTarget);
 }
 
 /**

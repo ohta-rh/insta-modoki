@@ -3,6 +3,7 @@
 import { INTERNAL_MESSAGE } from '../../../shared/errors';
 import { useRouter } from 'next/navigation';
 import { useId, useRef, useState, type KeyboardEvent } from 'react';
+import { trapTab } from '../../../shared/ui/focus-trap';
 import { supportsCommandInvokers } from '../../../shared/ui/supports-command-invokers';
 import { deletePostAction } from '../api/actions';
 import { usePostDeletedHandler } from './PostDeletedContext';
@@ -55,22 +56,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
   };
 
   // Tab and Shift+Tab wrap inside the dialog.
-  const trapFocus = (e: KeyboardEvent<HTMLDialogElement>) => {
-    if (e.key !== 'Tab') return;
-    const items = Array.from(
-      e.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled)'),
-    );
-    const first = items[0];
-    const last = items[items.length - 1];
-    if (!first || !last) return;
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  };
+  const trapFocus = (e: KeyboardEvent<HTMLDialogElement>) => trapTab(e, e.currentTarget);
 
   return (
     <>

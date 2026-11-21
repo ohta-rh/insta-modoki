@@ -2,6 +2,7 @@
 
 import { INTERNAL_MESSAGE } from '../../../shared/errors';
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
+import { trapTab } from '../../../shared/ui/focus-trap';
 import { supportsCommandInvokers } from '../../../shared/ui/supports-command-invokers';
 import { listLikersAction } from '../api/actions';
 import { useLikeScope } from './LikeScope';
@@ -85,22 +86,7 @@ export function LikersDialog() {
   }, [next, status, load, items.length]);
 
   const dialogId = `likers-dialog-${postId}`;
-  const trapFocus = (e: KeyboardEvent<HTMLDialogElement>) => {
-    if (e.key !== 'Tab') return;
-    const focusable = Array.from(
-      e.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not(:disabled)'),
-    );
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (!first || !last) return;
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  };
+  const trapFocus = (e: KeyboardEvent<HTMLDialogElement>) => trapTab(e, e.currentTarget);
 
   return (
     <>
