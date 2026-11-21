@@ -18,8 +18,7 @@ export type CreatePostInput = {
   clientRequestId: string;
 };
 export type ParsedCreatePost =
-  | { ok: true; data: CreatePostInput }
-  | { ok: false; fieldErrors: Record<string, string[]> };
+  { ok: true; data: CreatePostInput } | { ok: false; fieldErrors: Record<string, string[]> };
 
 /** No NUL: SQLite's length() stops at it, which would let a long text past the CHECK. */
 const text = (max: number, message: string) =>

@@ -37,7 +37,27 @@ function withDb<T>(run: (db: DatabaseSync) => T): T {
  * its own IP (login-logout) must not be reset by another spec running in parallel.
  */
 export function clearRateLimits(): void {
-  withDb((db) => db.exec("DELETE FROM rate_limits WHERE key NOT LIKE 'login:ip:198.51.100.%'"));
+  withDb((db) =>
+    // `post:user:<id>` counters belong to one test's own user, so another spec's sign-up keeps them.
+    db.exec(
+      "DELETE FROM rate_limits WHERE key NOT LIKE 'login:ip:198.51.100.%' AND key NOT LIKE 'post:user:%'",
+    ),
+  );
+}
+
+/** Makes the user's next post over the hourly limit, or (count 0) clears the counter. */
+export function setPostCount(userId: string, count: number): void {
+  const windowStart = Math.floor(Date.now() / 3_600_000) * 3_600_000;
+  withDb((db) => {
+    db.prepare('DELETE FROM rate_limits WHERE key = ?').run(`post:user:${userId}`);
+    if (count > 0) {
+      db.prepare('INSERT INTO rate_limits (key, window_start, count) VALUES (?, ?, ?)').run(
+        `post:user:${userId}`,
+        windowStart,
+        count,
+      );
+    }
+  });
 }
 
 /** Inserts a user row directly (no password), so a test can collide with it. */
@@ -54,4 +74,17 @@ export function seedUser(username: string, email: string): void {
 
 export function userRow(username: string): Record<string, unknown> | undefined {
   return withDb((db) => db.prepare('SELECT * FROM users WHERE username = ?').get(username));
+}
+
+export function postRows(authorId: string): Record<string, unknown>[] {
+  return withDb((db) =>
+    db.prepare('SELECT * FROM posts WHERE author_id = ? ORDER BY created_at, id').all(authorId),
+  );
+}
+
+/** The media rows of a post, in photo order. */
+export function mediaRows(postId: string): Record<string, unknown>[] {
+  return withDb((db) =>
+    db.prepare('SELECT * FROM media WHERE post_id = ? ORDER BY position').all(postId),
+  );
 }
