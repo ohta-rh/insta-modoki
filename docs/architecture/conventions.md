@@ -32,11 +32,13 @@ src/shared/
 
 | 種類 | 置き場所 | 名前 | 実行 |
 |---|---|---|---|
-| 単体 | `src/**/<file>.test.ts(x)` | `describe('<対象>')` / `it('<条件> のとき <結果>')`（日本語） | verify の単体テスト |
+| 単体 | `src/**/<file>.test.ts(x)`、`scripts/**/*.test.ts` | `describe('<対象>')` / `it('<条件> のとき <結果>')`（日本語） | verify の単体テスト |
 | 結合（DB・ストレージを使う） | `src/**/<file>.int.test.ts` | 同上 | スロットのテスト用 DB（`.claude/rules/local-environment.md`） |
 | E2E | `e2e/<feature>.spec.ts` | `test('<利用者の操作> と <結果>')` | Playwright、スロットのポート |
 
 PBI の「検証」は、このファイル名と名前で書く。
+
+カバレッジは単体テストで測り、対象は `src/**/model/**` と `src/shared/config/**`、基準は行 80%（下回ると verify の `unit` が失敗する）。verify の手順は [verify.md](../guides/verify.md)（[ADR-0024](../adr/0024-verify-command-and-coverage-gate.md)）。
 
 ## エラー
 

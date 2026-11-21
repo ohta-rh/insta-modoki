@@ -23,3 +23,7 @@ docs/proposal/build.log
 docs/proposal/png/
 
 .DS_Store
+
+# TypeScript / Next.js generated
+*.tsbuildinfo
+next-env.d.ts
