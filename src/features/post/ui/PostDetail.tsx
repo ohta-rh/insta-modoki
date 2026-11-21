@@ -1,9 +1,4 @@
-import {
-  CommentCountLink,
-  CommentCountProvider,
-  type CommentView,
-  type Page,
-} from '../../comment';
+import { CommentCountLink, CommentCountProvider, type CommentView, type Page } from '../../comment';
 import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like';
 import type { PostView } from '../model/schema';
 import { DeletePostButton } from './DeletePostButton';

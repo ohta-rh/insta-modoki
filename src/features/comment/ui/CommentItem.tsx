@@ -1,4 +1,4 @@
-import { formatRelativeTime } from '../../post/model/relative-time';
+import { formatRelativeTime } from '../../../shared/time/relative-time';
 import type { CommentView } from '../model/schema';
 
 const action =

@@ -2,7 +2,6 @@
 export { getPost } from './api/get-post';
 export { deletePost } from './api/delete-post';
 export { appOrigin, buildOgMeta, type OgMeta } from './model/og';
-export { formatRelativeTime } from './model/relative-time';
 export { isPostId, type MediaView, type PostView, type UserSummary } from './model/schema';
 export { Carousel } from './ui/Carousel';
 export { DeletePostButton } from './ui/DeletePostButton';

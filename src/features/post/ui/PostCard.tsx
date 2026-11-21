@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { formatRelativeTime } from '../model/relative-time';
+import { formatRelativeTime } from '../../../shared/time/relative-time';
 import type { PostView } from '../model/schema';
 import { Carousel } from './Carousel';
 import { PostActionBar } from './PostActionBar';

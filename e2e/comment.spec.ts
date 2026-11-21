@@ -76,6 +76,8 @@ signedIn(
     await send(page).click();
     await expect(item(page, 'どういたしまして')).toBeVisible();
 
+    // Every row has been replaced by the server's row (a pending row is `aria-busy`).
+    await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
     const parentX = await xOf(page, 'こんにちは');
     const replyX = await xOf(page, 'ありがとう');
     expect(replyX).toBeGreaterThan(parentX + 20);
@@ -300,3 +302,47 @@ signedIn('375px でも入力欄が下のナビと重ならず 画面の下に固
   await page.mouse.wheel(0, 3000);
   await expect(form).toBeInViewport();
 });
+
+signedIn(
+  '送信が失敗すると 追加した行が消え 本文は欄に残り message が出て 再送すると成功する',
+  async ({ page }) => {
+    const { post } = await strangerPost(page);
+    await page.goto(`/p/${post.id}`);
+    await waitForHydration(page);
+
+    // The Server Action's request is held (to see the row appear first), then cut.
+    let failing = true;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route(
+      (url) => url.pathname === `/p/${post.id}`,
+      async (route) => {
+        if (route.request().method() !== 'POST' || !failing) return route.continue();
+        await gate;
+        await route.abort();
+      },
+    );
+    const alert = page.getByTestId('comment-form').getByRole('alert');
+
+    await input(page).fill('届かないコメント');
+    await send(page).click();
+    await expect(item(page, '届かないコメント')).toBeVisible();
+    await expect(input(page)).toHaveValue('');
+    release();
+
+    await expect(item(page, '届かないコメント')).toHaveCount(0);
+    await expect(input(page)).toHaveValue('届かないコメント');
+    await expect(alert).toHaveText('エラーが発生しました。しばらくしてからもう一度お試しください');
+    await expect(page.getByRole('link', { name: 'コメント 0 件' })).toBeVisible();
+    expect(commentRows(post.id)).toHaveLength(0);
+
+    // 本文が残っているので、そのまま送り直せる。
+    failing = false;
+    await send(page).click();
+    await expect(item(page, '届かないコメント')).toBeVisible();
+    await expect(input(page)).toHaveValue('');
+    await expect(alert).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'コメント 1 件' })).toBeVisible();
+    await expect.poll(() => commentRows(post.id).length).toBe(1);
+  },
+);
