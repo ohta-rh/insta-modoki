@@ -45,11 +45,11 @@ flowchart LR
 |---|---|---|
 | `BETTER_AUTH_URL` | アプリの公開の URL（Better Auth の `baseURL`。`Origin` の検査に使う） | `http://localhost:3001` |
 | `BETTER_AUTH_SECRET` | セッションの署名のシークレット（32 バイトの乱数） | 実行時に生成。コミットしない |
-| `S3_ENDPOINT` | S3 互換のエンドポイント（R2 は `https://<account>.r2.cloudflarestorage.com`） | `http://localhost:3900` |
+| `S3_ENDPOINT` | S3 互換のエンドポイント（R2 は `https://<account>.r2.cloudflarestorage.com`） | `http://localhost:3910` |
 | `S3_BUCKET` | バケット名 | `insta-s1` |
 | `S3_ACCESS_KEY` / `S3_SECRET_KEY` | 署名付き URL を作る認証情報 | 実行時に生成。コミットしない |
 | `AUTH_PEPPER` | パスワードのハッシュに掛ける HMAC の鍵（32 バイトの乱数。シークレット）。ローカルの値は #20 のスロットのスクリプトが `.dev.vars` に生成し、コミットしない。ローテーションはハッシュの形式の版を足して行う（[ADR-0020](../adr/0020-better-auth-with-pbkdf2.md)） | 実行時に生成 |
-| `S3_PUBLIC_BASE_URL` | 画像を配信する公開の URL（`storage_key` を足して使う） | `http://localhost:3900/insta-s1` |
+| `S3_PUBLIC_BASE_URL` | 画像を配信する公開の URL（`storage_key` を足して使う） | `http://localhost:3910/insta-s1` |
 | `PORT` | `dev` と `start` が使うポート（既定 3000、スロット N は `3000 + N`） | `3001` |
 
 D1 は環境変数ではなく、`wrangler.jsonc` のバインディング `DB`（型は `cloudflare-env.d.ts`。`wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts` で作る）。
@@ -101,7 +101,7 @@ Next.js の App Router の規約に従い、`src/app/` に置く。ルートの�
 | 番号 | 未確定だった項目 | 決定 |
 |---|---|---|
 | #19 | パッケージマネージャーと実行コマンド・設定ファイルの名前・`/` のルートのファイル | pnpm 12（`packageManager` に固定、`.node-version` は `26`）。コマンドは上の「コマンド名」の表。設定ファイルは `next.config.ts`・`open-next.config.ts`・`wrangler.jsonc`・`tsconfig.json`（`allowImportingTsExtensions: true`）・`postcss.config.mjs`・`eslint.config.mjs`・`.prettierrc`・`vitest.config.ts`・`playwright.config.ts`・`pnpm-workspace.yaml`（`allowBuilds`）。`/` のルートのファイルは `src/app/page.tsx` |
-| #20 | DB の種類と compose のサービス | DB は D1（ローカルは `.wrangler/state` のファイル）で、compose に DB のサービスは置かない。compose のサービスは S3 互換ストレージの Garage（`dxflrs/garage:v2.5.0`、`s3_region = "auto"`）だけ。スロットのバケットは `insta-s<N>`。スロットのスクリプトは `.dev.vars` を作り、`wrangler d1 migrations apply DB --local` を流し、リセットで `.wrangler/state` を消す |
+| #20 | DB の種類と compose のサービス | DB は D1（ローカルは `.wrangler/state` のファイル）で、compose に DB のサービスは置かない。compose のサービスは S3 互換ストレージの Garage（`dxflrs/garage:v2.5.0`、`s3_region = "auto"`）だけ。スロットのバケットは `insta-s<N>`。ホストの S3 のポートは 3910（3900 は別のプロジェクトのコンテナが使うため。[ADR-0023](../adr/0023-slots-with-garage-and-d1-files.md)）。スロットのスクリプトは `.dev.vars` を作り、`wrangler d1 migrations apply DB --local` を流し、リセットで `.wrangler/state` を消す |
 | #22 | CI の準備と install のコマンド | `actions/setup-node` で Node.js 26、pnpm は `packageManager` の版。install は `pnpm install --frozen-lockfile`。E2E の前に `pnpm exec playwright install --with-deps chromium`。DB のサービスは要らず、Garage だけを起動する |
 | #23 | DB の型の対応・マイグレーションの作り方とファイル名・トランザクションの方式 | 型の対応は [data-model.md](data-model.md) の「DB の型の対応」（`timestamp` は `INTEGER` のミリ秒、`boolean` は `INTEGER` の 0 と 1）。マイグレーションは手書きの `migrations/NNNN_<name>.sql` を `wrangler d1 migrations apply DB --local` で流し、Drizzle のスキーマ（`src/features/<slice>/db/schema.ts`）は手で合わせて結合テストで一致を確かめる。トランザクションは `db.batch([...])`（`db.transaction()` は D1 で `Failed query: begin` になる）。結合テストは `getPlatformProxy({ persist: false })` |
 | #24 | CSS の方式・ルートのレイアウトのファイル | Tailwind CSS 4（`postcss.config.mjs` に `@tailwindcss/postcss`、`src/app/globals.css` に `@import "tailwindcss"`）と Radix UI Primitives。足りないときだけ CSS Modules。ルートのレイアウトは `src/app/layout.tsx`（`globals.css` を import） |
