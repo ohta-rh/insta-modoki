@@ -4,6 +4,7 @@ import { signUpViaUi } from './support/auth';
 import { mediaRows, postRows, setPostCount, userRow } from './support/db';
 import { makeJpeg } from './support/fixtures';
 import { startInFreshWindow } from './support/rate-window';
+import { holdScripts } from './support/hydration';
 
 const POST_URL = /\/p\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
@@ -280,12 +281,7 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   fileChooser.catch(() => {});
   await signUpViaUi(page);
   // Hold every script chunk back so the page stays un-hydrated while the key is pressed.
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/_next/static/chunks/**', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdScripts(page);
   await page.goto('/create', { waitUntil: 'commit' });
 
   const choose = page.getByRole('button', { name: '写真を選ぶ' });

@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { seedUser, setUploadCount, userRow } from './support/db';
 import { makeJpeg, padTo, webpSize } from './support/fixtures';
-import { waitForHydration } from './support/hydration';
+import { holdScripts, waitForHydration } from './support/hydration';
 import { startInFreshWindow } from './support/rate-window';
 import { getObject } from './support/storage';
 
@@ -272,12 +272,7 @@ test('キーボードだけで編集でき axe の重大な違反が無い', asy
 
 /** Opens /accounts/edit with every script chunk held back, so the page stays un-hydrated. */
 async function openWithoutJs(page: Page): Promise<() => void> {
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/_next/static/chunks/**', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdScripts(page);
   await page.goto('/accounts/edit', { waitUntil: 'commit' });
   await nameField(page).waitFor();
   return release;

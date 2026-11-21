@@ -4,8 +4,9 @@ import { expect, test as base, type BrowserContext } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { seedUser, withDb } from './support/db';
 import { harness } from './support/harness';
-import { waitForHydration } from './support/hydration';
+import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
+import { tabTo } from './support/keys';
 
 /**
  * `page` signed in. One user signs up per worker and every test of the worker reuses that session
@@ -38,10 +39,6 @@ const countLink = (page: Page, n: number) =>
 /** The like button's own message (Next.js keeps an empty alert region of its own on every page). */
 const alert = (page: Page) => page.locator('p[role="alert"]');
 const likersDialog = (page: Page) => page.getByRole('dialog', { name: 'いいねした人' });
-const nextFrames = (page: Page) =>
-  page.evaluate(
-    () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
-  );
 
 /** A user nobody is signed in as, with a post of their own whose photos are stored. */
 async function strangerPost(page: Page) {
@@ -126,12 +123,7 @@ signedIn(
 
 signedIn('JS が読み込まれる前でも ハートを押していいねでき 取り消せる', async ({ page }) => {
   const post = await strangerPost(page);
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/_next/static/chunks/**', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdScripts(page);
   await page.goto(`/p/${post.id}`, { waitUntil: 'commit' });
 
   await heart(page).waitFor();
@@ -370,7 +362,7 @@ signedIn(
     expect(countBox.height).toBeGreaterThanOrEqual(44);
 
     // Tab reaches the heart; Enter and Space both switch it.
-    await focusByTab(page, heart(page));
+    await tabTo(page, heart(page));
     await expect(heart(page)).toHaveAttribute('aria-pressed', 'false');
     await page.keyboard.press('Enter');
     await expect(heart(page)).toHaveAttribute('aria-pressed', 'true');
@@ -388,7 +380,7 @@ signedIn(
     expect(likeRowCount(post.id)).toBe(2);
 
     // Tab goes on to the count, which opens the dialog; the focus stays inside it.
-    await focusByTab(page, countLink(page, 2));
+    await tabTo(page, countLink(page, 2));
     await page.keyboard.press('Enter');
     const dialog = likersDialog(page);
     await expect(dialog).toBeVisible();
@@ -403,11 +395,3 @@ signedIn(
     await expect(countLink(page, 2)).toBeFocused();
   },
 );
-
-async function focusByTab(page: Page, target: ReturnType<Page['locator']>) {
-  for (let i = 0; i < 30; i += 1) {
-    if (await target.evaluate((el) => el === document.activeElement)) return;
-    await page.keyboard.press('Tab');
-  }
-  throw new Error('Tab で目的の要素に届きません');
-}

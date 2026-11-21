@@ -1,11 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { waitForHydration } from './support/hydration';
+import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 import { signUpViaUi, type NewUser } from './support/auth';
 import { seedUser } from './support/db';
 import { getObject } from './support/storage';
 import { delayMedia, insertPost, postRowCount, putPostFiles } from './support/posts';
+import { tabTo } from './support/keys';
 
 /** `page` signed in as a new user, who is `me`. */
 const signedIn = test.extend<{ me: NewUser }>({
@@ -17,11 +18,6 @@ const signedIn = test.extend<{ me: NewUser }>({
 const carousel = (page: Page) => page.locator('[aria-roledescription="carousel"]');
 const badge = (page: Page, text: string) => page.getByText(text, { exact: true });
 const scrollLeftOf = (page: Page) => carousel(page).evaluate((el) => el.scrollLeft);
-/** Lets two animation frames pass, so a scroll or state change the last input caused would have shown. */
-const nextFrames = (page: Page) =>
-  page.evaluate(
-    () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
-  );
 /** Waits until the strip has finished scrolling to slide `index`. */
 const expectAtSlide = (page: Page, index: number) =>
   expect
@@ -250,12 +246,7 @@ signedIn(
   async ({ page, me }) => {
     const post = insertPost({ authorUsername: me.username, mediaCount: 1 });
     await putPostFiles(page, post);
-    let release!: () => void;
-    const gate = new Promise<void>((resolve) => (release = resolve));
-    await page.route('**/_next/static/chunks/**', async (route) => {
-      await gate;
-      await route.continue();
-    });
+    const release = await holdScripts(page);
     await page.goto(`/p/${post.id}`, { waitUntil: 'commit' });
 
     const open = page.getByRole('button', { name: '削除', exact: true });
@@ -325,10 +316,10 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
     expect(box.height).toBeGreaterThanOrEqual(44);
   }
   await waitForHydration(page);
-  await focusByTab(page, carouselEl);
+  await tabTo(page, carouselEl);
   await page.keyboard.press('ArrowRight');
   await expect(badge(page, '2/3')).toBeVisible();
-  await focusByTab(page, next);
+  await tabTo(page, next);
   // Reduced motion: the photo changes at once, with no smooth scrolling in between.
   const after = await next.evaluate((button) => {
     (button as HTMLButtonElement).click();
@@ -339,7 +330,7 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
   await expect(badge(page, '3/3')).toBeVisible();
 
   const open = page.getByRole('button', { name: '削除', exact: true });
-  await focusByTab(page, open);
+  await tabTo(page, open);
   await page.keyboard.press('Enter');
   const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
   await expect(dialog).toBeVisible();
@@ -353,11 +344,3 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
   await expect(dialog).toBeHidden();
   await expect(open).toBeFocused();
 });
-
-async function focusByTab(page: Page, target: ReturnType<Page['locator']>) {
-  for (let i = 0; i < 30; i += 1) {
-    if (await target.evaluate((el) => el === document.activeElement)) return;
-    await page.keyboard.press('Tab');
-  }
-  throw new Error('Tab で目的の要素に届きません');
-}

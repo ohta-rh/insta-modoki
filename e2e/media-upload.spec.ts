@@ -5,6 +5,7 @@ import { signUpViaUi } from './support/auth';
 import { userRow } from './support/db';
 import { hasExif, makeJpeg, padTo, webpSize, withGps } from './support/fixtures';
 import { getObject, mediaUrl } from './support/storage';
+import { holdScripts } from './support/hydration';
 
 const PAGE_PATH = '/e2e-harness/upload';
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
@@ -187,12 +188,7 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   // Armed before the key press (see the post-hydration test): interception is enabled asynchronously.
   const chooser = page.waitForEvent('filechooser');
   // Hold every script chunk back so the page stays un-hydrated while the key is pressed.
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/_next/static/chunks/**', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdScripts(page);
   await page.goto(PAGE_PATH, { waitUntil: 'commit' });
 
   const choose = page.getByRole('button', { name: '写真を選ぶ' });

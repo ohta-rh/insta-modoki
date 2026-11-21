@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { signUpViaUi, type NewUser } from './support/auth';
 import { seedFollow, seedUser, userRow, withDb } from './support/db';
-import { waitForHydration } from './support/hydration';
+import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
 
 /** `page` signed in as a new user, who is `me`. */
@@ -49,11 +49,6 @@ const likeRows = (postId: string) =>
     (db) =>
       (db.prepare('SELECT count(*) AS n FROM likes WHERE post_id = ?').get(postId) as { n: number })
         .n,
-  );
-
-const nextFrames = (page: Page) =>
-  page.evaluate(
-    () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
   );
 
 test('未ログインで / を開くとログイン画面へ移る', async ({ page }) => {
@@ -179,12 +174,7 @@ signedIn('フィードをキーボードで操れ、axe の重大な違反が 0 
 
 signedIn('JS が読み込まれる前でも ハートを押していいねできる', async ({ page, me }) => {
   const { posts } = followedAuthor(me, 1, '先');
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/_next/static/chunks/**', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdScripts(page);
   await page.goto('/', { waitUntil: 'commit' });
   await heart(page).waitFor();
   await heart(page).focus();

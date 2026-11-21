@@ -3,7 +3,8 @@ import type { Page } from '@playwright/test';
 import { expect, test as base, type BrowserContext } from '@playwright/test';
 import { signUpViaUi, type NewUser } from './support/auth';
 import { seedFollow, seedFollowers, seedUser, userRow, withDb } from './support/db';
-import { waitForHydration } from './support/hydration';
+import { holdScripts, waitForHydration } from './support/hydration';
+import { tabTo } from './support/keys';
 
 /**
  * `page` signed in. One user signs up per worker and every test of the worker reuses that session
@@ -107,12 +108,7 @@ signedIn(
   'JS が読み込まれる前でも ボタンを押してフォローでき 解除できる',
   async ({ page, account }) => {
     const bob = newPerson();
-    let release!: () => void;
-    const gate = new Promise<void>((resolve) => (release = resolve));
-    await page.route('**/_next/static/chunks/**', async (route) => {
-      await gate;
-      await route.continue();
-    });
+    const release = await holdScripts(page);
     await page.goto(`/${bob.username}`, { waitUntil: 'commit' });
 
     await followButton(page).waitFor();
@@ -255,7 +251,7 @@ signedIn(
     }
 
     // Tab reaches the button; Enter and Space both switch it.
-    await focusByTab(page, followButton(page));
+    await tabTo(page, followButton(page));
     await expect(followButton(page)).toHaveAttribute('aria-pressed', 'false');
     await page.keyboard.press('Enter');
     await expect(followButton(page)).toHaveAttribute('aria-pressed', 'true');
@@ -271,11 +267,3 @@ signedIn(
     expect(await serious()).toEqual([]);
   },
 );
-
-async function focusByTab(page: Page, target: ReturnType<Page['locator']>) {
-  for (let i = 0; i < 30; i += 1) {
-    if (await target.evaluate((el) => el === document.activeElement)) return;
-    await page.keyboard.press('Tab');
-  }
-  throw new Error('Tab で目的の要素に届きません');
-}

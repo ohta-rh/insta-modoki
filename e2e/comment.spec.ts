@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { signUpViaUi, type NewUser } from './support/auth';
 import { commentRows, insertComments, postCommentCount } from './support/comments';
 import { seedUser } from './support/db';
-import { waitForHydration } from './support/hydration';
+import { holdScripts, waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
 
 /** `page` signed in as a new user, who is `me`. */
@@ -259,12 +259,7 @@ signedIn('コメント欄をキーボードで操作でき、axe の重大な違
 
 signedIn('JS が読み込まれる前でも コメントを送れる', async ({ page }) => {
   const { post } = await strangerPost(page);
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/_next/static/chunks/**', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdScripts(page);
   await page.goto(`/p/${post.id}`, { waitUntil: 'commit' });
 
   await input(page).waitFor();

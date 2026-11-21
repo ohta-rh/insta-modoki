@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { seedUser, userRow } from './support/db';
 import { harness } from './support/harness';
-import { waitForHydration } from './support/hydration';
+import { holdScripts, waitForHydration } from './support/hydration';
 import { fileKeysOf, insertPost, makeWebp, postRowCount } from './support/posts';
 import { putObject } from './support/storage';
 
@@ -319,12 +319,7 @@ test('JS が読み込まれる前にグリッドの投稿を押すと 通常の�
   page,
 }) => {
   const { username, ids } = await strangerWithPosts(page, 3);
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/_next/static/chunks/**', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdScripts(page);
   await page.goto(`/${username}`, { waitUntil: 'commit' });
   const link = tile(page, ids[0]!);
   await link.waitFor();
