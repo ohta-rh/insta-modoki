@@ -184,6 +184,8 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   page,
 }) => {
   await signUpViaUi(page);
+  // Armed before the key press (see the post-hydration test): interception is enabled asynchronously.
+  const chooser = page.waitForEvent('filechooser');
   // Hold every script chunk back so the page stays un-hydrated while the key is pressed.
   let release!: () => void;
   const gate = new Promise<void>((resolve) => (release = resolve));
@@ -197,7 +199,6 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   await choose.waitFor();
   await choose.focus();
   await expect(choose).toBeFocused();
-  const chooser = page.waitForEvent('filechooser', { timeout: 5000 });
   await page.keyboard.press('Enter');
   await chooser;
   release();
