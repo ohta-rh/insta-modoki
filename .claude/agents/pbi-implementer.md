@@ -26,7 +26,7 @@ If any of these is missing, reply `NEEDS_CONTEXT` and stop.
 2. **Fix findings** — for each forwarded finding: reproduce it with a failing test, fix, run
    the touched tests, commit. Report what changed per finding.
 3. **E2E + verify** — Playwright for every screen-observable AC against the app on port
-   `3000 + slot`; then the full verify command. Any failure is a bug: failing test first, fix,
+   `3100 + slot`; then the full verify command. Any failure is a bug: failing test first, fix,
    commit, and report that code changed (the Director re-runs review).
 
 ## Rules

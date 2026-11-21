@@ -21,7 +21,7 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
 
 ## What to run
 
-1. Build and start the app on port `3000 + slot` the way a user would run it (production build
+1. Build and start the app on port `3100 + slot` the way a user would run it (production build
    when one exists, not the dev server). Start from an empty slot; create data only through the
    app's own seed command or the UI.
 2. **EPIC AC scenarios, in real Chrome** — for each EPIC AC, operate the app by its stated
