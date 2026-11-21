@@ -2,8 +2,16 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { clearRateLimits } from './support/db';
+import { startInFreshWindow, waitUntilSecondOfMinute } from './support/rate-window';
 
 const submit = (page: Page) => page.getByRole('button', { name: 'ログイン' });
+
+/**
+ * A private IP for one test, so other specs sharing "local" do not count against it. Distinct per
+ * test and per --repeat-each run (a random pick collided and shared one counter), and per minute.
+ */
+const ownIp = (testNo: number) =>
+  `198.51.100.${1 + ((test.info().repeatEachIndex * 2 + testNo + Math.floor(Date.now() / 60_000)) % 250)}`;
 
 /** Signs a user up, then drops the session so the user is registered but signed out. */
 async function registeredUser(page: Page) {
@@ -38,12 +46,48 @@ test('ログインしてからログアウトすると 保護された画面に�
 });
 
 test('1 分に 6 回続けて間違えると 操作が多すぎますと表示される', async ({ page }) => {
+  test.setTimeout(60_000); // may wait up to 20 s for a fresh window
   const user = await registeredUser(page);
-  // A private IP for this test, so other specs sharing "local" do not count against it.
-  const ip = `198.51.100.${1 + Math.floor(Math.random() * 200)}`;
+  const ip = ownIp(0);
   await page.context().setExtraHTTPHeaders({ 'cf-connecting-ip': ip });
   await page.goto('/accounts/login');
   await page.waitForLoadState('networkidle');
+  await startInFreshWindow(60, 20);
+  const wrong = 'メールアドレスまたはパスワードが違います';
+  for (let i = 1; i <= 5; i += 1) {
+    await page.getByLabel('メールアドレス').fill(user.email);
+    await page.getByLabel('パスワード').fill(`wrong-${i}`);
+    await submit(page).click();
+    await expect(page.getByRole('alert').filter({ hasText: wrong })).toBeVisible();
+    await expect(page.getByLabel('メールアドレス')).toHaveValue(user.email);
+    await expect(page.getByLabel('パスワード')).toHaveValue('');
+    await expect(submit(page)).toBeEnabled();
+  }
+  await page.getByLabel('メールアドレス').fill(user.email);
+  await page.getByLabel('パスワード').fill('wrong-6');
+  await submit(page).click();
+  await expect(
+    page
+      .getByRole('alert')
+      .filter({ hasText: '操作が多すぎます。しばらくしてからもう一度お試しください' }),
+  ).toBeVisible();
+});
+
+test('窓の終わりの直前に始めても 6 回目で操作が多すぎますと表示される', async ({ page }) => {
+  test.setTimeout(120_000); // waits up to a minute for the second of the minute
+  const user = await registeredUser(page);
+  const ip = ownIp(1);
+  await page.context().setExtraHTTPHeaders({ 'cf-connecting-ip': ip });
+  await page.goto('/accounts/login');
+  await page.waitForLoadState('networkidle');
+  await waitUntilSecondOfMinute(57);
+  // A slow network: each submission takes about 0.7 s more, so six of them last about 5 s and
+  // always run over the window's end at second 60 (as in the failing CI run, 6.5 s).
+  await page.route('**/accounts/login', async (route) => {
+    if (route.request().method() === 'POST') await new Promise((r) => setTimeout(r, 700));
+    await route.continue();
+  });
+  await startInFreshWindow(60, 20);
   const wrong = 'メールアドレスまたはパスワードが違います';
   for (let i = 1; i <= 5; i += 1) {
     await page.getByLabel('メールアドレス').fill(user.email);

@@ -19,14 +19,12 @@ export async function startInFreshWindow(windowSec: number, needSec: number): Pr
   if (msUntilFreshWindow(Date.now(), windowSec, needSec) === 0) return;
   const windowIndex = () => Math.floor(Date.now() / (windowSec * 1000));
   const current = windowIndex();
-  await expect
-    .poll(() => windowIndex() > current, { timeout: needSec * 1000 + 5000 })
-    .toBe(true);
+  await expect.poll(() => windowIndex() > current, { timeout: needSec * 1000 + 5000 }).toBe(true);
 }
 
 /** Returns once the wall clock's second within the minute equals `second` (0-59). */
 export async function waitUntilSecondOfMinute(second: number): Promise<void> {
   await expect
-    .poll(() => new Date().getSeconds(), { timeout: 65_000, intervals: [50] })
+    .poll(() => new Date().getUTCSeconds(), { timeout: 65_000, intervals: [50] })
     .toBe(second);
 }

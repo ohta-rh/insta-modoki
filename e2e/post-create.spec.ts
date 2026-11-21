@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { mediaRows, postRows, setPostCount, userRow } from './support/db';
 import { makeJpeg } from './support/fixtures';
+import { startInFreshWindow } from './support/rate-window';
 
 const POST_URL = /\/p\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
@@ -120,6 +121,7 @@ test('2201 字のキャプションは送れない', async ({ page }) => {
 });
 
 test('送信に失敗しても 入力が残り やり直せる', async ({ page }) => {
+  test.setTimeout(90_000); // may wait up to 30 s for a fresh hourly window
   const { userId } = await start(page);
   const jpeg = await makeJpeg(page, 320, 240);
   const puts: string[] = [];
@@ -148,6 +150,7 @@ test('送信に失敗しても 入力が残り やり直せる', async ({ page }
 
   // 2. The upload works, createPost refuses (over the hourly limit); its message is shown as is.
   await page.unroute('**/media/**');
+  await startInFreshWindow(3600, 30);
   setPostCount(userId, 30);
   await submit(page).click();
   await expect(alerts(page)).toHaveText(RATE_LIMITED);

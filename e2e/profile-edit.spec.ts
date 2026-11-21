@@ -4,6 +4,7 @@ import { signUpViaUi } from './support/auth';
 import { seedUser, setUploadCount, userRow } from './support/db';
 import { makeJpeg, padTo, webpSize } from './support/fixtures';
 import { waitForHydration } from './support/hydration';
+import { startInFreshWindow } from './support/rate-window';
 import { getObject } from './support/storage';
 
 const NAME_MESSAGE = '表示名は 1〜30 字で入力してください';
@@ -149,6 +150,7 @@ test('字数の境界が表示され 表示名は 1〜30 字 自己紹介は 150
 });
 
 test('保存に失敗しても 入力が残り やり直せる', async ({ page }) => {
+  test.setTimeout(90_000); // may wait up to 30 s for a fresh hourly window
   const { userId, username } = await start(page);
   await nameField(page).fill('残る名前');
   await bioField(page).fill('残る自己紹介');
@@ -171,6 +173,7 @@ test('保存に失敗しても 入力が残り やり直せる', async ({ page }
 
   // 2. The server refuses (over the hourly upload limit); its message is shown as is.
   await page.unroute('**/media/**');
+  await startInFreshWindow(3600, 30);
   setUploadCount(userId, 300);
   await save(page).click();
   await expect(alerts(page)).toHaveText(RATE_LIMITED);

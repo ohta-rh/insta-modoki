@@ -4,6 +4,8 @@ const port = Number(process.env.PORT ?? 3100);
 
 export default defineConfig({
   testDir: 'e2e',
+  // e2e/support/**/*.test.ts are vitest unit tests of the helpers, not browser scenarios.
+  testMatch: '**/*.spec.ts',
   fullyParallel: true,
   // CI keeps an HTML report so a failed run can upload it (ADR-0027).
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
