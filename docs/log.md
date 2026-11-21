@@ -2,6 +2,7 @@
 
 ## 2026-11-21
 * **Creation**: [ADR-0041](adr/0041-e2e-setup-writes-go-through-the-app.md)（E2E の準備の書き込みは、テストのプロセスから D1 の SQLite を直接書かず、アプリの `/e2e-harness/db` を通す。SQLITE_BUSY で並列の E2E が落ちていた）を追加し、[routes.md](architecture/routes.md) に載せた（#32）。
+* **Creation**: [ADR-0039](adr/0039-like-counter-moves-by-changes-in-one-db-batch.md)（いいねの件数は 1 つの `db.batch` の中で `changes()` だけ増減。件数はダイアログを開くボタン）を追加した（#34）。
 * **Creation**: [ADR-0037](adr/0037-serve-local-media-from-garage-web-endpoint.md)（ローカルの画像は Garage のウェブ用エンドポイント 3912 から別 origin で配信。[ADR-0023](adr/0023-slots-with-garage-and-d1-files.md) を置き換え）を追加し、[overview.md](architecture/overview.md)・[ローカル開発の手順](guides/local-development.md) を更新した（#20）。
 * **Update**: [conventions.md](architecture/conventions.md) の「認証とセッション」に、ログインが要る全ての処理と読み出しで `requireUser()` を呼ぶ決まりを足した（#26 のセキュリティレビュー）。
 * **Creation**: [ADR-0029](adr/0029-signup-writes-rows-in-one-db-batch.md)（サインアップは 1 つの `db.batch`）、[ADR-0030](adr/0030-better-auth-session-and-rate-limit-rules.md)（認証の規則を引き継ぎ、セッション 30 日・延長なし・`email_verified`。[ADR-0020](adr/0020-better-auth-with-pbkdf2.md) を置き換え）、[ADR-0031](adr/0031-login-only-screens-in-app-route-group.md)（ログイン必須の画面は `(app)`）を追加し、[data-model.md](architecture/data-model.md)・[conventions.md](architecture/conventions.md)（項目ごとの文言・`toErrorResponse`・`charLength`・`consume`・`checkUsername` の制限）・[overview.md](architecture/overview.md) を更新した（#26）。

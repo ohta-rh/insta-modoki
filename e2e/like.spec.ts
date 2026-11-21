@@ -1,21 +1,16 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { expect, test } from '@playwright/test';
-import { signUpViaUi, type NewUser } from './support/auth';
+import { expect, test as base } from '@playwright/test';
+import { test as signedIn } from './support/auth';
 import { seedUser, userRow, withDb } from './support/db';
 import { waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
 
-/** `page` signed in as a new user, who is `me`. */
-const signedIn = test.extend<{ me: NewUser }>({
-  me: async ({ page }, use) => {
-    await use(await signUpViaUi(page));
-  },
-});
-
 const heart = (page: Page) => page.getByRole('button', { name: 'いいね', exact: true });
 const countLink = (page: Page, n: number) =>
   page.getByRole('button', { name: `${n} 件のいいね`, exact: true });
+/** The like button's own message (Next.js keeps an empty alert region of its own on every page). */
+const alert = (page: Page) => page.locator('p[role="alert"]');
 const likersDialog = (page: Page) => page.getByRole('dialog', { name: 'いいねした人' });
 const nextFrames = (page: Page) =>
   page.evaluate(
@@ -46,7 +41,7 @@ const storedLikeCount = (postId: string) =>
 /** Makes `n` users like the post, the i-th at a later time than the one before. */
 function seedLikers(postId: string, n: number): string[] {
   const names: string[] = [];
-  const base = Date.now() - 3_600_000;
+  const start = Date.now() - 3_600_000;
   for (let i = 0; i < n; i += 1) {
     const username = `e2e_f${Date.now().toString(36)}${i}${Math.random().toString(36).slice(2, 5)}`;
     seedUser(username, `${username}@example.com`);
@@ -55,7 +50,7 @@ function seedLikers(postId: string, n: number): string[] {
       db.prepare('INSERT INTO likes (user_id, post_id, created_at) VALUES (?, ?, ?)').run(
         id,
         postId,
-        base + i * 1000,
+        start + i * 1000,
       );
     });
     names.push(username);
@@ -184,12 +179,12 @@ signedIn('サーバーが失敗を返すと表示が元に戻りエラーを出�
   withDb((db) => db.prepare('DELETE FROM posts WHERE id = ?').run(gone.id));
 
   await heart(page).click();
-  await expect(page.getByRole('alert')).toHaveText('ページが見つかりません');
+  await expect(alert(page)).toHaveText('ページが見つかりません');
   await expect(heart(page)).toHaveAttribute('aria-pressed', 'false');
   await expect(countLink(page, 0)).toBeVisible();
   // The next try clears the message.
   await heart(page).click();
-  await expect(page.getByRole('alert')).toHaveText('ページが見つかりません');
+  await expect(alert(page)).toHaveText('ページが見つかりません');
 
   // The connection fails: the same, with the fixed message.
   const lost = await strangerPost(page);
@@ -200,7 +195,7 @@ signedIn('サーバーが失敗を返すと表示が元に戻りエラーを出�
     (route) => (route.request().method() === 'POST' ? route.abort() : route.continue()),
   );
   await heart(page).click();
-  await expect(page.getByRole('alert')).toHaveText(
+  await expect(alert(page)).toHaveText(
     'エラーが発生しました。しばらくしてからもう一度お試しください',
   );
   await expect(heart(page)).toHaveAttribute('aria-pressed', 'false');
@@ -212,6 +207,8 @@ signedIn('素早く 5 回押すと最後の状態で止まり 同時のリクエ
   const post = await strangerPost(page);
   await page.goto(`/p/${post.id}`);
   await waitForHydration(page);
+  // The first request is held while the other presses come in; every request is counted.
+  let hold: Promise<void> = Promise.resolve();
   let open = 0;
   let most = 0;
   let sent = 0;
@@ -222,18 +219,44 @@ signedIn('素早く 5 回押すと最後の状態で止まり 同時のリクエ
       sent += 1;
       open += 1;
       most = Math.max(most, open);
+      await hold;
       await route.continue();
       open -= 1;
     },
   );
+  const holdRequests = () => {
+    let release!: () => void;
+    hold = new Promise<void>((resolve) => (release = resolve));
+    return release;
+  };
   const button = heart(page);
+
+  // Five presses (odd): the last wanted state is "liked", and the held first request answers it.
+  const release = holdRequests();
   for (let i = 0; i < 5; i += 1) await button.click();
   await expect(button).toHaveAttribute('aria-pressed', 'true');
-  await expect.poll(() => likeRowCount(post.id)).toBe(1);
   await expect(countLink(page, 1)).toBeVisible();
-  expect(most).toBe(1);
-  expect(sent).toBeGreaterThanOrEqual(1);
+  expect(sent).toBe(1);
+  release();
+  await expect.poll(() => likeRowCount(post.id)).toBe(1);
+  await expect.poll(() => open).toBe(0);
+  await nextFrames(page);
+  expect(sent).toBe(1);
   expect(storedLikeCount(post.id)).toBe(1);
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
+
+  // Four presses (even) on the liked heart: "unlike" is sent first, then "like" once it ends.
+  const release2 = holdRequests();
+  for (let i = 0; i < 4; i += 1) await button.click();
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
+  expect(sent).toBe(2);
+  release2();
+  await expect.poll(() => sent).toBe(3);
+  await expect.poll(() => open).toBe(0);
+  await expect.poll(() => likeRowCount(post.id)).toBe(1);
+  expect(storedLikeCount(post.id)).toBe(1);
+  expect(most).toBe(1);
+  await expect(countLink(page, 1)).toBeVisible();
 });
 
 signedIn('件数から一覧を開き、21 人目が追加読み込みで出て、Esc で閉じる', async ({ page }) => {
@@ -274,7 +297,7 @@ signedIn('いいねが 0 件のとき 一覧に「まだいいねはありませ
   await expect(likersDialog(page).getByText('まだいいねはありません')).toBeVisible();
 });
 
-test('ログインしていない人がハートを押すとログイン画面へ移る', async ({ page }) => {
+base('ログインしていない人がハートを押すとログイン画面へ移る', async ({ page }) => {
   const post = await strangerPost(page);
   await page.goto(`/p/${post.id}`);
   await waitForHydration(page);

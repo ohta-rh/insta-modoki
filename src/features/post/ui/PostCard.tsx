@@ -16,6 +16,7 @@ export function PostCard({
   menu,
   like,
   comment,
+  wrapMedia,
 }: {
   post: PostView;
   /** The current time in epoch ms; a screen that renders many cards passes one value to all. */
@@ -25,6 +26,8 @@ export function PostCard({
   menu?: ReactNode;
   like?: ReactNode;
   comment?: ReactNode;
+  /** Wraps the photos (the like slice's double tap goes here). */
+  wrapMedia?: (media: ReactNode) => ReactNode;
 }) {
   const { author } = post;
   const createdAt = new Date(post.createdAt);
@@ -55,7 +58,11 @@ export function PostCard({
         </a>
         {menu}
       </header>
-      <Carousel media={post.media} username={author.username} priority={priority} />
+      {wrapMedia ? (
+        wrapMedia(<Carousel media={post.media} username={author.username} priority={priority} />)
+      ) : (
+        <Carousel media={post.media} username={author.username} priority={priority} />
+      )}
       <PostActionBar like={like} comment={comment} />
       <div className="px-3 pb-4">
         {post.caption !== '' && (

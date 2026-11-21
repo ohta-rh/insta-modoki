@@ -36,6 +36,7 @@
 * [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、Better Auth の signUpEmail とその HTTP ハンドラーは使わない](0029-signup-writes-rows-in-one-db-batch.md) - 採用
 * [ADR-0030: 認証は Better Auth と PBKDF2-SHA256 + pepper のまま、セッションは 30 日・延長なしにし、users に email_verified を足す](0030-better-auth-session-and-rate-limit-rules.md) - 採用（ADR-0020 を置き換える）
 * [ADR-0031: ログインが必要な画面はルートグループ (app) に置き、そのレイアウトが未ログインを /accounts/login へ redirect する](0031-login-only-screens-in-app-route-group.md) - 採用
+* [ADR-0039: いいねの件数は、1 つの db.batch の中で直前の文の changes() だけ増減させる](0039-like-counter-moves-by-changes-in-one-db-batch.md) - 採用
 
 # 環境とホスティング
 
