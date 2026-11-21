@@ -4,15 +4,11 @@ import { expect, test } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { userRow } from './support/db';
 import { hasExif, makeJpeg, padTo, webpSize, withGps } from './support/fixtures';
-import { ensureBucketCors, getObject } from './support/storage';
+import { getObject } from './support/storage';
 
 const PAGE_PATH = '/e2e-harness/upload';
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
 type Result = { key: string; width: number; height: number; thumbhash: string };
-
-test.beforeAll(async () => {
-  await ensureBucketCors();
-});
 
 /** Signs up through the real screen and opens the harness page; returns the new user's username. */
 async function start(page: Page): Promise<string> {

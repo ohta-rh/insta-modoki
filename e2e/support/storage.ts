@@ -23,24 +23,6 @@ function settings(): Settings {
   };
 }
 
-/**
- * The browser PUTs straight to the bucket from another origin, so the bucket must allow it (CORS).
- * Idempotent; R2 gets the same rule in M2.
- */
-export async function ensureBucketCors(): Promise<void> {
-  const { endpoint, bucket, aws } = settings();
-  const body =
-    '<CORSConfiguration><CORSRule><AllowedOrigin>*</AllowedOrigin><AllowedMethod>PUT</AllowedMethod>' +
-    '<AllowedMethod>GET</AllowedMethod><AllowedMethod>HEAD</AllowedMethod><AllowedHeader>*</AllowedHeader>' +
-    '<ExposeHeader>ETag</ExposeHeader><MaxAgeSeconds>3000</MaxAgeSeconds></CORSRule></CORSConfiguration>';
-  const res = await aws.fetch(`${endpoint}/${bucket}?cors`, {
-    method: 'PUT',
-    body,
-    headers: { 'content-type': 'application/xml' },
-  });
-  if (!res.ok) throw new Error(`CORS を設定できませんでした: ${res.status} ${await res.text()}`);
-}
-
 /** The bytes and content type of a stored object, or null when it is absent. */
 export async function getObject(
   key: string,

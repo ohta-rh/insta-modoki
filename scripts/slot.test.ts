@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'vitest';
-import { renderEnv, run, slotIntEnabled, slotNames } from './slot.mjs';
+import { corsXml, renderEnv, run, slotIntEnabled, slotNames } from './slot.mjs';
 
 const secrets = {
   accessKey: 'access-key-for-test',
@@ -137,4 +137,15 @@ test('結合テストは SLOT_INT=1 のときだけ流す', () => {
   assert.equal(slotIntEnabled({}), false);
   assert.equal(slotIntEnabled({ SLOT_INT: '0' }), false);
   assert.equal(slotIntEnabled({ SLOT_INT: '1' }), true);
+});
+
+test('corsXml がスロットのアプリの origin だけに PUT・GET・HEAD を許す', () => {
+  const xml = corsXml(3);
+  assert.match(xml, /<AllowedOrigin>http:\/\/localhost:3103<\/AllowedOrigin>/);
+  assert.equal((xml.match(/<AllowedOrigin>/g) ?? []).length, 1);
+  for (const m of ['PUT', 'GET', 'HEAD'])
+    assert.match(xml, new RegExp(`<AllowedMethod>${m}</AllowedMethod>`));
+  assert.doesNotMatch(xml, /DELETE|POST|\*<\/AllowedOrigin>/);
+  assert.match(xml, /<AllowedHeader>content-type<\/AllowedHeader>/);
+  assert.match(xml, /<AllowedHeader>content-length<\/AllowedHeader>/);
 });

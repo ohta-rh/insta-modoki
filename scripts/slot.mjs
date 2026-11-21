@@ -113,6 +113,22 @@ async function s3Request(
   return text;
 }
 
+/** The bucket's CORS rule: the slot's own app origin may PUT (signed upload), GET and HEAD. */
+export function corsXml(n) {
+  const { port } = slotNames(n);
+  return (
+    '<CORSConfiguration><CORSRule>' +
+    `<AllowedOrigin>http://localhost:${port}</AllowedOrigin>` +
+    '<AllowedMethod>PUT</AllowedMethod><AllowedMethod>GET</AllowedMethod><AllowedMethod>HEAD</AllowedMethod>' +
+    '<AllowedHeader>content-type</AllowedHeader><AllowedHeader>content-length</AllowedHeader>' +
+    '<ExposeHeader>ETag</ExposeHeader><MaxAgeSeconds>3000</MaxAgeSeconds>' +
+    '</CORSRule></CORSConfiguration>'
+  );
+}
+
+/** Sets the rule above on the bucket (replaces any earlier one, so it is idempotent). */
+export const putBucketCors = (cfg, n) => s3Request(cfg, 'PUT', '', { cors: '' }, corsXml(n));
+
 export const putObject = (cfg, key, body) => s3Request(cfg, 'PUT', key, {}, body);
 export const deleteObject = (cfg, key) => s3Request(cfg, 'DELETE', key);
 
@@ -252,6 +268,7 @@ export async function run(argv, deps = {}) {
     if (command === 'reset') rmSync(state, { recursive: true, force: true });
     const b = ensureBucket();
     if (b.status !== 0) return fail('バケットの準備', b);
+    await putBucketCors(cfg, n);
     if (command === 'reset') await emptyBucket(cfg);
 
     const prev = existsSync(envFile) ? parseEnv(readFileSync(envFile, 'utf8')) : {};
