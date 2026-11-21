@@ -10,3 +10,4 @@ export { MediaImage } from './ui/MediaImage';
 export { PostActionBar } from './ui/PostActionBar';
 export { PostCard } from './ui/PostCard';
 export { PostDetail } from './ui/PostDetail';
+export { thumbhashDataUrl } from './model/thumbhash';
