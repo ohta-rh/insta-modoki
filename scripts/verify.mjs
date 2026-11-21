@@ -29,7 +29,10 @@ export const STEPS = [
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 
-function findIntegrationTests(dir) {
+/** Directories searched for `*.int.test.ts` (scripts/ holds the slot script's integration test). */
+export const INTEGRATION_DIRS = ['src', 'scripts'];
+
+export function findIntegrationTests(dir) {
   if (!existsSync(dir)) return false;
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
@@ -45,7 +48,7 @@ function findIntegrationTests(dir) {
 const defaultDeps = {
   exec: (command) => spawnSync(command, { shell: true, stdio: 'inherit', cwd: root }).status,
   log: (line) => console.log(line),
-  hasIntegrationTests: () => findIntegrationTests(join(root, 'src')),
+  hasIntegrationTests: () => INTEGRATION_DIRS.some((d) => findIntegrationTests(join(root, d))),
 };
 
 /** Returns the process exit code: 0 ok, the failed command's code (or 1), 2 for bad arguments. */

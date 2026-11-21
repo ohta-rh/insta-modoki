@@ -7,10 +7,10 @@ name: insta-modoki
 services:
   s3:
     image: dxflrs/garage:v2.5.0
-    command: ["/garage", "server", "--single-node"]
+    command: ['/garage', 'server', '--single-node']
     ports:
       # Host port 3910 (container 3900): 3900 is commonly taken by another Garage on a dev machine.
-      - "127.0.0.1:3910:3900"
+      - '127.0.0.1:3910:3900'
     volumes:
       - s3-meta:/var/lib/garage/meta
       - s3-data:/var/lib/garage/data
@@ -18,7 +18,7 @@ services:
       - source: garage_toml
         target: /etc/garage.toml
     healthcheck:
-      test: ["CMD", "/garage", "status"]
+      test: ['CMD', '/garage', 'status']
       interval: 5s
       timeout: 5s
       retries: 12

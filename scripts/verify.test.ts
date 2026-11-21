@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import config from '../vitest.config.ts';
-import { COVERAGE_LINES, main, meetsCoverage, STEPS } from './verify.mjs';
+import { join } from 'node:path';
+import {
+  COVERAGE_LINES,
+  findIntegrationTests,
+  INTEGRATION_DIRS,
+  main,
+  meetsCoverage,
+  STEPS,
+} from './verify.mjs';
 
 type Deps = Parameters<typeof main>[1];
 
@@ -109,5 +117,11 @@ describe('verify', () => {
     expect(main(['--only', 'foo'], deps)).toBe(2);
     expect(lines).toEqual(['verify: 不明な手順: foo']);
     expect(executed).toEqual([]);
+  });
+
+  it('scripts/ の *.int.test.ts も結合テストとして見つける', () => {
+    const root = join(import.meta.dirname, '..');
+    expect(INTEGRATION_DIRS).toContain('scripts');
+    expect(findIntegrationTests(join(root, 'scripts'))).toBe(true);
   });
 });

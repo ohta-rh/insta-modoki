@@ -20,7 +20,7 @@ status: stable
 | `lint` | `pnpm lint` | ESLint の違反 |
 | `format` | `pnpm format:check` | Prettier の形式に合っていないファイルがある |
 | `unit` | `pnpm exec vitest run --coverage --exclude "**/*.int.test.ts"` | 単体テストの失敗、または `src/**/model/**` と `src/shared/config/**` の行カバレッジが 80% 未満 |
-| `integration` | `pnpm exec vitest run --passWithNoTests .int.test.ts` | 結合テストの失敗（`src/**/*.int.test.ts` が 1 つも無いときは `integration: テストなし` を出して成功） |
+| `integration` | `pnpm exec vitest run --passWithNoTests .int.test.ts` | 結合テストの失敗（`src/` と `scripts/` の `*.int.test.ts` が 1 つも無いときは `integration: テストなし` を出して成功） |
 | `build` | `pnpm build` | OpenNext のビルドの失敗 |
 | `e2e` | `pnpm e2e` | Playwright の失敗（ビルドの成果物を `pnpm start` で workerd に載せて開く） |
 

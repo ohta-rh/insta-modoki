@@ -52,4 +52,5 @@ Garage の `dxflrs/garage:v2.5.0` は `/garage` の実行ファイルだけの i
 - ホストのポート 3910 と鍵 `insta-local` は共有で、スロットを超えて同じ。バケットの名前でデータを分ける。ストレージの認証は分かれない。
 - ADR-0008 は置き換える。共有のスタックを 1 つにすること、ポートとバケットの名前の規則、Director だけがスタックを動かすこと、`compose.yaml` を変える PBI を単独の Wave にすることは引き継ぐ。DB の名前と `.env.local` は引き継がない。
 - `compose.yaml` の config や image の版を変えたら、Director が共有のスタックに反映する。
+- スロットのスクリプトのテストは Vitest で書く（[ADR-0022](0022-testing-ui-and-package-management.md)）。`scripts/slot.test.ts` は単体、`scripts/slot.int.test.ts` は結合で、`verify` の `integration` が `src/` と `scripts/` の `*.int.test.ts` から見つけて流す。
 - 結合テスト（`scripts/slot.int.test.ts`）はスロットを初期化・削除するので、他の worktree が使っていないスロット（既定は 0 と 4）で流す。`SLOT_INT_A` と `SLOT_INT_B` で変える。
