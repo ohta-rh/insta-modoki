@@ -5,7 +5,7 @@
 // The DB is D1 (files in .wrangler/state of the current directory); the bucket lives in Garage.
 import { createHash, createHmac, randomBytes } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -195,6 +195,7 @@ export async function run(argv, deps = {}) {
     if (command === "reset") await emptyBucket(cfg);
 
     const prev = existsSync(envFile) ? parseEnv(readFileSync(envFile, "utf8")) : {};
+    rmSync(envFile, { force: true }); // never rewrite secrets into a file with an older, looser mode
     writeFileSync(
       envFile,
       renderEnv(n, {
@@ -205,7 +206,6 @@ export async function run(argv, deps = {}) {
       }),
       { mode: 0o600 },
     );
-    chmodSync(envFile, 0o600); // mode only applies to a new file
 
 
     if (existsSync(join(cwd, "migrations"))) {
