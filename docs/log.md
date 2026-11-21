@@ -1,5 +1,8 @@
 # ドキュメントの更新履歴
 
+## 2026-11-22
+* **Creation**: [EPIC #6 の総合試験のレポート](test-reports/epic-0006-reactions-like-comment.md)（1 回目、PASS）と、その写真・記録（`test-reports/evidence/epic-0006/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+
 ## 2026-11-21
 * **Creation**: [EPIC #4 の総合試験のレポート](test-reports/epic-0004-post-create-detail.md)（1 回目、FAIL。投稿詳細の「削除」でコンソールに警告 1 件）と、その写真・記録（`test-reports/evidence/epic-0004/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #3 の総合試験のレポート](test-reports/epic-0003-profile.md)（1 回目、PASS。ヘッダーのアイコンの `alt=""` は隣に名前がある飾りとして正しい、と Director が判定）と、その写真・記録（`test-reports/evidence/epic-0003/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
