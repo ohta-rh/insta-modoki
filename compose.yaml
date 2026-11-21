@@ -1,0 +1,46 @@
+# Shared local stack for Milestone 1 (ADR-0006, ADR-0008, ADR-0023).
+# Started once from the main checkout by the Director. Worktrees never start their own.
+# The DB is D1 (files under .wrangler/state in each worktree), so the only service is
+# S3-compatible storage standing in for R2.
+name: insta-modoki
+
+services:
+  s3:
+    image: dxflrs/garage:v2.5.0
+    command: ["/garage", "server", "--single-node"]
+    ports:
+      # Host port 3910 (container 3900): 3900 is commonly taken by another Garage on a dev machine.
+      - "127.0.0.1:3910:3900"
+    volumes:
+      - s3-meta:/var/lib/garage/meta
+      - s3-data:/var/lib/garage/data
+    configs:
+      - source: garage_toml
+        target: /etc/garage.toml
+    healthcheck:
+      test: ["CMD", "/garage", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    restart: unless-stopped
+
+configs:
+  garage_toml:
+    content: |
+      metadata_dir = "/var/lib/garage/meta"
+      data_dir = "/var/lib/garage/data"
+      db_engine = "lmdb"
+      replication_factor = 1
+      # Local-only value: the RPC port is not published and the cluster has one node.
+      rpc_secret = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      rpc_bind_addr = "127.0.0.1:3901"
+      rpc_public_addr = "127.0.0.1:3901"
+
+      [s3_api]
+      s3_region = "auto"
+      api_bind_addr = "0.0.0.0:3900"
+
+volumes:
+  s3-meta:
+  s3-data:

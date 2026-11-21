@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-21
+* **Creation**: [ADR-0023](adr/0023-slots-with-garage-and-d1-files.md)（compose は Garage だけ、スロットは D1 のファイル・バケット・.dev.vars）と [guides/](guides/)（[ローカル開発の手順](guides/local-development.md)）を追加し、[ADR-0008](adr/0008-share-one-compose-stack-with-a-slot-per-worktree.md) を置き換えた（#20）。
 * **Creation**: アプリの雛形（Next.js + OpenNext、Vitest、Playwright、ESLint、Prettier）と `scripts/verify.mjs`、[guides/verify.md](guides/verify.md)、[ADR-0024](adr/0024-verify-command-and-coverage-gate.md)（verify の手順とカバレッジの基準）を追加し、[conventions.md](architecture/conventions.md) の「テスト」に `scripts/**/*.test.ts` とカバレッジの基準を足した（#19）。
 * **Creation**: [research/](research/)（[技術スタックの選定の調査](research/stack-selection.md)）と [architecture/overview.md](architecture/overview.md)（全体の図・環境変数・コマンド名・ルートのファイルの場所・後続の PBI への確定表）を追加した（#18）。
 * **Creation**: [ADR-0018](adr/0018-nextjs-on-workers-via-opennext.md)（Next.js を OpenNext で Workers に）、[ADR-0019](adr/0019-d1-and-drizzle.md)（D1 と Drizzle）、[ADR-0020](adr/0020-better-auth-with-pbkdf2.md)（Better Auth と PBKDF2）、[ADR-0021](adr/0021-browser-made-webp-and-presigned-put.md)（ブラウザの WebP と署名付き PUT、Garage）、[ADR-0022](adr/0022-testing-ui-and-package-management.md)（Vitest・Playwright・Tailwind・Radix・Node.js 26・pnpm 12）を追加した。

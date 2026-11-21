@@ -3,12 +3,13 @@ type: ADR
 title: "ADR-0008: worktree の間で compose のスタックを 1 つ共有し、スロットごとにポート・データベース・バケットを分ける"
 description: "docker compose のスタック（プロジェクト名 insta-modoki）は main のチェックアウトから 1 つだけ起動し、全ての worktree が共有する。worktree ごとのスロット番号で、ポート・データベース名・バケット名を分ける。"
 tags: [environment, parallel, docker]
-status: stable
+status: deprecated
+superseded_by: 0023-slots-with-garage-and-d1-files.md
 ---
 
 # ADR-0008: worktree の間で compose のスタックを 1 つ共有し、スロットごとにポート・データベース・バケットを分ける
 
-- ステータス: 採用
+- ステータス: 置き換え: [ADR-0023](0023-slots-with-garage-and-d1-files.md)（DB が D1 になり、DB の名前と `.env.local` を使わなくなった）
 - 日付: 2026-11-20
 - 決定者: エージェント（委任された判断。ユーザーは「docker の共有方法を検討する」と指示した）
 - 関連: [ADR-0006](0006-first-milestone-runs-locally-on-docker-compose.md)、[ADR-0007](0007-director-dispatches-sonnet-implementers-in-worktrees.md)

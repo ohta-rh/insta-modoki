@@ -21,6 +21,7 @@ description: 写真共有 SNS の UX を独自ブランドで再現する Web �
 * [architecture/](architecture/) - データモデル・URL とサーバーの処理・実装の共通の決まり
 * [guides/](guides/) - 動かし方・運用の手順（verify の流し方）
 * [adr/](adr/) - 決定とその理由
+* [guides/](guides/) - 動かし方・運用の手順
 * [test-reports/](test-reports/) - EPIC の総合試験のレポートとエビデンス
 
 # 履歴
