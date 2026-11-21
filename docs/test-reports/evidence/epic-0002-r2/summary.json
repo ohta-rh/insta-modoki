@@ -1,0 +1,175 @@
+{
+ "events": [],
+ "results": {
+  "ac1-badinput": {
+   "url": "http://localhost:3101/accounts/signup",
+   "text": "アカウントを作成 入力を確認してください メールアドレス メールアドレスの形式を確認してください ユーザー名 表示名 パスワード パスワードは 8〜72 字で入力してください サインアップ"
+  },
+  "ac1-signup-home": {
+   "url": "http://localhost:3101/",
+   "signedIn": true
+  },
+  "ac1-signup-while-signed-in": {
+   "url": "http://localhost:3101/"
+  },
+  "ac4-cookie": {
+   "name": "better-auth.session_token",
+   "httpOnly": true,
+   "secure": false,
+   "sameSite": "Lax",
+   "path": "/",
+   "days": 30
+  },
+  "ac4-doc-cookie-visible": false,
+  "ac2-tab2-before": {
+   "url": "http://localhost:3101/",
+   "signedIn": true
+  },
+  "ac2-after-logout": {
+   "url": "http://localhost:3101/accounts/login",
+   "sessionCookiePresent": false
+  },
+  "ac2-logged-out-home": {
+   "url": "http://localhost:3101/accounts/login",
+   "signedIn": false
+  },
+  "ac2-logged-out-create": {
+   "url": "http://localhost:3101/accounts/login",
+   "signedIn": false
+  },
+  "ac2-back-1": {
+   "url": "http://localhost:3101/accounts/login",
+   "signedIn": false
+  },
+  "ac2-back-2": {
+   "url": "http://localhost:3101/accounts/login",
+   "signedIn": false
+  },
+  "ac2-goto-home-after-back": {
+   "url": "http://localhost:3101/accounts/login",
+   "signedIn": false
+  },
+  "ac2-forward": {
+   "url": "http://localhost:3101/accounts/login",
+   "signedIn": false
+  },
+  "ac2-tab2-after-reload": {
+   "url": "http://localhost:3101/accounts/login",
+   "signedIn": false
+  },
+  "ac2-wrong": {
+   "alert": "メールアドレスまたはパスワードが違います | ",
+   "url": "http://localhost:3101/accounts/login"
+  },
+  "ac2-relogin": {
+   "url": "http://localhost:3101/",
+   "signedIn": true,
+   "cookie": true
+  },
+  "ac2-second-logout": {
+   "url": "http://localhost:3101/accounts/login"
+  },
+  "ac1-dupuser": {
+   "shown": true,
+   "submitDisabled": true,
+   "url": "http://localhost:3101/accounts/signup"
+  },
+  "ac1-dupuser-cleared": {
+   "stillShown": 0,
+   "submitEnabled": true
+  },
+  "ac1-dupemail": {
+   "alert": "入力を確認してください | ",
+   "url": "http://localhost:3101/accounts/signup",
+   "text": "アカウントを作成 入力を確認してください メールアドレス このメールアドレスは登録済みです ユーザー名 表示名 パスワード サインアップ"
+  },
+  "ac3-registered": [
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "操作が多すぎます。しばらくしてからもう一度お試しください |",
+   "started 2026-11-21T23:44:00.005Z ended 2026-11-21T23:44:02.884Z"
+  ],
+  "ac3-unregistered": [
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "メールアドレスまたはパスワードが違います |",
+   "操作が多すぎます。しばらくしてからもう一度お試しください |",
+   "started 2026-11-21T23:45:00.039Z ended 2026-11-21T23:45:02.909Z"
+  ]
+ },
+ "keyboard": {
+  "signup-1280": [
+   "input:email",
+   "input:username",
+   "input:displayName",
+   "input:password",
+   "button:サインアップ",
+   "body",
+   "a:本文へ移動",
+   "input:email"
+  ],
+  "signup-1280-hscroll": false,
+  "logout-1280": [
+   "a:ホーム",
+   "a:検索",
+   "a:投稿",
+   "a:通知",
+   "a:プロフィール",
+   "button:ログアウト",
+   "a:本文へ移動",
+   "a:ホーム"
+  ],
+  "logout-1280-hscroll": false,
+  "login-1280": [
+   "input:email",
+   "input:password",
+   "button:ログイン",
+   "a:サインアップ",
+   "body",
+   "a:本文へ移動",
+   "input:email"
+  ],
+  "login-1280-hscroll": false,
+  "login-1280-result": "http://localhost:3101/",
+  "signup-375": [
+   "input:email",
+   "input:username",
+   "input:displayName",
+   "input:password",
+   "button:サインアップ",
+   "body",
+   "a:本文へ移動",
+   "input:email"
+  ],
+  "signup-375-hscroll": false,
+  "logout-375": [
+   "button:ログアウト",
+   "a:ホーム",
+   "a:検索",
+   "a:投稿",
+   "a:通知",
+   "a:プロフィール",
+   "a:本文へ移動",
+   "button:ログアウト"
+  ],
+  "logout-375-hscroll": false,
+  "login-375": [
+   "input:email",
+   "input:password",
+   "button:ログイン",
+   "a:サインアップ",
+   "body",
+   "a:本文へ移動",
+   "input:email"
+  ],
+  "login-375-hscroll": false,
+  "login-375-result": "http://localhost:3101/"
+ },
+ "screens": {},
+ "chrome": "157.0.8103.80"
+}
