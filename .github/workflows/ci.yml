@@ -34,8 +34,8 @@ jobs:
         env:
           PORT: 3100
           SLOT_INT: 1
-          SLOT_INT_A: "3"
-          SLOT_INT_B: "4"
+          SLOT_INT_A: '3'
+          SLOT_INT_B: '4'
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
