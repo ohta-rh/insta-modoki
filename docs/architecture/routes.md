@@ -28,7 +28,7 @@ status: stable
 | `/stories/create` / `/stories/[username]` | ストーリーの投稿 / ビューア | 要 | M3 |
 | `/direct` / `/direct/[conversationId]` | DM の一覧 / 会話 | 要 | M4 |
 | `/reels` | 縦型動画（任意） | 要 | M4 |
-| `/e2e-harness/upload` | 写真の選択部品の確認用（E2E 用。`APP_ENV` が `production` のとき 404） | 不要 | M1 |
+| `/e2e-harness/upload` | 写真の選択部品の確認用（E2E 用。`E2E_HARNESS=1`（Playwright の webServer だけが渡す）で、かつ `APP_ENV` が `production` でないときだけ表示。それ以外は 404） | 不要 | M1 |
 | `/about` | 紹介 | 不要 | M4 |
 
 ### 予約したユーザー名

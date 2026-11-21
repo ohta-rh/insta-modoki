@@ -10,7 +10,8 @@ export default defineConfig({
   use: { baseURL: `http://localhost:${port}` },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'pnpm start',
+    // E2E_HARNESS reaches the Worker only as a wrangler --var (a shell variable does not), and only here.
+    command: 'pnpm start --var E2E_HARNESS:1',
     // `/` redirects to the login screen for a visitor; a public screen answers 200 once the app is up.
     url: `http://localhost:${port}/accounts/signup`,
     reuseExistingServer: false,
