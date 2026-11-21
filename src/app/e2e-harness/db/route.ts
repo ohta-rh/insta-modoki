@@ -1,12 +1,21 @@
 import { getRequestEnv } from '../../../shared/db/request';
 import { operationSchema, runOperation } from './operations';
 
-// Setup writes for the E2E suite only: it answers only when E2E_HARNESS=1 (set by
-// playwright.config.ts alone) and never in production; otherwise it is a 404 like any other
-// missing route. The body is one named operation (operations.ts), never SQL (ADR-0041).
+// Setup writes for the E2E suite only: it answers only when E2E_HARNESS=1 and APP_ENV is
+// exactly local or test (both set by playwright.config.ts alone; an unset or mistyped APP_ENV
+// answers 404); otherwise it is a 404 like any other missing route. The body is one named
+// operation (operations.ts), never SQL (ADR-0041). A web page cannot reach it: the body must be
+// application/json (a no-cors cross-site form or fetch cannot send that without a preflight) and
+// an Origin header, when present, must be this server's own.
 export async function POST(request: Request): Promise<Response> {
-  if (process.env.E2E_HARNESS !== '1' || process.env.APP_ENV === 'production') {
+  if (process.env.E2E_HARNESS !== '1' || !['local', 'test'].includes(process.env.APP_ENV ?? '')) {
     return new Response(null, { status: 404 });
+  }
+  const type = request.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase();
+  if (type !== 'application/json') return new Response(null, { status: 415 });
+  const origin = request.headers.get('origin');
+  if (origin !== null && origin !== new URL(request.url).origin) {
+    return new Response(null, { status: 403 });
   }
   let body: unknown;
   try {

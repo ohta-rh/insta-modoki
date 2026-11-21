@@ -28,7 +28,7 @@ E2E は `opennextjs-cloudflare preview` のアプリを起動し、そのアプ�
 
 - E2E のテストのプロセスは、アプリの D1 へ書かない。準備の書き込みは `POST /e2e-harness/db`（`src/app/e2e-harness/db/route.ts`）に頼み、Worker 自身の D1 の束縛で行う。
 - 入力は JSON の名前つきの操作 1 つ（`seedUser`、`insertPost`、`follow`、`setPostCount`、`clearRateLimits`）で、Zod の `strictObject` で長さと件数を制限する。SQL は受け取らない。
-- 条件は `/e2e-harness/upload` と同じ。`E2E_HARNESS === '1'`（`playwright.config.ts` の webServer だけが渡す）で、かつ `APP_ENV !== 'production'` のときだけ動き、それ以外は 404。単体テスト（`route.test.ts`）で確かめる。
+- `E2E_HARNESS === '1'` で、かつ `APP_ENV` がちょうど `local` か `test` のときだけ動き（どちらも `playwright.config.ts` の webServer だけが `--var` で渡す。未設定や打ち間違いは動かない許可リスト）、それ以外は 404。`Content-Type` が `application/json` でなければ 415、`Origin` があって自分の origin と違えば 403（他のサイトのページから no-cors で叩けない）。単体テスト（`route.test.ts`）で確かめる。
 - `e2e/support/` の補助の名前と呼び方は変えない。同期の呼び出しのまま、短命の node のプロセスで HTTP を呼ぶ（`e2e/support/harness.ts`）。読み出し（`userRow`、`postRows` など）は直接のままにする。
 
 ## 検討した選択肢
@@ -44,4 +44,4 @@ E2E は `opennextjs-cloudflare preview` のアプリを起動し、そのアプ�
 
 - 並列に走る E2E でも、アプリの D1 への書き手がアプリだけになり、SQLITE_BUSY で落ちない。
 - E2E の準備の書き込みは 1 回ごとに短い HTTP 呼び出し（node のプロセス 1 つ）が増える。
-- 守ること: E2E のテストのプロセスから D1 へ書かない。新しい準備が要るときは `operations.ts` に名前つきの操作を足す。条件の検査を外さない。M2 以降の本番のビルドでは `E2E_HARNESS` を渡さないので 404 のままである。
+- 守ること: E2E のテストのプロセスから D1 へ書かない。新しい準備が要るときは `operations.ts` に名前つきの操作を足す。条件の検査を外さない。M2 以降の本番のビルドでは `E2E_HARNESS` も `APP_ENV=local|test` も渡さないので 404 のままである。
