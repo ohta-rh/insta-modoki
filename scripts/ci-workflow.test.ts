@@ -47,6 +47,13 @@ describe('.github/workflows/ci.yml', () => {
     expect(ci).toMatch(/SLOT_INT: 1/);
   });
 
+  it('checkout は persist-credentials: false で、結合テストのスロットは 3 と 4 でスロット 0 を触らない', () => {
+    const i = lines.findIndex((l) => /uses: actions\/checkout@/.test(l));
+    expect(lines.slice(i, i + 3).join('\n')).toMatch(/with:\s*\n\s+persist-credentials: false/);
+    expect(has(/^\s+SLOT_INT_A: "3"\s*$/)).toBe(true);
+    expect(has(/^\s+SLOT_INT_B: "4"\s*$/)).toBe(true);
+  });
+
   it('失敗したとき playwright-report を upload する', () => {
     const i = lines.findIndex((l) => /uses: actions\/upload-artifact@/.test(l));
     expect(i).toBeGreaterThan(0);

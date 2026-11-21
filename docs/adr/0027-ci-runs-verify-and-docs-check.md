@@ -22,7 +22,7 @@ OKF の検査は手元の使い捨てのスクリプトにしか無く、リポ�
 - docs の検査は `scripts/check-docs.mjs`（Node の標準だけ）。`.claude/rules/documentation.md` の規則と、`type` が `docs/index.md` の「type の一覧」にあることを検査する。YAML は読まず、トップレベルの `key:` の行だけを見る。入れ子の YAML の文法の誤りは検出しない。
 - verify の手順 `docs`（`node scripts/check-docs.mjs docs`）を `format` の次に足す（[ADR-0024](0024-verify-command-and-coverage-gate.md) の 7 つの手順は 8 つになる。ADR-0024 の決定の形は変えない）。
 - CI は `.github/workflows/ci.yml` の 1 つの job `verify`。`main` への push と pull request で動き、`permissions` は `contents: read` だけ、`timeout-minutes: 20`、同じ ref の古い実行は取り消す。
-- 手順: checkout → `pnpm/action-setup`（`packageManager` の版）→ `actions/setup-node`（`.node-version`、`cache: pnpm`）→ `pnpm install --frozen-lockfile` → `docker compose up -d --wait`（Garage だけ）→ `node scripts/slot.mjs prepare 0` → `pnpm exec playwright install --with-deps chromium` → `PORT=3100 SLOT_INT=1 node scripts/verify.mjs`。CI は使い捨ての環境なのでスロットの結合テスト（`SLOT_INT=1`）もここで流す。
+- 手順: checkout → `pnpm/action-setup`（`packageManager` の版）→ `actions/setup-node`（`.node-version`、`cache: pnpm`）→ `pnpm install --frozen-lockfile` → `docker compose up -d --wait`（Garage だけ）→ `node scripts/slot.mjs prepare 0` → `pnpm exec playwright install --with-deps chromium` → `PORT=3100 SLOT_INT=1 node scripts/verify.mjs`。CI は使い捨ての環境なのでスロットの結合テスト（`SLOT_INT=1`）もここで流す。結合テストが捨てるスロットは `SLOT_INT_A=3`・`SLOT_INT_B=4` にして、CI が使うスロット 0 のバケットを消さない。checkout は `persist-credentials: false`（後の手順に token を残さない）。
 - 失敗したとき `playwright-report` を upload する。そのため `playwright.config.ts` は `CI` があるとき HTML のレポートも出す。
 - 使う action は 40 桁の commit SHA で固定する（行末のコメントに版）。`scripts/ci-workflow.test.ts` が行の正規表現で確かめる（YAML の依存を足さない）。
 
