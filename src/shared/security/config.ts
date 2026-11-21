@@ -6,10 +6,11 @@ const MEDIA_ORIGIN_MESSAGE = 'MEDIA_ORIGIN は origin（例 https://example.com�
 
 // `;`, whitespace and control characters would let a value open a new CSP directive or header,
 // so they are rejected before the value is parsed as a URL.
-const UNSAFE_CHARS = /[;\s\u0000-\u001f\u007f]/;
+const hasUnsafeChar = (value: string): boolean =>
+  [...value].some((c) => c === ';' || /\s/.test(c) || c <= '\u001f' || c === '\u007f');
 
 function isOrigin(value: string): boolean {
-  if (UNSAFE_CHARS.test(value)) return false;
+  if (hasUnsafeChar(value)) return false;
   try {
     const url = new URL(value);
     return (url.protocol === 'http:' || url.protocol === 'https:') && url.origin === value;
