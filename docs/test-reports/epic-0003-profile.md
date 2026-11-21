@@ -1,7 +1,7 @@
 ---
 type: TestReport
 title: EPIC #3 プロフィールの総合試験（1 回目）
-description: 統合ブランチ m1/local-mvp の 20d04dd で、EPIC #3 の 5 つの受け入れ条件を実ブラウザ（Google Chrome 157）で確かめた。5 つとも満たし PASS。ただし AC-5 の「画像に空でない alt」はプロフィールのヘッダーのアイコンが alt="" で、文言どおりではない（Director の判断を求める）。
+description: 統合ブランチ m1/local-mvp の 20d04dd で、EPIC #3 の 5 つの受け入れ条件を実ブラウザ（Google Chrome 157）で確かめた。5 つとも満たし PASS。AC-5 のヘッダーのアイコンの alt="" は、隣に名前がある飾りの画像として正しい（Director の判定）。
 tags: [epic-test]
 ---
 
@@ -31,7 +31,13 @@ PASS。AC-1〜5 は実ブラウザで満たした。見つけた問題は 1 件�
 | AC-2 | B で `/accounts/edit` を開き、表示名を空にして（失敗の経路）、表示名「新しい名前 B 😀」・自己紹介 2 行・アイコン画像（800×600 の JPEG）に変えて保存。別のブラウザ（別の context、A の Cookie）で `/<B のユーザー名>` を開き、再読み込みだけ行う | PASS。表示名が空だと「表示名は 1〜30 字で入力してください」が出て保存ボタンが無効。保存後に B の `/<username>` へ移り、新しい表示名・自己紹介（改行を保つ）・新しいアイコン（Garage の画像）が出る。別の context でも再読み込みだけで同じ値が出て、アイコンは読み込めた（`naturalWidth > 0`）。編集のリンクは出ない | [空の表示名 1280](evidence/epic-0003/ac2-fail-empty-name-1280.png)、[768](evidence/epic-0003/ac2-fail-empty-name-768.png)、[375](evidence/epic-0003/ac2-fail-empty-name-375.png)、[入力後 1280](evidence/epic-0003/ac2-edit-filled-1280.png)、[768](evidence/epic-0003/ac2-edit-filled-768.png)、[375](evidence/epic-0003/ac2-edit-filled-375.png)、[保存後の自分 1280](evidence/epic-0003/ac2-own-after-1280.png)、[768](evidence/epic-0003/ac2-own-after-768.png)、[375](evidence/epic-0003/ac2-own-after-375.png)、[別の context 1280](evidence/epic-0003/ac2-other-view-1280.png)、[768](evidence/epic-0003/ac2-other-view-768.png)、[375](evidence/epic-0003/ac2-other-view-375.png) |
 | AC-3 | 自己紹介に 151 字を入れて保存。次に 150 字を入れて保存 | PASS。151 字は「自己紹介は 150 字までです」と「151 / 150」が出て保存ボタンが無効。プロフィールを開き直しても元の自己紹介のまま（保存されていない）。150 字は警告が出ず保存でき、保存後のプロフィールの自己紹介は 150 字 | [151 字 1280](evidence/epic-0003/ac3-151-refused-1280.png)、[768](evidence/epic-0003/ac3-151-refused-768.png)、[375](evidence/epic-0003/ac3-151-refused-375.png)、[150 字 1280](evidence/epic-0003/ac3-150-saved-1280.png)、[768](evidence/epic-0003/ac3-150-saved-768.png)、[375](evidence/epic-0003/ac3-150-saved-375.png) |
 | AC-4 | B で A のプロフィールを開く。B 自身のプロフィールも開く。未ログインの context で `/accounts/edit` を開く | PASS。A のプロフィール（B から・未ログインから）に「プロフィールを編集」は無い（リンクも文字も 0 件）。B 自身のプロフィールにはある。未ログインの `/accounts/edit` は `/accounts/login` に移る | [他人のプロフィール 1280](evidence/epic-0003/ac4-others-profile-1280.png)、[768](evidence/epic-0003/ac4-others-profile-768.png)、[375](evidence/epic-0003/ac4-others-profile-375.png)、[未ログインの編集 1280](evidence/epic-0003/ac4-anon-edit-to-login-1280.png)、[768](evidence/epic-0003/ac4-anon-edit-to-login-768.png)、[375](evidence/epic-0003/ac4-anon-edit-to-login-375.png) |
-| AC-5 | 375px と 1280px で、プロフィールと編集の画面を Tab・文字入力・Enter だけで操作。画像の `alt`、コンソール、通信を調べる | PASS（条件あり。「見つけた問題」の 1 を Director が判断する）。両幅とも、プロフィールの全てのリンク・ボタンに Tab が届き、編集は表示名 → 自己紹介 → 保存（Enter）で保存して B のプロフィールへ戻れた。横のスクロールは無い。グリッドの画像は全て空でない `alt`（「撮影者 A の写真 N」）、編集画面のアイコンは「現在のアイコン」。プロフィールのヘッダーのアイコンだけ `alt=""`（隣に表示名がある装飾の扱い）。コンソールのエラー・警告と失敗した通信は、意図した 404 の画面を除き 0 | [プロフィール 1280](evidence/epic-0003/ac5-profile-keyboard-1280.png)・[375](evidence/epic-0003/ac5-profile-keyboard-375.png)、[編集 1280](evidence/epic-0003/ac5-edit-keyboard-1280.png)・[375](evidence/epic-0003/ac5-edit-keyboard-375.png) |
+| AC-5 | 375px と 1280px で、プロフィールと編集の画面を Tab・文字入力・Enter だけで操作。画像の `alt`、コンソール、通信を調べる | PASS（Director の判定。下の「AC-5 の判定」）。両幅とも、プロフィールの全てのリンク・ボタンに Tab が届き、編集は表示名 → 自己紹介 → 保存（Enter）で保存して B のプロフィールへ戻れた。横のスクロールは無い。グリッドの画像は全て空でない `alt`（「撮影者 A の写真 N」）、編集画面のアイコンは「現在のアイコン」。プロフィールのヘッダーのアイコンだけ `alt=""`（隣に表示名がある装飾の扱い）。コンソールのエラー・警告と失敗した通信は、意図した 404 の画面を除き 0 | [プロフィール 1280](evidence/epic-0003/ac5-profile-keyboard-1280.png)・[375](evidence/epic-0003/ac5-profile-keyboard-375.png)、[編集 1280](evidence/epic-0003/ac5-edit-keyboard-1280.png)・[375](evidence/epic-0003/ac5-edit-keyboard-375.png) |
+
+### AC-5 の判定（Director、2026-11-21）
+
+- ヘッダーのアイコン（`src/features/profile/ui/ProfileHeader.tsx`）の `alt=""` は、すぐ隣に表示名と `@ユーザー名` があり、同じ情報を重ねて読み上げさせないための飾りの扱いで、WCAG の作り方として正しい。リポジトリの前例も同じ（`src/shared/ui/icons/Icon.tsx` の「飾り。名前は使うボタンやリンクが持つ」）。
+- AC-5 の「画像に空でない `alt`」は、情報を持つ画像（グリッドの写真）に当てる。グリッドの全ての写真に空でない `alt` があることを確かめた。
+- よって AC-5 は PASS とし、バグの PBI は起票しない。EPIC #3 の本文の AC-5 にこの読み方を日付つきで書いた。
 
 ### AC-5 の Tab の順（[summary.json](evidence/epic-0003/summary.json) の `keyboard`）
 
