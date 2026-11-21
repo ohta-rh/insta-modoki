@@ -42,10 +42,7 @@ export async function getObject(
 export const mediaUrl = (key: string): string => `${settings().mediaBase}/${key}`;
 
 /** Stores an object under the key (a few bytes unless a body is given). */
-export async function putObject(
-  key: string,
-  body: Uint8Array = new Uint8Array(5),
-): Promise<void> {
+export async function putObject(key: string, body: BodyInit = new Uint8Array(5)): Promise<void> {
   const { endpoint, bucket, aws } = settings();
   const res = await aws.fetch(`${endpoint}/${bucket}/${key}`, {
     method: 'PUT',

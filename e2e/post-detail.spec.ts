@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { signUpViaUi, type NewUser } from './support/auth';
 import { seedUser } from './support/db';
 import { getObject } from './support/storage';
-import { insertPost, postRowCount, putPostFiles, serveMedia } from './support/posts';
+import { delayMedia, insertPost, postRowCount, putPostFiles } from './support/posts';
 
 /** `page` signed in as a new user, who is `me`. */
 const signedIn = test.extend<{ me: NewUser }>({
@@ -31,7 +31,7 @@ function strangerPost(
 
 test('写真をスワイプと矢印キーで切り替えられ 枚数バッジとドットが位置を示す', async ({ page }) => {
   const { post } = strangerPost({ mediaCount: 3 });
-  await serveMedia(page);
+  await putPostFiles(page, post);
   await page.goto(`/p/${post.id}`);
 
   await expect(carousel(page)).toBeVisible();
@@ -77,7 +77,7 @@ test('写真をスワイプと矢印キーで切り替えられ 枚数バッジ�
 
 test('写真が 1 枚の投稿にはバッジとドットが出ない', async ({ page }) => {
   const { post } = strangerPost({ mediaCount: 1 });
-  await serveMedia(page);
+  await putPostFiles(page, post);
   await page.goto(`/p/${post.id}`);
 
   await expect(page.locator('main img').first()).toBeVisible();
@@ -88,7 +88,8 @@ test('写真が 1 枚の投稿にはバッジとドットが出ない', async ({
 
 test('画像の読み込みが遅くても CLS が 0.1 以下で プレースホルダーが出る', async ({ page }) => {
   const { post } = strangerPost({ mediaCount: 3, width: 1200, height: 900 });
-  await serveMedia(page, 1000);
+  await putPostFiles(page, post);
+  await delayMedia(page, 1000);
   await page.addInitScript(() => {
     (window as unknown as { __cls: number }).__cls = 0;
     new PerformanceObserver((list) => {
@@ -171,8 +172,7 @@ test('存在しない投稿は 404 の画面が出る', async ({ page }) => {
 signedIn('自分の投稿を確認ダイアログのあとで削除できる', async ({ page, me }) => {
   const username = me.username;
   const post = insertPost({ authorUsername: username, mediaCount: 3, caption: '消す投稿' });
-  const files = await putPostFiles(post);
-  await serveMedia(page);
+  const files = await putPostFiles(page, post);
   await page.goto(`/p/${post.id}`);
 
   const open = page.getByRole('button', { name: '削除', exact: true });
@@ -204,7 +204,7 @@ signedIn('自分の投稿を確認ダイアログのあとで削除できる', a
 
 signedIn('他人の投稿には削除が出ない', async ({ page }) => {
   const { post } = strangerPost({ mediaCount: 1 });
-  await serveMedia(page);
+  await putPostFiles(page, post);
   await page.goto(`/p/${post.id}`);
   await expect(page.locator('main img').first()).toBeVisible();
   await expect(page.getByRole('button', { name: '削除' })).toHaveCount(0);
@@ -218,7 +218,7 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
     caption: 'キーボードで見る',
     altTexts: ['猫', '', ''],
   });
-  await serveMedia(page);
+  await putPostFiles(page, post);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(`/p/${post.id}`);
   await expect(page.locator('[aria-roledescription="carousel"] img').first()).toBeVisible();

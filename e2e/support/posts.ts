@@ -53,10 +53,16 @@ export function insertPost(options: {
 export const fileKeysOf = (storageKey: string): string[] =>
   ['orig', 'w320', 'w640', 'w1080'].map((name) => `${storageKey}/${name}.webp`);
 
-/** Stores the four files of every photo of the post, so a delete has something to remove. */
-export async function putPostFiles(post: InsertedPost): Promise<string[]> {
-  const keys = post.storageKeys.flatMap(fileKeysOf);
-  for (const key of keys) await putObject(key);
+/** Stores real WebP files (made in the browser) for the four variants of every photo of the post. */
+export async function putPostFiles(page: Page, post: InsertedPost): Promise<string[]> {
+  const keys: string[] = [];
+  for (const [i, storageKey] of post.storageKeys.entries()) {
+    const body = await makeWebp(page, 64, 48, 40 + i * 70);
+    for (const key of fileKeysOf(storageKey)) {
+      await putObject(key, body);
+      keys.push(key);
+    }
+  }
   return keys;
 }
 
@@ -89,18 +95,10 @@ export async function makeWebp(page: Page, width: number, height: number, hue: n
   return Buffer.from(base64, 'base64');
 }
 
-/**
- * The local object store refuses anonymous reads, so the browser cannot load a photo from it. The
- * photos of a post are answered here instead, after `delayMs` (0 = at once). Returns the number
- * of photo requests seen so far.
- */
-export async function serveMedia(page: Page, delayMs = 0): Promise<() => number> {
-  const body = await makeWebp(page, 64, 48, 200);
-  let seen = 0;
+/** Holds every photo response for `delayMs` before it reaches the page (a slow connection). */
+export async function delayMedia(page: Page, delayMs: number): Promise<void> {
   await page.route(/\/media\/[^/]+\/[^/]+\/(orig|w320|w640|w1080)\.webp$/, async (route) => {
-    seen += 1;
-    if (delayMs > 0) await new Promise((r) => setTimeout(r, delayMs));
-    await route.fulfill({ status: 200, contentType: 'image/webp', body });
+    await new Promise((r) => setTimeout(r, delayMs));
+    await route.continue();
   });
-  return () => seen;
 }
