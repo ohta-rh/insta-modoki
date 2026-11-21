@@ -23,19 +23,16 @@ export async function getProfile(input: unknown, deps: GetProfileDeps): Promise<
 
   const viewer = await getSessionUser(deps.headers, { env });
   const db = getDb(env);
-  const [userRows] = await db.batch([
-    db
-      .select({
-        id: users.id,
-        username: users.username,
-        displayName: users.displayName,
-        bio: users.bio,
-        avatarKey: users.avatarKey,
-      })
-      .from(users)
-      .where(eq(users.username, username)),
-  ]);
-  const user = userRows[0];
+  const [user] = await db
+    .select({
+      id: users.id,
+      username: users.username,
+      displayName: users.displayName,
+      bio: users.bio,
+      avatarKey: users.avatarKey,
+    })
+    .from(users)
+    .where(eq(users.username, username));
   if (!user) throw new AppError('NOT_FOUND');
 
   const [postRows, followerRows, followingRows, followRows] = await db.batch([

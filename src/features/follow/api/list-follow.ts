@@ -36,10 +36,10 @@ export async function listFollow(
   // `owner` is the person whose list this is; `listed` is the column of the people in it.
   const owner = direction === 'followers' ? follows.followeeId : follows.followerId;
   const listed = direction === 'followers' ? follows.followerId : follows.followeeId;
-  const [ownerRows] = await db.batch([
-    db.select({ id: users.id }).from(users).where(eq(users.username, username)),
-  ]);
-  const ownerRow = ownerRows[0];
+  const [ownerRow] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.username, username));
   if (!ownerRow) throw new AppError('NOT_FOUND');
 
   const rows = await db
