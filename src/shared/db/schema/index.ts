@@ -5,3 +5,4 @@ export * from './media';
 export * from './likes';
 export * from './comments';
 export * from './follows';
+export * from './rate-limits';

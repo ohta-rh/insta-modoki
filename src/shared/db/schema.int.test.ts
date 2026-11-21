@@ -63,9 +63,17 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 6 つのテーブルと 5 つの索引ができる', async () => {
+  it('マイグレーションで 7 つのテーブルと 5 つの索引ができる', async () => {
     expect(await names('table')).toEqual(
-      expect.arrayContaining(['users', 'posts', 'media', 'likes', 'comments', 'follows']),
+      expect.arrayContaining([
+        'users',
+        'posts',
+        'media',
+        'likes',
+        'comments',
+        'follows',
+        'rate_limits',
+      ]),
     );
     expect(await names('index')).toEqual(
       expect.arrayContaining([
@@ -76,14 +84,14 @@ describe('マイグレーション', () => {
         'follows_followee_created_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(6);
+    expect(await names('table')).toHaveLength(7);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(6);
+    expect(before).toHaveLength(7);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {

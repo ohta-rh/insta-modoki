@@ -6,7 +6,18 @@ import { afterAll, beforeAll, beforeEach } from 'vitest';
 import { getDb, type Db } from '../../src/shared/db';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
-const TABLES = ['likes', 'follows', 'comments', 'media', 'posts', 'users'] as const;
+const TABLES = [
+  'rate_limits',
+  'sessions',
+  'accounts',
+  'verifications',
+  'likes',
+  'follows',
+  'comments',
+  'media',
+  'posts',
+  'users',
+] as const;
 
 /** A DB name is for tests only when it ends with `_test` or contains `_test_<digits>`. */
 export function assertTestDatabaseName(url: string): void {
