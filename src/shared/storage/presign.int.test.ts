@@ -11,9 +11,9 @@ beforeAll(async () => {
 });
 
 const newKey = () => `media/presign-test/${crypto.randomUUID()}/orig.webp`;
-const bytes = (n: number) => new Uint8Array(n).fill(7);
+const bytes = (n: number) => new Uint8Array(new ArrayBuffer(n)).fill(7);
 
-async function put(url: string, body: Uint8Array, contentType = 'image/webp') {
+async function put(url: string, body: Uint8Array<ArrayBuffer>, contentType = 'image/webp') {
   return fetch(url, { method: 'PUT', body, headers: { 'Content-Type': contentType } });
 }
 

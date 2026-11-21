@@ -12,7 +12,10 @@ describe('publicUrl / mediaSrcset', () => {
 
   it('公開の基底の URL があるとき 末尾の / を除いてそれを使う', () => {
     expect(
-      publicUrl({ ...base, S3_PUBLIC_BASE_URL: 'https://media.example.com/' }, 'media/u/k/w320.webp'),
+      publicUrl(
+        { ...base, S3_PUBLIC_BASE_URL: 'https://media.example.com/' },
+        'media/u/k/w320.webp',
+      ),
     ).toBe('https://media.example.com/media/u/k/w320.webp');
   });
 

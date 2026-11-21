@@ -44,7 +44,9 @@ describe('requestUploadUrls', () => {
   it('未ログインのとき UNAUTHENTICATED を返す', async () => {
     const e = env();
     for (const input of [{ files: files(1) }, { files: [] }]) {
-      const err = await rejection(() => requestUploadUrls(input, { env: e, headers: new Headers() }));
+      const err = await rejection(() =>
+        requestUploadUrls(input, { env: e, headers: new Headers() }),
+      );
       expect(err.code).toBe('UNAUTHENTICATED');
       expect(err.message).toBe('ログインしてください');
     }
@@ -86,7 +88,10 @@ describe('requestUploadUrls', () => {
     );
     expect(err.code).toBe('RATE_LIMITED');
     expect(err.message).toBe('操作が多すぎます。しばらくしてからもう一度お試しください');
-    const other = await requestUploadUrls({ files: files(1) }, { env: b.e, headers: b.headers, now });
+    const other = await requestUploadUrls(
+      { files: files(1) },
+      { env: b.e, headers: b.headers, now },
+    );
     expect(other.uploads).toHaveLength(1);
   });
 
@@ -97,7 +102,9 @@ describe('requestUploadUrls', () => {
     const keys = new Set<string>();
     for (const u of uploads) {
       expect(u.key).toMatch(
-        new RegExp(`^media/${user.id}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$`),
+        new RegExp(
+          `^media/${user.id}/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$`,
+        ),
       );
       keys.add(u.key);
       for (const name of ['orig', 'w320', 'w640', 'w1080'] as const) {

@@ -37,11 +37,11 @@ describe('parseUploadRequest', () => {
   });
 
   it('形式が許可外 または項目が欠けているとき VALIDATION になる', () => {
-    expect(codeOf({ files: [file({ contentType: 'image/gif' })] })).toBe('VALIDATION');
-    expect(codeOf({ files: [file({ contentType: 'text/html' })] })).toBe('VALIDATION');
-    expect(codeOf({ files: [file({ variantSizes: { orig: 1, w320: 1, w640: 1 } as never })] })).toBe(
-      'VALIDATION',
-    );
+    expect(codeOf({ files: [file({ contentType: 'image/gif' as never })] })).toBe('VALIDATION');
+    expect(codeOf({ files: [file({ contentType: 'text/html' as never })] })).toBe('VALIDATION');
+    expect(
+      codeOf({ files: [file({ variantSizes: { orig: 1, w320: 1, w640: 1 } as never })] }),
+    ).toBe('VALIDATION');
     expect(codeOf({ files: [file({ size: 1.5 })] })).toBe('VALIDATION');
     expect(codeOf({ files: [file({ size: 0 })] })).toBe('VALIDATION');
     expect(codeOf({})).toBe('VALIDATION');

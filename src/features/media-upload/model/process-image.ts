@@ -1,4 +1,5 @@
 import { rgbaToThumbHash } from 'thumbhash';
+import type { AppErrorCode } from '../../../shared/errors';
 import { fitWithin, MAX_EDGE, variantSize, VARIANT_WIDTHS, type Size } from './resize';
 
 /** A crop rectangle in the pixels of the picked photo. */
@@ -47,9 +48,10 @@ export type ImageDeps = {
   createCanvas(width: number, height: number): CanvasLike;
 };
 
+/** Same shape as an AppError (`code`, `message`), thrown in the browser. */
 export class UploadError extends Error {
-  readonly code: 'VALIDATION' | 'INTERNAL';
-  constructor(message: string, code: 'VALIDATION' | 'INTERNAL' = 'VALIDATION') {
+  readonly code: AppErrorCode | 'INTERNAL';
+  constructor(message: string, code: AppErrorCode | 'INTERNAL' = 'VALIDATION') {
     super(message);
     this.name = 'UploadError';
     this.code = code;

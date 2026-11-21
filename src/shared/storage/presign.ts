@@ -11,7 +11,10 @@ export type PresignPutInput = {
 
 /** `YYYYMMDDTHHMMSSZ`, the form aws4fetch signs with. */
 const amzDate = (ms: number): string =>
-  new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  new Date(ms)
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 
 /**
  * A presigned PUT URL (ADR-0021). `content-type` and `content-length` are part of the signature
