@@ -28,4 +28,21 @@ describe('checkUsername', () => {
       expect((err as AppError).fieldErrors?.username).toHaveLength(1);
     }
   });
+
+  it('同じ IP の 31 回目の呼び出しが RATE_LIMITED になり 別の IP は影響を受けない', async () => {
+    const env = { DB: t.d1 as never };
+    const ip = (a: string) => new Headers({ 'cf-connecting-ip': a });
+    for (let i = 0; i < 30; i += 1) {
+      await checkUsername({ username: 'mio' }, { env, headers: ip('203.0.113.5') });
+    }
+    const err = await checkUsername({ username: 'mio' }, { env, headers: ip('203.0.113.5') }).catch(
+      (e) => e,
+    );
+    expect(err).toBeInstanceOf(AppError);
+    expect((err as AppError).code).toBe('RATE_LIMITED');
+    expect((err as AppError).retryAfterSec).toBeGreaterThanOrEqual(1);
+    expect(await checkUsername({ username: 'mio' }, { env, headers: ip('203.0.113.6') })).toEqual({
+      available: true,
+    });
+  });
 });

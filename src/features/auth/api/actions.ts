@@ -57,7 +57,7 @@ export async function checkUsernameAction(
   username: string,
 ): Promise<{ available: boolean } | { error: string }> {
   try {
-    return await checkUsername({ username });
+    return await checkUsername({ username }, { headers: await headers() });
   } catch (error) {
     if (error instanceof AppError) {
       return { error: error.fieldErrors?.username?.[0] ?? error.message };
