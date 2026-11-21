@@ -21,7 +21,7 @@ function dbFile(): string {
   );
 }
 
-function withDb<T>(run: (db: DatabaseSync) => T): T {
+export function withDb<T>(run: (db: DatabaseSync) => T): T {
   const db = new DatabaseSync(dbFile());
   try {
     db.exec('PRAGMA busy_timeout = 10000');

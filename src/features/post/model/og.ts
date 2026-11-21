@@ -36,3 +36,25 @@ export function buildOgMeta(post: PostView, origin: string): OgMeta {
     twitterCard: 'summary_large_image',
   };
 }
+
+const FALLBACK_ORIGIN = 'http://localhost';
+
+/**
+ * The origin the request came to, from its Host and x-forwarded-proto headers. Without a
+ * protocol, localhost is http and anything else https. A missing or malformed host gives
+ * http://localhost, so a forged header can only change the tags of the response it was sent with.
+ */
+export function requestOrigin(headers: Pick<Headers, 'get'>): string {
+  const host = headers.get('host');
+  if (!host) return FALLBACK_ORIGIN;
+  const forwarded = headers.get('x-forwarded-proto')?.split(',')[0]?.trim();
+  const local = /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host);
+  const proto =
+    forwarded === 'http' || forwarded === 'https' ? forwarded : local ? 'http' : 'https';
+  try {
+    const url = new URL(`${proto}://${host}`);
+    return url.host === host.toLowerCase() ? `${proto}://${url.host}` : FALLBACK_ORIGIN;
+  } catch {
+    return FALLBACK_ORIGIN;
+  }
+}

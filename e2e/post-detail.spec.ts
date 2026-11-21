@@ -1,0 +1,282 @@
+import AxeBuilder from '@axe-core/playwright';
+import type { Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { signUpViaUi, type NewUser } from './support/auth';
+import { seedUser } from './support/db';
+import { getObject } from './support/storage';
+import { insertPost, postRowCount, putPostFiles, serveMedia } from './support/posts';
+
+/** `page` signed in as a new user, who is `me`. */
+const signedIn = test.extend<{ me: NewUser }>({
+  me: async ({ page }, use) => {
+    await use(await signUpViaUi(page));
+  },
+});
+
+const carousel = (page: Page) => page.locator('[aria-roledescription="carousel"]');
+const badge = (page: Page, text: string) => page.getByText(text, { exact: true });
+const activeDot = async (page: Page) =>
+  page
+    .getByTestId('carousel-dot')
+    .evaluateAll((dots) => dots.findIndex((d) => d.getAttribute('data-active') === 'true'));
+
+/** A user nobody is signed in as, with a post of their own. */
+function strangerPost(
+  options: Parameters<typeof insertPost>[0] extends infer O ? Partial<O> : never,
+) {
+  const username = `e2e_o${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  seedUser(username, `${username}@example.com`);
+  return { username, post: insertPost({ ...options, authorUsername: username }) };
+}
+
+test('写真をスワイプと矢印キーで切り替えられ 枚数バッジとドットが位置を示す', async ({ page }) => {
+  const { post } = strangerPost({ mediaCount: 3 });
+  await serveMedia(page);
+  await page.goto(`/p/${post.id}`);
+
+  await expect(carousel(page)).toBeVisible();
+  await expect(badge(page, '1/3')).toBeVisible();
+  await expect(page.getByTestId('carousel-dot')).toHaveCount(3);
+  expect(await activeDot(page)).toBe(0);
+  await expect(page.locator('[aria-roledescription="slide"]')).toHaveCount(3);
+  await expect(page.locator('[aria-roledescription="slide"]').nth(1)).toHaveAttribute(
+    'aria-label',
+    '2 / 3',
+  );
+
+  // A real touch swipe to the left shows the next photo.
+  const box = (await carousel(page).boundingBox())!;
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Input.synthesizeScrollGesture', {
+    x: box.x + box.width / 2,
+    y: box.y + box.height / 2,
+    xDistance: -Math.round(box.width * 0.6),
+    gestureSourceType: 'touch',
+    speed: 800,
+  });
+  await expect(badge(page, '2/3')).toBeVisible();
+  expect(await activeDot(page)).toBe(1);
+
+  // Arrow keys on the focused photos: right, right (end), then left back to the start.
+  await carousel(page).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(badge(page, '3/3')).toBeVisible();
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(400); // nothing may happen: there is no state to wait for
+  await expect(badge(page, '3/3')).toBeVisible();
+  expect(await activeDot(page)).toBe(2);
+  await page.keyboard.press('ArrowLeft');
+  await expect(badge(page, '2/3')).toBeVisible();
+  await page.keyboard.press('ArrowLeft');
+  await expect(badge(page, '1/3')).toBeVisible();
+  await page.keyboard.press('ArrowLeft');
+  await page.waitForTimeout(400);
+  await expect(badge(page, '1/3')).toBeVisible();
+  expect(await activeDot(page)).toBe(0);
+});
+
+test('写真が 1 枚の投稿にはバッジとドットが出ない', async ({ page }) => {
+  const { post } = strangerPost({ mediaCount: 1 });
+  await serveMedia(page);
+  await page.goto(`/p/${post.id}`);
+
+  await expect(page.locator('main img').first()).toBeVisible();
+  await expect(badge(page, '1/1')).toHaveCount(0);
+  await expect(page.getByTestId('carousel-dot')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '次の写真' })).toHaveCount(0);
+});
+
+test('画像の読み込みが遅くても CLS が 0.1 以下で プレースホルダーが出る', async ({ page }) => {
+  const { post } = strangerPost({ mediaCount: 3, width: 1200, height: 900 });
+  await serveMedia(page, 1000);
+  await page.addInitScript(() => {
+    (window as unknown as { __cls: number }).__cls = 0;
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries() as unknown as {
+        value: number;
+        hadRecentInput: boolean;
+      }[]) {
+        if (!e.hadRecentInput) (window as unknown as { __cls: number }).__cls += e.value;
+      }
+    }).observe({ type: 'layout-shift', buffered: true });
+  });
+  await page.goto(`/p/${post.id}`, { waitUntil: 'domcontentloaded' });
+
+  const first = page.locator('[aria-roledescription="carousel"] img').first();
+  await expect(first).toBeVisible();
+  // Before the photo arrives: its box already has the photo's shape and a blurred background.
+  expect(await first.evaluate((img) => (img as HTMLImageElement).complete)).toBe(false);
+  const shape = (await first.boundingBox())!;
+  expect(shape.width / shape.height).toBeCloseTo(1200 / 900, 1);
+  expect(await first.evaluate((img) => getComputedStyle(img).backgroundImage)).toMatch(
+    /^url\("data:image\/png;base64,/,
+  );
+
+  await expect
+    .poll(() => first.evaluate((img) => (img as HTMLImageElement).naturalWidth), {
+      timeout: 10_000,
+    })
+    .toBeGreaterThan(0);
+  const cls = await page.evaluate(() => (window as unknown as { __cls: number }).__cls);
+  expect(cls).toBeLessThanOrEqual(0.1);
+
+  const imgs = page.locator('[aria-roledescription="carousel"] img');
+  await expect(imgs.nth(0)).not.toHaveAttribute('loading', 'lazy');
+  await expect(imgs.nth(1)).toHaveAttribute('loading', 'lazy');
+  await expect(imgs.nth(2)).toHaveAttribute('loading', 'lazy');
+});
+
+test('投稿詳細の HTML に OGP のタグが入る', async ({ page, request }) => {
+  const caption = `"引用" <b>太字</b> & ${'あ'.repeat(200)}`;
+  const { username, post } = strangerPost({ mediaCount: 2, caption, width: 1600, height: 900 });
+  const response = await request.get(`/p/${post.id}`);
+  expect(response.status()).toBe(200);
+  const html = await response.text();
+  // The caption is text in the tag, never markup.
+  expect(html).not.toContain('<b>太字</b>');
+  expect(html).toContain('&lt;b&gt;');
+
+  await page.goto(`/p/${post.id}`);
+  const meta = (property: string) =>
+    page
+      .locator(`meta[property="${property}"], meta[name="${property}"]`)
+      .first()
+      .getAttribute('content');
+  expect(await meta('og:title')).toBe(`@${username} の投稿`);
+  expect(await meta('og:description')).toBe(Array.from(caption).slice(0, 160).join(''));
+  const image = (await meta('og:image'))!;
+  expect(image).toMatch(/^https?:\/\/.+\/media\/.+\/w1080\.webp$/);
+  expect(image).toContain(post.storageKeys[0]);
+  expect(await meta('og:image:width')).toBe('1080');
+  expect(await meta('og:image:height')).toBe('608');
+  expect(await meta('og:url')).toBe(new URL(`/p/${post.id}`, page.url()).href);
+  expect(await meta('twitter:card')).toBe('summary_large_image');
+  await expect(page).toHaveTitle(`@${username} の投稿`);
+
+  // No caption: the description counts the photos.
+  const bare = strangerPost({ mediaCount: 2 });
+  await page.goto(`/p/${bare.post.id}`);
+  expect(await meta('og:description')).toBe(`@${bare.username} の写真 2 枚`);
+});
+
+test('存在しない投稿は 404 の画面が出る', async ({ page }) => {
+  for (const id of [crypto.randomUUID(), 'not-a-uuid']) {
+    const response = await page.goto(`/p/${id}`);
+    expect(response!.status()).toBe(404);
+    await expect(page.getByText('ページが見つかりません')).toBeVisible();
+    await expect(page.locator('meta[property="og:title"]')).toHaveCount(0);
+  }
+});
+
+signedIn('自分の投稿を確認ダイアログのあとで削除できる', async ({ page, me }) => {
+  const username = me.username;
+  const post = insertPost({ authorUsername: username, mediaCount: 3, caption: '消す投稿' });
+  const files = await putPostFiles(post);
+  await serveMedia(page);
+  await page.goto(`/p/${post.id}`);
+
+  const open = page.getByRole('button', { name: '削除', exact: true });
+  const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
+
+  // Cancel and Escape leave everything in place and hand the focus back to the button.
+  await open.click();
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'キャンセル' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(open).toBeFocused();
+  await open.click();
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(open).toBeFocused();
+  expect(postRowCount(post.id)).toBe(1);
+  expect(await getObject(files[0]!)).not.toBeNull();
+
+  await open.click();
+  await dialog.getByRole('button', { name: '削除', exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/${username}$`));
+  expect(postRowCount(post.id)).toBe(0);
+  for (const key of files) expect(await getObject(key), key).toBeNull();
+
+  const gone = await page.goto(`/p/${post.id}`);
+  expect(gone!.status()).toBe(404);
+});
+
+signedIn('他人の投稿には削除が出ない', async ({ page }) => {
+  const { post } = strangerPost({ mediaCount: 1 });
+  await serveMedia(page);
+  await page.goto(`/p/${post.id}`);
+  await expect(page.locator('main img').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: '削除' })).toHaveCount(0);
+});
+
+signedIn('キーボードだけで操作でき axe の重大な違反が無い', async ({ page, me }) => {
+  const username = me.username;
+  const post = insertPost({
+    authorUsername: username,
+    mediaCount: 3,
+    caption: 'キーボードで見る',
+    altTexts: ['猫', '', ''],
+  });
+  await serveMedia(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`/p/${post.id}`);
+  await expect(page.locator('[aria-roledescription="carousel"] img').first()).toBeVisible();
+
+  const serious = async () =>
+    (await new AxeBuilder({ page }).analyze()).violations.filter(
+      (v) => v.impact === 'critical' || v.impact === 'serious',
+    );
+  expect(await serious()).toEqual([]);
+
+  // Photos carry text alternatives: the given one, else "@<username> の写真 <n>".
+  const alts = await page
+    .locator('[aria-roledescription="carousel"] img')
+    .evaluateAll((imgs) => imgs.map((i) => i.getAttribute('alt')));
+  expect(alts).toEqual(['猫', `@${username} の写真 2`, `@${username} の写真 3`]);
+
+  // Tab reaches the carousel, then its buttons, then the delete button.
+  const carouselEl = carousel(page);
+  const next = page.getByRole('button', { name: '次の写真' });
+  const prev = page.getByRole('button', { name: '前の写真' });
+  for (const button of [prev, next]) {
+    const box = (await button.boundingBox())!;
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+  }
+  await focusByTab(page, carouselEl);
+  await page.keyboard.press('ArrowRight');
+  await expect(badge(page, '2/3')).toBeVisible();
+  await focusByTab(page, next);
+  // Reduced motion: the photo changes at once, with no smooth scrolling in between.
+  const after = await next.evaluate((button) => {
+    (button as HTMLButtonElement).click();
+    const strip = document.querySelector('[aria-roledescription="carousel"]')!;
+    return { left: strip.scrollLeft, width: strip.clientWidth };
+  });
+  expect(after.left).toBeCloseTo(after.width * 2, 0);
+  await expect(badge(page, '3/3')).toBeVisible();
+
+  const open = page.getByRole('button', { name: '削除', exact: true });
+  await focusByTab(page, open);
+  await page.keyboard.press('Enter');
+  const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
+  await expect(dialog).toBeVisible();
+  expect(await serious()).toEqual([]);
+  // The focus stays inside the dialog however many times Tab is pressed.
+  for (let i = 0; i < 5; i += 1) {
+    await page.keyboard.press('Tab');
+    expect(await dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);
+  }
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(open).toBeFocused();
+});
+
+async function focusByTab(page: Page, target: ReturnType<Page['locator']>) {
+  for (let i = 0; i < 30; i += 1) {
+    if (await target.evaluate((el) => el === document.activeElement)) return;
+    await page.keyboard.press('Tab');
+  }
+  throw new Error('Tab で目的の要素に届きません');
+}

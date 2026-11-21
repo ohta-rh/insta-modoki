@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildOgMeta } from './og';
+import { buildOgMeta, requestOrigin } from './og';
 import type { PostView } from './schema';
 
 const post = (
@@ -81,5 +81,28 @@ describe('buildOgMeta', () => {
       width: 600,
       height: 800,
     });
+  });
+});
+
+describe('requestOrigin', () => {
+  const headers = (init: Record<string, string>) => new Headers(init);
+
+  it('host と x-forwarded-proto から origin を作る', () => {
+    expect(requestOrigin(headers({ host: 'mado.example', 'x-forwarded-proto': 'https' }))).toBe(
+      'https://mado.example',
+    );
+  });
+
+  it('プロトコルが無いとき localhost は http それ以外は https にする', () => {
+    expect(requestOrigin(headers({ host: 'localhost:3102' }))).toBe('http://localhost:3102');
+    expect(requestOrigin(headers({ host: 'mado.example' }))).toBe('https://mado.example');
+  });
+
+  it('host が無いか壊れているとき http://localhost にする', () => {
+    expect(requestOrigin(headers({}))).toBe('http://localhost');
+    expect(requestOrigin(headers({ host: 'a b/c' }))).toBe('http://localhost');
+    expect(requestOrigin(headers({ host: 'x', 'x-forwarded-proto': 'javascript' }))).toBe(
+      'https://x',
+    );
   });
 });
