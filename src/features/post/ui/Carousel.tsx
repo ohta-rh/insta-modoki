@@ -2,6 +2,7 @@
 
 import { useRef, useState, type KeyboardEvent } from 'react';
 import type { MediaView } from '../model/schema';
+import { photoAlt } from '../model/alt-text';
 import { MediaImage } from './MediaImage';
 
 const arrowButton =
@@ -44,7 +45,8 @@ export function Carousel({
   const target = useRef<number | null>(null);
   const [index, setIndex] = useState(0);
   const count = media.length;
-  const altOf = (m: MediaView, i: number) => m.altText || `@${username} の写真 ${i + 1}`;
+  const altOf = (m: MediaView, i: number) =>
+    photoAlt({ altText: m.altText, username, position: i + 1, count });
 
   if (count === 1) {
     return <MediaImage media={media[0]!} alt={altOf(media[0]!, 0)} priority={priority} />;

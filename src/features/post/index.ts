@@ -2,6 +2,7 @@
 export { getPost } from './api/get-post';
 export { deletePost } from './api/delete-post';
 export { loadPostViews } from './api/load-post-views';
+export { photoAlt } from './model/alt-text';
 export { appOrigin, buildOgMeta, type OgMeta } from './model/og';
 export { isPostId, type MediaView, type PostView, type UserSummary } from './model/schema';
 export { Carousel } from './ui/Carousel';

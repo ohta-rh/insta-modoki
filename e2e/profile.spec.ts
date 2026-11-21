@@ -153,7 +153,11 @@ test('グリッドの画像が全て alt を持ち axe の重大な違反が無�
   const alts = await grid(page)
     .locator('img')
     .evaluateAll((els) => els.map((e) => e.getAttribute('alt')));
-  expect(alts).toEqual([`@${user.username} の写真`, `@${user.username} の写真`, '猫']);
+  expect(alts).toEqual([
+    `${user.username} が投稿した写真（1 / 1）`,
+    `${user.username} が投稿した写真（1 / 2）`,
+    '猫',
+  ]);
   const serious = (await new AxeBuilder({ page }).analyze()).violations.filter(
     (v) => v.impact === 'critical' || v.impact === 'serious',
   );

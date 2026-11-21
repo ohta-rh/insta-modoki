@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { thumbhashDataUrl } from '../../post';
+import { photoAlt, thumbhashDataUrl } from '../../post';
 import { listProfilePostsAction } from '../api/actions';
 import type { PostThumb } from '../model/schema';
 import { useDeletedPosts } from './ProfilePostsProvider';
@@ -46,7 +46,12 @@ function Tile({ post, username, eager }: { post: PostThumb; username: string; ea
         sizes={SIZES}
         width={cover.width}
         height={cover.height}
-        alt={cover.altText || `@${username} の写真`}
+        alt={photoAlt({
+          altText: cover.altText,
+          username,
+          position: 1,
+          count: post.mediaCount,
+        })}
         loading={eager ? undefined : 'lazy'}
         decoding="async"
         className="block h-full w-full bg-cover object-cover"

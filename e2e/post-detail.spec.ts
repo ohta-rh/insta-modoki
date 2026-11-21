@@ -305,11 +305,15 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
     );
   expect(await serious()).toEqual([]);
 
-  // Photos carry text alternatives: the given one, else "@<username> の写真 <n>".
+  // Photos carry text alternatives: the given one, else "<username> が投稿した写真（<位置> / <枚数>）".
   const alts = await page
     .locator('[aria-roledescription="carousel"] img')
     .evaluateAll((imgs) => imgs.map((i) => i.getAttribute('alt')));
-  expect(alts).toEqual(['猫', `@${username} の写真 2`, `@${username} の写真 3`]);
+  expect(alts).toEqual([
+    '猫',
+    `${username} が投稿した写真（2 / 3）`,
+    `${username} が投稿した写真（3 / 3）`,
+  ]);
 
   // Tab reaches the carousel, then its buttons, then the delete button.
   const carouselEl = carousel(page);
