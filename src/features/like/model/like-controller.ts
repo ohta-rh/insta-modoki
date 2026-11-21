@@ -1,3 +1,5 @@
+import { INTERNAL_MESSAGE } from '../../../shared/errors';
+
 export type LikeState = { liked: boolean; count: number };
 export type LikeSendResult =
   { ok: true; liked: boolean; likeCount: number } | { ok: false; code: string; message: string };
@@ -56,7 +58,7 @@ export function createLikeController({ initial, send, onChange }: LikeController
       result = {
         ok: false,
         code: 'INTERNAL',
-        message: 'エラーが発生しました。しばらくしてからもう一度お試しください',
+        message: INTERNAL_MESSAGE,
       };
     }
     inFlight = false;

@@ -1,5 +1,6 @@
 'use client';
 
+import { INTERNAL_MESSAGE } from '../../../shared/errors';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
   addCommentAction,
@@ -25,7 +26,7 @@ import { CommentItem } from './CommentItem';
 import { useCommentCount } from './CommentCount';
 import { DeleteCommentDialog } from './DeleteCommentDialog';
 
-const NETWORK_MESSAGE = 'エラーが発生しました。しばらくしてからもう一度お試しください';
+const NETWORK_MESSAGE = INTERNAL_MESSAGE;
 const more =
   'min-h-[var(--tap-min)] rounded-lg px-3 text-[length:var(--font-size-sm)] font-bold text-text-secondary hover:bg-surface disabled:opacity-50';
 

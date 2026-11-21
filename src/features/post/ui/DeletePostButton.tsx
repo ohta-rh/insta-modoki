@@ -1,5 +1,6 @@
 'use client';
 
+import { INTERNAL_MESSAGE } from '../../../shared/errors';
 import { useRouter } from 'next/navigation';
 import { useId, useRef, useState, type KeyboardEvent } from 'react';
 import { supportsCommandInvokers } from '../../../shared/ui/supports-command-invokers';
@@ -48,7 +49,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
       }
       setError(result.error.message);
     } catch {
-      setError('エラーが発生しました。しばらくしてからもう一度お試しください');
+      setError(INTERNAL_MESSAGE);
     }
     setPending(false);
   };

@@ -1,5 +1,6 @@
 'use client';
 
+import { INTERNAL_MESSAGE } from '../../../shared/errors';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UserSummary } from '../../post';
 import { listFollowersAction, listFollowingAction } from '../api/actions';
@@ -49,7 +50,7 @@ export function FollowList({
         setNext(result.page.nextCursor);
         setStatus('idle');
       } catch {
-        setMessage('エラーが発生しました。しばらくしてからもう一度お試しください');
+        setMessage(INTERNAL_MESSAGE);
         setStatus('error');
       }
     },

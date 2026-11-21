@@ -1,3 +1,5 @@
+import { INTERNAL_MESSAGE } from '../../../shared/errors';
+
 export type FollowState = { following: boolean; count: number };
 export type FollowSendResult =
   | { ok: true; following: boolean; followerCount: number }
@@ -56,7 +58,7 @@ export function createFollowController({ initial, send, onChange }: FollowContro
       result = {
         ok: false,
         code: 'INTERNAL',
-        message: 'エラーが発生しました。しばらくしてからもう一度お試しください',
+        message: INTERNAL_MESSAGE,
       };
     }
     inFlight = false;

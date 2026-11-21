@@ -1,5 +1,6 @@
 'use client';
 
+import { INTERNAL_MESSAGE } from '../../../shared/errors';
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { supportsCommandInvokers } from '../../../shared/ui/supports-command-invokers';
 import { listLikersAction } from '../api/actions';
@@ -46,7 +47,7 @@ export function LikersDialog() {
         setStatus('idle');
       } catch {
         if (gen !== generation.current) return;
-        setMessage('エラーが発生しました。しばらくしてからもう一度お試しください');
+        setMessage(INTERNAL_MESSAGE);
         setStatus('error');
       }
     },
