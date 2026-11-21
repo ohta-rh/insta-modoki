@@ -1,13 +1,14 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LogOutConfirm, requireUser } from '@/features/auth';
+import { LogOutConfirm, isUnauthenticated, requireUser } from '@/features/auth';
 
 export const metadata = { title: 'ログアウト | Mado（仮称）' };
 
 export default async function LogOutPage() {
   try {
     await requireUser(await headers());
-  } catch {
+  } catch (error) {
+    if (!isUnauthenticated(error)) throw error;
     redirect('/accounts/login');
   }
   return (
