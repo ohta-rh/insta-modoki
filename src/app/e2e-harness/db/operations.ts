@@ -82,6 +82,14 @@ export const operationSchema = z.discriminatedUnion('op', [
       .min(1)
       .max(100),
   }),
+  z.strictObject({
+    op: z.literal('seedFollowers'),
+    followeeId: id,
+    followers: z
+      .array(z.strictObject({ username: text(30), email: text(254), followedAt: ms }))
+      .min(1)
+      .max(50),
+  }),
 ]);
 
 export type Operation = z.infer<typeof operationSchema>;
@@ -218,6 +226,33 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
             .where(eq(posts.id, postId)),
         ),
       ] as unknown as Parameters<typeof db.batch>[0]);
+      return;
+    }
+    case 'seedFollowers': {
+      // New users and their follows of `followeeId` in one batch; one insert per row (D1 allows
+      // 100 bound variables in one statement). The array is never empty (min 1 follower).
+      const now = new Date();
+      const people = operation.followers.map((f) => ({ ...f, id: crypto.randomUUID() }));
+      const rows = [
+        ...people.map((p) =>
+          db.insert(users).values({
+            id: p.id,
+            username: p.username,
+            email: p.email,
+            displayName: p.username,
+            createdAt: now,
+            updatedAt: now,
+          }),
+        ),
+        ...people.map((p) =>
+          db.insert(follows).values({
+            followerId: p.id,
+            followeeId: operation.followeeId,
+            createdAt: new Date(p.followedAt),
+          }),
+        ),
+      ];
+      await db.batch(rows as unknown as Parameters<typeof db.batch>[0]);
       return;
     }
   }

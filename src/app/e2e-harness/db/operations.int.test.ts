@@ -249,3 +249,50 @@ describe('E2E ハーネスの操作（コメント）', () => {
     expect(after!.commentCount).toBe(0);
   });
 });
+
+describe('E2E ハーネスの操作（seedFollowers）', () => {
+  it('seedFollowers が利用者と フォローの行を書き 時刻の順に並べられる', async () => {
+    const target = await createUser(t.db);
+    const at = Date.UTC(2026, 10, 1);
+    await run({
+      op: 'seedFollowers',
+      followeeId: target.id,
+      followers: [0, 1, 2].map((i) => ({
+        username: `fan_${i}`,
+        email: `fan_${i}@example.com`,
+        followedAt: at + i * 1000,
+      })),
+    });
+    const rows = await t.db.select().from(follows).where(eq(follows.followeeId, target.id));
+    expect(rows.map((r) => r.createdAt.getTime()).sort()).toEqual([at, at + 1000, at + 2000]);
+    expect((await t.db.select().from(users).where(eq(users.username, 'fan_1'))).length).toBe(1);
+  });
+
+  it('seedFollowers が上限の 50 人でも書き 途中で失敗すると何も残さない', async () => {
+    const target = await createUser(t.db);
+    await run({
+      op: 'seedFollowers',
+      followeeId: target.id,
+      followers: Array.from({ length: 50 }, (_, i) => ({
+        username: `crowd_${i}`,
+        email: `crowd_${i}@example.com`,
+        followedAt: 1000 + i,
+      })),
+    });
+    expect(await t.db.select().from(follows)).toHaveLength(50);
+
+    const other = await createUser(t.db);
+    await expect(
+      run({
+        op: 'seedFollowers',
+        followeeId: other.id,
+        followers: [
+          { username: 'dup_f', email: 'dup_f1@example.com', followedAt: 1 },
+          { username: 'dup_f', email: 'dup_f2@example.com', followedAt: 2 },
+        ],
+      }),
+    ).rejects.toThrow();
+    expect(await t.db.select().from(follows).where(eq(follows.followeeId, other.id))).toEqual([]);
+    expect((await t.db.select().from(users).where(eq(users.username, 'dup_f'))).length).toBe(0);
+  });
+});
