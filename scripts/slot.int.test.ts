@@ -3,7 +3,7 @@
 // Defaults to slots 0 and 4; override with SLOT_INT_A and SLOT_INT_B.
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, statSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
@@ -61,6 +61,10 @@ test("prepare を 2 回流しても既存のデータが残る", async () => {
   slot("prepare", A);
   assert.ok(hasRow(A));
   assert.deepEqual(await listObjects(cfg(A)), ["keep.txt"]);
+  assert.equal(statSync(join(dirs[A], ".dev.vars")).mode & 0o777, 0o600, ".dev.vars is owner-only");
+  chmodSync(join(dirs[A], ".dev.vars"), 0o644);
+  slot("prepare", A);
+  assert.equal(statSync(join(dirs[A], ".dev.vars")).mode & 0o777, 0o600, "an existing file is chmod-ed back to 0600");
   assert.equal(readFileSync(join(dirs[A], ".dev.vars"), "utf8"), before, "secrets are kept across prepare");
 });
 

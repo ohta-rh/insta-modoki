@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Prepare, reset or drop a worktree's slot on the shared compose stack (ADR-0008, ADR-0023).
-//   node scripts/slot.mjs <prepare|reset|drop> <N>        N is 0..4 (0 = main checkout)
+//   node scripts/slot.mjs <prepare|reset|drop> <N>        N is 0..4 (0 = main checkout; app port 3100 + N)
 // Exit codes: 0 success, 1 stack down or a command failed, 2 bad arguments.
 // The DB is D1 (files in .wrangler/state of the current directory); the bucket lives in Garage.
 import { createHash, createHmac, randomBytes } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -20,7 +20,7 @@ export function slotNames(n) {
   const text = String(n);
   if (!/^[0-4]$/.test(text)) throw new Error("slot は 0〜4 の整数です");
   const i = Number(text);
-  return { db: `insta_s${i}`, testDb: `insta_s${i}_test`, bucket: `insta-s${i}`, port: 3000 + i };
+  return { db: `insta_s${i}`, testDb: `insta_s${i}_test`, bucket: `insta-s${i}`, port: 3100 + i };
 }
 
 export function renderEnv(n, { accessKey, secretKey, authPepper, authSecret }) {
@@ -155,8 +155,10 @@ export async function run(argv, deps = {}) {
   // The single access key, created once.
   let info = garage("key", "info", KEY_NAME, "--show-secret");
   if (info.status !== 0) {
-    info = garage("key", "create", KEY_NAME);
-    if (info.status !== 0) return fail("鍵の作成", info);
+    const created = garage("key", "create", KEY_NAME);
+    // A concurrent prepare on a fresh stack may have created it first: read it back once.
+    info = created.status === 0 ? created : garage("key", "info", KEY_NAME, "--show-secret");
+    if (info.status !== 0) return fail("鍵の作成", created);
   }
   const accessKey = field(info.stdout, "Key ID");
   const secretKey = field(info.stdout, "Secret key");
@@ -201,7 +203,10 @@ export async function run(argv, deps = {}) {
         authPepper: prev.AUTH_PEPPER || randomHex(),
         authSecret: prev.BETTER_AUTH_SECRET || randomHex(),
       }),
+      { mode: 0o600 },
     );
+    chmodSync(envFile, 0o600); // mode only applies to a new file
+
 
     if (existsSync(join(cwd, "migrations"))) {
       const m = exec("pnpm", ["exec", "wrangler", "d1", "migrations", "apply", "DB", "--local"], { cwd });

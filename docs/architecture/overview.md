@@ -43,14 +43,14 @@ flowchart LR
 
 | 名前 | 内容 | 例 |
 |---|---|---|
-| `BETTER_AUTH_URL` | アプリの公開の URL（Better Auth の `baseURL`。`Origin` の検査に使う） | `http://localhost:3001` |
+| `BETTER_AUTH_URL` | アプリの公開の URL（Better Auth の `baseURL`。`Origin` の検査に使う） | `http://localhost:3101` |
 | `BETTER_AUTH_SECRET` | セッションの署名のシークレット（32 バイトの乱数） | 実行時に生成。コミットしない |
 | `S3_ENDPOINT` | S3 互換のエンドポイント（R2 は `https://<account>.r2.cloudflarestorage.com`） | `http://localhost:3910` |
 | `S3_BUCKET` | バケット名 | `insta-s1` |
 | `S3_ACCESS_KEY` / `S3_SECRET_KEY` | 署名付き URL を作る認証情報 | 実行時に生成。コミットしない |
 | `AUTH_PEPPER` | パスワードのハッシュに掛ける HMAC の鍵（32 バイトの乱数。シークレット）。ローカルの値は #20 のスロットのスクリプトが `.dev.vars` に生成し、コミットしない。ローテーションはハッシュの形式の版を足して行う（[ADR-0020](../adr/0020-better-auth-with-pbkdf2.md)） | 実行時に生成 |
 | `S3_PUBLIC_BASE_URL` | 画像を配信する公開の URL（`storage_key` を足して使う） | `http://localhost:3910/insta-s1` |
-| `PORT` | `dev` と `start` が使うポート（既定 3000、スロット N は `3000 + N`） | `3001` |
+| `PORT` | `dev` と `start` が使うポート（既定 3100、スロット N は `3100 + N`） | `3101` |
 
 D1 は環境変数ではなく、`wrangler.jsonc` のバインディング `DB`（型は `cloudflare-env.d.ts`。`wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts` で作る）。
 
@@ -58,9 +58,9 @@ D1 は環境変数ではなく、`wrangler.jsonc` のバインディング `DB`�
 
 | コマンド | 実行するもの | 備考 |
 |---|---|---|
-| `dev` | `next dev --port ${PORT:-3000}` | `next.config.ts` が `initOpenNextCloudflareForDev()` を呼ぶ |
+| `dev` | `next dev --port ${PORT:-3100}` | `next.config.ts` が `initOpenNextCloudflareForDev()` を呼ぶ |
 | `build` | `opennextjs-cloudflare build` | `open-next.config.ts` の `buildCommand: "pnpm exec next build"` が中で `next build` を呼ぶ（`build` が自分自身を呼ばないため） |
-| `start` | `opennextjs-cloudflare preview --port ${PORT:-3000}` | `build` の後。workerd で動く |
+| `start` | `opennextjs-cloudflare preview --port ${PORT:-3100}` | `build` の後。workerd で動く |
 | `typecheck` | `tsc --noEmit` | typescript は試作で動いた 5.9.3 に固定する（7 系は試していない） |
 | `lint` | `eslint .` | ESLint 10、`eslint.config.mjs` |
 | `format:check` | `prettier . --check` | |

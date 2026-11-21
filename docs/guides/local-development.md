@@ -35,7 +35,7 @@ S3 API はホストの `http://localhost:3910`。止める・作り直すのは 
 
 # `.dev.vars` の中身
 
-`.env.example` に名前の一覧がある（値は空）。`SLOT`・`PORT`（`3000 + N`）・`BETTER_AUTH_URL`・`BETTER_AUTH_SECRET`・`AUTH_PEPPER`・`S3_ENDPOINT`・`S3_REGION`・`S3_BUCKET`・`S3_ACCESS_KEY`・`S3_SECRET_KEY`・`S3_PUBLIC_BASE_URL`・`MEDIA_ORIGIN`。`AUTH_PEPPER`・`BETTER_AUTH_SECRET` は初回に乱数で作り、以降は保つ。`.dev.vars` は git に入れない。
+`.env.example` に名前の一覧がある（値は空）。`SLOT`・`PORT`（`3100 + N`）・`BETTER_AUTH_URL`・`BETTER_AUTH_SECRET`・`AUTH_PEPPER`・`S3_ENDPOINT`・`S3_REGION`・`S3_BUCKET`・`S3_ACCESS_KEY`・`S3_SECRET_KEY`・`S3_PUBLIC_BASE_URL`・`MEDIA_ORIGIN`。`AUTH_PEPPER`・`BETTER_AUTH_SECRET` は初回に乱数で作り、以降は保つ。`.dev.vars` は git に入れない。
 
 # テスト
 

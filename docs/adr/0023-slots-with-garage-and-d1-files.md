@@ -24,7 +24,8 @@ Garage の `dxflrs/garage:v2.5.0` は `/garage` の実行ファイルだけの i
 - `compose.yaml` のサービスは `s3`（`dxflrs/garage:v2.5.0`、`--single-node`）だけにする。DB のサービスは置かない。プロジェクト名は `name: insta-modoki`。設定は `configs.content` に埋め込み、worktree のパスに依存させない。ボリュームは `s3-meta` と `s3-data`。
 - S3 API はホストの `127.0.0.1:3910` に出す（コンテナの中は 3900）。3900 を使わないのは、開発機で別の Garage が使いがちなため。RPC・管理 API のポートは出さない。
 - スロットの名前は次のとおり。DB の名前（`insta_s<N>`・`insta_s<N>_test`）は使わない。
-  - ポート `3000 + N`、バケット `insta-s<N>`
+  - アプリのポート `3100 + N`（main は 3100）。ADR-0008 の `3000 + N` は使わない。この開発機で 3000 と 3001 が別のプロジェクトに使われているため（Director の決定）
+  - バケット `insta-s<N>`
   - DB は worktree の `.wrangler/state`（D1 のファイル）。結合テストはメモリ上の D1 で、名前は要らない
   - 設定は worktree の `.dev.vars`（wrangler が読む。`.env.local` は使わない。git に入れない）
 - `scripts/slot.mjs <prepare|reset|drop> <N>`（N は 0〜4）が、依存なしの Node.js で次を行う。終了コードは成功 0、スタック停止・コマンドの失敗 1、引数の誤り 2。

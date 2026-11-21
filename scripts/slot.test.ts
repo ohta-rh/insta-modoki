@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
 import { renderEnv, run, slotNames } from "./slot.mjs";
 
@@ -11,8 +13,8 @@ const secrets = {
 };
 
 test("slot 0 と 4 の名前を返す", () => {
-  assert.deepEqual(slotNames(0), { db: "insta_s0", testDb: "insta_s0_test", bucket: "insta-s0", port: 3000 });
-  assert.deepEqual(slotNames(4), { db: "insta_s4", testDb: "insta_s4_test", bucket: "insta-s4", port: 3004 });
+  assert.deepEqual(slotNames(0), { db: "insta_s0", testDb: "insta_s0_test", bucket: "insta-s0", port: 3100 });
+  assert.deepEqual(slotNames(4), { db: "insta_s4", testDb: "insta_s4_test", bucket: "insta-s4", port: 3104 });
 });
 
 test("slot 5 のとき投げる", () => {
@@ -59,8 +61,8 @@ test("renderEnv が slot 3 の値を全て出す", () => {
   const text = renderEnv(3, secrets);
   const map = Object.fromEntries(text.trim().split("\n").map((l: string) => [l.slice(0, l.indexOf("=")), l.slice(l.indexOf("=") + 1)]));
   assert.equal(map.SLOT, "3");
-  assert.equal(map.PORT, "3003");
-  assert.equal(map.BETTER_AUTH_URL, "http://localhost:3003");
+  assert.equal(map.PORT, "3103");
+  assert.equal(map.BETTER_AUTH_URL, "http://localhost:3103");
   assert.equal(map.S3_BUCKET, "insta-s3");
   assert.equal(map.S3_REGION, "auto");
   assert.equal(map.S3_ENDPOINT, "http://localhost:3910");
@@ -79,4 +81,25 @@ test(".env.example が renderEnv の変数名を全て含む", () => {
   for (const name of names) {
     assert.ok(example.includes(`${name}=`), `${name}= (empty value) is missing from .env.example`);
   }
+});
+
+test("key create が既存で失敗したら key info を 1 回やり直す", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "slot-unit-"));
+  let infoCalls = 0;
+  const keyOut = "Key ID:              GKtest\nSecret key:          sektest\n";
+  const code = await run(["prepare", "1"], {
+    exec: (cmd: string, args: string[]) => {
+      if (cmd === "docker" && args[0] === "ps") return { status: 0, stdout: "cid\n", stderr: "" };
+      const g = args.slice(3).join(" ");
+      if (g.startsWith("key info")) return infoCalls++ === 0 ? { status: 1, stdout: "", stderr: "not found" } : { status: 0, stdout: keyOut, stderr: "" };
+      if (g.startsWith("key create")) return { status: 1, stdout: "", stderr: "already exists" };
+      return { status: 0, stdout: "", stderr: "" };
+    },
+    cwd: dir,
+    stderr: () => {},
+    stdout: () => {},
+  });
+  rmSync(dir, { recursive: true, force: true });
+  assert.equal(code, 0);
+  assert.equal(infoCalls, 2);
 });

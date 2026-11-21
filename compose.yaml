@@ -32,7 +32,8 @@ configs:
       data_dir = "/var/lib/garage/data"
       db_engine = "lmdb"
       replication_factor = 1
-      # Local-only value: the RPC port is not published and the cluster has one node.
+      # Local-dev-only value, never reuse it anywhere else: the RPC port is not published and
+      # the cluster has a single node.
       rpc_secret = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
       rpc_bind_addr = "127.0.0.1:3901"
       rpc_public_addr = "127.0.0.1:3901"
