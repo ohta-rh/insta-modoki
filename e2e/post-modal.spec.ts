@@ -184,6 +184,9 @@ test('フォーカスがモーダルの外に出ない', async ({ page }) => {
   const id = (await visibleTileId(page)) ?? '';
   await tile(page, id).click();
   await expect(dialog(page)).toBeVisible();
+  // The dialog is in the DOM before the modal's effect has moved the focus to 閉じる; a Tab
+  // pressed in between would leave from the grid tile that was clicked (outside the dialog).
+  await expect(dialog(page).getByRole('button', { name: '閉じる' })).toBeFocused();
 
   const insideDialog = () =>
     page.evaluate(() => document.activeElement?.closest('[role="dialog"]') !== null);
