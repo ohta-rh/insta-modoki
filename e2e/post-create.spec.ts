@@ -195,6 +195,10 @@ test('写真の順番を入れ替え 1 枚外して投稿すると その順で�
 });
 
 test('キーボードだけで投稿でき axe の重大な違反が無い', async ({ page }) => {
+  // Arm the chooser interception long before the key press: Playwright enables it asynchronously,
+  // and a chooser that opens first is the browser's own and never reaches the test.
+  const fileChooser = page.waitForEvent('filechooser');
+  fileChooser.catch(() => {});
   const { userId } = await start(page);
   const jpeg = await makeJpeg(page, 800, 600);
 
@@ -212,7 +216,6 @@ test('キーボードだけで投稿でき axe の重大な違反が無い', asy
   };
 
   await tabTo(page.getByRole('button', { name: '写真を選ぶ' }));
-  const fileChooser = page.waitForEvent('filechooser');
   await page.keyboard.press('Enter');
   await (await fileChooser).setFiles([file('k1.jpg', jpeg), file('k2.jpg', jpeg)]);
   await expect(page.getByRole('listitem', { name: /^写真 \d+$/ })).toHaveCount(2);
@@ -268,6 +271,10 @@ test('未ログインで /create を開くと ログイン画面に移る', asyn
 test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと 選択ダイアログが開く', async ({
   page,
 }) => {
+  // Arm the chooser interception before the key press: Playwright enables it asynchronously,
+  // and a chooser that opens first is the browser's own and never reaches the test.
+  const fileChooser = page.waitForEvent('filechooser');
+  fileChooser.catch(() => {});
   await signUpViaUi(page);
   // Hold every script chunk back so the page stays un-hydrated while the key is pressed.
   let release!: () => void;
@@ -282,7 +289,6 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   await choose.waitFor();
   await choose.focus();
   await expect(choose).toBeFocused();
-  const fileChooser = page.waitForEvent('filechooser', { timeout: 5000 });
   await page.keyboard.press('Enter');
   await fileChooser;
   release();
