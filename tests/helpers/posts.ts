@@ -67,6 +67,25 @@ export async function createComment(
   return id;
 }
 
+/** Inserts a comment (or a reply, with `parentId`) at an exact time, without touching `comment_count`. */
+export async function createCommentAt(
+  db: Db,
+  postId: string,
+  authorId: string,
+  options: { parentId?: string; body?: string; createdAt: Date },
+): Promise<string> {
+  const id = newId();
+  await db.insert(comments).values({
+    id,
+    postId,
+    authorId,
+    parentId: options.parentId ?? null,
+    body: options.body ?? 'こんにちは',
+    createdAt: options.createdAt,
+  });
+  return id;
+}
+
 /** The four stored files of one `media.storage_key`. */
 export const fileKeysOf = (storageKey: string): string[] =>
   ['orig', 'w320', 'w640', 'w1080'].map((name) => `${storageKey}/${name}.webp`);
