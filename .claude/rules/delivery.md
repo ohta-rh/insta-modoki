@@ -92,8 +92,11 @@ When the last child PBI of an EPIC is closed, the EPIC is **not** closed yet:
    reset it. Only one EPIC test runs at a time: the real Chrome is a shared resource.
 2. Spawn `epic-tester` (`model: "sonnet"`, `ALLOW_COMMIT=true`, contract paste block). It drives
    **real Chrome through the chrome-devtools MCP** — headless Playwright never counts as the
-   integrated test. If it returns `BLOCKED` for the browser, the Director runs the same test
-   itself with the claude-in-chrome tools and writes the same report.
+   integrated test. If the MCP's Chrome is unavailable (e.g. another session holds its profile),
+   it drives a headed Google Chrome with a throwaway profile over CDP instead (Playwright
+   `channel: 'chrome'`, `headless: false`; ADR-0045). Only if both fail does it return
+   `BLOCKED`; then the Director runs the same test itself with the claude-in-chrome tools and
+   writes the same report.
 3. `PASS` → verify the report against the EPIC's AC (every AC has screenshots; console and
    network clean), integrate the report and evidence like a PBI (§4: rebase, ff-merge, push),
    tick the EPIC's DoD, comment with the report link and SHA, close the EPIC.

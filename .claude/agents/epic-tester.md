@@ -14,8 +14,15 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
 1. Report `git rev-parse --show-toplevel` and the branch; if they are not the given worktree and
    `epic-test/<N>` → `BLOCKED`.
 2. Check the browser: `list_pages` must answer. If the chrome-devtools tools are unavailable or
-   fail twice → `BLOCKED` ("real browser unavailable"). Never substitute headless Playwright
-   for the integrated test.
+   fail twice (e.g. "The browser is already running for …/chrome-devtools-mcp/chrome-profile"),
+   switch to the second means (ADR-0045): a script in your worktree's `.tmp_*/` directory
+   launches **headed Google Chrome** with `chromium.launch({ channel: 'chrome', headless: false })`
+   from `@playwright/test` (a throwaway profile), drives it over CDP, sets the widths with
+   `page.setViewportSize`, saves screenshots straight into the evidence directory, and counts
+   `console` (error/warning), `pageerror`, `requestfailed` and `response` ≥ 400 events per screen.
+   Record the means and `browser.version()` under `## 対象`. Only if that also fails →
+   `BLOCKED` ("real browser unavailable"). Never substitute headless mode or the bundled
+   Chromium for the integrated test.
 3. Read the EPIC (`gh issue view <N>`), every child PBI, `CLAUDE.md`, `.claude/rules/`, and the
    ADRs they link. Use only your slot's resources (`.claude/rules/local-environment.md`).
 
