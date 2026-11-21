@@ -51,14 +51,19 @@ describe('evaluate', () => {
 
 describe('formatViolation', () => {
   it('上限の指標は > で、点数は < で出す', () => {
-    expect(
-      formatViolation({ indicator: 'lcpMs', screen: '/', value: 2501, limit: 2500 }),
-    ).toBe('perf: FAIL lcpMs / 2501 > 2500');
+    expect(formatViolation({ indicator: 'lcpMs', screen: '/', value: 2501, limit: 2500 })).toBe(
+      'perf: FAIL lcpMs / 2501 > 2500',
+    );
     expect(
       formatViolation({ indicator: 'lighthouseScore', screen: '/demo', value: 89, limit: 90 }),
     ).toBe('perf: FAIL lighthouseScore /demo 89 < 90');
     expect(
-      formatViolation({ indicator: 'initialJsGzipBytes', screen: '/', value: 380000, limit: 170000 }),
+      formatViolation({
+        indicator: 'initialJsGzipBytes',
+        screen: '/',
+        value: 380000,
+        limit: 170000,
+      }),
     ).toBe('perf: FAIL initialJsGzipBytes / 380000 > 170000');
   });
 });

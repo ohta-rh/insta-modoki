@@ -48,6 +48,7 @@
 * [ADR-0041: E2E の準備の書き込みは、テストのプロセスから SQLite を直接書かず、アプリの /e2e-harness/db を通す](0041-e2e-setup-writes-go-through-the-app.md) - 採用
 * [ADR-0043: プロフィールのグリッドからのモーダルは、Next.js の intercepting routes と parallel routes で作る](0043-profile-grid-modal-by-intercepting-route.md) - 採用
 * [ADR-0045: chrome-devtools の MCP が使えないとき、epic-tester は画面ありの Google Chrome を CDP で操作して総合試験を行う](0045-epic-test-may-drive-headed-chrome-over-cdp.md) - 採用
+* [ADR-0046: 性能の基準は THRESHOLDS に 1 か所で定め、初期 JS は verify の既定の手順で、Lighthouse・INP・フィード API の p95 は --with-perf と main への push の CI で検査する](0046-performance-budget-in-verify-and-ci.md) - 採用
 
 # ひな形
 

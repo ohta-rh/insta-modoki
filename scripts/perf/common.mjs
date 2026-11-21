@@ -49,13 +49,16 @@ export async function ensureServer() {
     await new Promise((r) => setTimeout(r, 500));
   }
   await stop();
-  throw new Error(`perf: アプリが ${baseUrl()} で起動しませんでした（pnpm build は済んでいますか）`);
+  throw new Error(
+    `perf: アプリが ${baseUrl()} で起動しませんでした（pnpm build は済んでいますか）`,
+  );
 }
 
 /** The demo user's password: SEED_DEMO_PASSWORD, set when `seed:bench` was run (never kept in the repository). */
 export function demoPassword() {
   const p = process.env.SEED_DEMO_PASSWORD;
-  if (!p) throw new Error('perf: SEED_DEMO_PASSWORD が未設定です（seed:bench に渡したものと同じ値）');
+  if (!p)
+    throw new Error('perf: SEED_DEMO_PASSWORD が未設定です（seed:bench に渡したものと同じ値）');
   return p;
 }
 
