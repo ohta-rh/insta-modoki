@@ -17,6 +17,7 @@ export function PostCard({
   like,
   comment,
   wrapMedia,
+  footer,
 }: {
   post: PostView;
   /** The current time in epoch ms; a screen that renders many cards passes one value to all. */
@@ -28,6 +29,8 @@ export function PostCard({
   comment?: ReactNode;
   /** Wraps the photos (the like slice's double tap goes here). */
   wrapMedia?: (media: ReactNode) => ReactNode;
+  /** Under the caption, above the time (the feed's link to all the comments). */
+  footer?: ReactNode;
 }) {
   const { author } = post;
   const createdAt = new Date(post.createdAt);
@@ -73,6 +76,7 @@ export function PostCard({
             {post.caption}
           </p>
         )}
+        {footer}
         <time
           dateTime={createdAt.toISOString()}
           suppressHydrationWarning

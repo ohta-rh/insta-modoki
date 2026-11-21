@@ -23,7 +23,7 @@ export async function getFeed(input: unknown, deps: GetFeedDeps): Promise<Page<P
   const db = getDb(env);
 
   // One extra row says whether another page exists. The posts index
-  // (author_id, created_at DESC, id DESC) serves each author; no OFFSET.
+  // (author_id, created_at DESC, id DESC) serves each author; paging is by cursor only.
   const rows = await db
     .select({ id: posts.id, createdAt: posts.createdAt })
     .from(posts)

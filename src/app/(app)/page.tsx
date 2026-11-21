@@ -1,8 +1,22 @@
-// Placeholder page; the feed replaces it. The shell comes from the root layout.
-export default function HomePage() {
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { Feed, getFeed } from '@/features/feed';
+import { AppError } from '@/shared/errors';
+
+// The home feed: the first page is read here, the rest by the Feed's Server Action. The (app)
+// layout already sends a visitor to the login screen; getFeed enforces the session again.
+export default async function HomePage() {
+  let page;
+  try {
+    page = await getFeed({}, { headers: await headers() });
+  } catch (error) {
+    if (error instanceof AppError && error.code === 'UNAUTHENTICATED') redirect('/accounts/login');
+    throw error;
+  }
   return (
-    <div className="p-4">
-      <h1 className="text-[length:var(--font-size-xl)] font-bold">Mado（仮称）</h1>
+    <div className="mx-auto w-full max-w-[var(--content-max)] py-4">
+      <h1 className="sr-only">ホーム</h1>
+      <Feed initialItems={page.items} initialCursor={page.nextCursor} now={Date.now()} />
     </div>
   );
 }

@@ -28,7 +28,7 @@ export function MediaImage({
       width={media.width}
       height={media.height}
       alt={alt}
-      loading={priority ? undefined : 'lazy'}
+      loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : undefined}
       decoding="async"
       className="block h-auto w-full bg-cover"

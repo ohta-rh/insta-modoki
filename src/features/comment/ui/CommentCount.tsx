@@ -28,12 +28,15 @@ export function useCommentCount(): Counter {
   return useContext(CountContext) ?? { count: 0, add: () => {} };
 }
 
-/** The `comment` slot of the action row: jumps to the comment box. */
-export function CommentCountLink() {
+/**
+ * The `comment` slot of the action row: jumps to the comment box, or (with `href`, on a screen
+ * that has no comment box, like the feed) opens the post's own screen.
+ */
+export function CommentCountLink({ href }: { href?: string } = {}) {
   const { count } = useCommentCount();
   return (
     <a
-      href={`#${COMMENT_INPUT_ID}`}
+      href={href ?? `#${COMMENT_INPUT_ID}`}
       aria-label={`コメント ${count} 件`}
       className="flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] items-center justify-center gap-1 rounded-lg px-2 text-text"
     >
