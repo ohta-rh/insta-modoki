@@ -6,7 +6,10 @@ const b64url = (s: string) => Buffer.from(s, 'utf8').toString('base64url');
 
 describe('cursor', () => {
   it('エンコードしてデコードすると元に戻る', () => {
-    const cursor = { createdAt: new Date('2026-11-21T01:02:03.456Z'), id: '019a0000-0000-7000-8000-000000000000' };
+    const cursor = {
+      createdAt: new Date('2026-11-21T01:02:03.456Z'),
+      id: '019a0000-0000-7000-8000-000000000000',
+    };
     const s = encodeCursor(cursor);
     expect(s).toMatch(/^[A-Za-z0-9_-]+$/);
     expect(Buffer.from(s, 'base64url').toString('utf8')).toBe(

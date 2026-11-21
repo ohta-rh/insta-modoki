@@ -142,6 +142,7 @@ describe('verify', () => {
   it('scripts/ の *.int.test.ts も結合テストとして見つける', () => {
     const root = join(import.meta.dirname, '..');
     expect(INTEGRATION_DIRS).toContain('scripts');
+    expect(INTEGRATION_DIRS).toContain('tests');
     expect(findIntegrationTests(join(root, 'scripts'))).toBe(true);
   });
 

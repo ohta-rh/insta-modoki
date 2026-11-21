@@ -31,7 +31,7 @@ export const STEPS = [
 const root = fileURLToPath(new URL('..', import.meta.url));
 
 /** Directories searched for `*.int.test.ts` (scripts/ holds the slot script's integration test). */
-export const INTEGRATION_DIRS = ['src', 'scripts'];
+export const INTEGRATION_DIRS = ['src', 'scripts', 'tests'];
 
 export function findIntegrationTests(dir) {
   if (!existsSync(dir)) return false;

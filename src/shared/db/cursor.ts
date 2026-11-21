@@ -6,7 +6,9 @@ const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 /** `createdAt|id`, base64url (docs/architecture/conventions.md "カーソル"). */
 export function encodeCursor(cursor: Cursor): string {
-  return Buffer.from(`${cursor.createdAt.toISOString()}|${cursor.id}`, 'utf8').toString('base64url');
+  return Buffer.from(`${cursor.createdAt.toISOString()}|${cursor.id}`, 'utf8').toString(
+    'base64url',
+  );
 }
 
 export function decodeCursor(value: string): Cursor {

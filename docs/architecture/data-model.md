@@ -23,6 +23,12 @@ DB は D1（SQLite）。Drizzle ORM の列の定義は右の列（[overview.md](
 
 ## 共通の決まり
 
+- 制約名は `<table>_<column>_check`（CHECK）・`<table>_<column>_unique`（UNIQUE。複数の列は `media_post_id_position_unique`）、索引名は `<table>_<列>_idx`。`migrations/0001_mvp_schema.sql` で作った名前は次のとおり（[ADR-0028](../adr/0028-first-migration-conventions-and-test-db.md)）。
+  - CHECK: `users_username_check`（小文字・3〜30 字）・`users_email_check`（小文字）・`users_display_name_check`・`users_bio_check`・`users_role_check`・`users_is_private_check`・`posts_caption_check`・`posts_like_count_check`・`posts_comment_count_check`・`media_position_check`・`media_type_check`・`media_width_check`・`media_height_check`・`media_alt_text_check`・`comments_body_check`・`follows_follower_id_check`
+  - UNIQUE: `users_username_unique`・`users_email_unique`・`media_post_id_position_unique`
+  - 索引: `posts_author_id_created_at_id_idx`・`posts_created_at_id_idx`・`likes_post_id_created_at_idx`・`comments_post_parent_created_idx`・`follows_followee_created_idx`
+- 「前後の空白を除いた長さ」の CHECK は、SQLite の `trim()` が既定では半角の空白しか除かないので、空白・タブ・改行・全角の空白などを明示して `trim(x, char(32, 9, 10, 11, 12, 13, 160, 12288))` と書く。文字数は `length()`（バイトでなく文字）。
+
 - 主キー `id` は UUIDv7 の文字列（時系列順に並ぶ）。カーソルの並びのキーにも使う（[conventions.md](conventions.md) の「カーソル」）。
 - 時刻は全て UTC の `timestamp`。列名は `created_at` / `updated_at` / `expires_at` / `read_at`。
 - 外部キーは、利用者（`users`）と投稿（`posts`）からの削除を連鎖させる（`ON DELETE CASCADE`）。ストレージのファイルの削除は、行の削除と同じ処理の中で行う（[conventions.md](conventions.md) の「削除」）。
