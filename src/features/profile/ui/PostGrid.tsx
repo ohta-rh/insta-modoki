@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { thumbhashDataUrl } from '../../post';
 import { listProfilePostsAction } from '../api/actions';
 import type { PostThumb } from '../model/schema';
+import { useDeletedPosts } from './ProfilePostsProvider';
 
 /** The first six tiles are on the first screen; the rest load lazily. */
 const EAGER_TILES = 6;
@@ -29,7 +31,15 @@ function Tile({ post, username, eager }: { post: PostThumb; username: string; ea
   const { cover } = post;
   const placeholder = thumbhashDataUrl(cover.thumbhash);
   return (
-    <a href={`/p/${post.id}`} className="relative block aspect-square overflow-hidden bg-surface">
+    // Next's Link opens the post in the modal (intercepting route) on a plain click, keeps the
+    // scroll position, and leaves Ctrl/Cmd/middle clicks and a click before hydration to the
+    // browser: they load the normal post page.
+    <Link
+      href={`/p/${post.id}`}
+      prefetch={false}
+      scroll={false}
+      className="relative block aspect-square overflow-hidden bg-surface"
+    >
       <img
         src={cover.srcset.w320}
         srcSet={`${cover.srcset.w320} 320w, ${cover.srcset.w640} 640w`}
@@ -55,7 +65,7 @@ function Tile({ post, username, eager }: { post: PostThumb; username: string; ea
           <span aria-hidden="true">{post.mediaCount}</span>
         </span>
       )}
-    </a>
+    </Link>
   );
 }
 
@@ -73,7 +83,9 @@ export function PostGrid({
   initialItems: PostThumb[];
   initialCursor: string | null;
 }) {
-  const [items, setItems] = useState(initialItems);
+  const [loaded, setItems] = useState(initialItems);
+  const { ids: deleted } = useDeletedPosts();
+  const items = loaded.filter((p) => !deleted.has(p.id));
   const [cursor, setCursor] = useState(initialCursor);
   const [failed, setFailed] = useState(false);
   const loading = useRef(false);

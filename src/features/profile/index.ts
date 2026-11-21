@@ -7,3 +7,5 @@ export { PostGrid } from './ui/PostGrid';
 export { ProfileEmptyState } from './ui/ProfileEmptyState';
 export { ProfileHeader } from './ui/ProfileHeader';
 export { EditProfileForm } from './edit/EditProfileForm';
+export { PostModal } from './ui/PostModal';
+export { ProfilePostsProvider } from './ui/ProfilePostsProvider';

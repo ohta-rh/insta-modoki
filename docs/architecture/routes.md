@@ -20,7 +20,7 @@ status: stable
 | `/accounts/edit` | プロフィールの編集 | 要 | M1 |
 | `/create` | 投稿の作成 | 要 | M1 |
 | `/p/[postId]` | 投稿詳細 | 不要 | M1 |
-| `/[username]` | プロフィール | 不要 | M1 |
+| `/[username]` | プロフィール。グリッドの投稿を押すと `/p/[postId]` がモーダルで開く（intercepting route。直接開く・再読み込みは通常の投稿詳細。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） | 不要 | M1 |
 | `/[username]/followers` / `/[username]/following` | フォロワー / フォロー中の一覧 | 不要 | M1 |
 | `/admin` | 管理（招待コード・削除・通報） | 管理者 | M2 |
 | `/explore` / `/explore/search` / `/explore/tags/[tag]` | 発見 / 検索 / ハッシュタグ | 要 | M3 |

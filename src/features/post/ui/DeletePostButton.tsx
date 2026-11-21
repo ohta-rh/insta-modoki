@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useId, useRef, useState, type KeyboardEvent } from 'react';
 import { deletePostAction } from '../api/actions';
+import { usePostDeletedHandler } from './PostDeletedContext';
 
 const secondary =
   'min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-4 text-[length:var(--font-size-sm)] font-bold';
@@ -13,6 +14,7 @@ const secondary =
  */
 export function DeletePostButton({ postId, username }: { postId: string; username: string }) {
   const router = useRouter();
+  const onDeleted = usePostDeletedHandler();
   const trigger = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const [pending, setPending] = useState(false);
@@ -34,7 +36,9 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
     try {
       const result = await deletePostAction({ postId });
       if (result.ok) {
-        router.push(`/${username}`);
+        // Inside the profile's modal the provider closes it; elsewhere go to the author's page.
+        if (onDeleted) onDeleted(postId);
+        else router.push(`/${username}`);
         return; // stays disabled until the navigation replaces the screen
       }
       setError(result.error.message);

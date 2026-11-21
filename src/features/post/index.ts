@@ -10,3 +10,4 @@ export { PostActionBar } from './ui/PostActionBar';
 export { PostCard } from './ui/PostCard';
 export { PostDetail } from './ui/PostDetail';
 export { thumbhashDataUrl } from './model/thumbhash';
+export { PostDeletedProvider, usePostDeletedHandler } from './ui/PostDeletedContext';
