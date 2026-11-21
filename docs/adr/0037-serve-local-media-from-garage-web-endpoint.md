@@ -34,6 +34,7 @@ Garage の S3 API は匿名の GET を拒む（`AccessDenied: Garage does not su
 - `prepare` と `reset` は、スロットのバケットのウェブ公開を `garage bucket website --allow insta-s<N>` で許可する（何度流しても同じ）。
 - `renderEnv` は `S3_PUBLIC_BASE_URL` と `MEDIA_ORIGIN` を `http://insta-s<N>.web.localhost:3912` にする。バケットはホスト名に入るので、URL にバケットの段は無い。`publicUrl` と `mediaSrcset`（`<S3_PUBLIC_BASE_URL>/<key>`）は変えない。`S3_ENDPOINT` は 3910 のまま。
 - 画像の origin はアプリの origin と別にする（[ADR-0021](0021-browser-made-webp-and-presigned-put.md)、[ADR-0026](0026-csp-with-nonce-from-proxy-and-headers-file.md) の `img-src` が `MEDIA_ORIGIN` を許す）。
+- 画像の origin と署名付き PUT の送り先（`S3_ENDPOINT` の origin、3910）が別になるので、CSP の `connect-src` に `MEDIA_ORIGIN` に加えて `S3_ENDPOINT` の origin を足す（`readSecurityConfig` の `uploadOrigin`）。`img-src`・`media-src` には足さない。
 - E2E は画像を `page.route` で差し替えず、実際の配信元から読む。
 
 ## 検討した選択肢

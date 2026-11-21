@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-export type SecurityConfig = { mediaOrigin: string | null; production: boolean };
+export type SecurityConfig = {
+  mediaOrigin: string | null;
+  /** Where the browser PUTs signed uploads (the S3 endpoint's origin); allowed in connect-src. */
+  uploadOrigin: string | null;
+  production: boolean;
+};
 
 const MEDIA_ORIGIN_MESSAGE = 'MEDIA_ORIGIN は origin（例 https://example.com）で指定してください';
 
@@ -24,7 +29,17 @@ const schema = z.object({
   APP_ENV: z.enum(['local', 'test', 'production']).default('local'),
 });
 
-/** Reads MEDIA_ORIGIN and APP_ENV; throws when MEDIA_ORIGIN is not a bare http(s) origin. */
+function originOf(value: string | undefined): string | null {
+  if (!value || hasUnsafeChar(value)) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Reads MEDIA_ORIGIN, S3_ENDPOINT and APP_ENV; throws when MEDIA_ORIGIN is not a bare http(s) origin. */
 export function readSecurityConfig(source: Record<string, string | undefined>): SecurityConfig {
   const mediaOrigin = source.MEDIA_ORIGIN === '' ? undefined : source.MEDIA_ORIGIN;
   const result = schema.safeParse({ MEDIA_ORIGIN: mediaOrigin, APP_ENV: source.APP_ENV });
@@ -36,6 +51,7 @@ export function readSecurityConfig(source: Record<string, string | undefined>): 
   }
   return {
     mediaOrigin: result.data.MEDIA_ORIGIN ?? null,
+    uploadOrigin: originOf(source.S3_ENDPOINT),
     production: result.data.APP_ENV === 'production',
   };
 }

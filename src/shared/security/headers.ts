@@ -1,5 +1,7 @@
 export type SecurityHeaderOptions = {
   mediaOrigin: string | null;
+  /** Origin the browser PUTs signed uploads to; connect-src only. */
+  uploadOrigin?: string | null;
   production: boolean;
   /** Per-request nonce for Next.js' inline scripts; added to script-src only when given. */
   nonce?: string;
@@ -7,7 +9,12 @@ export type SecurityHeaderOptions = {
 
 const NONCE = /^[A-Za-z0-9+/_-]+={0,2}$/;
 
-function buildCsp({ mediaOrigin, production, nonce }: SecurityHeaderOptions): string {
+function buildCsp({
+  mediaOrigin,
+  uploadOrigin = null,
+  production,
+  nonce,
+}: SecurityHeaderOptions): string {
   if (nonce !== undefined && !NONCE.test(nonce)) throw new Error('nonce が不正です');
   const media = mediaOrigin === null ? [] : [mediaOrigin];
   const directives = [
@@ -17,8 +24,12 @@ function buildCsp({ mediaOrigin, production, nonce }: SecurityHeaderOptions): st
     ['style-src', "'self'", "'unsafe-inline'"],
     ['img-src', "'self'", 'data:', 'blob:', ...media],
     ['media-src', "'self'", ...media],
-    // The browser PUTs straight to the signed media URL (requestUploadUrls).
-    ['connect-src', "'self'", ...media],
+    // The browser PUTs straight to the signed upload URL (requestUploadUrls), on the S3 endpoint's origin.
+    [
+      'connect-src',
+      "'self'",
+      ...new Set([...media, ...(uploadOrigin === null ? [] : [uploadOrigin])]),
+    ],
     ['font-src', "'self'"],
     ['object-src', "'none'"],
     ['base-uri', "'self'"],

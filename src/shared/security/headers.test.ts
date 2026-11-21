@@ -65,6 +65,21 @@ describe('buildSecurityHeaders', () => {
     expect(directive(csp, 'media-src')).toEqual(["'self'", 'http://localhost:3900']);
   });
 
+  it('uploadOrigin は connect-src だけに入る（署名付き PUT の送り先）', () => {
+    const csp = buildSecurityHeaders({
+      ...base,
+      mediaOrigin: 'http://m.web.localhost:3912',
+      uploadOrigin: 'http://localhost:3910',
+    })['Content-Security-Policy']!;
+    expect(directive(csp, 'connect-src')).toEqual([
+      "'self'",
+      'http://m.web.localhost:3912',
+      'http://localhost:3910',
+    ]);
+    expect(directive(csp, 'img-src')).not.toContain('http://localhost:3910');
+    expect(directive(csp, 'media-src')).not.toContain('http://localhost:3910');
+  });
+
   it('MEDIA_ORIGIN が script-src に入らない', () => {
     const csp = buildSecurityHeaders({ ...base, mediaOrigin: 'http://localhost:3900' })[
       'Content-Security-Policy'

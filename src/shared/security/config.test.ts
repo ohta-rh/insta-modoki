@@ -5,7 +5,11 @@ const message = 'MEDIA_ORIGIN は origin（例 https://example.com）で指定�
 
 describe('readSecurityConfig', () => {
   it('未設定のとき mediaOrigin は null、production は false', () => {
-    expect(readSecurityConfig({})).toEqual({ mediaOrigin: null, production: false });
+    expect(readSecurityConfig({})).toEqual({
+      mediaOrigin: null,
+      uploadOrigin: null,
+      production: false,
+    });
   });
 
   it('空文字は未設定として扱う', () => {
@@ -62,5 +66,21 @@ describe('readSecurityConfig', () => {
 
   it('APP_ENV が不正なとき投げる', () => {
     expect(() => readSecurityConfig({ APP_ENV: 'staging' })).toThrow('APP_ENV');
+  });
+
+  it('S3_ENDPOINT の origin が uploadOrigin になる（署名付き PUT の送り先）', () => {
+    expect(readSecurityConfig({ S3_ENDPOINT: 'http://localhost:3910' }).uploadOrigin).toBe(
+      'http://localhost:3910',
+    );
+    expect(
+      readSecurityConfig({ S3_ENDPOINT: 'https://acct.r2.cloudflarestorage.com/' }).uploadOrigin,
+    ).toBe('https://acct.r2.cloudflarestorage.com');
+  });
+
+  it('S3_ENDPOINT が未設定・空・http(s) でないとき uploadOrigin は null', () => {
+    expect(readSecurityConfig({}).uploadOrigin).toBeNull();
+    expect(readSecurityConfig({ S3_ENDPOINT: '' }).uploadOrigin).toBeNull();
+    expect(readSecurityConfig({ S3_ENDPOINT: 'javascript:alert(1)' }).uploadOrigin).toBeNull();
+    expect(readSecurityConfig({ S3_ENDPOINT: 'http://a;b' }).uploadOrigin).toBeNull();
   });
 });
