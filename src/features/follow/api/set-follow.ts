@@ -30,7 +30,10 @@ export async function setFollow(
   if (username === null) throw new AppError('NOT_FOUND');
 
   const db = getDb(env);
-  const [target] = await db.select({ id: users.id }).from(users).where(eq(users.username, username));
+  const [target] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.username, username));
   if (!target) throw new AppError('NOT_FOUND');
   if (target.id === user.id) {
     throw new AppError('VALIDATION', { fieldErrors: { username: [SELF_FOLLOW_MESSAGE] } });

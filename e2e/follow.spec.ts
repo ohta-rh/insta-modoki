@@ -247,7 +247,10 @@ signedIn(
     expect(box.width).toBeGreaterThanOrEqual(44);
     expect(box.height).toBeGreaterThanOrEqual(44);
     for (const label of ['フォロワー', 'フォロー中']) {
-      const linkBox = (await page.getByRole('link', { name: new RegExp(label) }).first().boundingBox())!;
+      const linkBox = (await page
+        .getByRole('link', { name: new RegExp(label) })
+        .first()
+        .boundingBox())!;
       expect(linkBox.height).toBeGreaterThanOrEqual(44);
     }
 

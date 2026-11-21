@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
+import { getSessionUser } from '@/features/auth';
+import { FollowButton, FollowerCount, FollowScope } from '@/features/follow';
 import {
   getProfile,
   listProfilePosts,
@@ -35,9 +37,26 @@ export default async function ProfilePage({ params }: Props) {
   const profile = await loadProfile(username);
   const posts =
     profile.postCount > 0 ? await listProfilePosts({ username: profile.username }) : null;
+  // Someone else's profile gets the follow button; your own keeps the edit link (ProfileHeader).
+  const viewer = profile.isMe ? null : await getSessionUser(await headers());
   return (
     <div className="mx-auto w-full max-w-[var(--content-max)]">
-      <ProfileHeader profile={profile} />
+      {profile.isMe ? (
+        <ProfileHeader profile={profile} />
+      ) : (
+        <FollowScope
+          username={profile.username}
+          initialFollowing={profile.isFollowing}
+          initialFollowerCount={profile.followerCount}
+          signedIn={viewer !== null}
+        >
+          <ProfileHeader
+            profile={profile}
+            actions={<FollowButton />}
+            followerCount={<FollowerCount />}
+          />
+        </FollowScope>
+      )}
       {posts && posts.items.length > 0 ? (
         <PostGrid
           username={profile.username}

@@ -4,15 +4,31 @@ import { EditProfileLink } from './EditProfileLink';
 
 /**
  * The profile's top: avatar (or the first letter in a circle), the names, the bio and the three
- * counts. The counts are plain text here (the lists they open come with the follow PBI).
- * `actions` is the slot beside the names; when it is empty your own profile gets the edit link
- * (the follow PBI fills it for someone else's).
+ * counts. The follower and following counts link to their lists. `actions` is the slot beside the
+ * names (the follow button, filled by the route); when it is empty your own profile gets the edit
+ * link. `followerCount` replaces the follower number, so the button's optimistic update moves it.
  */
-export function ProfileHeader({ profile, actions }: { profile: ProfileView; actions?: ReactNode }) {
+export function ProfileHeader({
+  profile,
+  actions,
+  followerCount,
+}: {
+  profile: ProfileView;
+  actions?: ReactNode;
+  followerCount?: ReactNode;
+}) {
   const counts = [
-    { label: '投稿', value: profile.postCount },
-    { label: 'フォロワー', value: profile.followerCount },
-    { label: 'フォロー中', value: profile.followingCount },
+    { label: '投稿', value: profile.postCount, href: null },
+    {
+      label: 'フォロワー',
+      value: followerCount ?? profile.followerCount,
+      href: `/${profile.username}/followers`,
+    },
+    {
+      label: 'フォロー中',
+      value: profile.followingCount,
+      href: `/${profile.username}/following`,
+    },
   ];
   return (
     <header className="flex gap-4 px-4 py-5 md:gap-10 md:py-8">
@@ -48,7 +64,15 @@ export function ProfileHeader({ profile, actions }: { profile: ProfileView; acti
         <ul className="mt-3 flex gap-5 text-[length:var(--font-size-sm)]">
           {counts.map((c) => (
             <li key={c.label}>
-              <span className="font-bold">{c.value}</span> {c.label}
+              {c.href ? (
+                <a href={c.href} className="inline-flex min-h-[var(--tap-min)] items-center">
+                  <span className="font-bold">{c.value}</span>&nbsp;{c.label}
+                </a>
+              ) : (
+                <span className="inline-flex min-h-[var(--tap-min)] items-center">
+                  <span className="font-bold">{c.value}</span>&nbsp;{c.label}
+                </span>
+              )}
             </li>
           ))}
         </ul>
