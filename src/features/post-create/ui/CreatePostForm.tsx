@@ -209,6 +209,7 @@ export function CreatePostForm() {
               <input
                 type="radio"
                 name="ratio"
+                className="h-[var(--tap-min)] w-[var(--tap-min)]"
                 value={r}
                 checked={ratio === r}
                 onChange={() => setRatio(r)}

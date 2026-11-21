@@ -59,3 +59,21 @@ status: stable
 - 現在の項目に `aria-current="page"`（`/` はちょうど `/` のとき、他は先頭が一致するとき）。項目は幅も高さも 44px 以上。
 - ルートのレイアウトは `AppShellClient`（`usePathname()` で現在のパスを取る）で包む。登録・ログインの画面は `hideNav` を使う。
 - 項目は `next/link` ではなく通常の `<a>`。まだ無い画面を先読みして 404 を出さないため。画面が揃ったら、先読みの要否を #46 の検査と合わせて見直せる。
+
+## アクセシビリティ
+
+主要 8 画面と 2 つの重ねた画面（投稿のモーダル・いいねした人の一覧）を、375px で `e2e/a11y.spec.ts`（axe: `wcag2a`・`wcag2aa`・`wcag21a`・`wcag21aa`・`wcag22aa` の `critical`・`serious`、タップ領域 44×44px、alt、いいねの状態、`h1`、`lang`）、`e2e/keyboard.spec.ts`（キーボードだけの通し・輪郭 2px 以上・モーダルの閉じ込め）、`e2e/reduced-motion.spec.ts`（視差効果を減らす設定）が検査する（#46）。
+
+- 写真の代わりの文は `photoAlt`（`src/features/post/model/alt-text.ts`）が 1 か所で作る。投稿者の文が無いときは `<username> が投稿した写真（<位置> / <枚数>）`。投稿詳細・カルーセル・フィード・プロフィールのグリッド・モーダルが使う。ヘッダーのアイコンの `alt=""` は、隣に名前がある飾りなので正しい。
+- 動き: カルーセルの帯とモーダルは `transition-opacity` を `--motion-fast`（視差効果を減らす設定で 0ms）で持つ。設定があると `transition-duration` と `animation-duration` が 0s、`scroll-behavior` は `auto`。
+- axe は途中の透明度の色で対比を測るので、モーダルの検査は出現の動き（`document.getAnimations()`）が終わるのを待つ。
+
+見つかった違反と直した所:
+
+| 規則 | 画面 | 直した所 |
+|---|---|---|
+| 操作できる要素が 44×44px 以上（AC-7） | 投稿の作成 | 比率のラジオ 2 つ（13×13px）を `CreatePostForm.tsx` で `--tap-min` の大きさにした |
+| 動きがある（AC-6） | 投稿詳細（カルーセル）・モーダル | `Carousel.tsx` の帯と `PostModal.tsx` に `transition-opacity`（`--motion-fast`）を足した |
+| 写真の代わりの文の形（AC-8） | 投稿詳細・フィード・プロフィールのグリッド・モーダル | `@<username> の写真 <n>` を `photoAlt` の `<username> が投稿した写真（<位置> / <枚数>）` に統一した |
+
+上の他に、axe の重大・深刻な違反、`h1` の数、`lang`、輪郭の太さ、モーダルの閉じ込め、いいねの `aria-pressed` と形は、最初の検査で違反が無かった。
