@@ -1,11 +1,12 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { requireUser } from '../../auth';
 import type { AuthEnv } from '../../auth/api/auth-env';
+import { isPostId } from '../../post';
 import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { likes, posts } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
-import { isPostId, likeInput, type LikeResult } from '../model/schema';
+import { likeInput, type LikeResult } from '../model/schema';
 
 export type LikeDeps = { env?: AuthEnv; headers: Headers; now?: number };
 
