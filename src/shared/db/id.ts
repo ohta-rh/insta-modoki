@@ -1,3 +1,5 @@
+// Intentional per-isolate state: ids are monotonic in call order within one isolate only (AC-10);
+// across isolates they are ordered by timestamp, with random tie-breaking.
 let lastMs = 0;
 let counter = 0;
 

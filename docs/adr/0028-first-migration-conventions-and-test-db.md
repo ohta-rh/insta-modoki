@@ -24,6 +24,7 @@ status: stable
 - `users.username` と `users.email` は DB でも `x = lower(x)` を CHECK し、形（`^[a-z0-9._]+$` など）と予約語は入力の検証（#26）に任せる。
 - `withTransaction` は作らない。複数の書き込みは `db.batch([...])`。
 - 結合テストの土台 `tests/helpers/db.ts` の `useTestDb()` は、ファイルごとに 1 度、メモリの D1 に `migrations/*.sql` を（`d1_migrations` に記録しながら）1 度ずつ当て、各テストの前に 6 つのテーブルを空にする。`TEST_DATABASE_URL` があるときは DB 名が `_test` か `_test_<数字>` で終わらなければ「テスト用ではない DB には接続しません: <名前>」で投げる（将来外部の DB に繋ぐ変更が入っても、本物の行を消さないための安全装置）。
+- `newId()` の同じミリ秒の単調増加は、1 つの isolate の中の状態（`lastMs` と `counter`）だけで保つ。isolate をまたぐ順序はミリ秒の精度で、同じミリ秒の中は保証しない。
 - `verify` の結合テストの探索先に `tests/` を足す。
 
 ## 検討した選択肢
