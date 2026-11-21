@@ -10,6 +10,7 @@ import {
   posts,
   rateLimits,
   sessions,
+  storageOrphans,
   users,
   verifications,
 } from './schema';
@@ -74,7 +75,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 10 個のテーブルと 5 つの索引ができる', async () => {
+  it('マイグレーションで 11 個のテーブルと 5 つの索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -84,6 +85,7 @@ describe('マイグレーション', () => {
         'comments',
         'follows',
         'rate_limits',
+        'storage_orphans',
       ]),
     );
     expect(await names('index')).toEqual(
@@ -95,14 +97,14 @@ describe('マイグレーション', () => {
         'follows_followee_created_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(10);
+    expect(await names('table')).toHaveLength(11);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(10);
+    expect(before).toHaveLength(11);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {
@@ -114,6 +116,7 @@ describe('マイグレーション', () => {
       comments,
       follows,
       rateLimits,
+      storageOrphans,
       sessions,
       accounts,
       verifications,

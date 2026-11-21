@@ -6,4 +6,5 @@ export * from './likes';
 export * from './comments';
 export * from './follows';
 export * from './rate-limits';
+export * from './storage-orphans';
 export * from '../../../features/auth/db/schema';

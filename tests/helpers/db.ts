@@ -8,6 +8,7 @@ import { getDb, type Db } from '../../src/shared/db';
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const TABLES = [
   'rate_limits',
+  'storage_orphans',
   'sessions',
   'accounts',
   'verifications',
