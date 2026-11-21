@@ -86,7 +86,7 @@ DB は D1（SQLite）。Drizzle ORM の列の定義は右の列（[overview.md](
 | post_id | text | NOT NULL、FK posts ON DELETE CASCADE |
 | position | integer | NOT NULL、0〜9。UNIQUE (post_id, position) |
 | type | text | NOT NULL。`'image'`（M4 で `'video'`） |
-| storage_key | text | NOT NULL。`media/<userId>/<UUIDv7>`。その下に `orig.webp`（長辺 2,048px）・`w320.webp`・`w640.webp`・`w1080.webp`（拡大はしない） |
+| storage_key | text | NOT NULL、UNIQUE（同じ写真を 2 つの投稿が同時に使えない）。`media/<userId>/<UUIDv7>`。その下に `orig.webp`（長辺 2,048px）・`w320.webp`・`w640.webp`・`w1080.webp`（拡大はしない） |
 | width / height | integer | NOT NULL、1 以上（原本の縮小後の画素） |
 | alt_text | text | NOT NULL、既定値 `''`、0〜500 字 |
 | thumbhash | text | NOT NULL（base64） |

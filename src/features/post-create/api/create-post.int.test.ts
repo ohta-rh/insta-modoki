@@ -88,6 +88,29 @@ describe('createPost', () => {
     expect(b.postId).toBe(a.postId);
     expect(await postCount()).toBe(1);
     expect(await mediaCount()).toBe(1);
+    // A double click may count twice (both calls pass the earlier-post check before either inserts);
+    // never more than that, and never a second post.
+    const [limit] = await t.db.select().from(rateLimits);
+    expect(limit?.count).toBeGreaterThanOrEqual(1);
+    expect(limit?.count).toBeLessThanOrEqual(2);
+  });
+
+  it('同じ key を別の clientRequestId で同時に使うと 投稿は 1 件だけで もう一方は VALIDATION になる', async () => {
+    const s = await signedIn();
+    const key = await uploaded(s.user.id);
+
+    const results = await Promise.allSettled([
+      call(s, request([photo(key)])),
+      call(s, request([photo(key)])),
+    ]);
+
+    expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(1);
+    const failed = results.find((r) => r.status === 'rejected') as PromiseRejectedResult;
+    expect(failed.reason).toBeInstanceOf(AppError);
+    expect((failed.reason as AppError).code).toBe('VALIDATION');
+    expect((failed.reason as AppError).message).toBe(NOT_UPLOADED);
+    expect(await postCount()).toBe(1);
+    expect(await mediaCount()).toBe(1);
   });
 
   it('別の利用者の同じ clientRequestId は別の投稿になる', async () => {

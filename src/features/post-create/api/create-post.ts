@@ -25,20 +25,17 @@ const KEY_TAIL = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}
 
 const notUploaded = () => new AppError('VALIDATION', { message: NOT_UPLOADED_MESSAGE });
 
-/** The UNIQUE constraint on (author_id, client_request_id), found anywhere in the cause chain. */
-function isRequestIdClash(error: unknown): boolean {
+/** Whether the error, or anything in its cause chain, has a message matching `pattern`. */
+function hasMessage(error: unknown, pattern: RegExp): boolean {
   for (let e: unknown = error, i = 0; e && i < 5; i += 1) {
-    if (
-      /UNIQUE constraint failed: posts\.author_id, posts\.client_request_id/.test(
-        e instanceof Error ? e.message : String(e),
-      )
-    ) {
-      return true;
-    }
+    if (pattern.test(e instanceof Error ? e.message : String(e))) return true;
     e = e instanceof Error ? e.cause : undefined;
   }
   return false;
 }
+
+const isRequestIdClash = (error: unknown): boolean =>
+  hasMessage(error, /UNIQUE constraint failed: posts\.author_id, posts\.client_request_id/);
 
 async function existingPostId(db: Db, authorId: string, clientRequestId: string) {
   const [row] = await db
@@ -152,6 +149,8 @@ export async function createPost(
       const winner = await existingPostId(db, user.id, clientRequestId);
       if (winner !== null) return { postId: winner };
     }
+    // Another post took one of these photos between the check and the insert.
+    if (hasMessage(error, /UNIQUE constraint failed: media\.storage_key/)) throw notUploaded();
     throw error;
   }
   return { postId };

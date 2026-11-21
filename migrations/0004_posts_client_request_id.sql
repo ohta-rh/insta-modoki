@@ -6,3 +6,6 @@
 ALTER TABLE posts ADD COLUMN client_request_id TEXT;
 
 CREATE UNIQUE INDEX posts_author_id_client_request_id_unique ON posts (author_id, client_request_id);
+
+-- A photo's storage key belongs to one media row: two posts racing for the same key cannot both win.
+CREATE UNIQUE INDEX media_storage_key_unique ON media (storage_key);

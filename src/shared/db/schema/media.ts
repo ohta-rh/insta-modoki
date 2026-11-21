@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
+import { check, integer, sqliteTable, text, unique, uniqueIndex } from 'drizzle-orm/sqlite-core';
 import { posts } from './posts';
 
 export const media = sqliteTable(
@@ -19,6 +19,7 @@ export const media = sqliteTable(
     thumbhash: text('thumbhash').notNull(),
   },
   (t) => [
+    uniqueIndex('media_storage_key_unique').on(t.storageKey),
     unique('media_post_id_position_unique').on(t.postId, t.position),
     check('media_position_check', sql`${t.position} BETWEEN 0 AND 9`),
     check('media_type_check', sql`${t.type} IN ('image')`),
