@@ -125,6 +125,7 @@ test('key create が既存で失敗したら key info を 1 回やり直す', as
       return { status: 0, stdout: '', stderr: '' };
     },
     cwd: dir,
+    putCors: async () => '',
     stderr: () => {},
     stdout: () => {},
   });

@@ -268,7 +268,7 @@ export async function run(argv, deps = {}) {
     if (command === 'reset') rmSync(state, { recursive: true, force: true });
     const b = ensureBucket();
     if (b.status !== 0) return fail('バケットの準備', b);
-    await putBucketCors(cfg, n);
+    await (deps.putCors ?? putBucketCors)(cfg, n);
     if (command === 'reset') await emptyBucket(cfg);
 
     const prev = existsSync(envFile) ? parseEnv(readFileSync(envFile, 'utf8')) : {};
