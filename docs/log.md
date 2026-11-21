@@ -5,6 +5,7 @@
 * **Creation**: [EPIC #6 の総合試験のレポート](test-reports/epic-0006-reactions-like-comment.md)（1 回目、PASS）と、その写真・記録（`test-reports/evidence/epic-0006/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 
 ## 2026-11-21
+* **Creation**: [性能の計測のレポート](test-reports/perf-2026-11-21.md)（#45。全ての基準以内。初期 JS を 183,451 → 150,208 バイトに修正）と [ADR-0046](adr/0046-performance-budget-in-verify-and-ci.md)（性能の基準を `THRESHOLDS` に定め、初期 JS は verify の `perf-budget`、他は `--with-perf` と CI の `perf` の job で検査する）を追加し、[verify.md](guides/verify.md) に新しい手順を載せた。
 * **Creation**: [EPIC #4 の総合試験のレポート](test-reports/epic-0004-post-create-detail.md)（1 回目、FAIL。投稿詳細の「削除」でコンソールに警告 1 件）と、その写真・記録（`test-reports/evidence/epic-0004/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #3 の総合試験のレポート](test-reports/epic-0003-profile.md)（1 回目、PASS。ヘッダーのアイコンの `alt=""` は隣に名前がある飾りとして正しい、と Director が判定）と、その写真・記録（`test-reports/evidence/epic-0003/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #1 の総合試験のレポート（2 回目）](test-reports/epic-0001-dev-foundation-r2.md)（PASS。#72 の修正で AC-6 が満たされた）と、その写真・記録（`test-reports/evidence/epic-0001-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
