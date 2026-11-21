@@ -1,6 +1,9 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-21
+* **Creation**: [research/](research/)（[技術スタックの選定の調査](research/stack-selection.md)）と [architecture/overview.md](architecture/overview.md)（全体の図・環境変数・コマンド名・ルートのファイルの場所・後続の PBI への確定表）を追加した（#18）。
+* **Creation**: [ADR-0018](adr/0018-nextjs-on-workers-via-opennext.md)（Next.js を OpenNext で Workers に）、[ADR-0019](adr/0019-d1-and-drizzle.md)（D1 と Drizzle）、[ADR-0020](adr/0020-better-auth-with-pbkdf2.md)（Better Auth と PBKDF2）、[ADR-0021](adr/0021-browser-made-webp-and-presigned-put.md)（ブラウザの WebP と署名付き PUT、Garage）、[ADR-0022](adr/0022-testing-ui-and-package-management.md)（Vitest・Playwright・Tailwind・Radix・Node.js 26・pnpm 12）を追加した。
+* **Update**: [data-model.md](architecture/data-model.md) に DB の型の対応を、[routes.md](architecture/routes.md) と [conventions.md](architecture/conventions.md) に [overview.md](architecture/overview.md) への参照を足した。
 * **Creation**: [ADR-0017](adr/0017-milestone-on-an-integration-branch-when-a-pr-is-requested.md)（M1 を統合ブランチ `m1/local-mvp` に入れ、main への PR を 1 つ出す）を追加した。
 * **Creation**: [architecture/](architecture/)（[データモデル](architecture/data-model.md)・[URL とサーバーの処理](architecture/routes.md)・[実装の共通の決まり](architecture/conventions.md)）を追加した。
 * **Creation**: [ADR-0015](adr/0015-pbis-follow-the-global-write-pbi-standard.md)（PBI をグローバルの write-pbi の水準で書く）と [ADR-0016](adr/0016-typescript-and-react.md)（TypeScript と React）を追加し、PBI 51 と EPIC 17 の本文を書き直した。

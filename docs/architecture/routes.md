@@ -8,7 +8,7 @@ status: stable
 
 # 画面の URL とサーバーの処理
 
-ルートのファイルを置く場所は #18 で決まるフレームワークの規約に従う。ルートのファイルは薄く、`src/features/<slice>/` の部品を組み合わせるだけにする（[ADR-0014](../adr/0014-code-in-feature-slices.md)）。
+ルートのファイルを置く場所は [overview.md](overview.md) の「ルートのファイルの場所」に従う（Next.js の App Router、`src/app/`）。ルートのファイルは薄く、`src/features/<slice>/` の部品を組み合わせるだけにする（[ADR-0014](../adr/0014-code-in-feature-slices.md)）。
 
 ## 画面
 

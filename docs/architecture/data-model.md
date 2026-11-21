@@ -1,14 +1,25 @@
 ---
 type: Architecture
 title: データモデル
-description: 全機能のテーブル・列・制約・インデックス・削除の連鎖。PBI の「実装方針 › データ」はこの文書の節を参照する。DB の方言（D1 / PostgreSQL）は #18 で決まり、型はその方言に写す。
+description: 全機能のテーブル・列・制約・インデックス・削除の連鎖。PBI の「実装方針 › データ」はこの文書の節を参照する。DB は D1（SQLite）に決まり（[ADR-0019](../adr/0019-d1-and-drizzle.md)）、型は「DB の型の対応」の表で写す。
 tags: [architecture, data]
 status: stable
 ---
 
 # データモデル
 
-企画書 05（情報設計・データモデル）を元にした決定。型は方言に依らない名前で書き、#18 で決まる DB の型に写す（`text` / `integer` / `timestamp`（UTC）/ `boolean`）。
+企画書 05（情報設計・データモデル）を元にした決定。型は方言に依らない名前で書き（`text` / `integer` / `timestamp`（UTC）/ `boolean`）、下の「DB の型の対応」で D1 の型に写す。
+
+## DB の型の対応
+
+DB は D1（SQLite）。Drizzle ORM の列の定義は右の列（[overview.md](overview.md) の #23 の行）。
+
+| この文書の型 | D1（SQLite）の型 | Drizzle ORM の列 | 備考 |
+|---|---|---|---|
+| `text` | `TEXT` | `text("<列>")` | UUIDv7 の `id` も文字列 |
+| `integer` | `INTEGER` | `integer("<列>")` | 件数・画素・ミリ秒 |
+| `timestamp`（UTC） | `INTEGER`（UTC のエポックのミリ秒） | `integer("<列>", { mode: "timestamp_ms" })` | コードでは `Date` |
+| `boolean` | `INTEGER`（0 と 1） | `integer("<列>", { mode: "boolean" })` | `CHECK (<列> IN (0, 1))` を付ける |
 
 ## 共通の決まり
 
@@ -16,7 +27,8 @@ status: stable
 - 時刻は全て UTC の `timestamp`。列名は `created_at` / `updated_at` / `expires_at` / `read_at`。
 - 外部キーは、利用者（`users`）と投稿（`posts`）からの削除を連鎖させる（`ON DELETE CASCADE`）。ストレージのファイルの削除は、行の削除と同じ処理の中で行う（[conventions.md](conventions.md) の「削除」）。
 - 件数の非正規化は `posts.like_count` と `posts.comment_count` だけ。増減は行の追加・削除と同じトランザクションで行う。
-- マイグレーションは PBI ごとに新しいファイル `migrations/NNNN_<name>.sql`（番号は Director が着手時に割り当てる）。
+- マイグレーションは PBI ごとに新しい手書きのファイル `migrations/NNNN_<name>.sql`（番号は Director が着手時に割り当てる）。`wrangler d1 migrations apply DB --local` で流す。
+- 件数の増減と行の追加は同じ `db.batch([...])` に入れる（D1 は対話的なトランザクションに対応しない。[ADR-0019](../adr/0019-d1-and-drizzle.md)）。
 
 ## M1（MVP）
 

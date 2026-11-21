@@ -24,6 +24,11 @@
 
 * [ADR-0014: コードは機能ごとの slice（src/features/<name>/）と共有の部分（src/shared/）に分ける](0014-code-in-feature-slices.md) - 採用
 * [ADR-0016: 言語は TypeScript、UI は React にする（フレームワークは #18 で決める）](0016-typescript-and-react.md) - 採用
+* [ADR-0018: アプリは Next.js 16（App Router）を OpenNext で Cloudflare Workers に載せて動かす](0018-nextjs-on-workers-via-opennext.md) - 採用
+* [ADR-0019: DB は Cloudflare D1、ORM は Drizzle ORM にする](0019-d1-and-drizzle.md) - 採用
+* [ADR-0020: 認証は Better Auth（メールとパスワード、DB のセッション）にし、ハッシュは PBKDF2-SHA256 に差し替える](0020-better-auth-with-pbkdf2.md) - 採用
+* [ADR-0021: 画像はブラウザで 3 幅の WebP を作り、署名付き PUT で R2 に直接置く。ローカルのストレージは Garage にする](0021-browser-made-webp-and-presigned-put.md) - 採用
+* [ADR-0022: テストは Vitest と Playwright、UI は Tailwind CSS と Radix UI、実行環境は Node.js 26 と pnpm 12 にする](0022-testing-ui-and-package-management.md) - 採用
 
 # 環境とホスティング
 

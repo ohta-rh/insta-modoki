@@ -8,7 +8,7 @@ status: stable
 
 # 実装の共通の決まり
 
-言語と UI は TypeScript と React（[ADR-0016](../adr/0016-typescript-and-react.md)）。フレームワーク・DB・ORM・認証は #18 で決まる。
+言語と UI は TypeScript と React（[ADR-0016](../adr/0016-typescript-and-react.md)）。フレームワーク・DB・ORM・認証は [overview.md](overview.md)（#18）で決まった。
 
 ## slice の中の構成（[ADR-0014](../adr/0014-code-in-feature-slices.md)）
 
