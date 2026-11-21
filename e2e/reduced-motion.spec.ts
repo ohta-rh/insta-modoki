@@ -52,8 +52,8 @@ test('設定が無いときは動きがある', async ({ browser, world }) => {
     reducedMotion: 'no-preference',
   });
   const { carousel, modal } = await openCarouselAndModal(page, world);
-  const seconds = (value: string) => Number.parseFloat(value.split(',')[0]!);
-  expect(seconds(JSON.parse(carousel).transition)).toBeGreaterThan(0);
-  expect(seconds(JSON.parse(modal).transition)).toBeGreaterThan(0);
+  // The real motion: the carousel scrolls smoothly, the modal plays its post-modal-in animation.
+  expect(JSON.parse(carousel).scroll).toBe('smooth');
+  expect(Number.parseFloat(JSON.parse(modal).animation)).toBeGreaterThan(0);
   await page.context().close();
 });

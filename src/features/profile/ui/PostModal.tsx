@@ -89,7 +89,7 @@ export function PostModal({ postId, children }: { postId: string; children: Reac
         role="dialog"
         aria-modal="true"
         aria-label="投稿"
-        className="post-modal relative transition-opacity duration-[var(--motion-fast)] motion-reduce:transition-none h-full w-full overflow-y-auto bg-bg md:h-auto md:max-h-[90vh] md:max-w-[900px] md:rounded-xl"
+        className="post-modal relative h-full w-full overflow-y-auto bg-bg md:h-auto md:max-h-[90vh] md:max-w-[900px] md:rounded-xl"
       >
         <div className="sticky top-0 z-10 flex justify-end bg-bg">
           <button

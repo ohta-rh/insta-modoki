@@ -92,7 +92,7 @@ export function Carousel({
         // A touch or wheel by the user takes over from a scroll the buttons started.
         onPointerDown={() => (target.current = null)}
         onWheel={() => (target.current = null)}
-        className="flex snap-x snap-mandatory items-center overflow-x-auto bg-surface transition-opacity duration-[var(--motion-fast)] motion-reduce:transition-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory items-center overflow-x-auto bg-surface motion-safe:scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {media.map((m, i) => (
           <div
