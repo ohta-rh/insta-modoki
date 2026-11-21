@@ -3,7 +3,12 @@ import { COVERAGE_LINES } from './scripts/verify.mjs';
 
 export default defineConfig({
   test: {
-    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts', 'tests/**/*.test.ts', 'e2e/support/**/*.test.ts'],
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'scripts/**/*.test.ts',
+      'tests/**/*.test.ts',
+      'e2e/support/**/*.test.ts',
+    ],
     environment: 'node',
     coverage: {
       provider: 'v8',
