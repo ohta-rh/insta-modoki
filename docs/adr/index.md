@@ -33,6 +33,7 @@
 * [ADR-0024: verify は scripts/verify.mjs が 7 つの手順を固定の順に流し、単体テストの行カバレッジ 80% を基準にする](0024-verify-command-and-coverage-gate.md) - 採用
 * [ADR-0026: CSP は src/proxy.ts が要求ごとの nonce で付け、静的ファイルは public/_headers で付ける](0026-csp-with-nonce-from-proxy-and-headers-file.md) - 採用
 * [ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする](0027-ci-runs-verify-and-docs-check.md) - 採用
+* [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、ログイン必須の画面はルートグループ (app) のレイアウトで守る](0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md) - 採用
 
 # 環境とホスティング
 
@@ -40,6 +41,7 @@
 * [ADR-0008: compose のスタックを 1 つ共有し、スロットごとにポート・DB・バケットを分ける](0008-share-one-compose-stack-with-a-slot-per-worktree.md) - 置き換え: ADR-0023
 * [ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける](0023-slots-with-garage-and-d1-files.md) - 採用
 * [ADR-0011: デプロイ先は Cloudflare とし、無料枠に収めることを前提にする](0011-deploy-to-cloudflare-free-tier-first.md) - 採用
+* [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、ログイン必須の画面はルートグループ (app) のレイアウトで守る](0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md) - 採用
 
 # ひな形
 

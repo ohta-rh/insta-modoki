@@ -1,4 +1,5 @@
-import { expect, test, type Response } from '@playwright/test';
+import type { Response } from '@playwright/test';
+import { expect, test } from './support/auth';
 
 const HEADERS = [
   'content-security-policy',

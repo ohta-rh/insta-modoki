@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/auth';
 
 test('トップページを開くと、見出しが見えてコンソールのエラーが 0 件', async ({ page }) => {
   const errors: string[] = [];

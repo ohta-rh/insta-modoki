@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isCurrent, navItems } from './nav-items';
+import { isAuthScreen, isCurrent, navItems } from './nav-items';
 
 const haru = { username: 'haru' };
 
@@ -66,5 +66,22 @@ describe('isCurrent', () => {
 
   it('viewer が null のとき ログインの画面では 投稿・通知・プロフィール は現在にならない', () => {
     expect(currentLabels('/accounts/login', null)).toEqual([]);
+  });
+});
+
+describe('navItems のプロフィールの href', () => {
+  it('username に URL で意味を持つ文字があっても encodeURIComponent した 1 つのパスになる', () => {
+    const href = navItems({ username: '../x?y#z' }).find((i) => i.key === 'profile')!.href;
+    expect(href).toBe('/..%2Fx%3Fy%23z');
+    expect(href.split('/')).toHaveLength(2);
+  });
+});
+
+describe('isAuthScreen', () => {
+  it('サインアップとログインの画面だけが true', () => {
+    expect(isAuthScreen('/accounts/signup')).toBe(true);
+    expect(isAuthScreen('/accounts/login')).toBe(true);
+    expect(isAuthScreen('/accounts/edit')).toBe(false);
+    expect(isAuthScreen('/')).toBe(false);
   });
 });

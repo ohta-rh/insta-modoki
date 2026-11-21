@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-21
+* **Creation**: [ADR-0029](adr/0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md)（サインアップは 1 つの `db.batch` で書き、ログイン必須の画面はルートグループ `(app)` で守る）を追加し、[data-model.md](architecture/data-model.md)（`sessions`・`accounts`・`verifications`・`email_verified`）、[conventions.md](architecture/conventions.md)（項目ごとの文言・`toErrorResponse`・`charLength`・`consume`）、[overview.md](architecture/overview.md)（`(app)` のルートの場所・確定表）を更新した（#26）。
 * **Creation**: [ADR-0027](adr/0027-ci-runs-verify-and-docs-check.md)（CI は 1 つの job で verify を流し、docs の検査は依存の無い `scripts/check-docs.mjs`）を追加し、[guides/verify.md](guides/verify.md) に `docs` の手順・docs の検査・CI の節を足した（#22）。
 * **Creation**: [ADR-0023](adr/0023-slots-with-garage-and-d1-files.md)（compose は Garage だけ、スロットは D1 のファイル・バケット・.dev.vars）と [guides/](guides/)（[ローカル開発の手順](guides/local-development.md)）を追加し、[ADR-0008](adr/0008-share-one-compose-stack-with-a-slot-per-worktree.md) を置き換えた（#20）。
 * **Creation**: [ADR-0026](adr/0026-csp-with-nonce-from-proxy-and-headers-file.md)（CSP は `src/proxy.ts` の nonce と `public/_headers`）を追加した（#25）。

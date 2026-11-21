@@ -1,5 +1,7 @@
+import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactNode } from 'react';
+import { getSessionUser, isValidUsernameFormat } from '@/features/auth';
 import { AppShellClient } from '@/shared/ui';
 import './globals.css';
 
@@ -11,11 +13,13 @@ export const metadata = {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // Render every route per request so it gets the CSP nonce from src/proxy.ts (ADR-0026).
   await connection();
+  const user = await getSessionUser(await headers());
+  // Only a username that passes the format check reaches the navigation links.
+  const viewer = user && isValidUsernameFormat(user.username) ? { username: user.username } : null;
   return (
     <html lang="ja">
       <body>
-        {/* viewer is passed by #26 once the session is readable. */}
-        <AppShellClient viewer={null}>{children}</AppShellClient>
+        <AppShellClient viewer={viewer}>{children}</AppShellClient>
       </body>
     </html>
   );

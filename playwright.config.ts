@@ -11,7 +11,8 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     command: 'pnpm start',
-    url: `http://localhost:${port}`,
+    // `/` redirects to the login screen for a visitor; a public screen answers 200 once the app is up.
+    url: `http://localhost:${port}/accounts/signup`,
     reuseExistingServer: false,
     timeout: 120_000,
     env: { PORT: String(port) },

@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './support/auth';
 
 const LABELS = ['ホーム', '検索', '投稿', '通知', 'プロフィール'];
 const side = (page: Page) => page.locator('nav[data-nav="side"]');

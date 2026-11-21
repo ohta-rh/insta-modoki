@@ -35,7 +35,7 @@ export function navItems(viewer: Viewer): NavItem[] {
     {
       key: 'profile',
       label: 'プロフィール',
-      href: viewer ? `/${viewer.username}` : LOGIN_PATH,
+      href: viewer ? `/${encodeURIComponent(viewer.username)}` : LOGIN_PATH,
       icon: 'user',
       requiresLogin: true,
     },
@@ -48,3 +48,7 @@ export function isCurrent(item: NavItem, path: string, viewer: Viewer): boolean 
   if (item.href === '/') return path === '/';
   return path === item.href || path.startsWith(`${item.href}/`);
 }
+
+/** Sign-up and log-in render without the navigation. */
+export const isAuthScreen = (path: string): boolean =>
+  path === '/accounts/signup' || path === '/accounts/login';

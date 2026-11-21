@@ -54,11 +54,21 @@ PBI の「検証」は、このファイル名と名前で書く。
 | `RATE_LIMITED` | 429 | 操作が多すぎます。しばらくしてからもう一度お試しください（`retryAfterSec`） |
 | `PAYLOAD_TOO_LARGE` | 413 | ファイルが大きすぎます（1 枚 10MB まで） |
 
-内部の例外の内容（SQL・スタック・ファイルのパス）は画面にも応答にも出さない。
+内部の例外の内容（SQL・スタック・ファイルのパス）は画面にも応答にも出さない。`toErrorResponse(error)`（`src/shared/errors.ts`）が、`AppError` は code に対応する HTTP 状態で返し、それ以外の例外は 500 と固定の文言「エラーが発生しました。しばらくしてからもう一度お試しください」にする。
+
+`signUp` と `checkUsername` の項目ごとの文言（`fieldErrors`）。
+
+| 項目 | 文言 |
+|---|---|
+| email | メールアドレスの形式を確認してください |
+| username | ユーザー名は 3〜30 字で入力してください / ユーザー名は英小文字・数字・.・_ だけ使えます（先頭と末尾は . 以外、.. は不可） / このユーザー名は使えません（予約語） / このユーザー名は使われています（CONFLICT） |
+| email（CONFLICT） | このメールアドレスは登録済みです |
+| displayName | 表示名は 1〜30 字で入力してください |
+| password | パスワードは 8〜72 字で入力してください（バイトの上限は無い） |
 
 ## 入力の検証
 
-- 文字数は Unicode のコードポイントで数える。上限のある文字の項目は、前後の空白を除いてから数える。
+- 文字数は Unicode のコードポイントで数える（`src/shared/text.ts` の `charLength`）。メールアドレスとユーザー名は、保存の前にアプリの側で `toLowerCase()`（Unicode）し、NUL と制御文字を拒む（SQLite の `lower()` は ASCII だけ、`length()` は NUL で止まるため。`hasControlChars`）。上限のある文字の項目は、前後の空白を除いてから数える。
 - VALIDATION の `fieldErrors` には、項目ごとに「<項目名>は N 文字以内で入力してください」「<項目名>を入力してください」の形の文言を入れる。
 
 ## 認証とセッション
@@ -98,7 +108,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 | コメント | 1 ユーザー 1 時間あたり 120 件 |
 | アップロード URL の発行 | 1 ユーザー 1 時間あたり 300 枚 |
 
-レート制限は固定の窓で数え、`src/shared/security/rate-limit.ts` の `consume(key, limit, windowSec, cost = 1)` で行い、`rate_limits` テーブルに記録する（[data-model.md](data-model.md)）。
+レート制限は固定の窓で数え、`src/shared/security/rate-limit.ts` の `consume(key, limit, windowSec, cost = 1, deps?)` で行い（1 回の upsert。`deps` は `{ db, now }` でテストが差し替える。窓の始まりは `now` を `windowSec` で切り捨てたミリ秒）、`rate_limits` テーブルに記録する（[data-model.md](data-model.md)）。
 
 ## 書き込みの再送
 

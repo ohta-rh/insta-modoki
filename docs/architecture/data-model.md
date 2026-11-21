@@ -52,7 +52,17 @@ DB は D1（SQLite）。Drizzle ORM の列の定義は右の列（[overview.md](
 | is_private | boolean | NOT NULL、既定値 false（M4 で使う） |
 | created_at / updated_at | timestamp | NOT NULL |
 
-パスワードのハッシュとセッションは、#18 で決める認証ライブラリのテーブルに置き、`users.id` を参照する。
+`email_verified`（boolean、NOT NULL、既定値 false）は Better Auth の利用者モデルが要求する列（`migrations/0002_auth.sql` で足した）。パスワードのハッシュとセッションは Better Auth のテーブル（下）に置き、`users.id` を参照する（[ADR-0029](../adr/0029-signup-writes-rows-in-one-batch-and-protects-by-route-group.md)）。
+
+### sessions / accounts / verifications
+
+`migrations/0002_auth.sql`。Better Auth のモデル名は複数形で、`users` の `name` は `display_name`、`image` は `avatar_key` に対応する。
+
+| テーブル | 列 | 制約 |
+|---|---|---|
+| sessions | id, user_id, token, expires_at, ip_address, user_agent, created_at, updated_at | PK id、FK users ON DELETE CASCADE、UNIQUE token、索引 user_id。有効期間は 30 日 |
+| accounts | id, account_id, provider_id, user_id, access_token, refresh_token, id_token, access_token_expires_at, refresh_token_expires_at, scope, password, created_at, updated_at | PK id、FK users ON DELETE CASCADE、UNIQUE (provider_id, account_id)、索引 user_id。メールとパスワードは `provider_id = 'credential'`、`password` は `pbkdf2-sha256-hmac$…` |
+| verifications | id, identifier, value, expires_at, created_at, updated_at | PK id、索引 identifier（M1 では使わない） |
 
 ### posts
 
