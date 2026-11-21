@@ -1,0 +1,4 @@
+# EPIC #1 AC-5 (main checkout, f50238c)
+$ pnpm exec vitest run src/shared/db/schema.int.test.ts -t "同じ利用者が同じ投稿に 2 回いいねすると拒まれる"
+ ✓ src/shared/db/schema.int.test.ts > 制約 > 同じ利用者が同じ投稿に 2 回いいねすると拒まれる 32ms
+      Tests  1 passed | 26 skipped (27)
