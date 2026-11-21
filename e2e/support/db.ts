@@ -87,3 +87,19 @@ export function rateRows(key: string): Record<string, unknown>[] {
 export function setUploadCount(userId: string, count: number): void {
   harness({ op: 'setUploadCount', userId, count });
 }
+
+/**
+ * Makes `n` new users follow `followeeId`, the i-th at a later time than the one before (so the
+ * last name is the newest follower). Written by the app; returns the usernames in that order.
+ */
+export function seedFollowers(followeeId: string, n: number): string[] {
+  const start = Date.now() - 3_600_000;
+  const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  const followers = Array.from({ length: n }, (_, i) => ({
+    username: `e2e_g${stamp}${i}`,
+    email: `e2e_g${stamp}${i}@example.com`,
+    followedAt: start + i * 1000,
+  }));
+  harness({ op: 'seedFollowers', followeeId, followers });
+  return followers.map((f) => f.username);
+}
