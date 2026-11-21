@@ -27,6 +27,7 @@ Workers の無料のプランは 1 リクエストの CPU 時間が 10 ms。Bett
 - ハッシュには秘密の pepper を足す。OWASP の Password Storage Cheat Sheet に従い、PBKDF2 の出力をさらに `HMAC-SHA256(鍵 = 環境変数 AUTH_PEPPER, データ = PBKDF2 の出力)` にして保存する（ハッシュの形式は `pbkdf2-sha256-hmac$<反復>$<ソルト>$<ハッシュ>`）。pepper は DB に置かず、DB だけが漏れた場合にオフラインの総当たりを止める補完の対策にする。`AUTH_PEPPER` を変えると既存のパスワードが検証できなくなるので、ローテーションは形式の版を足して行う。pepper の動作は試作では試していない。
 - 反復の 100,000 回は、OWASP の推奨（PBKDF2-HMAC-SHA256 で 600,000 回）からの外れを承知で受け入れる。理由は無料枠の CPU 時間 10 ms。M2 の実測で CPU 時間に余裕があれば、反復を増やす（ハッシュに反復が入っているので古いものも検証できる）。この規則は、反復を上げられるときに上げる、と読む。
 - Better Auth の組み込みのレート制限（メモリ上）は無効にする。Workers では isolate ごとにメモリが分かれて効かないため。ログインとサインアップの制限は、[conventions.md](../architecture/conventions.md) の「上限とレート制限」の `consume()`（D1 の `rate_limits` テーブル）で、認証のルートハンドラーの前に行う。
+- パスワードの `verify` は、保存した HMAC と計算した HMAC を定数時間で比べる。`crypto.subtle.verify("HMAC", ...)` を使い、`===` や文字列の比較は使わない。
 - レート制限の IP は `cf-connecting-ip` だけから取る。`X-Forwarded-For` は使わない（利用者が偽れる）。ローカルは `cf-connecting-ip` が無いので固定の値 `local` にする。ログインにはメール単位の制限も足す。同じメールに対する失敗は 1 時間に 10 回までで、`consume('login:email:<小文字にしたメール>', 10, 3600)` を IP の制限に加えて行う。
 - セッションの Cookie は、アプリの URL（`BETTER_AUTH_URL`）が https なら `Secure` が付く（Better Auth の挙動）。`Secure` が付かない http は localhost だけで使う。
 - Better Auth の POST は `Origin` の検査があるので、`baseURL` を環境変数 `BETTER_AUTH_URL` で渡す。

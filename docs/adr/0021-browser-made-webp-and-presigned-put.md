@@ -50,6 +50,8 @@ status: stable
 ## 結果
 
 - R2 の認証情報の作成と CORS・配信用のホスト名・`nosniff` のルールの設定は、ユーザーの操作が要る M2 で行う。
+- 既知の限界: メディアは公開のバケットから、アクセスの検査なしに配信する。M4 の非公開アカウント（#66）では、非公開のアカウントのメディアを、Worker が可視性を検査して返すか、短い期限の署名付き GET で配信する。それまでは受け入れた限界で、キーが UUIDv7 で推測しにくいことに頼る。
+- M2 で、R2 が署名した content-length を強制するかを確かめる。それまでは、大きさの上限は、サーバーの `HEAD` の検査と、`requestUploadUrls` の既存の利用者ごとの上限（[conventions.md](../architecture/conventions.md) の 1 時間 300 枚）に頼る。大きすぎて参照されないオブジェクトは、掃除のジョブが消すまで残る。
 - [routes.md](../architecture/routes.md) の `requestUploadUrls` は、署名に型と大きさを含める。`createPost` と `updateProfile` は所有の検査と `HEAD` の検査の `VALIDATION` を返す。
 - #20 は Garage のサービスと、スロットごとのバケット `insta-s<N>` の作成を足す。
 - アプリのテストは、期限切れの HTTP のコードに依存させない。
