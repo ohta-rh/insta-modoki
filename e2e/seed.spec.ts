@@ -2,10 +2,10 @@ import { expect, test } from '@playwright/test';
 import { ensureDemoSeed, loginAsDemo } from './support/demo';
 
 // Seeding 300 posts with images takes about 20 seconds, and two workers must not seed at once.
-test.describe.configure({ mode: 'serial', timeout: 180_000 });
+test.describe.configure({ mode: 'serial', timeout: 120_000 });
 
 test.beforeAll(async () => {
-  test.setTimeout(180_000);
+  test.setTimeout(120_000);
   await ensureDemoSeed();
 });
 

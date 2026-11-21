@@ -34,7 +34,12 @@ beforeAll(async () => {
   proxy = await getPlatformProxy<{ DB: SeedD1 }>({ persist: false });
   await applyMigrations(proxy.env.DB as never);
   storage = await loadStorageEnv();
-  env = { ...storage, DB: proxy.env.DB, AUTH_PEPPER: 'test-pepper-value' };
+  env = {
+    ...storage,
+    DB: proxy.env.DB,
+    AUTH_PEPPER: 'test-pepper-value',
+    SLOT: (proxy.env as { SLOT?: string }).SLOT,
+  };
 }, 60_000);
 afterAll(async () => {
   await proxy?.dispose();
@@ -44,7 +49,7 @@ describe('seed:demo', () => {
   let first: { code: number; lines: string[] };
   beforeAll(async () => {
     first = await seed('demo');
-  }, 900_000);
+  }, 300_000);
 
   it('demo は 30 人と 300 件の投稿を作る', async () => {
     expect(first.code).toBe(0);
@@ -172,7 +177,7 @@ describe('seed:demo をもう 1 回流す', () => {
       `INSERT INTO posts (id, author_id, caption, created_at) VALUES ('real-post', 'real-1', 'x', ${at})`,
     ).run();
     second = await seed('demo');
-  }, 900_000);
+  }, 300_000);
 
   it('2 回流しても投稿は 300 件のまま', async () => {
     expect(second.code).toBe(0);
@@ -205,7 +210,7 @@ describe('seed の数の確認', () => {
     } finally {
       await env.DB.prepare('DROP TRIGGER seed_test_drop_post').run();
     }
-  }, 900_000);
+  }, 300_000);
 });
 
 describe('seed:bench', () => {
@@ -220,5 +225,5 @@ describe('seed:bench', () => {
         "SELECT count(*) AS n FROM follows WHERE follower_id = (SELECT id FROM users WHERE username = 'demo')",
       ),
     ).toBe(100);
-  }, 900_000);
+  }, 180_000);
 });

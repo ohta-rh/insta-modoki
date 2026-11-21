@@ -40,6 +40,17 @@ describe('runSeed', () => {
   });
 });
 
+describe('runSeed のスロットの確認', () => {
+  it('バケットの番号が .dev.vars の SLOT と違うとき、DB に触らずに 1 を返す', async () => {
+    const log = vi.fn();
+    const other = { ...env, S3_BUCKET: 'insta-s3', SLOT: '2' } as unknown as SeedEnv;
+    expect(await runSeed(['--profile', 'demo'], { env: other, vars: {}, log })).toBe(1);
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('SLOT'));
+    const missing = { ...env, S3_BUCKET: 'insta-s3' } as unknown as SeedEnv;
+    expect(await runSeed(['--profile', 'demo'], { env: missing, vars: {}, log })).toBe(1);
+  });
+});
+
 describe('parseArgs', () => {
   it('--profile demo と bench だけを受け付ける', () => {
     expect(parseArgs(['--profile', 'demo'])).toBe('demo');

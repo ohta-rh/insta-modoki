@@ -20,7 +20,12 @@ export type SeedD1 = {
   prepare(sql: string): D1Statement;
   batch(statements: D1Statement[]): Promise<unknown>;
 };
-export type SeedEnv = StorageEnv & { DB: SeedD1; AUTH_PEPPER: string; APP_ENV?: string };
+export type SeedEnv = StorageEnv & {
+  DB: SeedD1;
+  AUTH_PEPPER: string;
+  APP_ENV?: string;
+  SLOT?: string;
+};
 export type SeedDeps = {
   env: SeedEnv;
   /** Process environment values (`SEED_DEMO_PASSWORD`, `APP_ENV`). */
@@ -133,8 +138,15 @@ export async function runSeed(argv: string[], deps: SeedDeps): Promise<number> {
     log('本番の DB にはシードを入れません');
     return 1;
   }
-  if (!/^insta-s\d+$/.test(env.S3_BUCKET ?? '')) {
+  const bucketSlot = /^insta-s(\d+)$/.exec(env.S3_BUCKET ?? '')?.[1];
+  if (bucketSlot === undefined) {
     log(`スロットのバケット（insta-s<N>）ではないので入れません: ${env.S3_BUCKET}`);
+    return 1;
+  }
+  if (env.SLOT !== bucketSlot) {
+    log(
+      `バケット ${env.S3_BUCKET} の番号が .dev.vars の SLOT（${env.SLOT ?? '未設定'}）と違うので入れません`,
+    );
     return 1;
   }
   const profile = (deps.profiles ?? PROFILES)[name]!;
