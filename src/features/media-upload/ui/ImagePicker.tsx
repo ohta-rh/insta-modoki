@@ -74,23 +74,22 @@ export function ImagePicker({ onUploaded }: ImagePickerProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <input
-        ref={input}
-        type="file"
-        accept="image/*"
-        multiple
-        hidden
-        onChange={(e) => pick(e.currentTarget.files)}
-      />
       <div className="flex gap-2">
-        <button
-          type="button"
-          className={SECONDARY}
-          onClick={() => input.current?.click()}
-          disabled={busy}
+        {/* The real file input is the keyboard target, so the chooser opens even before hydration. */}
+        <label
+          className={`${SECONDARY} inline-flex cursor-pointer items-center has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:disabled]:cursor-default has-[:disabled]:opacity-50`}
         >
+          <input
+            ref={input}
+            type="file"
+            accept="image/*"
+            multiple
+            disabled={busy}
+            className="sr-only"
+            onChange={(e) => pick(e.currentTarget.files)}
+          />
           写真を選ぶ
-        </button>
+        </label>
         <button
           type="button"
           className={BUTTON}

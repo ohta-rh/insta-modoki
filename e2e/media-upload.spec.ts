@@ -177,3 +177,26 @@ test('写真の選択部品をキーボードだけで操作でき axe の重大
     [],
   );
 });
+
+test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと 選択ダイアログが開く', async ({
+  page,
+}) => {
+  await signUpViaUi(page);
+  // Hold every script chunk back so the page stays un-hydrated while the key is pressed.
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  await page.route('**/_next/static/chunks/**', async (route) => {
+    await gate;
+    await route.continue();
+  });
+  await page.goto(PAGE_PATH, { waitUntil: 'commit' });
+
+  const choose = page.getByRole('button', { name: '写真を選ぶ' });
+  await choose.waitFor();
+  await choose.focus();
+  await expect(choose).toBeFocused();
+  const chooser = page.waitForEvent('filechooser', { timeout: 5000 });
+  await page.keyboard.press('Enter');
+  await chooser;
+  release();
+});
