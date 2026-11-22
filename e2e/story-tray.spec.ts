@@ -149,9 +149,7 @@ test('ビューアを閉じるとトレイが読み込み直さずに視聴済�
       page.getByRole('link', { name: `${a.username}のストーリー（視聴済み）` }),
     ).toBeVisible();
     await expect(unseen(c.username)).toBeVisible();
-    const order = await links(page).evaluateAll((els) =>
-      els.map((el) => el.getAttribute('href')),
-    );
+    const order = await links(page).evaluateAll((els) => els.map((el) => el.getAttribute('href')));
     expect(order.indexOf(`/stories/${c.username}`)).toBeLessThan(
       order.indexOf(`/stories/${a.username}`),
     );
