@@ -83,10 +83,11 @@ export function StoryViewer({ reel, mode }: { reel: StoryReel; mode: 'modal' | '
   const close = useCallback(() => {
     if (leaving.current) return;
     leaving.current = true;
-    if (mode === 'modal') router.back();
-    else router.replace('/');
-    // The home's server parts (the tray) were drawn before the views were recorded.
-    router.refresh();
+    if (mode === 'modal') {
+      router.back();
+      // The home's server parts (the tray) were drawn before the views were recorded.
+      router.refresh();
+    } else router.replace('/');
   }, [mode, router]);
 
   // The clock: the time between frames is what the reducer counts (not run under "reduce motion").
