@@ -1,0 +1,3 @@
+source: gps-1200x900.jpg
+sharp metadata().exif present: true (300 bytes)
+parsed: {"exif":true,"gps":true,"gpsTags":[1,2,3,4]}
