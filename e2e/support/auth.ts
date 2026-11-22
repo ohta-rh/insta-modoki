@@ -100,4 +100,13 @@ export const signedIn = base.extend<
     { auto: true },
   ],
 });
+/**
+ * `page` signed in as a brand-new user (`me`) for this one test only. Use it for a test that creates
+ * notifications or starts from zero unread: the `signedIn` account is shared by the worker's tests.
+ */
+export const freshUser = base.extend<{ me: NewUser }>({
+  me: async ({ page }, use) => {
+    await use(await signUpViaUi(page));
+  },
+});
 export { expect };

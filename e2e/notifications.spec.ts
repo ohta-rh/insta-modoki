@@ -1,32 +1,19 @@
 import { expect, test as base } from '@playwright/test';
-import { baseURL, signedIn, signUpViaUi } from './support/auth';
+import { baseURL, freshUser, signedIn, signUpViaUi } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
-import { seedUser, userRow, withDb } from './support/db';
+import { seedUser, unreadNotificationCount, userRow, withDb } from './support/db';
 import { harness } from './support/harness';
 import { waitForHydration } from './support/hydration';
 import { tabTo } from './support/keys';
 import { insertPost, putPostFiles } from './support/posts';
 
 const NAV = 'メイン';
-/** How many unread notifications the user has in the database (read directly; writes go through the app). */
-const unreadRows = (username: string) =>
-  withDb(
-    (db) =>
-      (
-        db
-          .prepare(
-            'SELECT count(*) AS n FROM notifications WHERE read_at IS NULL AND recipient_id = (SELECT id FROM users WHERE username = ?)',
-          )
-          .get(username) as { n: number }
-      ).n,
-  );
-
-signedIn(
+freshUser(
   'いいねの通知がバッジに 10 秒以内に出て、一覧を開くと既読になる',
-  async ({ page, browser, account }) => {
+  async ({ page, browser, me }) => {
     // The badge waits for one 10 s poll, on top of two sign-ups and a like.
-    signedIn.setTimeout(90_000);
-    const post = insertPost({ authorUsername: account.me.username, caption: '通知の対象' });
+    freshUser.setTimeout(90_000);
+    const post = insertPost({ authorUsername: me.username, caption: '通知の対象' });
     await putPostFiles(page, post);
     await page.goto('/');
     await waitForHydration(page);
@@ -65,7 +52,7 @@ signedIn(
     // Opening the list marks everything read: the badge goes away, the row keeps its mark.
     await expect(nav.getByRole('link', { name: '通知', exact: true })).toBeVisible();
     await expect(row).toContainText('新着');
-    await expect.poll(() => unreadRows(account.me.username)).toBe(0);
+    await expect.poll(() => unreadNotificationCount(me.username)).toBe(0);
 
     await page.reload();
     await waitForHydration(page);
@@ -110,7 +97,7 @@ signedIn('キーボードだけで通知を開け、axe の重大な違反が 0 
   await waitForHydration(page);
   // The list marks everything read once it is shown. Wait for that, so the unread rows seeded
   // here are not left over for another test of this worker (the account is shared by them).
-  await expect.poll(() => unreadRows(account.me.username)).toBe(0);
+  await expect.poll(() => unreadNotificationCount(account.me.username)).toBe(0);
   const list = page.getByRole('list', { name: '通知の一覧' });
   // Another test of this worker may have left a row of its own; the two seeded ones must be there.
   await expect(list.getByRole('link', { name: /通知の相手さん/ })).toHaveCount(2);
