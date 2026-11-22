@@ -196,7 +196,7 @@ function selfChain(procs, selfPid) {
 export async function listPortPids(port, exec = realExec, selfPid = process.pid) {
   const r = exec('lsof', ['-ti', `tcp:${port}`, '-sTCP:LISTEN']);
   const listeners = [...new Set(r.stdout.split('\n').map((l) => Number(l.trim())))].filter(
-    (p) => Number.isInteger(p) && p > 0,
+    (p) => Number.isInteger(p) && p > 1,
   );
   if (listeners.length === 0) return [];
   const procs = readProcesses(exec);
@@ -219,6 +219,7 @@ export async function listPortPids(port, exec = realExec, selfPid = process.pid)
  * This process and its ancestors are skipped.
  */
 export function killTree(pid, signal, exec = realExec, selfPid = process.pid, send = process.kill) {
+  if (!(pid > 1)) return; // PID 1 would walk every process on the host
   const procs = readProcesses(exec);
   const self = selfChain(procs, selfPid);
   const children = new Map();

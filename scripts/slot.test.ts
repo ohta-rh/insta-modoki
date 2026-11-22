@@ -381,3 +381,20 @@ test('--port=ポート と PORT=ポート の親は対象にする', async () =>
   ];
   assert.deepEqual((await listPortPids(3102, psOf(rows), 999)).sort(), [10, 20, 50]);
 });
+
+test('lsof が PID 1 を返しても対象にしない', async () => {
+  const exec = (cmd: string) =>
+    cmd === 'lsof'
+      ? { status: 0, stdout: '1\n400\n', stderr: '' }
+      : { status: 0, stdout: '   1     0 launchd\n 400     1 workerd', stderr: '' };
+  assert.deepEqual(await listPortPids(3102, exec, 999), [400]);
+});
+
+test('killTree は PID 1 には何も送らない', () => {
+  const sent: number[] = [];
+  killTree(1, 'SIGTERM', psOf(['   1     0 launchd', ' 400     1 workerd']), 999, (pid: number) => {
+    sent.push(pid);
+    return true as const;
+  });
+  assert.equal(sent.length, 0);
+});
