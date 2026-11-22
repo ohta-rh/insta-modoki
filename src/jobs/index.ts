@@ -1,3 +1,4 @@
+import { cleanupOldNotifications } from './notification-cleanup.ts';
 import { retryStorageOrphans } from './storage-orphans-retry.ts';
 import { cleanupExpiredStories } from './story-cleanup.ts';
 import type { Job, JobEnv } from './types.ts';
@@ -9,6 +10,7 @@ import type { Job, JobEnv } from './types.ts';
 export const jobs = {
   'storage-orphans-retry': retryStorageOrphans,
   'story-cleanup': cleanupExpiredStories,
+  'notification-cleanup': cleanupOldNotifications,
 } satisfies Record<string, Job>;
 
 /**

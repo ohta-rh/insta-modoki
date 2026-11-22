@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { runJobCli } from '../src/jobs/cli';
+import { jobs as registered } from '../src/jobs/index';
 import type { Job, JobEnv } from '../src/jobs/types';
 
 const env = {} as JobEnv;
@@ -42,5 +43,20 @@ describe('runJobCli', () => {
     };
     const r = await run(['bad'], { bad });
     expect(r).toEqual({ code: 1, out: [], err: ['bad: 失敗しました'] });
+  });
+
+  it('notification-cleanup を名前で実行できる', async () => {
+    const job = vi.fn<Job>(async () => ({ deleted: 7 }));
+    const r = await run(['notification-cleanup'], { ...registered, 'notification-cleanup': job });
+    expect(r).toEqual({ code: 0, out: ['notification-cleanup: deleted=7'], err: [] });
+    expect(job).toHaveBeenCalledWith({ env, now: NOW });
+  });
+
+  it('知らない名前の一覧に notification-cleanup が出る', async () => {
+    const r = await run(['notification-clean'], registered);
+    expect(r.code).toBe(2);
+    expect(r.out).toEqual([]);
+    expect(r.err[0]).toBe('知らないジョブです: notification-clean');
+    expect(r.err[1]).toContain('notification-cleanup');
   });
 });
