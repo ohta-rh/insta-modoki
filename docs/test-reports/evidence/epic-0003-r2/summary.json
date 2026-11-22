@@ -1,0 +1,227 @@
+{
+ "events": {
+  "ac1-404": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http4xx": [
+    "404 http://localhost:3101/no_such_user_zz9"
+   ]
+  },
+  "ac2-err-intentional": {
+   "console": [
+    "error: Failed to load resource: net::ERR_FAILED",
+    "error: Failed to load resource: net::ERR_FAILED",
+    "error: Failed to load resource: net::ERR_FAILED",
+    "error: Failed to load resource: net::ERR_FAILED"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3910/insta-s1/media/01a2008a-3129-7000-9052-5c2fd5228a9c/01a2008a-6185-7000-8108-71 net::ERR_FAILED",
+    "http://localhost:3910/insta-s1/media/01a2008a-3129-7000-9052-5c2fd5228a9c/01a2008a-6185-7000-8108-71 net::ERR_FAILED",
+    "http://localhost:3910/insta-s1/media/01a2008a-3129-7000-9052-5c2fd5228a9c/01a2008a-6185-7000-8108-71 net::ERR_FAILED",
+    "http://localhost:3910/insta-s1/media/01a2008a-3129-7000-9052-5c2fd5228a9c/01a2008a-6185-7000-8108-71 net::ERR_FAILED"
+   ],
+   "http4xx": []
+  }
+ },
+ "checks": {
+  "ac1": {
+   "h1": "撮影者 A",
+   "headerText": "E 撮影者 A @e3_a_mwr2gvad フォローする 3 投稿 0 フォロワー 0 フォロー中 猫と散歩 毎日更新",
+   "hrefsNewestFirst": true,
+   "sizes": {
+    "375": {
+     "w": [
+      123.7,
+      123.7,
+      123.7
+     ],
+     "h": [
+      123.7,
+      123.7,
+      123.7
+     ],
+     "gap": 2,
+     "sameRow": true
+    },
+    "768": {
+     "w": [
+      173.3,
+      173.3,
+      173.3
+     ],
+     "h": [
+      173.3,
+      173.3,
+      173.3
+     ],
+     "gap": 2,
+     "sameRow": true
+    },
+    "1280": {
+     "w": [
+      208.7,
+      208.7,
+      208.7
+     ],
+     "h": [
+      208.7,
+      208.7,
+      208.7
+     ],
+     "gap": 2,
+     "sameRow": true
+    }
+   },
+   "editLink": 0,
+   "status404": 404,
+   "text404": "ページが見つかりません\n\nリンクが間違っているか、このアカウントは存在しません。\n\nホームへ戻る"
+  },
+  "pagination": {
+   "counts": [
+    12,
+    28
+   ],
+   "total": 28,
+   "unique": 28,
+   "matchesNewestFirst": true,
+   "headerCount": "E 多投稿 P @e3_p_mwr2gwbv フォローする 28 投稿 0 フォロワー 0 フォロー中",
+   "alts": 0
+  },
+  "pagination375": {
+   "counts": [
+    12,
+    24,
+    28
+   ],
+   "unique": 28,
+   "matches": true
+  },
+  "modal": {
+   "url": true,
+   "closeFocused": true,
+   "tabOut": 0,
+   "shiftOut": 0,
+   "captionShown": 1,
+   "urlAfterEsc": true,
+   "tileFocusedAfterEsc": true,
+   "tilesAfterClose": 28
+  },
+  "ac2": {
+   "emptyErr": true,
+   "saveDisabled": true,
+   "uploadFailAlert": "アップロードに失敗しました。もう一度お試しください",
+   "keptAfterFail": {
+    "name": "新しい名前 B 😀",
+    "bio": "一行目\n二行目"
+   },
+   "own": {
+    "h1": "新しい名前 B 😀",
+    "headerText": "新しい名前 B 😀 @e3_b_mwr2h1mj プロフィールを編集 0 投稿 0 フォロワー 0 フォロー中 一行目 二行目",
+    "avatar": {
+     "src": "http://insta-s1.web.localhost:3912/media/01a2008a-3129-7000-9052-5c2fd5228a9c/01a2008a-654",
+     "nat": 320,
+     "alt": ""
+    },
+    "editLink": 1
+   },
+   "other": {
+    "h1": "新しい名前 B 😀",
+    "bio": "新しい名前 B 😀 @e3_b_mwr2h1mj フォローする 0 投稿 0 フォロワー 0 フォロー中 一行目 二行目",
+    "avatar": {
+     "src": "http://insta-s1.web.localhost:3912/media/01a2008a-3129-7000-9052-5c2fd5228a9c/01a2008a-654",
+     "nat": 320,
+     "alt": ""
+    },
+    "editLink": 0
+   }
+  },
+  "ac3": {
+   "warn151": true,
+   "count151": 1,
+   "saveDisabled": true,
+   "bioAfter151": false,
+   "warn150": false,
+   "saved150": 151
+  },
+  "ac4": {
+   "editLinkOnOthers": 0,
+   "editTextOnOthers": 0,
+   "anonEditLink": 0,
+   "anonUrl": "http://localhost:3101/accounts/login",
+   "editLinkOwn": 1
+  }
+ },
+ "keyboard": {
+  "profile1280": [
+   "ホーム|/",
+   "検索|/explore/search",
+   "投稿|/create",
+   "通知|/notifications",
+   "プロフィール|/e3_b_mwr2h1mj",
+   "フォローする|BUTTON",
+   "0 フォロワー|/e3_a_mwr2gvad/followers",
+   "0 フォロー中|/e3_a_mwr2gvad/following",
+   "A|/p/01a2008a-1471-7000-b46c-15770c9bb4c4",
+   "A|/p/01a2008a-137d-7000-9c5e-10acf8fb8235",
+   "A|/p/01a2008a-124a-7000-8b7b-adf8d97bf32f"
+  ],
+  "profile1280_hscroll": false,
+  "edit1280": [
+   "ホーム|/",
+   "検索|/explore/search",
+   "投稿|/create",
+   "通知|/notifications",
+   "プロフィール|/e3_b_mwr2h1mj",
+   "INPUT|INPUT",
+   "INPUT|INPUT",
+   "TEXTAREA|TEXTAREA",
+   "保存|BUTTON"
+  ],
+  "edit1280_saved": "キーボード 1280",
+  "profile375": [
+   "フォローする|BUTTON",
+   "0 フォロワー|/e3_a_mwr2gvad/followers",
+   "0 フォロー中|/e3_a_mwr2gvad/following",
+   "A|/p/01a2008a-1471-7000-b46c-15770c9bb4c4",
+   "A|/p/01a2008a-137d-7000-9c5e-10acf8fb8235",
+   "A|/p/01a2008a-124a-7000-8b7b-adf8d97bf32f",
+   "ホーム|/",
+   "検索|/explore/search",
+   "投稿|/create"
+  ],
+  "profile375_hscroll": false,
+  "edit375": [
+   "INPUT|INPUT",
+   "INPUT|INPUT",
+   "TEXTAREA|TEXTAREA",
+   "保存|BUTTON"
+  ],
+  "edit375_saved": "キーボード 375"
+ },
+ "alts": {
+  "profileB": "",
+  "grid1280": [
+   "撮影者 A の写真 3",
+   "撮影者 A の写真 2",
+   "撮影者 A の写真 1"
+  ],
+  "grid375": [
+   "撮影者 A の写真 3",
+   "撮影者 A の写真 2",
+   "撮影者 A の写真 1"
+  ],
+  "editAvatar": null
+ },
+ "chrome": "157.0.8103.80",
+ "setup": {
+  "A": "e3_a_mwr2gvad",
+  "P": "e3_p_mwr2gwbv",
+  "B": "e3_b_mwr2h1mj",
+  "aPosts": 3,
+  "pPosts": 28
+ }
+}

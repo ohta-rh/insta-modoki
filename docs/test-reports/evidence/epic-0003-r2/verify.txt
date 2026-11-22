@@ -1,0 +1,293 @@
+verify: typecheck ...
+$ tsc --noEmi
+verify: typecheck OK
+verify: lint ...
+$ eslint .
+verify: lint OK
+verify: format ...
+$ prettier . --check
+Checking formatting...
+All matched files use Prettier code style!
+verify: format OK
+verify: docs ...
+check-docs: OK (65 件の文書)
+verify: docs OK
+verify: unit ...
+
+ RUN  v5.1.0 /Users/tetsuyaohta/projects/other/insta-modoki/.worktrees/epic-3
+      Coverage enabled with v8
+
+
+ Test Files  68 passed (68)
+      Tests  443 passed (443)
+   Start at  08:57:26
+   Duration  2.49s (import 55%, transform 23%, tests 17%, worker 6%)
+
+    Isolate  68 workers spawned · ~140ms startup each (spawn + environment, per file)
+             at least ~494ms faster with isolate: false — reuses workers across files instead of one per file
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   94.65 |    83.39 |   92.36 |    95.4 |
+ ...res/auth/model |     100 |     97.1 |     100 |     100 |
+  schema.ts        |     100 |    93.54 |     100 |     100 | 81-83
+ .../comment/model |   87.34 |       60 |   91.66 |    87.5 |
+  schema.ts        |   57.14 |        0 |   66.66 |   63.15 | 41-48
+  thread.ts        |   98.24 |    64.28 |   96.66 |   97.72 | 81
+ ...a-upload/model |   87.94 |    74.54 |   79.31 |   89.25 |
+  process-image.ts |   92.68 |       90 |   66.66 |   94.73 | 63-64
+  upload-images.ts |      75 |    51.85 |   71.42 |   76.59 | ...76,100,132-136
+ ...t-create/model |     100 |       90 |     100 |     100 |
+  crop.ts          |     100 |    83.33 |     100 |     100 | 59
+ ...res/post/model |   96.29 |    83.33 |   83.33 |     100 |
+  og.ts            |     100 |       75 |     100 |     100 | 29-34
+  schema.ts        |   66.66 |      100 |       0 |     100 |
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 94.65% ( 496/524 )
+Branches     : 83.39% ( 221/265 )
+Functions    : 92.36% ( 121/131 )
+Lines        : 95.4% ( 436/457 )
+================================================================================
+verify: unit OK
+verify: integration ...
+integration: scripts/slot.int.test.ts は SLOT_INT=1 が無いので飛ばします（スロットのバケットを空にするため。ADR-0023）
+
+ RUN  v5.1.0 /Users/tetsuyaohta/projects/other/insta-modoki/.worktrees/epic-3
+
+
+ Test Files  31 passed | 1 skipped (32)
+      Tests  226 passed | 4 skipped (230)
+   Start at  08:57:29
+   Duration  105.98s (tests 76%, import 23%, transform 1%)
+
+verify: integration OK
+verify: build ...
+$ opennextjs-cloudflare build
+
+┌─────────────────────────────┐
+│ OpenNext — Cloudflare build │
+└─────────────────────────────┘
+
+App directory: /Users/tetsuyaohta/projects/other/insta-modoki/.worktrees/epic-3
+Next.js version : 16.4.5
+@opennextjs/cloudflare version: 1.20.16
+@opennextjs/aws version: 4.1.15
+workerd compatibility_date: 2026-11-01
+
+┌─────────────────────────────────┐
+│ OpenNext — Building Next.js app │
+└─────────────────────────────────┘
+
+▲ Next.js 16.4.5 (Turbopack)
+Using secrets defined in .dev.vars
+✓ Running next.config.ts took 399ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 546ms
+  Running TypeScript ...
+  Finished TypeScript in 1710ms ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/10) ...
+  Generating static pages using 15 workers (2/10)
+  Generating static pages using 15 workers (4/10)
+  Generating static pages using 15 workers (7/10)
+✓ Generating static pages using 15 workers (10/10) in 94ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /[username]
+├ ƒ /[username]/(..)p/[postId]
+├ ƒ /[username]/followers
+├ ƒ /[username]/following
+├ ƒ /accounts/edi
+├ ƒ /accounts/login
+├ ƒ /accounts/logou
+├ ƒ /accounts/signup
+├ ƒ /create
+├ ƒ /e2e-harness/db
+├ ƒ /e2e-harness/upload
+└ ƒ /p/[postId]
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+
+WARN Node.js middleware support is experimental in cloudflare, and not officially maintained by OpenNext maintainers. Use at your own risk.
+
+┌──────────────────────────────┐
+│ OpenNext — Generating bundle │
+└──────────────────────────────┘
+
+Bundling middleware function...
+Bundling Node.js middleware...
+Bundling static assets...
+Bundling cache assets...
+Building server function: default...
+Applying code patches: 2.395s
+# copyPackageTemplateFiles
+⚙️ Bundling the OpenNext server...
+
+Worker saved in `.open-next/worker.js` 🚀
+
+OpenNext build complete.
+verify: build OK
+verify: e2e ...
+$ playwright tes
+[WebServer] $ opennextjs-cloudflare preview --port ${PORT:-3100} --var E2E_HARNESS:1 --var APP_ENV:local
+
+Running 139 tests using 8 workers
+
+  ✓    3 [chromium] › e2e/a11y.spec.ts:8:3 › 投稿の作成 で axe の重大・深刻な違反が 0 件 (612ms)
+  ✓    8 [chromium] › e2e/a11y.spec.ts:8:3 › 投稿詳細 で axe の重大・深刻な違反が 0 件 (678ms)
+  ✓    4 [chromium] › e2e/a11y.spec.ts:8:3 › プロフィールの編集 で axe の重大・深刻な違反が 0 件 (936ms)
+  ✓    5 [chromium] › e2e/a11y.spec.ts:8:3 › ログイン で axe の重大・深刻な違反が 0 件 (692ms)
+  ✓    7 [chromium] › e2e/a11y.spec.ts:8:3 › サインアップ で axe の重大・深刻な違反が 0 件 (687ms)
+  ✓    1 [chromium] › e2e/a11y.spec.ts:8:3 › プロフィール で axe の重大・深刻な違反が 0 件 (984ms)
+  ✓    6 [chromium] › e2e/a11y.spec.ts:8:3 › フォロワーの一覧 で axe の重大・深刻な違反が 0 件 (844ms)
+  ✓    2 [chromium] › e2e/a11y.spec.ts:8:3 › ホームフィード で axe の重大・深刻な違反が 0 件 (799ms)
+  ✓   13 [chromium] › e2e/a11y.spec.ts:74:1 › 代替テキストが無い写真は位置と枚数つきの alt を持つ (287ms)
+  ✓   14 [chromium] › e2e/a11y.spec.ts:86:1 › いいねの状態が aria-pressed と形で伝わる (312ms)
+  ✓   10 [chromium] › e2e/a11y.spec.ts:27:1 › いいねした人の一覧で axe の重大・深刻な違反が 0 件 (613ms)
+  ✓    9 [chromium] › e2e/a11y.spec.ts:16:1 › 投稿のモーダルで axe の重大・深刻な違反が 0 件 (911ms)
+  ✓   12 [chromium] › e2e/a11y.spec.ts:62:1 › 投稿の写真は全て空でない alt を持つ (1.1s)
+  ✓   19 [chromium] › e2e/keyboard.spec.ts:117:1 › Esc で閉じて開いた要素にフォーカスが戻る (866ms)
+  ✓   18 [chromium] › e2e/keyboard.spec.ts:104:1 › モーダルの中でフォーカスが閉じ込められる (1.0s)
+  ✓   20 [chromium] › e2e/reduced-motion.spec.ts:34:1 › 視差効果を減らす設定のとき、動きが 0 秒になる (1.1s)
+  ✓   21 [chromium] › e2e/reduced-motion.spec.ts:47:1 › 設定が無いときは動きがある (921ms)
+  ✓   11 [chromium] › e2e/a11y.spec.ts:38:1 › 操作できる要素が全て 44×44px 以上 (2.8s)
+  ✓   16 [chromium] › e2e/a11y.spec.ts:109:1 › html の lang が ja (2.8s)
+  ✓   15 [chromium] › e2e/a11y.spec.ts:100:1 › 画面ごとに h1 が 1 つ (2.9s)
+  ✓   17 [chromium] › e2e/keyboard.spec.ts:70:1 › フォーカスされた要素の輪郭が 2px 以上 (2.9s)
+  ✓   23 [chromium] › e2e/comment.spec.ts:100:1 › 21 件目以降と 4 件目以降の返信が追加読み込みで出る (1.5s)
+  ✓   22 [chromium] › e2e/comment.spec.ts:38:1 › コメントと返信を送ると一覧の末尾にすぐ出て、返信は 1 階層だけ字下げされる (1.7s)
+  ✓   30 [chromium] › e2e/feed.spec.ts:54:1 › 未ログインで / を開くとログイン画面へ移る (225ms)
+  ✓   25 [chromium] › e2e/comment.spec.ts:209:1 › コメント欄をキーボードで操作でき、axe の重大な違反が 0 件 (1.6s)
+  ✓   26 [chromium] › e2e/comment.spec.ts:260:1 › JS が読み込まれる前でも コメントを送れる (1.0s)
+  ✓   31 [chromium] › e2e/feed.spec.ts:101:1 › フォローが 0 人のとき空の案内を出す (590ms)
+  ✓   28 [chromium] › e2e/comment.spec.ts:277:1 › 375px でも入力欄が下のナビと重ならず 画面の下に固定される (1.2s)
+  ✓   27 [chromium] › e2e/comment.spec.ts:301:1 › 送信が失敗すると 追加した行が消え 本文は欄に残り message が出て 再送すると成功する (1.3s)
+  ✓   24 [chromium] › e2e/comment.spec.ts:138:1 › 自分のコメントと自分の投稿の他人のコメントだけ削除でき、確認で取り消せる (2.5s)
+  ✓   36 [chromium] › e2e/follow.spec.ts:181:1 › 未ログインでボタンを押すとログイン画面へ移る (470ms)
+  ✓   34 [chromium] › e2e/feed.spec.ts:175:1 › JS が読み込まれる前でも ハートを押していいねできる (942ms)
+  ✓   38 [chromium] › e2e/like.spec.ts:304:1 › ログインしていない人がハートを押すとログイン画面へ移る (621ms)
+  ✓   33 [chromium] › e2e/feed.spec.ts:142:1 › フィードをキーボードで操れ、axe の重大な違反が 0 件 (1.6s)
+  ✓   37 [chromium] › e2e/keyboard.spec.ts:9:1 › サインアップから投稿・いいね・コメントまでを、キーボードだけで完了できる (1.5s)
+  ✓   42 [chromium] › e2e/login-logout.spec.ts:112:1 › ログイン済みでログイン画面を開くとホームに移る (394ms)
+  ✓   32 [chromium] › e2e/feed.spec.ts:108:1 › 次ページの読み込みに失敗しても表示済みの投稿が残り、再読み込みできる (2.6s)
+  ✓   35 [chromium] › e2e/feed.spec.ts:187:1 › 投稿のあるフィードを開いても CSP 違反とコンソールのエラーが出ない (2.5s)
+  ✓   40 [chromium] › e2e/login-logout.spec.ts:49:1 › 1 分に 6 回続けて間違えると 操作が多すぎますと表示される (1.6s)
+  ✓   39 [chromium] › e2e/login-logout.spec.ts:25:1 › ログインしてからログアウトすると 保護された画面に入れない (2.0s)
+  ✓   29 [chromium] › e2e/feed.spec.ts:59:1 › スクロールの手前で次の 12 件が重複なく読み込まれ、最後に「ここまでです」が出る (4.1s)
+  ✓   45 [chromium] › e2e/media-upload.spec.ts:61:1 › 位置情報つきの写真をアップロードしても 保存されたファイルに EXIF が残らない (1.1s)
+  ✓   47 [chromium] › e2e/media-upload.spec.ts:128:1 › アップロードが失敗したら 理由が表示され やり直せる (1.2s)
+  ✓   49 [chromium] › e2e/media-upload.spec.ts:184:1 › JS の読み込み前でも 写真を選ぶ をキーボードで押すと 選択ダイアログが開く (375ms)
+  ✓   51 [chromium] › e2e/navigation.spec.ts:8:1 › 375px では下部ナビの 5 項目が見えて、サイドナビは見えない (435ms)
+  ✓   44 [chromium] › e2e/media-upload.spec.ts:29:1 › 大きすぎる写真と許可外の形式は 送信前に理由つきで拒まれる (2.2s)
+  ✓   52 [chromium] › e2e/navigation.spec.ts:19:1 › 768px では左サイドナビが見えて、下部ナビは見えない (387ms)
+  ✓   48 [chromium] › e2e/media-upload.spec.ts:150:1 › 写真の選択部品をキーボードだけで操作でき axe の重大な違反が無い (1.3s)
+  ✓   43 [chromium] › e2e/login-logout.spec.ts:118:1 › キーボードだけでログインでき axe の重大な違反が無い (2.4s)
+  ✓   46 [chromium] › e2e/media-upload.spec.ts:80:1 › アップロード後に 4 つのファイルと幅高さと ThumbHash が揃う (1.9s)
+  ✓   50 [chromium] › e2e/media-upload.spec.ts:203:1 › 保存した写真が 公開の配信元（別 origin）から 実際のブラウザで表示される (1.2s)
+  ✓   53 [chromium] › e2e/navigation.spec.ts:29:1 › 767px では下部ナビが見える (632ms)
+  ✓   56 [chromium] › e2e/navigation.spec.ts:59:1 › フォーカスの輪郭が 2px 以上 (608ms)
+  ✓   55 [chromium] › e2e/navigation.spec.ts:37:3 › Tab で本文へ移動と 5 項目に順に移り、Enter で移動できる (768px) (693ms)
+  ✓   54 [chromium] › e2e/navigation.spec.ts:37:3 › Tab で本文へ移動と 5 項目に順に移り、Enter で移動できる (375px) (741ms)
+  ✓   58 [chromium] › e2e/navigation.spec.ts:87:3 › ナビの全ての項目が 44×44px 以上 (375px) (673ms)
+  ✓   57 [chromium] › e2e/navigation.spec.ts:76:1 › 現在のパスの項目だけが aria-current="page" (759ms)
+  ✓   59 [chromium] › e2e/navigation.spec.ts:87:3 › ナビの全ての項目が 44×44px 以上 (768px) (668ms)
+  ✓   60 [chromium] › e2e/navigation.spec.ts:103:3 › 視差効果を減らす設定 › 視差効果を減らす設定のとき、トランジションの長さが 0 秒 (592ms)
+  ✓   61 [chromium] › e2e/navigation.spec.ts:119:1 › フッターに非公式の表記が出る (565ms)
+  ✓   62 [chromium] › e2e/navigation.spec.ts:126:1 › ページを開いたとき外部オリジンへの通信が 0 件 (1.1s)
+  ✓   63 [chromium] › e2e/navigation.spec.ts:139:1 › 404 の画面もナビつきで、nonce つきの CSP を持ち、コンソールのエラーが 0 件 (1.2s)
+  ✓   70 [chromium] › e2e/post-create.spec.ts:270:1 › 未ログインで /create を開くと ログイン画面に移る (174ms)
+  ✓   66 [chromium] › e2e/post-create.spec.ts:100:1 › 2201 字のキャプションは送れない (1.0s)
+  ✓   71 [chromium] › e2e/post-create.spec.ts:275:1 › JS の読み込み前でも 写真を選ぶ をキーボードで押すと 選択ダイアログが開く (444ms)
+  ✓   68 [chromium] › e2e/post-create.spec.ts:170:1 › 写真の順番を入れ替え 1 枚外して投稿すると その順で保存される (1.5s)
+  ✓   65 [chromium] › e2e/post-create.spec.ts:74:1 › 11 枚目は選べず 10 枚までは投稿できる (1.9s)
+  ✓   73 [chromium] › e2e/post-detail.spec.ts:97:1 › 写真が 1 枚の投稿にはバッジとドットが出ない (367ms)
+  ✓   64 [chromium] › e2e/post-create.spec.ts:38:1 › 3 枚を切り抜いて代替テキストとキャプションを付けて投稿すると 投稿詳細に移る (2.1s)
+  ✓   76 [chromium] › e2e/post-detail.spec.ts:182:1 › 存在しない投稿は 404 の画面が出る (264ms)
+  ✓   75 [chromium] › e2e/post-detail.spec.ts:149:1 › 投稿詳細の HTML に OGP のタグが入る (793ms)
+  ✓   78 [chromium] › e2e/post-detail.spec.ts:225:1 › 削除を押すと確認のダイアログが 1 度だけ開き コンソールに警告が出ない (524ms)
+  ✓   69 [chromium] › e2e/post-create.spec.ts:201:1 › キーボードだけで投稿でき axe の重大な違反が無い (1.9s)
+  ✓   77 [chromium] › e2e/post-detail.spec.ts:191:1 › 自分の投稿を確認ダイアログのあとで削除できる (998ms)
+  ✓   80 [chromium] › e2e/post-detail.spec.ts:272:1 › 他人の投稿には削除が出ない (356ms)
+  ✓   79 [chromium] › e2e/post-detail.spec.ts:244:1 › JS が読み込まれる前でも 削除の確認ダイアログが開き Esc で閉じる (511ms)
+  ✓   72 [chromium] › e2e/post-detail.spec.ts:42:1 › 写真をスワイプと矢印キーで切り替えられ 枚数バッジとドットが位置を示す (2.3s)
+  ✓   81 [chromium] › e2e/post-detail.spec.ts:280:1 › キーボードだけで操作でき axe の重大な違反が無い (1.2s)
+  ✓   74 [chromium] › e2e/post-detail.spec.ts:108:1 › 画像の読み込みが遅くても CLS が 0.1 以下で プレースホルダーが出る (2.3s)
+  ✓   85 [chromium] › e2e/post-modal.spec.ts:180:1 › フォーカスがモーダルの外に出ない (1.3s)
+  ✓   84 [chromium] › e2e/post-modal.spec.ts:135:1 › モーダルの URL を新しいタブや再読み込みで開くと 通常の投稿詳細になる (1.8s)
+  ✓   87 [chromium] › e2e/post-modal.spec.ts:239:1 › 開こうとした投稿が無いとき モーダルの中に見つからないと表示される (1.6s)
+  ✓   89 [chromium] › e2e/post-modal.spec.ts:318:1 › JS が読み込まれる前にグリッドの投稿を押すと 通常の投稿詳細のページに移る (637ms)
+  ✓   82 [chromium] › e2e/post-modal.spec.ts:81:1 › グリッドの投稿をクリックすると モーダルで開き URL が /p/postId になる (3.6s)
+  ✓   86 [chromium] › e2e/post-modal.spec.ts:206:1 › モーダルから自分の投稿を削除すると グリッドから消える (2.9s)
+  ✓   91 [chromium] › e2e/profile-edit.spec.ts:40:1 › 表示名と自己紹介とアイコンを変えて保存すると 自分と他人のプロフィールに反映される (1.2s)
+  ✓   83 [chromium] › e2e/post-modal.spec.ts:109:1 › Esc と閉じるボタンと戻るで閉じ スクロール位置とフォーカスが元に戻る (3.9s)
+  ✓   90 [chromium] › e2e/post-modal.spec.ts:335:1 › モーダルの中でコメントを送ると 一覧にすぐ出て 件数のリンクが増える (1.6s)
+  ✓   93 [chromium] › e2e/profile-edit.spec.ts:125:1 › 字数の境界が表示され 表示名は 1〜30 字 自己紹介は 150 字まで保存できる (673ms)
+  ✓   92 [chromium] › e2e/profile-edit.spec.ts:92:1 › アイコンを選ぶと 正方形のプレビューが出て 大きすぎる写真は拒まれる (1.2s)
+  ✓   96 [chromium] › e2e/profile-edit.spec.ts:211:1 › 編集の画面からログアウトの確認に移れる (713ms)
+  ✓   95 [chromium] › e2e/profile-edit.spec.ts:193:1 › 他人のプロフィールには編集ボタンが出ない (974ms)
+  ✓   88 [chromium] › e2e/post-modal.spec.ts:263:1 › 3 つの幅でモーダルが崩れず axe の重大な違反が無い (3.4s)
+  ✓   98 [chromium] › e2e/profile-edit.spec.ts:287:1 › JS が読み込まれる前でも 保存を押すと 保存されてプロフィールに移る (479ms)
+  ✓   99 [chromium] › e2e/profile-edit.spec.ts:306:1 › JS が読み込まれる前でも 不正な値は欄の下に理由が出て 入力が残る (517ms)
+  ✓   97 [chromium] › e2e/profile-edit.spec.ts:218:1 › キーボードだけで編集でき axe の重大な違反が無い (1.4s)
+  ✓  103 [chromium] › e2e/profile.spec.ts:132:1 › 存在しないユーザー名では 404 の画面が出る (593ms)
+  ✓  100 [chromium] › e2e/profile.spec.ts:46:1 › 他人のプロフィールを開くと ヘッダーと投稿のグリッドが新しい順に表示される (1.5s)
+  ✓  105 [chromium] › e2e/profile.spec.ts:167:1 › 投稿が無いときは空の状態が表示される (703ms)
+  ✓  104 [chromium] › e2e/profile.spec.ts:145:1 › グリッドの画像が全て alt を持ち axe の重大な違反が無い (998ms)
+  ✓  106 [chromium] › e2e/profile.spec.ts:187:1 › 複数枚の投稿だけに 枚数が表示される (568ms)
+  ✓  109 [chromium] › e2e/security-headers.spec.ts:44:1 › 存在しない静的ファイルの 404 にも 4 つのヘッダーが付く (109ms)
+  ✓  102 [chromium] › e2e/profile.spec.ts:112:1 › 続きの読み込みに失敗すると 失敗の表示から もう一度読み込める (2.1s)
+  ✓  107 [chromium] › e2e/profile.spec.ts:207:1 › 375px と 1280px でグリッドが 3 列の正方形で並ぶ (1.2s)
+  ✓  108 [chromium] › e2e/security-headers.spec.ts:23:1 › トップページと 404 と静的ファイルの全ての応答に 4 つのヘッダーが付く (1.0s)
+  ✓  110 [chromium] › e2e/security-headers.spec.ts:52:1 › 存在する静的ファイルは Worker を通らず _headers のヘッダーで返る (875ms)
+  ✓  111 [chromium] › e2e/security-headers.spec.ts:75:1 › 外部のスクリプトとインラインのスクリプトを差し込んでも実行されない (880ms)
+  ✓  112 [chromium] › e2e/signup.spec.ts:9:1 › 新しい利用者がサインアップすると ログイン済みでホームに移る (431ms)
+  ✓  114 [chromium] › e2e/signup.spec.ts:46:1 › ログインしていない利用者が保護された画面を開くと ログイン画面に移る (701ms)
+  ✓  113 [chromium] › e2e/signup.spec.ts:28:1 › 使われているユーザー名を入力して離れると 送信前に重複が表示される (800ms)
+  ✓  115 [chromium] › e2e/signup.spec.ts:57:1 › 入力が不正なとき 項目ごとの理由が表示され 入力が残る (544ms)
+  ✓  101 [chromium] › e2e/profile.spec.ts:91:1 › 13 件目はスクロールすると読み込まれる (3.7s)
+  ✓  117 [chromium] › e2e/smoke.spec.ts:3:1 › トップページを開くと、見出しが見えてコンソールのエラーが 0 件 (352ms)
+  ✓  116 [chromium] › e2e/signup.spec.ts:97:1 › キーボードだけでサインアップでき axe の重大な違反が無い (1.2s)
+  ✓  118 [chromium] › e2e/smoke.spec.ts:18:1 › トップページを開いても CSP 違反が出ない (849ms)
+  ✓  120 [chromium] › e2e/follow.spec.ts:80:1 › JS が読み込まれる前でも ボタンを押してフォローでき 解除できる (370ms)
+  ✓  121 [chromium] › e2e/follow.spec.ts:103:1 › 通信が失敗すると ボタンと数が元に戻りエラーを出す (462ms)
+  ✓  124 [chromium] › e2e/follow.spec.ts:160:1 › 0 件のとき空の案内を出す (556ms)
+  ✓  119 [chromium] › e2e/follow.spec.ts:35:1 › 他人のプロフィールでフォローすると、ボタンが「フォロー中」になりフォロワー数が 1 増える (957ms)
+  ✓  125 [chromium] › e2e/follow.spec.ts:168:1 › 存在しない利用者の一覧は 404 になる (365ms)
+  ✓  126 [chromium] › e2e/follow.spec.ts:175:1 › 自分のプロフィールにはフォローボタンが出ない (160ms)
+  ✓  122 [chromium] › e2e/follow.spec.ts:121:1 › ヘッダーの数値から一覧を開き、21 人目が追加読み込みで出る (615ms)
+  ✓  129 [chromium] › e2e/like.spec.ts:99:1 › JS が読み込まれる前でも ハートを押していいねでき 取り消せる (560ms)
+  ✓  123 [chromium] › e2e/follow.spec.ts:143:1 › フォロー中の数値から一覧を開き、フォローした相手が並ぶ (865ms)
+  ✓  128 [chromium] › e2e/like.spec.ts:52:1 › ボタンでいいねすると、押した瞬間に塗りつぶしと件数 +1 になり、再読み込みしても残る (991ms)
+  ✓  131 [chromium] › e2e/like.spec.ts:143:1 › 視差効果を減らす設定ではダブルタップでハートの動きが出ず 状態だけ変わる (440ms)
+  ✓  130 [chromium] › e2e/like.spec.ts:120:1 › 写真のダブルタップでいいねされ、いいね済みでは取り消されない (665ms)
+  ✓  127 [chromium] › e2e/follow.spec.ts:201:1 › フォローボタンをキーボードで切り替えられ、axe の重大な違反が 0 件 (1.5s)
+  ✓  135 [chromium] › e2e/like.spec.ts:277:1 › 件数を押すと一覧のダイアログが 1 度だけ開き コンソールに警告が出ない (548ms)
+  ✓  132 [chromium] › e2e/like.spec.ts:159:1 › サーバーが失敗を返すと表示が元に戻りエラーを出す (1.1s)
+  ✓  134 [chromium] › e2e/like.spec.ts:247:1 › 件数から一覧を開き、21 人目が追加読み込みで出て、Esc で閉じる (791ms)
+  ✓  133 [chromium] › e2e/like.spec.ts:191:1 › 素早く 5 回押すと最後の状態で止まり 同時のリクエストは 1 つ (957ms)
+  ✓  136 [chromium] › e2e/like.spec.ts:296:1 › いいねが 0 件のとき 一覧に「まだいいねはありません」が出る (569ms)
+  ✓  137 [chromium] › e2e/like.spec.ts:314:1 › いいねをキーボードで操作でき、状態が読み上げられ、axe の重大な違反が 0 件 (1.2s)
+  ✓   67 [chromium] › e2e/post-create.spec.ts:124:1 › 送信に失敗しても 入力が残り やり直せる (19.6s)
+  ✓   94 [chromium] › e2e/profile-edit.spec.ts:152:1 › 保存に失敗しても 入力が残り やり直せる (13.1s)
+  ✓   41 [chromium] › e2e/login-logout.spec.ts:77:1 › 窓の終わりの直前に始めても 6 回目で操作が多すぎますと表示される (29.0s)
+  ✓  138 [seed] › e2e/seed.spec.ts:12:1 › デモアカウントでログインできる (979ms)
+  ✓  139 [seed] › e2e/seed.spec.ts:20:1 › 間違ったパスワードではデモアカウントにログインできない (835ms)
+
+  139 passed (1.1m)
+verify: e2e OK
+verify: perf-budget ...
+bundle: initial js gzip=150791 limit=170000
+verify: perf-budget OK
+verify: OK
+exit code: 0
