@@ -258,6 +258,7 @@ describe('createStory', () => {
     expect(await storyCount()).toBe(1);
   });
 
+  // 31 uploads + 33 createStory calls run one after another (measured 5.0 s on a loaded host); the 5 s default is too tight.
   it('1 時間 30 件目まで成功し、31 件目は RATE_LIMITED を返す', async () => {
     const s = await signedIn();
     const keys = await Promise.all(Array.from({ length: 31 }, () => uploadedVideo(s.user.id)));
@@ -276,5 +277,5 @@ describe('createStory', () => {
     expect(
       (await t.db.select().from(stories).where(eq(stories.authorId, other.user.id))).length,
     ).toBe(1);
-  });
+  }, 60_000);
 });
