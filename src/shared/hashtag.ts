@@ -29,8 +29,7 @@ export function extractHashtags(caption: string): string[] {
 }
 
 export type CaptionPart =
-  | { type: 'text'; text: string }
-  | { type: 'tag'; text: string; name: string };
+  { type: 'text'; text: string } | { type: 'tag'; text: string; name: string };
 
 /**
  * Splits a caption into plain text and tags, keeping every character as written. A tag longer
