@@ -53,7 +53,8 @@ describe('loadPostViews', () => {
     for (let i = 0; i < 120; i++) ids.push((await createPost(t.db, author.id)).id);
     const views = await loadPostViews(t.db, storage, ids, author.id);
     expect(views.map((v) => v.id)).toEqual(ids);
-  });
+    // 120 sequential createPost calls: 4.3 s in CI, over 5 s on a loaded host (2026-11-22).
+  }, 30_000);
 
   it('空の入力は問い合わせずに空の配列を返す', async () => {
     const counted = countQueries(t.d1);

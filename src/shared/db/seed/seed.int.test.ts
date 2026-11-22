@@ -234,5 +234,6 @@ describe('seed:bench', () => {
         "SELECT count(*) AS n FROM follows WHERE follower_id = (SELECT id FROM users WHERE username = 'demo')",
       ),
     ).toBe(100);
-  }, 180_000);
+    // Measured: 21 s alone, 41-61 s in CI, over 204 s on a loaded host (2026-11-22); 600 s leaves headroom.
+  }, 600_000);
 });
