@@ -2,6 +2,7 @@
 
 ## 2026-11-22
 * **Update**: [conventions.md](architecture/conventions.md) の「削除」を、日次のジョブ `upload-orphan-sweep` が参照されない古いアップロードを消す内容にし、[data-model.md](architecture/data-model.md) に `job_cursors` を足した（#77）。
+* **Creation**: [EPIC #11 の総合試験のレポート（1 回目）](test-reports/epic-0011-notifications.md)（PASS。統合ブランチ m3/phase2 の 19648d3 で、いいねの通知が 5 秒以内（6 回の実測は最大 3,026 ms）、切断からの復帰、配信を塞いだときのポーリング、90 日の削除、他人の通知の非表示と axe・キーボードの 5 つの AC が満たされた）と、その写真・記録（`test-reports/evidence/epic-0011/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Update**: [data-model.md](architecture/data-model.md) の「notifications」に、作成から 90 日を過ぎた行を日次のジョブ `notification-cleanup` が消すことを足した（#59）。
 * **Creation**: [ADR-0050](adr/0050-notifications-via-sse-with-d1-checks.md)（通知は SSE で画面へ押し出し、サーバーは 3 秒ごとに D1 を確認する。Durable Objects は使わない）と[調査](research/notification-realtime.md)を追加し、[routes.md](architecture/routes.md)（`streamNotifications`）と [overview.md](architecture/overview.md)（`/api/notifications/stream`）を更新した（#58）。
 * **Creation**: [EPIC #12 の総合試験のレポート](test-reports/epic-0012-bookmarks.md)（1 回目、PASS。3fa2347 で 4 つの AC が満たされ、保存済みタブは本人だけに出る）と、その写真・記録（`test-reports/evidence/epic-0012/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
