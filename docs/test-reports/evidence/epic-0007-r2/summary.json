@@ -1,0 +1,229 @@
+{
+ "health": {
+  "ac1-unknown-profile": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http4xx": [
+    "404 http://localhost:3101/no_such_user_zz9"
+   ],
+   "expected404": true
+  }
+ },
+ "axe": [
+  {
+   "label": "サインアップ",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "ログイン",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "ホームフィード",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "プロフィール",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "プロフィールの編集",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "投稿の作成",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "投稿詳細",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "フォロワーの一覧",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "投稿のモーダル",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "AC-5 投稿詳細（コメント後）",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  }
+ ],
+ "tabOrder": {
+  "modal": [
+   "a[demo]",
+   "button[削除]",
+   "button[いいね]",
+   "button[4 件のいいね]",
+   "a[コメント 2 件]",
+   "a[demo]",
+   "a[seed_user_21]",
+   "button[@seed_user_21 に返信する]"
+  ],
+  "feed": [
+   "a[seed_user_29]",
+   "button[いいね]",
+   "button[0 件のいいね]",
+   "a[コメント 1 件]",
+   "a[seed_user_29]",
+   "a[コメント 1 件をすべて見る]",
+   "a[seed_user_26]",
+   "button[いいね]",
+   "button[6 件のいいね]",
+   "a[コメント 4 件]",
+   "a[seed_user_26]",
+   "a[コメント 4 件をすべて見る]",
+   "a[seed_user_24]",
+   "button[いいね]"
+  ],
+  "profile": [
+   "a[プロフィールを編集]",
+   "a[10 フォロワー]",
+   "a[20 フォロー中]",
+   "a[A]",
+   "a[A]",
+   "a[A]",
+   "a[A]",
+   "a[A]",
+   "a[2]",
+   "a[A]",
+   "a[A]",
+   "a[3]",
+   "a[A]",
+   "a[ホーム]"
+  ],
+  "postDetail": [
+   "a[demo]",
+   "button[削除]",
+   "button[いいね]",
+   "button[4 件のいいね]",
+   "a[コメント 2 件]",
+   "a[demo]",
+   "a[seed_user_21]",
+   "button[@seed_user_21 に返信する]",
+   "button[@seed_user_21 のコメントを削除]",
+   "a[seed_user_05]",
+   "button[@seed_user_05 に返信する]",
+   "button[@seed_user_05 のコメントを削除]",
+   "input[INPUT]",
+   "a[ホーム]"
+  ],
+  "followers": [
+   "a[@demo]",
+   "a[S seed_user_10 かいと]",
+   "a[S seed_user_20 みお]",
+   "a[S seed_user_21 こうき]",
+   "a[S seed_user_14 いつき]",
+   "a[S seed_user_09 めい]",
+   "a[S seed_user_29 あかり]",
+   "a[S seed_user_13 つむぎ]"
+  ]
+ },
+ "checks": {
+  "ac1_refused": {
+   "url": "http://localhost:3101/accounts/login",
+   "text": 1
+  },
+  "ac1_feed": {
+   "articles": 12,
+   "imgs": 25,
+   "url": "http://localhost:3101/"
+  },
+  "ac1_profile": {
+   "cols": 3,
+   "tiles": 10,
+   "header": "D デモ 太郎 @demo プロフィールを編集 10 投稿 10 フォロワー 20 フォロー中 週末はだいたい外にいます"
+  },
+  "ac1_404": 404,
+  "dlg_likers": {
+   "tabOut": 0,
+   "shiftOut": 0,
+   "initialInside": true,
+   "closed": true,
+   "focusReturned": true
+  },
+  "dlg_delete_post": {
+   "tabOut": 0,
+   "shiftOut": 0,
+   "initialInside": true,
+   "closed": true,
+   "focusReturned": true
+  },
+  "dlg_post_modal": {
+   "tabOut": 0,
+   "shiftOut": 0,
+   "initialInside": true,
+   "closed": true,
+   "focusReturned": true,
+   "urlAfter": "http://localhost:3101/demo"
+  },
+  "multiPost": "/p/01a200cd-efe1-7096-bb5f-53e4b38236d5",
+  "ac6_reduce": {
+   "matchMedia": true,
+   "carousel": {
+    "transition": "0s",
+    "animation": "0s",
+    "scroll": "auto"
+   },
+   "modal": {
+    "transition": "0s",
+    "animation": "0s",
+    "scroll": "auto"
+   }
+  },
+  "ac6_no-preference": {
+   "matchMedia": false,
+   "carousel": {
+    "transition": "0s",
+    "animation": "0s",
+    "scroll": "smooth"
+   },
+   "modal": {
+    "transition": "0s",
+    "animation": "0.15s",
+    "scroll": "auto"
+   }
+  },
+  "ac5_errors": {
+   "url": "http://localhost:3101/accounts/signup",
+   "email": 1,
+   "pw": 1
+  },
+  "ac5_liked": "true",
+  "ac5_emptyCommentDisabled": true,
+  "ac5_mouseEvents": 0,
+  "dlg_delete_comment": {
+   "tabOut": 0,
+   "shiftOut": 0,
+   "initialInside": true,
+   "closed": true,
+   "focusReturned": true
+  }
+ },
+ "chrome": "157.0.8103.80"
+}
