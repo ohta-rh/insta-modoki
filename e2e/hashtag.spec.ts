@@ -49,10 +49,11 @@ signedIn('キャプションのタグから一覧に移り、日本語のタグ�
   const tile = grid(page).getByRole('link');
   await expect(tile).toHaveCount(1);
   await expect(tile).toHaveAttribute('href', `/p/${postId}`);
-  const columns = await grid(page).evaluate(
-    (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length,
-  );
-  expect(columns).toBe(3);
+  await expect
+    .poll(() =>
+      grid(page).evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' ').length),
+    )
+    .toBe(3);
 
   // The Japanese tag opens the same post's list.
   await page.goBack();
@@ -89,6 +90,18 @@ signedIn('キーボードだけでタグのページを操作でき、axe の重
   seedUser(username, `${username}@example.com`);
   const authorId = userRow(username)!.id as string;
   expect(authorId).toBeTruthy();
+  // Tabbing scrolls the end marker into view and would load the next page by itself; with no
+  // observer only the "さらに表示" button can (the scroll path has its own unit test).
+  await page.addInitScript(() => {
+    window.IntersectionObserver = class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+      takeRecords() {
+        return [];
+      }
+    } as unknown as typeof IntersectionObserver;
+  });
   const base = Date.now() - 3 * 60 * 60 * 1000;
   for (let i = 0; i < 13; i++) {
     const createdAt = base + i * 60_000;
