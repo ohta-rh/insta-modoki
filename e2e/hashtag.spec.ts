@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { signUpViaUi, type NewUser } from './support/auth';
+import { signedIn } from './support/auth';
 import { seedUser, userRow } from './support/db';
 import { makeJpeg } from './support/fixtures';
 import { waitForHydration } from './support/hydration';
@@ -8,13 +8,6 @@ import { expectNoSeriousViolations } from './support/axe';
 import { insertPost, putPostFiles, tagPost } from './support/posts';
 
 const POST_URL = /\/p\/([0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12})$/;
-
-/** `page` signed in as a new user, who is `me`. */
-const signedIn = test.extend<{ me: NewUser }>({
-  me: async ({ page }, use) => {
-    await use(await signUpViaUi(page));
-  },
-});
 
 const unique = () => Math.random().toString(36).slice(2, 8);
 const grid = (page: Page) => page.getByTestId('post-grid');
