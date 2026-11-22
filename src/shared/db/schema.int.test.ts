@@ -75,7 +75,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 11 個のテーブルと 5 つの索引ができる', async () => {
+  it('マイグレーションで 13 個のテーブルと 9 つの索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -86,6 +86,8 @@ describe('マイグレーション', () => {
         'follows',
         'rate_limits',
         'storage_orphans',
+        'stories',
+        'story_views',
       ]),
     );
     expect(await names('index')).toEqual(
@@ -97,14 +99,14 @@ describe('マイグレーション', () => {
         'follows_followee_created_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(11);
+    expect(await names('table')).toHaveLength(13);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(11);
+    expect(before).toHaveLength(13);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {

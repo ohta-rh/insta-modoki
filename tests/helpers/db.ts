@@ -12,6 +12,8 @@ const TABLES = [
   'sessions',
   'accounts',
   'verifications',
+  'story_views',
+  'stories',
   'likes',
   'follows',
   'comments',
