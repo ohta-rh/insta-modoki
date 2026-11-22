@@ -124,8 +124,8 @@ test('ビューアを閉じるとトレイが読み込み直さずに視聴済�
     const [a, c] = people as [(typeof people)[0], (typeof people)[0]];
     await openHome(page);
     const unseen = (u: string) => page.getByRole('link', { name: `${u}のストーリー（未視聴）` });
-    await expect(links(page).nth(1)).toHaveAccessibleName(`${a.username}のストーリー（未視聴）`);
-    await expect(links(page).nth(2)).toHaveAccessibleName(`${c.username}のストーリー（未視聴）`);
+    await expect(unseen(a.username)).toBeVisible();
+    await expect(unseen(c.username)).toBeVisible();
 
     await unseen(a.username).click();
     const viewerA = page.getByRole('dialog', { name: `${a.username}のストーリー` });
@@ -144,9 +144,17 @@ test('ビューアを閉じるとトレイが読み込み直さずに視聴済�
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('dialog')).toHaveCount(0);
 
-    // No reload: the tray itself is redrawn.
-    await expect(links(page).nth(1)).toHaveAccessibleName(`${c.username}のストーリー（未視聴）`);
-    await expect(links(page).nth(2)).toHaveAccessibleName(`${a.username}のストーリー（視聴済み）`);
+    // No reload: the tray itself is redrawn. (The second round also has the first round's people.)
+    await expect(
+      page.getByRole('link', { name: `${a.username}のストーリー（視聴済み）` }),
+    ).toBeVisible();
+    await expect(unseen(c.username)).toBeVisible();
+    const order = await links(page).evaluateAll((els) =>
+      els.map((el) => el.getAttribute('href')),
+    );
+    expect(order.indexOf(`/stories/${c.username}`)).toBeLessThan(
+      order.indexOf(`/stories/${a.username}`),
+    );
   }
 });
 

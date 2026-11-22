@@ -236,6 +236,10 @@ test('直接開いたときは閉じるとホームへ移る', async ({ page }) 
     await page.getByRole('button', { name: '閉じる' }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('dialog')).toHaveCount(0);
+    // The tray is the latest: the person just seen is marked seen.
+    await expect(trayLink(page, b.username)).toHaveAccessibleName(
+      `${b.username}のストーリー（視聴済み）`,
+    );
   }
 });
 
