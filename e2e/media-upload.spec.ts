@@ -5,7 +5,8 @@ import { signUpViaUi } from './support/auth';
 import { userRow } from './support/db';
 import { hasExif, makeJpeg, padTo, webpSize, withGps } from './support/fixtures';
 import { getObject, mediaUrl } from './support/storage';
-import { holdScripts } from './support/hydration';
+import { holdScripts, waitForHydration } from './support/hydration';
+import { tabTo } from './support/keys';
 
 const PAGE_PATH = '/e2e-harness/upload';
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
@@ -226,4 +227,28 @@ test('保存した写真が 公開の配信元（別 origin）から 実際の�
   );
   expect(loaded).toEqual({ ok: true, width: 640 });
   await expect(page.locator(`img[src="${src}"]`)).toHaveJSProperty('naturalWidth', 640);
+});
+
+test('JS の読み込み前に選んだ写真が ハイドレーションの後に一覧に入り アップロードできる', async ({
+  page,
+}) => {
+  await signUpViaUi(page);
+  const jpeg = await makeJpeg(page, 320, 240);
+  const chooser = page.waitForEvent('filechooser');
+  chooser.catch(() => {});
+  const release = await holdScripts(page);
+  await page.goto(PAGE_PATH, { waitUntil: 'commit' });
+  const choose = page.getByRole('button', { name: '写真を選ぶ' });
+  await choose.waitFor();
+  await tabTo(page, choose);
+  await page.keyboard.press('Enter');
+  expect(await page.locator('html[data-hydrated="1"]').count()).toBe(0);
+  await (await chooser).setFiles([{ name: 'early.jpg', mimeType: 'image/jpeg', buffer: jpeg }]);
+  release();
+  await waitForHydration(page);
+
+  await expect(page.getByText('early.jpg')).toHaveCount(1);
+  await expect(upload(page)).toBeEnabled();
+  await upload(page).click();
+  await expect(page.getByTestId('result')).toContainText('"key"');
 });
