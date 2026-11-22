@@ -172,6 +172,15 @@ base('同じタブで別の人がログインしても、前の人の未読の�
   );
   await page.getByRole('button', { name: 'ログアウト' }).click();
   await expect(page).toHaveURL(/\/accounts\/login$/);
+  // B's own count never arrives (the poll, a Server Action with no arguments, fails), so only the
+  // store's own reset can keep A's number off the screen.
+  await page.route(
+    (url) => url.pathname === '/',
+    (route) =>
+      route.request().method() === 'POST' && route.request().postData() === '[]'
+        ? route.abort()
+        : route.continue(),
+  );
   await page.getByLabel('メールアドレス').fill(bob.email);
   await page.getByLabel('パスワード').fill(bob.password);
   await page.getByRole('button', { name: 'ログイン' }).click();
