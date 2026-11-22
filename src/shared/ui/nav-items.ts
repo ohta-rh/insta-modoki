@@ -17,7 +17,7 @@ export function navItems(viewer: Viewer): NavItem[] {
   const gated = (path: string) => (viewer ? path : LOGIN_PATH);
   return [
     { key: 'home', label: 'ホーム', href: '/', icon: 'home', requiresLogin: false },
-    { key: 'search', label: '検索', href: '/explore/search', icon: 'search', requiresLogin: false },
+    { key: 'search', label: '検索', href: '/explore', icon: 'search', requiresLogin: false },
     {
       key: 'create',
       label: '投稿',
