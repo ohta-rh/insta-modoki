@@ -8,9 +8,13 @@ const NOW = new Date('2026-11-22T00:00:00.000Z');
 function run(argv: string[], jobs: Record<string, Job>) {
   const out: string[] = [];
   const err: string[] = [];
-  return runJobCli(argv, { env, now: NOW, out: (l) => out.push(l), err: (l) => err.push(l), jobs }).then(
-    (code) => ({ code, out, err }),
-  );
+  return runJobCli(argv, {
+    env,
+    now: NOW,
+    out: (l) => out.push(l),
+    err: (l) => err.push(l),
+    jobs,
+  }).then((code) => ({ code, out, err }));
 }
 
 describe('runJobCli', () => {

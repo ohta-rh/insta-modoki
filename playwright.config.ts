@@ -23,7 +23,8 @@ export default defineConfig({
   ],
   webServer: {
     // E2E_HARNESS reaches the Worker only as a wrangler --var (a shell variable does not), and only here.
-    command: 'pnpm start --var E2E_HARNESS:1 --var APP_ENV:local',
+    // --test-scheduled makes wrangler serve /__scheduled?cron=<expr>, which runs the Worker's `scheduled` (ADR-0049).
+    command: 'pnpm start --test-scheduled --var E2E_HARNESS:1 --var APP_ENV:local',
     // `/` redirects to the login screen for a visitor; a public screen answers 200 once the app is up.
     url: `http://localhost:${port}/accounts/signup`,
     reuseExistingServer: false,

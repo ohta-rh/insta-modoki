@@ -170,7 +170,9 @@ describe('cleanupExpiredStories', () => {
     const failing = `${a.storageKey}/w640.webp`;
     // The key is already in storage_orphans: the insert must not fail on it.
     await t.d1
-      .prepare(`INSERT INTO storage_orphans (storage_key, created_at, attempts) VALUES ('${failing}', 1, 3)`)
+      .prepare(
+        `INSERT INTO storage_orphans (storage_key, created_at, attempts) VALUES ('${failing}', 1, 3)`,
+      )
       .run();
     const fake = vi.fn(async (client: Parameters<typeof removeObjects>[0], keys: string[]) => {
       await removeObjects(

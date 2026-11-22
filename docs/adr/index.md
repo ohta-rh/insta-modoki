@@ -45,6 +45,7 @@
 * [ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける](0023-slots-with-garage-and-d1-files.md) - 置き換え: ADR-0037
 * [ADR-0037: ローカルの画像は Garage のウェブ用エンドポイント（3912）から別 origin で配信する](0037-serve-local-media-from-garage-web-endpoint.md) - 採用
 * [ADR-0011: デプロイ先は Cloudflare とし、無料枠に収めることを前提にする](0011-deploy-to-cloudflare-free-tier-first.md) - 採用
+* [ADR-0049: 定期ジョブは Cron Trigger から Worker の入口 src/worker.mjs で起動し、Worker と Node で同じコードを動かす](0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md) - 採用
 * [ADR-0041: E2E の準備の書き込みは、テストのプロセスから SQLite を直接書かず、アプリの /e2e-harness/db を通す](0041-e2e-setup-writes-go-through-the-app.md) - 採用
 * [ADR-0043: プロフィールのグリッドからのモーダルは、Next.js の intercepting routes と parallel routes で作る](0043-profile-grid-modal-by-intercepting-route.md) - 採用
 * [ADR-0045: chrome-devtools の MCP が使えないとき、epic-tester は画面ありの Google Chrome を CDP で操作して総合試験を行う](0045-epic-test-may-drive-headed-chrome-over-cdp.md) - 採用

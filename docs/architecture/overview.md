@@ -35,6 +35,7 @@ flowchart LR
 | DB | D1 | wrangler がファイルに持つ D1（`.wrangler/state`。worktree ごとに独立し、git には入れない）。compose に DB のサービスは無い |
 | 画像のストレージ | R2（S3 API の署名付き URL） | compose の Garage `dxflrs/garage:v2.5.0`（S3 互換。スロットごとのバケット `insta-s<N>`） |
 | シークレットと設定 | `wrangler secret` と `wrangler.jsonc` の `vars` | worktree の `.dev.vars`（git には入れない。#20 のスロットのスクリプトが作る。`.env.local` は使わない） |
+| 定期ジョブ | Cron Triggers（`wrangler.jsonc` の `triggers.crons`、入口は `src/worker.mjs`） | `pnpm jobs:run <名前>`、と `pnpm start --test-scheduled` の `/__scheduled?cron=0+18+*+*+*` |
 | 結合テストの DB | – | `getPlatformProxy({ persist: false })` のメモリ上の D1 |
 
 ## 環境変数
@@ -65,7 +66,8 @@ D1 は環境変数ではなく、`wrangler.jsonc` のバインディング `DB`�
 | `lint` | `eslint .` | ESLint 10、`eslint.config.mjs` |
 | `format:check` | `prettier . --check` | |
 | `test` | `vitest run` | 単体と結合 |
-| `e2e` | `playwright test` | `webServer` が `start` をスロットのポートで起動する |
+| `e2e` | `playwright test` | `webServer` が `start --test-scheduled` をスロットのポートで起動する |
+| `jobs:run` | `node scripts/run-job.ts` | `pnpm jobs:run <名前>` で定期ジョブを 1 つ手で動かす（[ADR-0049](../adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)） |
 
 ## ルートのファイルの場所
 

@@ -55,6 +55,19 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 * 終了コード: 成功 0、数が合わない・本番・失敗 1、引数の誤り 2。
 * E2E は `e2e/support/demo.ts` の `ensureDemoSeed()` と `loginAsDemo(page)` を使う。
 
+# 定期ジョブを手で動かす
+
+スロットを準備した後（`node scripts/slot.mjs prepare <N>`）、worktree の中で流す。Worker の Cron Trigger（毎日 18:00 UTC）と同じコードが、スロットの D1 とバケットに対して動く（[ADR-0049](../adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)）。
+
+| コマンド | 動き |
+|---|---|
+| `pnpm jobs:run story-cleanup` | 期限切れのストーリーの行とファイルを消す。標準出力は `story-cleanup: deleted=<件数>`（1 回に 1,000 件まで） |
+| `pnpm jobs:run storage-orphans-retry` | 消せなかったファイル（`storage_orphans`）を再試行する。10 回で諦め、ログに出す |
+| `pnpm start --test-scheduled` の後に `http://localhost:<3100+N>/__scheduled?cron=0+18+*+*+*` を開く | 全てのジョブを順に動かす（Cron Trigger と同じ経路）。結果はアプリのログに出る |
+
+* 終了コード: 成功 0、ジョブの失敗 1、知らない名前・名前なし 2（標準エラーに登録済みの名前を出す）。
+* アプリが書いている最中は SQLITE_BUSY で失敗しうる。そのときはもう一度流す。
+
 # テスト
 
 * `pnpm exec vitest run scripts/slot.test.ts` - スタック不要

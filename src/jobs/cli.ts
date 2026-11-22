@@ -15,7 +15,7 @@ export type JobCliIo = {
  * only, never its message), 2 unknown or missing name.
  */
 export async function runJobCli(argv: string[], io: JobCliIo): Promise<number> {
-  const jobs = io.jobs ?? registry;
+  const jobs: Record<string, Job> = io.jobs ?? registry;
   const name = argv[0] ?? '';
   const job = Object.hasOwn(jobs, name) ? jobs[name] : undefined;
   if (!job) {

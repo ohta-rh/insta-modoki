@@ -20,7 +20,9 @@ export const retryStorageOrphans: Job = async ({ env, removeObjects }) => {
   if (rows.length === 0) return { deleted: 0 };
 
   const keys = rows.map((r) => r.storage_key);
-  const failed = new Set(await (removeObjects ?? removeStorageObjects)(getStorageClient(env), keys));
+  const failed = new Set(
+    await (removeObjects ?? removeStorageObjects)(getStorageClient(env), keys),
+  );
   const removed = keys.filter((k) => !failed.has(k));
 
   if (removed.length > 0) {

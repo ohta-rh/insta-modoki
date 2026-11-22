@@ -131,4 +131,4 @@ D1 は 1 つの SQL の文に渡せるバインド変数が 100 個まで。複�
 
 アップロードされたが行から参照されないオブジェクト（投稿せずに離脱した、`HEAD` の検査で拒否した）は、M3 の掃除のジョブが `media/<userId>/` の下で作成から 24 時間を過ぎ、`media`・`users.avatar_key` に無いものを消す（[ADR-0021](../adr/0021-browser-made-webp-and-presigned-put.md)）。
 
-投稿・利用者の削除は、DB の行を消すトランザクションが成功した後に、ストレージのキーをまとめて消す。ファイルの削除に失敗しても行は戻さず、`storage_orphans`（M3 の掃除のジョブで再試行）に記録する。
+投稿・利用者の削除は、DB の行を消すトランザクションが成功した後に、ストレージのキーをまとめて消す。ファイルの削除に失敗しても行は戻さず、`storage_orphans`（M3 の掃除のジョブで再試行）に記録する。再試行は `storage-orphans-retry`（1 日 1 回、10 回まで。[ADR-0049](../adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)）が行う。期限切れのストーリーは `story-cleanup` が行とファイルを消す。
