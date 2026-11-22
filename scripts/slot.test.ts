@@ -352,14 +352,17 @@ test('このプロセス自身とその親は、command にポートがあって
 });
 
 test('killTree は自分自身とその親には信号を送らない', () => {
-  const rows = ['  10     1 sh', '  20    10 node', '  60    20 node slot.mjs'];
-  const sent: number[] = [];
-  killTree(10, 'SIGTERM', psOf(rows), 60, (pid: number) => sent.push(pid));
-  assert.deepEqual(sent, []);
-  killTree(20, 'SIGTERM', psOf(['  20    10 node', '  70    20 workerd']), 60, (pid: number) =>
-    sent.push(pid),
-  );
-  assert.deepEqual(sent, [70, 20]);
+  const run = (target: number, rows: string[]) => {
+    const sent: number[] = [];
+    killTree(target, 'SIGTERM', psOf(rows), 60, (pid: number) => {
+      sent.push(pid);
+      return true as const;
+    });
+    return sent;
+  };
+  const chain = ['  10     1 sh', '  20    10 node', '  60    20 node slot.mjs'];
+  assert.deepEqual(run(10, chain), []);
+  assert.deepEqual(run(20, ['  20    10 node', '  70    20 workerd']), [70, 20]);
 });
 
 test('command に localhost:ポート しか無い親は、ポートで起動した親とみなさない', async () => {
