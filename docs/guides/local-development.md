@@ -47,6 +47,7 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 |---|---|
 | `pnpm seed:demo` | 利用者 30 人（`demo` を含む）、投稿 300 件、画像（1〜10 枚）、いいね・コメント・フォロー。最後の行は `seed: demo OK users=30 posts=300 media=<n>`。約 20 秒 |
 | `pnpm seed:bench` | 利用者 1,000 人、投稿 10,000 件。画像は 60 枚を使い回す（このデータはアプリから消さない）。最後の行は `seed: bench OK users=1000 posts=10000`。約 1 分。API の計測の前に流す明示のコマンドで、`verify` の E2E では流さない |
+| `node scripts/backfill-hashtags.ts` | スロットの D1 にある既存の投稿のキャプションから、タグ（`hashtags`・`post_hashtags`）を作る。何度流しても同じ。1 投稿は最初の 30 個まで、100 字を超えるタグは飛ばす。最後の行は `backfill-hashtags: OK posts=<n> links=<m>`（2 回目は `links=0`）。seed の後に流すと、デモの投稿のタグの一覧ができる |
 
 * 同じ DB に何回流しても結果は同じ。メールが `@seed.invalid` で終わる利用者（とその投稿・画像）だけを消してから入れ直す。実在の利用者の行は消さない。
 * `demo` のメールは `demo@seed.invalid`。パスワードは環境変数 `SEED_DEMO_PASSWORD` で渡す。渡さないと 16 字を作って 1 度だけ標準出力に出す（リポジトリには書かない）。

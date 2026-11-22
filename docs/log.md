@@ -2,6 +2,7 @@
 
 ## 2026-11-22
 * **Update**: [data-model.md](architecture/data-model.md)（`stories`・`story_views` の列・制約・索引を `migrations/0007_stories.sql` のとおりに）、[routes.md](architecture/routes.md)（`requestStoryUpload`・`createStory`）、[conventions.md](architecture/conventions.md)（ストーリーの上限）、[overview.md](architecture/overview.md)（`/stories/create`）を更新した（#47）。
+* **Update**: ハッシュタグ（#49）に合わせて [data-model.md](architecture/data-model.md)・[routes.md](architecture/routes.md)（`listTagPosts`、`createPost` のタグ）・[conventions.md](architecture/conventions.md)（`PostTile`、タグの上限、カーソル）・[overview.md](architecture/overview.md)・[local-development.md](guides/local-development.md)（`backfill-hashtags`）を更新した。
 * **Creation**: [ADR-0052](adr/0052-phase-2-before-cloudflare-publication.md)（マイルストーンの順番を M1 → M3 → M2 → M4 に変える）を追加し、[ADR-0013](adr/0013-four-milestones-local-mvp-then-cloudflare.md) を置き換えにした。
 * **Creation**: [EPIC #5 の総合試験のレポート（2 回目）](test-reports/epic-0005-follow-feed-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 7 つの AC が満たされ、フィード 48 件・フォロー中一覧 100 件のページ送りに重複・抜けは無く、JS 無しのフォームの動きも変わらない）と、その写真・記録（`test-reports/evidence/epic-0005-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #4 の総合試験のレポート（3 回目）](test-reports/epic-0004-post-create-detail-r3.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 6 つの AC が満たされた。削除の失敗後に focus が一度 body に落ちる軽微な挙動を記録）と、その写真・記録（`test-reports/evidence/epic-0004-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

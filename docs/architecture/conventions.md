@@ -88,7 +88,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 
 ## カーソル
 
-- 並びは既定で `(created_at DESC, id DESC)`。コメントと返信の一覧は古い順（`created_at ASC, id ASC`）。フォロワー・フォロー中・いいねした人の一覧は、`id` の位置に相手の利用者の id を入れる。カーソルは最後の行の `created_at` と `id` を `|` でつないで base64url にした文字列。OFFSET は使わない。
+- 並びは既定で `(created_at DESC, id DESC)`。コメントと返信の一覧は古い順（`created_at ASC, id ASC`）。フォロワー・フォロー中・いいねした人の一覧は、`id` の位置に相手の利用者の id を入れる。タグの投稿の一覧は `post_hashtags.created_at` の新しい順で、`id` の位置に `post_id` を入れる。カーソルは最後の行の `created_at` と `id` を `|` でつないで base64url にした文字列。OFFSET は使わない。
 - 応答は `Page<T> = { items: T[], nextCursor: string | null }`。壊れたカーソルは VALIDATION。
 
 ## 画面に返す形
@@ -98,6 +98,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 - `MediaView = { type, width, height, altText, thumbhash, srcset: { w320, w640, w1080 } }`
 - `PostView = { id, author: UserSummary, caption, media: MediaView[], likeCount, commentCount, likedByMe, createdAt }`
 - `PostThumb = { id, cover: MediaView, mediaCount }`
+- `PostTile = { id, cover: MediaView, mediaCount, username }`（`PostThumb` に投稿者の `username` を足した形。いろいろな人の投稿が並ぶグリッド `PostTileGrid` の `alt` に使う）
 - `CommentView = { id, author: UserSummary, body, parentId | null, createdAt, canDelete, replies?: CommentView[], replyCount? }`
 
 `email`・`role`・パスワード・ストレージのキーは、どの形にも入れない。
@@ -107,7 +108,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 | 対象 | 上限 |
 |---|---|
 | 画像 | 1 枚 10MB、1 投稿 10 枚、JPEG / PNG / WebP / HEIC、長辺 2,048px に縮小 |
-| 文字 | キャプション 2,200 字、コメント 2,200 字、自己紹介 150 字、表示名 30 字、代替テキスト 500 字 |
+| 文字 | キャプション 2,200 字、コメント 2,200 字、自己紹介 150 字、表示名 30 字、代替テキスト 500 字、ハッシュタグ 1 投稿あたり 30 個・1 個 100 字（NFKC で正規化した後のコードポイント） |
 | ログインの試行 | 同じ IP から 1 分あたり 5 回、同じメールの失敗は 1 時間あたり 10 回（`consume('login:email:<小文字にしたメール>', 10, 3600)`）。IP は `cf-connecting-ip` だけから取り（`X-Forwarded-For` は使わない。ローカルは `local`）。Better Auth の組み込みのメモリ上の制限は使わず、`consume()` で行う（[ADR-0020](../adr/0020-better-auth-with-pbkdf2.md)） |
 | サインアップ | 同じ IP から 1 時間あたり 10 回 |
 | ユーザー名の空き確認（`checkUsername`） | 同じ IP から 1 分あたり 30 回（`consume('checkname:ip:<ip>', 30, 60)`） |
