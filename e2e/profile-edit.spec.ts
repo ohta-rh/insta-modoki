@@ -94,7 +94,9 @@ test('アイコンを選ぶと 正方形のプレビューが出て 大きすぎ
   const { username } = await start(page);
   const posts: string[] = [];
   page.on('request', (r) => {
-    if (r.method() === 'POST' || r.method() === 'PUT') posts.push(r.url());
+    // Not the unread-badge poll (a Server Action POST with no arguments, body `[]`).
+    if ((r.method() === 'POST' && r.postData() !== '[]') || r.method() === 'PUT')
+      posts.push(r.url());
   });
 
   // A portrait photo: the preview is the square in its middle.

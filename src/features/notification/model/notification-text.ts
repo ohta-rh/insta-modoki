@@ -1,4 +1,5 @@
-import { UNREAD_COUNT_CAP, type NotificationView } from './schema';
+import { UNREAD_COUNT_CAP } from './constants';
+import type { NotificationView } from './schema';
 
 /** The sentence of one notification row. A comment's text ends with "…" when it was cut. */
 export function notificationText(view: NotificationView): string {

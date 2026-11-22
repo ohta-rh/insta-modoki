@@ -131,7 +131,9 @@ test('アップロードが失敗したら 理由が表示され やり直せる
   const jpeg = await makeJpeg(page, 320, 240);
   const urlRequests: string[] = [];
   page.on('request', (r) => {
-    if (r.method() === 'POST' && r.headers()['next-action']) urlRequests.push(r.url());
+    // Not the unread-badge poll (a Server Action POST with no arguments, body `[]`).
+    if (r.method() === 'POST' && r.headers()['next-action'] && r.postData() !== '[]')
+      urlRequests.push(r.url());
   });
 
   await page.route('**/media/**', (route) => route.abort());

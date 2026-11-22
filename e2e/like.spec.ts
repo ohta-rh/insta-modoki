@@ -318,7 +318,13 @@ signedIn(
     seedLikers(post.id, 2);
     let finished = 0;
     page.on('requestfinished', (r) => {
-      if (r.method() === 'POST' && new URL(r.url()).pathname === `/p/${post.id}`) finished += 1;
+      // The unread-badge poll is a Server Action POST with no arguments (body `[]`); not counted.
+      if (
+        r.method() === 'POST' &&
+        r.postData() !== '[]' &&
+        new URL(r.url()).pathname === `/p/${post.id}`
+      )
+        finished += 1;
     });
     await page.goto(`/p/${post.id}`);
     await waitForHydration(page);
