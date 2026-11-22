@@ -35,6 +35,7 @@ flowchart LR
 | DB | D1 | wrangler がファイルに持つ D1（`.wrangler/state`。worktree ごとに独立し、git には入れない）。compose に DB のサービスは無い |
 | 画像のストレージ | R2（S3 API の署名付き URL） | compose の Garage `dxflrs/garage:v2.5.0`（S3 互換。スロットごとのバケット `insta-s<N>`） |
 | シークレットと設定 | `wrangler secret` と `wrangler.jsonc` の `vars` | worktree の `.dev.vars`（git には入れない。#20 のスロットのスクリプトが作る。`.env.local` は使わない） |
+| 定期ジョブ | Cron Triggers（`wrangler.jsonc` の `triggers.crons`、入口は `src/worker.mjs`） | `pnpm jobs:run <名前>`、と `pnpm start --test-scheduled` の `/__scheduled?cron=0+18+*+*+*` |
 | 結合テストの DB | – | `getPlatformProxy({ persist: false })` のメモリ上の D1 |
 
 ## 環境変数
@@ -65,7 +66,8 @@ D1 は環境変数ではなく、`wrangler.jsonc` のバインディング `DB`�
 | `lint` | `eslint .` | ESLint 10、`eslint.config.mjs` |
 | `format:check` | `prettier . --check` | |
 | `test` | `vitest run` | 単体と結合 |
-| `e2e` | `playwright test` | `webServer` が `start` をスロットのポートで起動する |
+| `e2e` | `playwright test` | `webServer` が `start --test-scheduled` をスロットのポートで起動する |
+| `jobs:run` | `node scripts/run-job.ts` | `pnpm jobs:run <名前>` で定期ジョブを 1 つ手で動かす（[ADR-0049](../adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)） |
 
 ## ルートのファイルの場所
 
@@ -78,7 +80,14 @@ Next.js の App Router の規約に従い、`src/app/` に置く。ルートの�
 | `/accounts/login` | `src/app/accounts/login/page.tsx` |
 | `/accounts/edit` | `src/app/(app)/accounts/edit/page.tsx` |
 | `/create` | `src/app/(app)/create/page.tsx` |
+| `/stories/create` | `src/app/(app)/stories/create/page.tsx` |
+| `/explore` | `src/app/(app)/explore/page.tsx` |
+| `/explore/search` | `src/app/(app)/explore/search/page.tsx` |
+| `/stories/[username]` | `src/app/(app)/stories/[username]/page.tsx`（`(app)` の画面から開くときは `src/app/(app)/@modal/(.)stories/[username]/page.tsx` が重なる。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） |
+| `/notifications` | `src/app/(app)/notifications/page.tsx` |
+| `/api/notifications/stream` | `src/app/api/notifications/stream/route.ts`（未読数の SSE。[ADR-0050](../adr/0050-notifications-via-sse-with-d1-checks.md)） |
 | `/p/[postId]` | `src/app/p/[postId]/page.tsx` |
+| `/explore/tags/[tag]` | `src/app/(app)/explore/tags/[tag]/page.tsx` |
 | `/[username]` | `src/app/[username]/page.tsx` |
 | `/[username]/followers` | `src/app/[username]/followers/page.tsx` |
 | `/[username]/following` | `src/app/[username]/following/page.tsx` |

@@ -4,12 +4,15 @@ import { useTestDb } from '../../../../tests/helpers/db';
 import { createPost, createLike } from '../../../../tests/helpers/posts';
 import { createUser } from '../../../../tests/helpers/users';
 import {
+  bookmarks,
   comments,
   follows,
   likes,
   media,
   posts,
   rateLimits,
+  stories,
+  storyViews,
   users,
 } from '../../../shared/db/schema';
 import { operationSchema, runOperation, type Operation } from './operations';
@@ -294,5 +297,110 @@ describe('E2E ハーネスの操作（seedFollowers）', () => {
     ).rejects.toThrow();
     expect(await t.db.select().from(follows).where(eq(follows.followeeId, other.id))).toEqual([]);
     expect((await t.db.select().from(users).where(eq(users.username, 'dup_f'))).length).toBe(0);
+  });
+});
+
+describe('E2E ハーネスの操作（ストーリー）', () => {
+  const story = (authorId: string, over: Record<string, unknown> = {}) => ({
+    id: crypto.randomUUID(),
+    authorId,
+    type: 'image',
+    storageKey: `stories/${authorId}/${crypto.randomUUID()}`,
+    width: 100,
+    height: 200,
+    durationMs: null,
+    altText: '',
+    createdAt: Date.UTC(2026, 10, 1),
+    expiresAt: Date.UTC(2026, 10, 1) + 86_400_000,
+    ...over,
+  });
+
+  it('insertStories と insertStoryViews が行を入れ、上限を超える入力を拒む', async () => {
+    const author = await createUser(t.db);
+    const viewer = await createUser(t.db);
+    const a = story(author.id);
+    const b = story(author.id, { type: 'video', durationMs: 5000, altText: '動画' });
+    await run({ op: 'insertStories', stories: [a, b] });
+    const saved = await t.db.select().from(stories).orderBy(stories.storageKey);
+    expect(saved).toHaveLength(2);
+    expect(saved.find((r) => r.id === b.id)).toMatchObject({
+      type: 'video',
+      durationMs: 5000,
+      altText: '動画',
+    });
+    expect(saved[0]!.expiresAt.getTime() - saved[0]!.createdAt.getTime()).toBe(86_400_000);
+
+    await run({
+      op: 'insertStoryViews',
+      views: [{ storyId: a.id, viewerId: viewer.id, createdAt: Date.UTC(2026, 10, 1, 1) }],
+    });
+    const views = await t.db.select().from(storyViews);
+    expect(views.map((v) => [v.storyId, v.viewerId])).toEqual([[a.id, viewer.id]]);
+
+    const sixty = Array.from({ length: 60 }, () => story(author.id));
+    expect(operationSchema.safeParse({ op: 'insertStories', stories: sixty }).success).toBe(true);
+    expect(
+      operationSchema.safeParse({ op: 'insertStories', stories: [...sixty, story(author.id)] })
+        .success,
+    ).toBe(false);
+    const view = { storyId: a.id, viewerId: viewer.id, createdAt: 1 };
+    expect(
+      operationSchema.safeParse({ op: 'insertStoryViews', views: Array(60).fill(view) }).success,
+    ).toBe(true);
+    expect(
+      operationSchema.safeParse({ op: 'insertStoryViews', views: Array(61).fill(view) }).success,
+    ).toBe(false);
+    for (const bad of [
+      { op: 'insertStories', stories: [] },
+      { op: 'insertStories', stories: [{ ...a, extra: 1 }] },
+      { op: 'insertStoryViews', views: [] },
+      { op: 'insertStoryViews', views: [{ ...view, extra: 1 }] },
+    ]) {
+      expect(operationSchema.safeParse(bad).success, JSON.stringify(bad).slice(0, 50)).toBe(false);
+    }
+  });
+
+  it('insertStories は失敗すると 1 件も残さない', async () => {
+    const author = await createUser(t.db);
+    const dup = story(author.id);
+    await expect(run({ op: 'insertStories', stories: [dup, dup] })).rejects.toThrow();
+    expect(await t.db.select().from(stories)).toEqual([]);
+  });
+});
+
+describe('E2E ハーネスの操作（保存）', () => {
+  it('insertBookmarks が保存の行を時刻つきで書き、重複は無視し、上限を超える入力を拒む', async () => {
+    const author = await createUser(t.db);
+    const viewer = await createUser(t.db);
+    const a = await createPost(t.db, author.id);
+    const b = await createPost(t.db, author.id);
+    const items = [
+      { postId: a.id, savedAt: Date.UTC(2026, 10, 1, 1) },
+      { postId: b.id, savedAt: Date.UTC(2026, 10, 1, 2) },
+    ];
+    await run({ op: 'insertBookmarks', userId: viewer.id, items });
+    await run({ op: 'insertBookmarks', userId: viewer.id, items: [items[0]] });
+    const rows = await t.db.select().from(bookmarks).orderBy(bookmarks.createdAt);
+    expect(rows.map((r) => [r.userId, r.postId, r.createdAt.getTime()])).toEqual(
+      items.map((i) => [viewer.id, i.postId, i.savedAt]),
+    );
+
+    const item = { postId: a.id, savedAt: 1 };
+    const schema = (n: number) =>
+      operationSchema.safeParse({
+        op: 'insertBookmarks',
+        userId: viewer.id,
+        items: Array(n).fill(item),
+      }).success;
+    expect(schema(50)).toBe(true);
+    expect(schema(51)).toBe(false);
+    expect(schema(0)).toBe(false);
+    expect(
+      operationSchema.safeParse({
+        op: 'insertBookmarks',
+        userId: viewer.id,
+        items: [{ ...item, extra: 1 }],
+      }).success,
+    ).toBe(false);
   });
 });

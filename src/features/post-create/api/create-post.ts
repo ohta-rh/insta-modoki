@@ -1,11 +1,20 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import { requireUser } from '../../auth';
 import type { AuthEnv } from '../../auth/api/auth-env';
+import { hashtagStatements } from '../../hashtag';
 import { getDb, type Db } from '../../../shared/db/client';
 import { newId } from '../../../shared/db/id';
 import { getRequestEnv } from '../../../shared/db/request';
 import { media, posts, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
+import {
+  HASHTAG_COUNT_MESSAGE,
+  HASHTAG_LENGTH_MESSAGE,
+  MAX_HASHTAGS,
+  MAX_HASHTAG_LENGTH,
+  extractHashtags,
+} from '../../../shared/hashtag';
+import { charLength } from '../../../shared/text';
 import { consume } from '../../../shared/security/rate-limit';
 import {
   getStorageClient,
@@ -91,7 +100,7 @@ async function checkKeys(db: Db, client: StorageClient, userId: string, keys: st
 /**
  * Creates a post with 1 to 10 photos that `uploadImages` already stored. Order: login, input
  * checks, a repeat of the same `clientRequestId` (returns the first result, not counted), the
- * hourly limit, the storage checks, then one `db.batch` for the `posts` and `media` rows.
+ * hourly limit, the storage checks, then one `db.batch` for the `posts`, `media` and tag rows.
  */
 export async function createPost(
   input: unknown,
@@ -107,6 +116,21 @@ export async function createPost(
   }
   const { caption, media: photos, clientRequestId } = parsed.data;
 
+  // Over the tag limits is rejected here, before any row or rate-limit count is used.
+  const names = extractHashtags(caption);
+  const tagMessage =
+    names.length > MAX_HASHTAGS
+      ? HASHTAG_COUNT_MESSAGE
+      : names.some((n) => charLength(n) > MAX_HASHTAG_LENGTH)
+        ? HASHTAG_LENGTH_MESSAGE
+        : null;
+  if (tagMessage !== null) {
+    throw new AppError('VALIDATION', {
+      fieldErrors: { caption: [tagMessage] },
+      message: tagMessage,
+    });
+  }
+
   const db = getDb(env);
   const earlier = await existingPostId(db, user.id, clientRequestId);
   if (earlier !== null) return { postId: earlier };
@@ -120,6 +144,7 @@ export async function createPost(
   );
 
   const postId = newId();
+  const createdAt = new Date(deps.now ?? Date.now());
   try {
     await db.batch([
       db.insert(posts).values({
@@ -127,7 +152,7 @@ export async function createPost(
         authorId: user.id,
         caption,
         clientRequestId,
-        createdAt: new Date(deps.now ?? Date.now()),
+        createdAt,
       }),
       ...photos.map((p, position) =>
         db.insert(media).values({
@@ -142,6 +167,7 @@ export async function createPost(
           thumbhash: p.thumbhash,
         }),
       ),
+      ...hashtagStatements(db, { postId, names, createdAt }),
     ]);
   } catch (error) {
     // A second call with the same id raced this one and won: return its post.

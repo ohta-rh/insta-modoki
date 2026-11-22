@@ -35,6 +35,7 @@ const post = (
   likeCount: 0,
   commentCount: 0,
   likedByMe: false,
+  savedByMe: false,
   createdAt: '2026-11-21T00:00:00.000Z',
   ...over,
 });

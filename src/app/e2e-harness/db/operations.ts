@@ -1,13 +1,18 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { hashtagStatements } from '../../../features/hashtag';
 import { getDb, type DbEnv } from '../../../shared/db/client';
 import {
+  bookmarks,
   comments,
   follows,
   likes,
   media,
+  notifications,
   posts,
   rateLimits,
+  stories,
+  storyViews,
   users,
 } from '../../../shared/db/schema';
 
@@ -90,6 +95,58 @@ export const operationSchema = z.discriminatedUnion('op', [
       .min(1)
       .max(50),
   }),
+  // Stories (#47): one insert per row in one batch.
+  z.strictObject({
+    op: z.literal('insertStories'),
+    stories: z
+      .array(
+        z.strictObject({
+          id,
+          authorId: id,
+          type: z.enum(['image', 'video']),
+          storageKey: text(200),
+          width: z.number().int().min(1).max(10_000),
+          height: z.number().int().min(1).max(10_000),
+          durationMs: z.number().int().min(1).max(15_000).nullable(),
+          altText: z.string().max(500),
+          createdAt: ms,
+          expiresAt: ms,
+        }),
+      )
+      .min(1)
+      .max(60),
+  }),
+  z.strictObject({
+    op: z.literal('insertStoryViews'),
+    views: z
+      .array(z.strictObject({ storyId: id, viewerId: id, createdAt: ms }))
+      .min(1)
+      .max(60),
+  }),
+  // Tags an inserted post as createPost would (hashtags #49): `insertPost` writes none.
+  z.strictObject({
+    op: z.literal('tagPost'),
+    postId: id,
+    createdAt: ms,
+    names: z.array(text(100)).min(1).max(30),
+  }),
+  z.strictObject({
+    op: z.literal('seedNotification'),
+    recipientId: id,
+    actorId: id,
+    type: z.enum(['like', 'follow']),
+    postId: id.optional(),
+    createdAt: ms,
+  }),
+  // Saved posts (#51): one insert per row in one batch; a repeat is ignored.
+  z.strictObject({
+    op: z.literal('insertBookmarks'),
+    userId: id,
+    items: z
+      .array(z.strictObject({ postId: id, savedAt: ms }))
+      .min(1)
+      .max(50),
+  }),
 ]);
 
 export type Operation = z.infer<typeof operationSchema>;
@@ -168,6 +225,18 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
         followerId: operation.followerId,
         followeeId: operation.followeeId,
         createdAt: new Date(),
+      });
+      return;
+    }
+    case 'seedNotification': {
+      // A row as the app would write it, for a screen test that needs notifications at once.
+      await db.insert(notifications).values({
+        id: crypto.randomUUID(),
+        recipientId: operation.recipientId,
+        actorId: operation.actorId,
+        type: operation.type,
+        postId: operation.type === 'like' ? (operation.postId ?? null) : null,
+        createdAt: new Date(operation.createdAt),
       });
       return;
     }
@@ -253,6 +322,51 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
         ),
       ];
       await db.batch(rows as unknown as Parameters<typeof db.batch>[0]);
+      return;
+    }
+    case 'insertStories': {
+      await db.batch(
+        operation.stories.map((r) =>
+          db.insert(stories).values({
+            ...r,
+            createdAt: new Date(r.createdAt),
+            expiresAt: new Date(r.expiresAt),
+          }),
+        ) as unknown as Parameters<typeof db.batch>[0],
+      );
+      return;
+    }
+    case 'insertStoryViews': {
+      await db.batch(
+        operation.views.map((r) =>
+          db.insert(storyViews).values({ ...r, createdAt: new Date(r.createdAt) }),
+        ) as unknown as Parameters<typeof db.batch>[0],
+      );
+      return;
+    }
+    case 'insertBookmarks': {
+      await db.batch(
+        operation.items.map((item) =>
+          db
+            .insert(bookmarks)
+            .values({
+              userId: operation.userId,
+              postId: item.postId,
+              createdAt: new Date(item.savedAt),
+            })
+            .onConflictDoNothing(),
+        ) as unknown as Parameters<typeof db.batch>[0],
+      );
+      return;
+    }
+    case 'tagPost': {
+      await db.batch(
+        hashtagStatements(db, {
+          postId: operation.postId,
+          names: operation.names,
+          createdAt: new Date(operation.createdAt),
+        }) as unknown as Parameters<typeof db.batch>[0],
+      );
       return;
     }
   }

@@ -18,11 +18,12 @@
 # 製品と計画
 
 * [ADR-0003: Instagram の UX と機能を忠実に再現し、ブランドは独自にする](0003-reproduce-ux-under-own-brand.md) - 採用
-* [ADR-0013: ロードマップを 4 つのマイルストーン（ローカルの MVP → Cloudflare で公開 → Phase 2 → Phase 3）に組み直す](0013-four-milestones-local-mvp-then-cloudflare.md) - 採用
+* [ADR-0013: ロードマップを 4 つのマイルストーン（ローカルの MVP → Cloudflare で公開 → Phase 2 → Phase 3）に組み直す](0013-four-milestones-local-mvp-then-cloudflare.md) - 置き換え（ADR-0052）
 
 # アーキテクチャ
 
 * [ADR-0014: コードは機能ごとの slice（src/features/<name>/）と共有の部分（src/shared/）に分ける](0014-code-in-feature-slices.md) - 採用
+* [ADR-0050: 通知は SSE で画面へ押し出し、サーバーは 3 秒ごとに D1 を確認する（Durable Objects は使わない）](0050-notifications-via-sse-with-d1-checks.md) - 採用
 * [ADR-0054: ハイドレーション前に選ばれたファイルはマウント時に取り込み、選択は無効にしない](0054-pick-up-files-chosen-before-hydration-on-mount.md) - 採用
 * [ADR-0016: 言語は TypeScript、UI は React にする（フレームワークは #18 で決める）](0016-typescript-and-react.md) - 採用
 * [ADR-0018: アプリは Next.js 16（App Router）を OpenNext で Cloudflare Workers に載せて動かす](0018-nextjs-on-workers-via-opennext.md) - 採用
@@ -46,11 +47,14 @@
 * [ADR-0023: compose のサービスは Garage だけにし、スロットは D1 のファイル・バケット・.dev.vars で分ける](0023-slots-with-garage-and-d1-files.md) - 置き換え: ADR-0037
 * [ADR-0037: ローカルの画像は Garage のウェブ用エンドポイント（3912）から別 origin で配信する](0037-serve-local-media-from-garage-web-endpoint.md) - 採用
 * [ADR-0011: デプロイ先は Cloudflare とし、無料枠に収めることを前提にする](0011-deploy-to-cloudflare-free-tier-first.md) - 採用
+* [ADR-0049: 定期ジョブは Cron Trigger から Worker の入口 src/worker.mjs で起動し、Worker と Node で同じコードを動かす](0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md) - 採用
 * [ADR-0041: E2E の準備の書き込みは、テストのプロセスから SQLite を直接書かず、アプリの /e2e-harness/db を通す](0041-e2e-setup-writes-go-through-the-app.md) - 採用
 * [ADR-0043: プロフィールのグリッドからのモーダルは、Next.js の intercepting routes と parallel routes で作る](0043-profile-grid-modal-by-intercepting-route.md) - 採用
 * [ADR-0045: chrome-devtools の MCP が使えないとき、epic-tester は画面ありの Google Chrome を CDP で操作して総合試験を行う](0045-epic-test-may-drive-headed-chrome-over-cdp.md) - 採用
 * [ADR-0046: 性能の基準は THRESHOLDS に 1 か所で定め、初期 JS は verify の既定の手順で、Lighthouse・INP・フィード API の p95 は --with-perf と main への push の CI で検査する](0046-performance-budget-in-verify-and-ci.md) - 採用
 * [ADR-0048: 確かめた AC はその場で issue のチェックを付け、PASS した EPIC の画面に後から触れたら総合試験をやり直す](0048-tick-ac-on-evidence-and-retest-epics-after-later-changes.md) - 採用
+* [ADR-0052: マイルストーンの順番を M1 → M3（Phase 2 をローカルで）→ M2（Cloudflare で公開）→ M4 に変える](0052-phase-2-before-cloudflare-publication.md) - 採用
+* [ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる](0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) - 採用
 
 # ひな形
 

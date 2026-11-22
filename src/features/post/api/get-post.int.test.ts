@@ -65,6 +65,7 @@ describe('getPost', () => {
         'likeCount',
         'likedByMe',
         'media',
+        'savedByMe',
       ].sort(),
     );
     expect(Object.keys(viaViewer.author).sort()).toEqual(['avatarUrl', 'displayName', 'username']);

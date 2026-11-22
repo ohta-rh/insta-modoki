@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { countQueries } from '../../../../tests/helpers/count-queries';
 import { useTestDb } from '../../../../tests/helpers/db';
-import { createLike, createPost } from '../../../../tests/helpers/posts';
+import { createBookmark, createLike, createPost } from '../../../../tests/helpers/posts';
 import { loadStorageEnv } from '../../../../tests/helpers/storage';
 import { createUser } from '../../../../tests/helpers/users';
 import { getDb } from '../../../shared/db/client';
@@ -42,6 +42,24 @@ describe('loadPostViews', () => {
       false,
     ]);
     expect((await loadPostViews(t.db, storage, ids, null)).map((v) => v.likedByMe)).toEqual([
+      false,
+      false,
+    ]);
+  });
+
+  it('savedByMe は閲覧者が保存した投稿だけ true で、閲覧者がいないときは全て false', async () => {
+    const author = await createUser(t.db);
+    const viewer = await createUser(t.db);
+    const saved = await createPost(t.db, author.id);
+    const other = await createPost(t.db, author.id);
+    await createBookmark(t.db, viewer.id, saved.id);
+    await createBookmark(t.db, author.id, other.id);
+    const ids = [saved.id, other.id];
+    expect((await loadPostViews(t.db, storage, ids, viewer.id)).map((v) => v.savedByMe)).toEqual([
+      true,
+      false,
+    ]);
+    expect((await loadPostViews(t.db, storage, ids, null)).map((v) => v.savedByMe)).toEqual([
       false,
       false,
     ]);

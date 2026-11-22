@@ -25,6 +25,13 @@ export type PostView = {
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+  savedByMe: boolean;
   /** ISO 8601, UTC. */
   createdAt: string;
 };
+
+/** One page of a cursor list: `nextCursor` is null on the last page. */
+export type Page<T> = { items: T[]; nextCursor: string | null };
+
+/** A grid tile of someone's post: its first photo, how many it has, and its author's username. */
+export type PostTile = { id: string; cover: MediaView; mediaCount: number; username: string };

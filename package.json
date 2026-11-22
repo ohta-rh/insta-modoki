@@ -19,7 +19,8 @@
     "verify": "node scripts/verify.mjs",
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "seed:demo": "node scripts/seed/index.ts --profile demo",
-    "seed:bench": "node scripts/seed/index.ts --profile bench"
+    "seed:bench": "node scripts/seed/index.ts --profile bench",
+    "jobs:run": "node scripts/run-job.ts"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "1.20.16",

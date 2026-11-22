@@ -200,7 +200,9 @@ signedIn('素早く 5 回押すと最後の状態で止まり 同時のリクエ
   await page.route(
     (url) => url.pathname === `/p/${post.id}`,
     async (route) => {
-      if (route.request().method() !== 'POST') return route.continue();
+      // The unread-badge poll (a POST with body `[]`) is not a like request.
+      if (route.request().method() !== 'POST' || route.request().postData() === '[]')
+        return route.continue();
       sent += 1;
       open += 1;
       most = Math.max(most, open);
@@ -318,7 +320,13 @@ signedIn(
     seedLikers(post.id, 2);
     let finished = 0;
     page.on('requestfinished', (r) => {
-      if (r.method() === 'POST' && new URL(r.url()).pathname === `/p/${post.id}`) finished += 1;
+      // The unread-badge poll is a Server Action POST with no arguments (body `[]`); not counted.
+      if (
+        r.method() === 'POST' &&
+        r.postData() !== '[]' &&
+        new URL(r.url()).pathname === `/p/${post.id}`
+      )
+        finished += 1;
     });
     await page.goto(`/p/${post.id}`);
     await waitForHydration(page);

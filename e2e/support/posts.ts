@@ -98,3 +98,8 @@ export async function delayMedia(page: Page, delayMs: number): Promise<void> {
     await route.continue();
   });
 }
+
+/** Tags an inserted post with `names` (normalized, as `createPost` stores them), at the post's time. */
+export function tagPost(postId: string, names: string[], createdAt: number): void {
+  harness({ op: 'tagPost', postId, names, createdAt });
+}

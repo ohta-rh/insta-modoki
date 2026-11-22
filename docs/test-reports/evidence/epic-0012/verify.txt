@@ -1,0 +1,64 @@
+# 1 回目（e2e で 1 件落ち: notifications.spec.ts:24、4 並列の負荷で 18.1 秒。終了コード 1）
+verify: typecheck ...
+verify: typecheck OK
+verify: lint ...
+verify: lint OK
+verify: format ...
+verify: format OK
+verify: docs ...
+verify: docs OK
+verify: unit ...
+ Test Files  98 passed (98)
+      Tests  549 passed (549)
+verify: unit OK
+verify: integration ...
+ Test Files  53 passed | 1 skipped (54)
+      Tests  349 passed | 4 skipped (353)
+verify: integration OK
+verify: build ...
+verify: build OK
+verify: e2e ...
+  ✘  193 [chromium] › e2e/notifications.spec.ts:24:1 › いいねの通知がバッジに 10 秒以内に出て、一覧を開くと既読になる (18.1s)
+    Error: expect(locator).toBeVisible() failed
+      53 |     // A did nothing: the name changes by itself within one polling interval (10 s) plus the call.
+  1 failed
+  2 did not run
+  198 passed (1.5m)
+[ELIFECYCLE] Command failed with exit code 1.
+verify: FAIL e2e
+
+# 単独の再実行（notifications.spec.ts と bookmark.spec.ts）: 11 passed
+  ✓   4 [chromium] › e2e/bookmark.spec.ts:69:1 › フィードと投稿詳細で保存を押すと即座に反映され、再読み込みしても残る (11.5s)
+  ✓   1 [chromium] › e2e/bookmark.spec.ts:255:1 › 他人のプロフィールには保存済みタブが出ず、tab=saved は無視される (13.0s)
+  ✓   7 [chromium] › e2e/bookmark.spec.ts:241:1 › 保存済みタブは下までスクロールすると続きを読み込む (13.0s)
+  ✓   2 [chromium] › e2e/bookmark.spec.ts:193:1 › 保存すると保存済みタブに出て、解除すると消える (13.5s)
+  ✓  11 [chromium] › e2e/notifications.spec.ts:84:1 › キーボードだけで通知を開け、axe の重大な違反が 0 件 (3.5s)
+  ✓  10 [chromium] › e2e/notifications.spec.ts:24:1 › いいねの通知がバッジに 10 秒以内に出て、一覧を開くと既読になる (11.9s)
+
+  11 passed (30.8s)
+
+# 2 回目（全体、終了コード 0）
+verify: typecheck ...
+verify: typecheck OK
+verify: lint ...
+verify: lint OK
+verify: format ...
+verify: format OK
+verify: docs ...
+verify: docs OK
+verify: unit ...
+ Test Files  98 passed (98)
+      Tests  549 passed (549)
+verify: unit OK
+verify: integration ...
+ Test Files  53 passed | 1 skipped (54)
+      Tests  349 passed | 4 skipped (353)
+verify: integration OK
+verify: build ...
+verify: build OK
+verify: e2e ...
+  201 passed (1.7m)
+verify: e2e OK
+verify: perf-budget ...
+verify: perf-budget OK
+verify: OK

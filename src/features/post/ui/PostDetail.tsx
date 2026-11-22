@@ -1,3 +1,4 @@
+import { SaveButton } from '../../bookmark';
 import { CommentCountLink, CommentCountProvider, type CommentView, type Page } from '../../comment';
 import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like';
 import type { PostView } from '../model/schema';
@@ -39,6 +40,7 @@ export function PostDetail({
               </>
             }
             comment={<CommentCountLink />}
+            save={<SaveButton postId={post.id} initialSaved={post.savedByMe} />}
             menu={
               isOwner ? <DeletePostButton postId={post.id} username={post.author.username} /> : null
             }

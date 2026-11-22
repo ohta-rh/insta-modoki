@@ -50,4 +50,33 @@ describe('AppShell', () => {
   it('ナビは aria-label="メイン"', () => {
     expect(render().match(/<nav[^>]*aria-label="メイン"/g)).toHaveLength(2);
   });
+
+  it('badges を渡したときだけその項目に差し込む', () => {
+    const none = render();
+    expect(none).not.toContain('BADGE');
+    // No badge: the item is the bare <a>, no wrapper.
+    expect(none).not.toContain('pointer-events-none');
+    const html = render({ badges: { notifications: <b>BADGE</b> } });
+    expect(html.match(/BADGE/g)).toHaveLength(2);
+    // Only the 通知 item gets a wrapper; the others stay a bare <a> directly in the nav.
+    expect(html.match(/pointer-events-none/g)).toHaveLength(2);
+  });
+
+  it('badges はリンクの外、同じ項目の囲みの中に差し込む', () => {
+    const html = render({ badges: { notifications: <b>BADGE</b> } });
+    // Each navigation: <div class="relative ..."><a ...>…<span>通知</span></a><span class="pointer-events-none absolute ..."><b>BADGE</b></span></div>
+    const wrapped = html.match(
+      /<div class="relative[^"]*"><a [^>]*href="\/notifications"[^>]*>(?:(?!<\/a>).)*<span>通知<\/span><\/a><span class="pointer-events-none absolute [^"]*"><b>BADGE<\/b><\/span><\/div>/g,
+    );
+    expect(wrapped).toHaveLength(2);
+    // Nothing of the badge inside any link.
+    for (const a of html.match(/<a [^>]*>.*?<\/a>/g) ?? []) expect(a).not.toContain('BADGE');
+  });
+
+  it('linkAs を渡したときだけその項目の <a> を差し替える', () => {
+    const Marked = (props: React.ComponentProps<'a'>) => <a {...props} data-marked="1" />;
+    expect(render()).not.toContain('data-marked');
+    const html = render({ linkAs: { notifications: Marked } });
+    expect(html.match(/data-marked="1"/g)).toHaveLength(2);
+  });
 });

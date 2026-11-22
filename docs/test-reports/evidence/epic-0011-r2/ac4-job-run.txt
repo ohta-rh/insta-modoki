@@ -1,0 +1,3 @@
+exit code: 0
+Using secrets defined in .dev.vars
+notification-cleanup: deleted=1

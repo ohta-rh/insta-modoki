@@ -1,0 +1,6 @@
+$ pnpm jobs:run upload-orphan-sweep
+Using secrets defined in .dev.vars
+upload-orphan-sweep: deleted=0
+$ node scripts/run-job.ts upload-orphan-sweep
+
+exit=0

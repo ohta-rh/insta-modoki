@@ -41,13 +41,17 @@ export async function getObject(
 /** Where a browser reads an object from: the slot's public media origin, the same URL the app renders. */
 export const mediaUrl = (key: string): string => `${settings().mediaBase}/${key}`;
 
-/** Stores an object under the key (a few bytes unless a body is given). */
-export async function putObject(key: string, body: BodyInit = new Uint8Array(5)): Promise<void> {
+/** Stores an object under the key (a few bytes unless a body is given; WebP unless a type is given). */
+export async function putObject(
+  key: string,
+  body: BodyInit = new Uint8Array(5),
+  contentType = 'image/webp',
+): Promise<void> {
   const { endpoint, bucket, aws } = settings();
   const res = await aws.fetch(`${endpoint}/${bucket}/${key}`, {
     method: 'PUT',
     body,
-    headers: { 'content-type': 'image/webp' },
+    headers: { 'content-type': contentType },
   });
   if (!res.ok) throw new Error(`PUT ${key}: ${res.status}`);
 }

@@ -1,6 +1,6 @@
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import type { Db } from '../../../shared/db/client';
-import { likes, media, posts, users } from '../../../shared/db/schema';
+import { bookmarks, likes, media, posts, users } from '../../../shared/db/schema';
 import { avatarUrl, mediaSrcset, type StorageEnv } from '../../../shared/storage';
 import type { MediaView, PostView } from '../model/schema';
 
@@ -9,7 +9,7 @@ const CHUNK = 50;
 
 /**
  * PostViews for `postIds`, in that order, built with a fixed number of D1 round trips per 50 ids
- * (posts with their authors, photos and the viewer's likes in one batch), never one per post.
+ * (posts with their authors, photos and the viewer's likes and saves in one batch), never one per post.
  * An id with no post is skipped. `viewerId` null means nobody is signed in: nothing is liked.
  * This is the one way a PostView is built (getPost and the feed use it).
  */
@@ -22,7 +22,7 @@ export async function loadPostViews(
   const byId = new Map<string, PostView>();
   for (let i = 0; i < postIds.length; i += CHUNK) {
     const ids = postIds.slice(i, i + CHUNK);
-    const [postRows, mediaRows, likeRows] = await db.batch([
+    const [postRows, mediaRows, likeRows, savedRows] = await db.batch([
       db
         .select({
           id: posts.id,
@@ -55,6 +55,10 @@ export async function loadPostViews(
         .select({ postId: likes.postId })
         .from(likes)
         .where(and(inArray(likes.postId, ids), eq(likes.userId, viewerId ?? ''))),
+      db
+        .select({ postId: bookmarks.postId })
+        .from(bookmarks)
+        .where(and(inArray(bookmarks.postId, ids), eq(bookmarks.userId, viewerId ?? ''))),
     ]);
 
     const mediaOf = new Map<string, MediaView[]>();
@@ -71,6 +75,7 @@ export async function loadPostViews(
       mediaOf.set(m.postId, list);
     }
     const liked = new Set(likeRows.map((l) => l.postId));
+    const saved = new Set(savedRows.map((b) => b.postId));
     for (const post of postRows) {
       byId.set(post.id, {
         id: post.id,
@@ -84,6 +89,7 @@ export async function loadPostViews(
         likeCount: post.likeCount,
         commentCount: post.commentCount,
         likedByMe: liked.has(post.id),
+        savedByMe: saved.has(post.id),
         createdAt: post.createdAt.toISOString(),
       });
     }

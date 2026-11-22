@@ -223,7 +223,9 @@ signedIn(
     await page.route(
       (url) => url.pathname === `/p/${mine.id}`,
       async (route) => {
-        if (route.request().method() !== 'POST') return route.continue();
+        // The unread-badge poll (a POST with body `[]`) is not a comment request.
+        if (route.request().method() !== 'POST' || route.request().postData() === '[]')
+          return route.continue();
         posts += 1;
         if (!failing) return route.continue();
         await gate;

@@ -5,6 +5,7 @@ import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { follows, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
+import { deleteFollowNotification, insertFollowNotification } from '../../notification';
 import { lookupUsername } from '../../profile';
 import { followInput, SELF_FOLLOW_MESSAGE, type FollowResult } from '../model/schema';
 
@@ -54,12 +55,18 @@ export async function setFollow(
           })
           .onConflictDoNothing(),
         countFollowers,
+        insertFollowNotification(db, {
+          actorId: user.id,
+          followeeId: target.id,
+          now: deps.now ?? Date.now(),
+        }),
       ])
     : await db.batch([
         db
           .delete(follows)
           .where(and(eq(follows.followerId, user.id), eq(follows.followeeId, target.id))),
         countFollowers,
+        deleteFollowNotification(db, { actorId: user.id, followeeId: target.id }),
       ]);
   return { following, followerCount: counted[0]?.n ?? 0 };
 }

@@ -39,6 +39,11 @@ for (const width of [375, 768]) {
     await page.goto('/');
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: '本文へ移動' })).toBeFocused();
+    if (width === 375) {
+      // The bottom nav follows the main region, whose first stop on the home is the story tray's add button.
+      await page.keyboard.press('Tab');
+      await expect(page.getByRole('link', { name: 'ストーリーを追加' })).toBeFocused();
+    }
     for (const label of LABELS) {
       await page.keyboard.press('Tab');
       await expect(
@@ -52,7 +57,7 @@ for (const width of [375, 768]) {
       page.getByRole('navigation', { name: 'メイン' }).getByRole('link', { name: '検索' }),
     ).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/\/explore\/search$/);
+    await expect(page).toHaveURL(/\/explore$/);
   });
 }
 
@@ -61,10 +66,13 @@ test('フォーカスの輪郭が 2px 以上', async ({ page }) => {
   await page.goto('/');
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'ストーリーを追加' })).toBeFocused();
+  await page.keyboard.press('Tab');
   const link = bottom(page).getByRole('link', { name: 'ホーム' });
   await expect(link).toBeFocused();
   const width = await link.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
   expect(width).toBeGreaterThanOrEqual(2);
+  await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Shift+Tab');
   const skip = page.getByRole('link', { name: '本文へ移動' });
   await expect(skip).toBeFocused();
@@ -79,8 +87,19 @@ test('現在のパスの項目だけが aria-current="page"', async ({ page }) =
   await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('ホーム');
   await expect(bottom(page).locator('[aria-current="page"]')).toHaveCount(1);
   await bottom(page).getByRole('link', { name: '検索' }).click();
-  await expect(page).toHaveURL(/\/explore\/search$/);
+  await expect(page).toHaveURL(/\/explore$/);
   await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('検索');
+  await expect(bottom(page).locator('[aria-current="page"]')).toHaveCount(1);
+  // The search screen below /explore keeps 検索 as the current item.
+  await page.goto('/explore/search');
+  await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('検索');
+
+  // The side nav at 768px opens the same screen.
+  await page.setViewportSize({ width: 768, height: 800 });
+  await page.goto('/');
+  await side(page).getByRole('link', { name: '検索' }).click();
+  await expect(page).toHaveURL(/\/explore$/);
+  await expect(side(page).locator('[aria-current="page"]')).toHaveText('検索');
 });
 
 for (const width of [375, 768]) {

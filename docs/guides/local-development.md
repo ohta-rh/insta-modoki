@@ -47,12 +47,26 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 |---|---|
 | `pnpm seed:demo` | 利用者 30 人（`demo` を含む）、投稿 300 件、画像（1〜10 枚）、いいね・コメント・フォロー。最後の行は `seed: demo OK users=30 posts=300 media=<n>`。約 20 秒 |
 | `pnpm seed:bench` | 利用者 1,000 人、投稿 10,000 件。画像は 60 枚を使い回す（このデータはアプリから消さない）。最後の行は `seed: bench OK users=1000 posts=10000`。約 1 分。API の計測の前に流す明示のコマンドで、`verify` の E2E では流さない |
+| `node scripts/backfill-hashtags.ts` | スロットの D1 にある既存の投稿のキャプションから、タグ（`hashtags`・`post_hashtags`）を作る。何度流しても同じ。1 投稿は最初の 30 個まで、100 字を超えるタグは飛ばす。最後の行は `backfill-hashtags: OK posts=<n> links=<m>`（2 回目は `links=0`）。seed の後に流すと、デモの投稿のタグの一覧ができる |
 
 * 同じ DB に何回流しても結果は同じ。メールが `@seed.invalid` で終わる利用者（とその投稿・画像）だけを消してから入れ直す。実在の利用者の行は消さない。
 * `demo` のメールは `demo@seed.invalid`。パスワードは環境変数 `SEED_DEMO_PASSWORD` で渡す。渡さないと 16 字を作って 1 度だけ標準出力に出す（リポジトリには書かない）。
 * 画像は図形から自分で作る（第三者の素材は使わない。[ADR-0003](../adr/0003-reproduce-ux-under-own-brand.md)）。乱数は固定の seed（20261121）。
 * 終了コード: 成功 0、数が合わない・本番・失敗 1、引数の誤り 2。
 * E2E は `e2e/support/demo.ts` の `ensureDemoSeed()` と `loginAsDemo(page)` を使う。
+
+# 定期ジョブを手で動かす
+
+スロットを準備した後（`node scripts/slot.mjs prepare <N>`）、worktree の中で流す。Worker の Cron Trigger（毎日 18:00 UTC）と同じコードが、スロットの D1 とバケットに対して動く（[ADR-0049](../adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)）。
+
+| コマンド | 動き |
+|---|---|
+| `pnpm jobs:run story-cleanup` | 期限切れのストーリーの行とファイルを消す。標準出力は `story-cleanup: deleted=<件数>`（1 回に 1,000 件まで） |
+| `pnpm jobs:run storage-orphans-retry` | 消せなかったファイル（`storage_orphans`）を再試行する。10 回で諦め、ログに出す |
+| `pnpm start --test-scheduled` の後に `http://localhost:<3100+N>/__scheduled?cron=0+18+*+*+*` を開く | 全てのジョブを順に動かす（Cron Trigger と同じ経路）。結果はアプリのログに出る |
+
+* 終了コード: 成功 0、ジョブの失敗 1、知らない名前・名前なし 2（標準エラーに登録済みの名前を出す）。
+* アプリが書いている最中は SQLITE_BUSY で失敗しうる。そのときはもう一度流す。
 
 # テスト
 

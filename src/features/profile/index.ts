@@ -8,4 +8,7 @@ export { ProfileEmptyState } from './ui/ProfileEmptyState';
 export { ProfileHeader } from './ui/ProfileHeader';
 export { EditProfileForm } from './edit/EditProfileForm';
 export { PostModal } from './ui/PostModal';
-export { ProfilePostsProvider } from './ui/ProfilePostsProvider';
+export { ProfilePostsProvider, useDeletedPosts } from './ui/ProfilePostsProvider';
+export { profileTab, type ProfileTab } from './model/tab';
+export { ProfileTabs } from './ui/ProfileTabs';
+export { SavedGrid } from './ui/SavedGrid';

@@ -1,0 +1,9 @@
+rerun exit code: 0
+Using secrets defined in .dev.vars
+notification-cleanup: deleted=0
+bad name exit code: 2
+Using secrets defined in .dev.vars
+$ node scripts/run-job.ts no-such-job
+知らないジョブです: no-such-job
+登録済みのジョブ: storage-orphans-retry, story-cleanup, notification-cleanup
+[ELIFECYCLE] Command failed with exit code 2.

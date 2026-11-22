@@ -32,7 +32,8 @@ test('大きすぎる写真と許可外の形式は 送信前に理由つきで�
   const jpeg = await makeJpeg(page, 64, 48);
   const sent: string[] = [];
   page.on('request', (r) => {
-    if (r.method() !== 'GET' || new URL(r.url()).port === '3910')
+    // Not the unread-badge poll (a Server Action POST with no arguments, body `[]`).
+    if ((r.method() !== 'GET' && r.postData() !== '[]') || new URL(r.url()).port === '3910')
       sent.push(`${r.method()} ${r.url()}`);
   });
 
@@ -131,7 +132,9 @@ test('アップロードが失敗したら 理由が表示され やり直せる
   const jpeg = await makeJpeg(page, 320, 240);
   const urlRequests: string[] = [];
   page.on('request', (r) => {
-    if (r.method() === 'POST' && r.headers()['next-action']) urlRequests.push(r.url());
+    // Not the unread-badge poll (a Server Action POST with no arguments, body `[]`).
+    if (r.method() === 'POST' && r.headers()['next-action'] && r.postData() !== '[]')
+      urlRequests.push(r.url());
   });
 
   await page.route('**/media/**', (route) => route.abort());

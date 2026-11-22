@@ -6,6 +6,7 @@ import { getDb } from '../../../shared/db/client';
 import { getRequestEnv } from '../../../shared/db/request';
 import { likes, posts } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
+import { deleteLikeNotification, insertLikeNotification } from '../../notification';
 import { likeInput, type LikeResult } from '../model/schema';
 
 export type LikeDeps = { env?: AuthEnv; headers: Headers; now?: number };
@@ -27,6 +28,7 @@ export async function setLike(input: unknown, deps: LikeDeps, liked: boolean): P
   if (!isPostId(postId)) throw new AppError('NOT_FOUND');
 
   const db = getDb(env);
+  const now = deps.now ?? Date.now();
   const [, updated] = liked
     ? await db.batch([
         // Inserting from the posts row means a missing post inserts nothing (no foreign key error).
@@ -37,7 +39,7 @@ export async function setLike(input: unknown, deps: LikeDeps, liked: boolean): P
               .select({
                 userId: sql<string>`${user.id}`.as('user_id'),
                 postId: posts.id,
-                createdAt: sql<number>`${deps.now ?? Date.now()}`.as('created_at'),
+                createdAt: sql<number>`${now}`.as('created_at'),
               })
               .from(posts)
               .where(eq(posts.id, postId)),
@@ -48,6 +50,8 @@ export async function setLike(input: unknown, deps: LikeDeps, liked: boolean): P
           .set({ likeCount: sql`${posts.likeCount} + changes()` })
           .where(eq(posts.id, postId))
           .returning({ likeCount: posts.likeCount }),
+        // Last: it must not sit between the likes row and the counter (`changes()`, ADR-0039).
+        insertLikeNotification(db, { actorId: user.id, postId, now }),
       ])
     : await db.batch([
         db.delete(likes).where(and(eq(likes.postId, postId), eq(likes.userId, user.id))),
@@ -56,6 +60,7 @@ export async function setLike(input: unknown, deps: LikeDeps, liked: boolean): P
           .set({ likeCount: sql`max(${posts.likeCount} - changes(), 0)` })
           .where(eq(posts.id, postId))
           .returning({ likeCount: posts.likeCount }),
+        deleteLikeNotification(db, { actorId: user.id, postId }),
       ]);
 
   const row = updated[0];

@@ -25,7 +25,7 @@ describe('navItems', () => {
     expect(items.find((i) => i.label === 'プロフィール')?.href).toBe('/haru');
     expect(items.map((i) => i.href)).toEqual([
       '/',
-      '/explore/search',
+      '/explore',
       '/create',
       '/notifications',
       '/haru',
@@ -38,7 +38,7 @@ describe('navItems', () => {
       expect(items.find((i) => i.label === label)?.href, label).toBe('/accounts/login');
     }
     expect(items.find((i) => i.label === 'ホーム')?.href).toBe('/');
-    expect(items.find((i) => i.label === '検索')?.href).toBe('/explore/search');
+    expect(items.find((i) => i.label === '検索')?.href).toBe('/explore');
   });
 });
 
@@ -47,8 +47,12 @@ describe('isCurrent', () => {
     expect(currentLabels('/', haru)).toEqual(['ホーム']);
   });
 
-  it('/explore/search では 検索 が現在になる', () => {
-    expect(currentLabels('/explore/search', haru)).toEqual(['検索']);
+  it('検索 は /explore を指し、/explore の下で現在になる', () => {
+    expect(navItems(haru).find((i) => i.key === 'search')?.href).toBe('/explore');
+    for (const path of ['/explore', '/explore/search', '/explore/tags/tokyo']) {
+      expect(currentLabels(path, haru), path).toEqual(['検索']);
+    }
+    expect(currentLabels('/exploreX', haru)).toEqual([]);
   });
 
   it('/p/abc ではどれも現在にならない', () => {

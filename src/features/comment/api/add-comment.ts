@@ -8,6 +8,7 @@ import { comments, posts, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
 import { consume } from '../../../shared/security/rate-limit';
 import type { StorageEnv } from '../../../shared/storage';
+import { insertCommentNotification } from '../../notification';
 import { parseAddComment, type CommentView } from '../model/schema';
 import { commentColumns, toCommentView } from './comment-view';
 
@@ -79,7 +80,8 @@ export async function addComment(input: unknown, deps: AddCommentDeps): Promise<
   }
 
   const id = newId();
-  const createdAt = new Date(deps.now ?? Date.now());
+  const now = deps.now ?? Date.now();
+  const createdAt = new Date(now);
   try {
     await db.batch([
       db.insert(comments).values({
@@ -95,6 +97,7 @@ export async function addComment(input: unknown, deps: AddCommentDeps): Promise<
         .update(posts)
         .set({ commentCount: sql`${posts.commentCount} + 1` })
         .where(eq(posts.id, postId)),
+      insertCommentNotification(db, { actorId: user.id, postId, commentId: id, now }),
     ]);
   } catch (error) {
     // A second call with the same id raced this one and won: return its comment.
