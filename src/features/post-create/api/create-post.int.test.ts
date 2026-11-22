@@ -5,7 +5,7 @@ import { sessionHeadersFor, testAuthEnv } from '../../../../tests/helpers/sessio
 import { headObject, loadStorageEnv, putObject, putPhoto } from '../../../../tests/helpers/storage';
 import { createUser } from '../../../../tests/helpers/users';
 import { newId } from '../../../shared/db/id';
-import { media, posts, rateLimits, users } from '../../../shared/db/schema';
+import { hashtags, media, postHashtags, posts, rateLimits, users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
 import { consume } from '../../../shared/security/rate-limit';
 import type { StorageEnv } from '../../../shared/storage';
@@ -260,5 +260,63 @@ describe('createPost', () => {
     expect(rows.map((r) => r.altText)).toEqual(keys.map((_, i) => `写真 ${i + 1}`));
     expect(rows.map((r) => r.width)).toEqual(keys.map((_, i) => 100 + i));
     expect(rows.every((r) => r.type === 'image' && r.height === 600)).toBe(true);
+  });
+  it('タグが 30 個と 100 字のとき通り、31 個と 101 字のとき VALIDATION を返す', async () => {
+    const s = await signedIn();
+    const tags = (n: number) => Array.from({ length: n }, (_, i) => `#t${i}`).join(' ');
+    const make = async (caption: string) =>
+      call(s, request([photo(await uploaded(s.user.id))], { caption }));
+
+    const ok = await make(tags(30));
+    expect(
+      await t.db.select().from(postHashtags).where(eq(postHashtags.postId, ok.postId)),
+    ).toHaveLength(30);
+    const hundred = await make(`#${'あ'.repeat(100)}`);
+    expect(hundred.postId).not.toBe('');
+
+    const postsBefore = await postCount();
+    const [limitBefore] = await t.db.select().from(rateLimits);
+    const tooMany = await rejection(() => make(tags(31)));
+    expect(tooMany.code).toBe('VALIDATION');
+    expect(tooMany.fieldErrors?.caption).toEqual(['ハッシュタグは 30 個までです']);
+    const tooLong = await rejection(() => make(`#${'a'.repeat(101)}`));
+    expect(tooLong.code).toBe('VALIDATION');
+    expect(tooLong.fieldErrors?.caption).toEqual(['ハッシュタグは 100 字までです']);
+
+    expect(await postCount()).toBe(postsBefore);
+    const [limitAfter] = await t.db.select().from(rateLimits);
+    expect(limitAfter?.count).toBe(limitBefore?.count);
+  });
+
+  it('タグと紐づけを投稿と同じ batch で 1 行ずつ作り、再送で増やさず、失敗すると投稿も残さない', async () => {
+    const s = await signedIn();
+    const input = request([photo(await uploaded(s.user.id))], { caption: '朝 #tokyo' });
+    await call(s, request([photo(await uploaded(s.user.id))], { caption: '#Tokyo も' }));
+
+    const { postId } = await call(s, input);
+    await call(s, input);
+
+    const tags = await t.db.select().from(hashtags);
+    expect(tags.map((h) => h.name)).toEqual(['tokyo']);
+    const links = await t.db.select().from(postHashtags).where(eq(postHashtags.postId, postId));
+    expect(links).toHaveLength(1);
+    expect(links[0]?.hashtagId).toBe(tags[0]?.id);
+    expect(links[0]?.createdAt.getTime()).toBe(NOW);
+    expect(await t.db.select().from(postHashtags)).toHaveLength(2);
+
+    const failing = request([photo(await uploaded(s.user.id))], { caption: '#fail' });
+    const before = { posts: await postCount(), media: await mediaCount() };
+    await t.d1
+      .prepare(
+        "CREATE TRIGGER post_hashtags_fail BEFORE INSERT ON post_hashtags BEGIN SELECT RAISE(ABORT, 'fail'); END",
+      )
+      .run();
+    try {
+      await expect(call(s, failing)).rejects.toThrow();
+    } finally {
+      await t.d1.prepare('DROP TRIGGER post_hashtags_fail').run();
+    }
+    expect(await postCount()).toBe(before.posts);
+    expect(await mediaCount()).toBe(before.media);
   });
 });
