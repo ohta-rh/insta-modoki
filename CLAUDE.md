@@ -7,8 +7,8 @@ screenshots anywhere in the product (ADR-0003). The plan is the proposal in
 
 ## Status
 
-- The plan is filed on GitHub: 4 milestones (M1 local MVP → M2 Cloudflare invite-only demo →
-  M3 Phase 2 → M4 Phase 3, ADR-0013), 17 EPICs, 51 PBIs. Delivery starts with the first wave
+- The plan is filed on GitHub: 4 milestones, run in the order M1 local MVP → M3 Phase 2 (local) →
+  M2 Cloudflare invite-only demo → M4 Phase 3 (ADR-0052; names keep their numbers), 17 EPICs, 51 PBIs. Delivery starts with the first wave
   of M1 (the stack decision PBI). Code lives in feature slices (ADR-0014).
 
 - No application code yet. **Deploy target: Cloudflare, free tier first (ADR-0011)** — this

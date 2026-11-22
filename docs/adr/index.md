@@ -18,7 +18,7 @@
 # 製品と計画
 
 * [ADR-0003: Instagram の UX と機能を忠実に再現し、ブランドは独自にする](0003-reproduce-ux-under-own-brand.md) - 採用
-* [ADR-0013: ロードマップを 4 つのマイルストーン（ローカルの MVP → Cloudflare で公開 → Phase 2 → Phase 3）に組み直す](0013-four-milestones-local-mvp-then-cloudflare.md) - 採用
+* [ADR-0013: ロードマップを 4 つのマイルストーン（ローカルの MVP → Cloudflare で公開 → Phase 2 → Phase 3）に組み直す](0013-four-milestones-local-mvp-then-cloudflare.md) - 置き換え（ADR-0052）
 
 # アーキテクチャ
 
@@ -50,6 +50,7 @@
 * [ADR-0045: chrome-devtools の MCP が使えないとき、epic-tester は画面ありの Google Chrome を CDP で操作して総合試験を行う](0045-epic-test-may-drive-headed-chrome-over-cdp.md) - 採用
 * [ADR-0046: 性能の基準は THRESHOLDS に 1 か所で定め、初期 JS は verify の既定の手順で、Lighthouse・INP・フィード API の p95 は --with-perf と main への push の CI で検査する](0046-performance-budget-in-verify-and-ci.md) - 採用
 * [ADR-0048: 確かめた AC はその場で issue のチェックを付け、PASS した EPIC の画面に後から触れたら総合試験をやり直す](0048-tick-ac-on-evidence-and-retest-epics-after-later-changes.md) - 採用
+* [ADR-0052: マイルストーンの順番を M1 → M3（Phase 2 をローカルで）→ M2（Cloudflare で公開）→ M4 に変える](0052-phase-2-before-cloudflare-publication.md) - 採用
 
 # ひな形
 
