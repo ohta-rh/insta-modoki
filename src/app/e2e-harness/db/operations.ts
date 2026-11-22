@@ -8,6 +8,8 @@ import {
   media,
   posts,
   rateLimits,
+  stories,
+  storyViews,
   users,
 } from '../../../shared/db/schema';
 
@@ -89,6 +91,34 @@ export const operationSchema = z.discriminatedUnion('op', [
       .array(z.strictObject({ username: text(30), email: text(254), followedAt: ms }))
       .min(1)
       .max(50),
+  }),
+  // Stories (#47): one insert per row in one batch.
+  z.strictObject({
+    op: z.literal('insertStories'),
+    stories: z
+      .array(
+        z.strictObject({
+          id,
+          authorId: id,
+          type: z.enum(['image', 'video']),
+          storageKey: text(200),
+          width: z.number().int().min(1).max(10_000),
+          height: z.number().int().min(1).max(10_000),
+          durationMs: z.number().int().min(1).max(15_000).nullable(),
+          altText: z.string().max(500),
+          createdAt: ms,
+          expiresAt: ms,
+        }),
+      )
+      .min(1)
+      .max(60),
+  }),
+  z.strictObject({
+    op: z.literal('insertStoryViews'),
+    views: z
+      .array(z.strictObject({ storyId: id, viewerId: id, createdAt: ms }))
+      .min(1)
+      .max(60),
   }),
 ]);
 
@@ -253,6 +283,26 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
         ),
       ];
       await db.batch(rows as unknown as Parameters<typeof db.batch>[0]);
+      return;
+    }
+    case 'insertStories': {
+      await db.batch(
+        operation.stories.map((r) =>
+          db.insert(stories).values({
+            ...r,
+            createdAt: new Date(r.createdAt),
+            expiresAt: new Date(r.expiresAt),
+          }),
+        ) as unknown as Parameters<typeof db.batch>[0],
+      );
+      return;
+    }
+    case 'insertStoryViews': {
+      await db.batch(
+        operation.views.map((r) =>
+          db.insert(storyViews).values({ ...r, createdAt: new Date(r.createdAt) }),
+        ) as unknown as Parameters<typeof db.batch>[0],
+      );
       return;
     }
   }
