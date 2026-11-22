@@ -85,8 +85,13 @@ and EPIC test. The user merges.
    one, and on 2026-11-21 six consecutive pushes left the gate with no completed run at all.
 3. On the issue: confirm every AC box is ticked (§3 step 4), tick DoD, comment with the commit SHA, the verify result and the review
    verdicts; close; tick it in the EPIC.
-4. Clean up by exact name: `git worktree remove .worktrees/pbi-<N>`, `git branch -d pbi/<N>`,
-   drop the slot's databases/bucket, free the slot. Then re-evaluate the ready set (§2).
+4. Clean up by exact name. **First** `node scripts/slot.mjs drop <N>` in the worktree: it stops
+   whatever listens on the slot's port `3100 + N` (children included) and deletes the D1 files and
+   the bucket. Read its "止めたプロセス" line (`slot N のポート 310N のプロセスを M 個止めました`);
+   exit 1 means a process would not die (its PID is printed): fix that before going on. Then
+   `git worktree remove .worktrees/pbi-<N>`, `git branch -d pbi/<N>`, free the slot, and
+   re-evaluate the ready set (§2). A server stopped by hand is not enough: `pnpm start` leaves
+   `workerd` behind (#83).
 
 ## 5. EPIC integrated test — in a real browser (ADR-0012)
 
