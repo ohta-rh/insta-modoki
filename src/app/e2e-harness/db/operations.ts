@@ -1,5 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { hashtagStatements } from '../../../features/hashtag';
 import { getDb, type DbEnv } from '../../../shared/db/client';
 import {
   comments,
@@ -119,6 +120,13 @@ export const operationSchema = z.discriminatedUnion('op', [
       .array(z.strictObject({ storyId: id, viewerId: id, createdAt: ms }))
       .min(1)
       .max(60),
+  }),
+  // Tags an inserted post as createPost would (hashtags #49): `insertPost` writes none.
+  z.strictObject({
+    op: z.literal('tagPost'),
+    postId: id,
+    createdAt: ms,
+    names: z.array(text(100)).min(1).max(30),
   }),
 ]);
 
@@ -302,6 +310,16 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
         operation.views.map((r) =>
           db.insert(storyViews).values({ ...r, createdAt: new Date(r.createdAt) }),
         ) as unknown as Parameters<typeof db.batch>[0],
+      );
+      return;
+    }
+    case 'tagPost': {
+      await db.batch(
+        hashtagStatements(db, {
+          postId: operation.postId,
+          names: operation.names,
+          createdAt: new Date(operation.createdAt),
+        }) as unknown as Parameters<typeof db.batch>[0],
       );
       return;
     }
