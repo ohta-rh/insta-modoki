@@ -2,9 +2,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { mediaRows, postRows, setPostCount, userRow } from './support/db';
-import { makeJpeg } from './support/fixtures';
+import { makeJpeg, padTo } from './support/fixtures';
+import { tabTo } from './support/keys';
 import { startInFreshWindow } from './support/rate-window';
-import { holdScripts } from './support/hydration';
+import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 
 const POST_URL = /\/p\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
@@ -291,4 +292,88 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   await page.keyboard.press('Enter');
   await fileChooser;
   release();
+});
+
+/**
+ * Opens /create with every script held back, chooses `files` from 写真を選ぶ with the keyboard
+ * while the page is still un-hydrated, then lets the scripts load and waits for hydration.
+ */
+async function pickBeforeHydration(
+  page: Page,
+  files: { name: string; mimeType: string; buffer: Buffer }[],
+): Promise<void> {
+  const fileChooser = page.waitForEvent('filechooser');
+  fileChooser.catch(() => {});
+  const release = await holdScripts(page);
+  await page.goto('/create', { waitUntil: 'commit' });
+  const choose = page.getByRole('button', { name: '写真を選ぶ' });
+  await choose.waitFor();
+  await tabTo(page, choose);
+  await page.keyboard.press('Enter');
+  expect(await page.locator('html[data-hydrated="1"]').count()).toBe(0);
+  await (await fileChooser).setFiles(files);
+  release();
+  await waitForHydration(page);
+}
+
+test('JS の読み込み前に選んだ写真が ハイドレーションの後に一覧に入る', async ({ page }) => {
+  const user = await signUpViaUi(page);
+  const jpeg = await makeJpeg(page, 800, 600);
+  await pickBeforeHydration(page, [file('early.jpg', jpeg)]);
+
+  const items = page.getByRole('listitem', { name: /^写真 \d+$/ });
+  await expect(items).toHaveCount(1);
+  await expect(page.getByText('0 / 10 枚')).toHaveCount(0);
+  await expect(page.getByText('1 / 10 枚')).toBeVisible();
+  await nextFrames(page);
+  await expect(items).toHaveCount(1); // not taken in twice
+  expect(await alerts(page).count()).toBe(0);
+
+  await alt(page, 1).fill('早く選んだ写真');
+  await submit(page).click();
+  await expect(page).toHaveURL(POST_URL);
+  const [post] = postRows(userRow(user.username)!.id as string);
+  expect(mediaRows(post!.id as string)).toHaveLength(1);
+});
+
+test('JS の読み込み前に選んだ写真の後に 同じ写真をキーボードで選び直せる', async ({ page }) => {
+  await signUpViaUi(page);
+  const jpeg = await makeJpeg(page, 800, 600);
+  await pickBeforeHydration(page, [file('same.jpg', jpeg)]);
+  await expect(page.getByRole('listitem', { name: /^写真 \d+$/ })).toHaveCount(1);
+
+  const fileChooser = page.waitForEvent('filechooser');
+  fileChooser.catch(() => {});
+  const choose = page.getByRole('button', { name: '写真を選ぶ' });
+  await tabTo(page, choose);
+  await page.keyboard.press('Enter');
+  await (await fileChooser).setFiles([file('same.jpg', jpeg)]);
+  await expect(page.getByRole('listitem', { name: /^写真 \d+$/ })).toHaveCount(2);
+  await expect(page.getByText('2 / 10 枚')).toBeVisible();
+});
+
+test('JS の読み込み前に選んだ 10MB を超える写真は ハイドレーションの後に理由が出る', async ({
+  page,
+}) => {
+  await signUpViaUi(page);
+  const jpeg = await makeJpeg(page, 200, 200);
+  await pickBeforeHydration(page, [file('big.jpg', padTo(jpeg, 10_485_761))]);
+
+  await expect(alerts(page)).toContainText('big.jpg: ファイルが大きすぎます（1 枚 10MB まで）');
+  await expect(page.getByText('0 / 10 枚')).toBeVisible();
+});
+
+test('JS の読み込み前に 11 枚選ぶと ハイドレーションの後に 10 枚が入り 上限の理由が出る', async ({
+  page,
+}) => {
+  await signUpViaUi(page);
+  const jpeg = await makeJpeg(page, 64, 48);
+  await pickBeforeHydration(
+    page,
+    Array.from({ length: 11 }, (_, i) => file(`p${i + 1}.jpg`, jpeg)),
+  );
+
+  await expect(page.getByRole('listitem', { name: /^写真 \d+$/ })).toHaveCount(10);
+  await expect(alerts(page).first()).toContainText('写真は 10 枚までです');
+  await expect(page.getByText('10 / 10 枚')).toBeVisible();
 });

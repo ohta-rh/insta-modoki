@@ -23,6 +23,7 @@
 # アーキテクチャ
 
 * [ADR-0014: コードは機能ごとの slice（src/features/<name>/）と共有の部分（src/shared/）に分ける](0014-code-in-feature-slices.md) - 採用
+* [ADR-0054: ハイドレーション前に選ばれたファイルはマウント時に取り込み、選択は無効にしない](0054-pick-up-files-chosen-before-hydration-on-mount.md) - 採用
 * [ADR-0016: 言語は TypeScript、UI は React にする（フレームワークは #18 で決める）](0016-typescript-and-react.md) - 採用
 * [ADR-0018: アプリは Next.js 16（App Router）を OpenNext で Cloudflare Workers に載せて動かす](0018-nextjs-on-workers-via-opennext.md) - 採用
 * [ADR-0019: DB は Cloudflare D1、ORM は Drizzle ORM にする](0019-d1-and-drizzle.md) - 採用

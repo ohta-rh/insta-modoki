@@ -84,7 +84,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 
 ## ハイドレーション
 
-最初のキー入力やクリックで動かなければならない操作（送信・遷移・ファイル選択・ダイアログを開く）は、ブラウザ自身の動作で作る（form、リンク、input、dialog と popover の呼び出し属性 `commandfor` / `command`）。JS だけで動く操作（カルーセルの矢印キー、スクロール位置の追跡など）は、JS の読み込み後に効けばよい強化として作る。ルートのレイアウトの `HydrationMarker`（`src/shared/ui/`）が、ハイドレーションの後に `html[data-hydrated="1"]` を付ける。E2E は JS だけで動く操作に触る前に `e2e/support/hydration.ts` の `waitForHydration(page)` を呼ぶ。JS の読み込みを止めた状態で操作できることは、`e2e/media-upload.spec.ts` と `e2e/post-detail.spec.ts` の「JS が読み込まれる前でも」の形のテストで確かめる。
+最初のキー入力やクリックで動かなければならない操作（送信・遷移・ファイル選択・ダイアログを開く）は、ブラウザ自身の動作で作る（form、リンク、input、dialog と popover の呼び出し属性 `commandfor` / `command`）。JS だけで動く操作（カルーセルの矢印キー、スクロール位置の追跡など）は、JS の読み込み後に効けばよい強化として作る。ルートのレイアウトの `HydrationMarker`（`src/shared/ui/`）が、ハイドレーションの後に `html[data-hydrated="1"]` を付ける。E2E は JS だけで動く操作に触る前に `e2e/support/hydration.ts` の `waitForHydration(page)` を呼ぶ。JS の読み込みを止めた状態で操作できることは、`e2e/media-upload.spec.ts` と `e2e/post-detail.spec.ts` の「JS が読み込まれる前でも」の形のテストで確かめる。`<input type="file">` の選択を React の `onChange` で取り込むときは、ハイドレーションの前に選ばれたファイルも `useFilesPickedBeforeHydration`（`src/shared/ui/`）でマウント時に取り込む（ADR-0054）。
 
 ## カーソル
 

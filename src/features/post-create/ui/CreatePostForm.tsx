@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { UploadError, uploadImages, validateFile } from '../../media-upload';
 import type { UploadedImage } from '../../media-upload';
 import { charLength } from '../../../shared/text';
+import { useFilesPickedBeforeHydration } from '../../../shared/ui/files-picked-before-hydration';
 import { createPostAction } from '../api/actions';
 import { CENTER, cropRect, RATIOS, type Focus, type Ratio } from '../model/crop';
 import { MAX_ALT_TEXT, MAX_CAPTION, MAX_PHOTOS } from '../model/limits';
@@ -43,6 +44,7 @@ async function readSize(file: File): Promise<{ width: number; height: number }> 
 export function CreatePostForm() {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
+  useFilesPickedBeforeHydration(input, (files) => void pick(files));
   const [clientRequestId] = useState(() => crypto.randomUUID());
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [ratio, setRatio] = useState<Ratio>('1:1');

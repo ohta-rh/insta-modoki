@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useFilesPickedBeforeHydration } from '../../../shared/ui/files-picked-before-hydration';
 import { MAX_FILES } from '../model/limits';
 import { uploadImages, type UploadedImage } from '../model/upload-images';
 import { validateFile } from '../model/validate-file';
@@ -24,6 +25,7 @@ export type ImagePickerProps = {
  */
 export function ImagePicker({ onUploaded }: ImagePickerProps) {
   const input = useRef<HTMLInputElement>(null);
+  useFilesPickedBeforeHydration(input, pick);
   const [files, setFiles] = useState<File[]>([]);
   const [rejections, setRejections] = useState<Rejection[]>([]);
   const [progress, setProgress] = useState<number[] | null>(null);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useFilesPickedBeforeHydration } from '../../../shared/ui/files-picked-before-hydration';
 import { validateFile, type Crop } from '../../media-upload';
 import { centerSquare } from './crop';
 
@@ -34,6 +35,7 @@ export function AvatarField({
   onPick: (picked: PickedAvatar) => void;
 }) {
   const input = useRef<HTMLInputElement>(null);
+  useFilesPickedBeforeHydration(input, (files) => void pick(files[0]));
   const [preview, setPreview] = useState<{ url: string; crop: Crop } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const current = useRef<string | null>(null);

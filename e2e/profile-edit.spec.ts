@@ -4,6 +4,7 @@ import { signUpViaUi } from './support/auth';
 import { seedUser, setUploadCount, userRow } from './support/db';
 import { makeJpeg, padTo, webpSize } from './support/fixtures';
 import { holdScripts, waitForHydration } from './support/hydration';
+import { tabTo as tabToTarget } from './support/keys';
 import { startInFreshWindow } from './support/rate-window';
 import { getObject } from './support/storage';
 
@@ -328,4 +329,46 @@ test('JS が読み込まれる前でも 不正な値は欄の下に理由が出�
   } finally {
     release();
   }
+});
+
+/** Opens /accounts/edit with every script held back and chooses `file` from アイコンを変更 by keyboard. */
+async function pickIconBeforeHydration(page: Page, file: ReturnType<typeof jpeg>): Promise<void> {
+  const fileChooser = page.waitForEvent('filechooser');
+  fileChooser.catch(() => {});
+  const release = await holdScripts(page);
+  await page.goto('/accounts/edit', { waitUntil: 'commit' });
+  const choose = page.getByRole('button', { name: 'アイコンを変更' });
+  await choose.waitFor();
+  await tabToTarget(page, choose);
+  await page.keyboard.press('Enter');
+  expect(await page.locator('html[data-hydrated="1"]').count()).toBe(0);
+  await (await fileChooser).setFiles([file]);
+  release();
+  await waitForHydration(page);
+}
+
+test('JS の読み込み前に選んだアイコンが ハイドレーションの後にプレビューに出て 保存できる', async ({
+  page,
+}) => {
+  const user = await signUpViaUi(page);
+  const image = await makeJpeg(page, 800, 600);
+  await pickIconBeforeHydration(page, jpeg('early.jpg', image));
+
+  await expect(preview(page)).toBeVisible();
+  await expect(preview(page)).toHaveAttribute('alt', '新しいアイコンのプレビュー');
+  await save(page).click();
+  await expect(page).toHaveURL(new RegExp(`/${user.username}$`));
+  expect(userRow(user.username)!.avatar_key).not.toBeNull();
+});
+
+test('JS の読み込み前に選んだ 10MB を超えるアイコンは ハイドレーションの後に理由が出る', async ({
+  page,
+}) => {
+  await signUpViaUi(page);
+  const big = padTo(await makeJpeg(page, 200, 200), 10_485_761);
+  await pickIconBeforeHydration(page, jpeg('big.jpg', big));
+
+  await expect(alerts(page)).toHaveText(TOO_LARGE);
+  await expect(preview(page)).toHaveCount(0);
+  await expect(page.getByRole('img', { name: '現在のアイコン' })).toBeVisible();
 });
