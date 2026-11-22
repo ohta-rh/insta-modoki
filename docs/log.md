@@ -1,5 +1,8 @@
 # ドキュメントの更新履歴
 
+## 2026-11-23
+* **Creation**: [Web 版の画面の参照値と今のアプリとの差](research/web-ui-reference.md)（ログインしていない公開ページの実測と参照自身の CSS 変数から、骨格・ホーム・プロフィール・投稿・ログインの寸法と色を今のアプリと比べた調査）を追加し、[research/index.md](research/index.md) に載せた。
+
 ## 2026-11-22
 * **Creation**: [EPIC #11 の総合試験のレポート（2 回目）](test-reports/epic-0011-notifications-r2.md)（PASS。ADR-0048 によるやり直し。5807758 で、#86 のバッジの位置・クリック・名前を含む 5 つの AC を実ブラウザで確かめた）と、その写真・記録（`test-reports/evidence/epic-0011-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #12 の総合試験のレポート（2 回目）](test-reports/epic-0012-bookmarks-r2.md)（PASS。統合ブランチ m3/phase2 の 62cc427 で、未読バッジ・ストーリー・共通の投稿カードが入ったあとの再試験。4 つの AC を満たし、未読の通知があるアカウントで axe の違反は 0 件）と、その写真・記録（`test-reports/evidence/epic-0012-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
