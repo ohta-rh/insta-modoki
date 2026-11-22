@@ -16,10 +16,14 @@ status: stable
 ## 背景
 
 - 期限切れのストーリーの行とファイルを消し、`storage_orphans` を再試行する定期ジョブが要る（#56）。#59（通知の掃除）なども同じ仕組みに載る。
-- Workers の定期実行は Cron Triggers（ADR-0011）。`wrangler.jsonc` の `main` は OpenNext の生成物 `.open-next/worker.js` で、その既定の出力は `export default { async fetch(…) }` だけを持つ（`@opennextjs/cloudflare` 1.20.16 の `dist/cli/templates/worker.js`）。`scheduled` を足すには入口を包む必要がある。
+- Workers の定期実行は Cron Triggers で、`scheduled()` ハンドラーを `wrangler.jsonc` の `triggers.crons` の式に結びつける（Cloudflare Docs「Cron Triggers」<https://developers.cloudflare.com/workers/configuration/cron-triggers/>、2026-11-22 確認）。ADR-0011 はデプロイ先を Cloudflare の無料枠とする決定で、Cron Triggers には触れていない。`wrangler.jsonc` の `main` は OpenNext の生成物 `.open-next/worker.js` で、その既定の出力は `export default { async fetch(…) }` だけを持つ（`@opennextjs/cloudflare` 1.20.16 の `dist/cli/templates/worker.js`）。`scheduled` を足すには入口を包む必要がある。
 - アプリの drizzle のモジュールは拡張子なしで import し合うので Node は読めない（`src/shared/db/seed/seed.ts:8-11`）。seed は D1 の束縛と `.ts` 付きの import で書いた。
 - wrangler 4.158.0 の `dev --test-scheduled` は `/__scheduled?cron=<式>` で `scheduled` を呼ぶ（`middleware-scheduled.ts`）。`opennextjs-cloudflare preview` は残りの引数を `wrangler dev` に渡すので、`pnpm start --test-scheduled` で使える。
-- 無料枠は 1 回の実行に外部への通信 50・D1 の問い合わせ 50。
+- 無料枠（2026-11-22 に確認）。
+  - 1 回の実行のサブリクエストは 50。サブリクエストには R2・KV・D1 など Cloudflare のサービスへの要求も含まれる（<https://developers.cloudflare.com/workers/platform/limits/>）。
+  - D1 の 1 回の実行あたりの問い合わせは 50（`db.batch()` は 1 回と数える。<https://developers.cloudflare.com/d1/platform/limits/>）。この 2 つの 50 が別々の枠か、合わせて 50 かは、ドキュメントが「D1 の上限はサブリクエストの上限を参照」と書くだけで明記していない。安全側で、合わせて 50 の内側に収める。
+  - Cron Trigger 1 回の CPU 時間は 10 ms（有料は 30 秒から）、実時間は 15 分。1 アカウントの Cron Trigger は 5 本（有料は 1,000）。
+  - 見積り: `story-cleanup` は最大 10 周で D1 が 20 文・ストレージが 10 要求、`storage-orphans-retry` は D1 が最大 3 文・ストレージが 1 要求で、合計は最大 34 で 50 の内側に収まる。
 
 ## 決定
 
