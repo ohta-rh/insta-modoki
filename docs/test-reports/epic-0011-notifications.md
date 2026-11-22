@@ -16,7 +16,7 @@ tags: [epic-test]
 - OS: macOS 26.2
 - ブラウザ: Google Chrome 157.0.8103.80（安定版、画面あり）
 - 操作の手段: chrome-devtools の MCP は `list_pages` が 2 回とも失敗した（`The browser is already running for .../chrome-devtools-mcp/chrome-profile`）。そのため [ADR-0045](../adr/0045-epic-test-may-drive-headed-chrome-over-cdp.md) のとおり、Playwright の `channel: 'chrome'`・`headless: false` で画面ありの Google Chrome を使い捨てのプロファイルで起こして CDP で操作した。A と B（と空の状態用の C）は別々のブラウザ文脈（Cookie が別）で、サインアップ・いいね・コメント・フォロー・通知の操作は全て UI で行った。
-- データ: A の投稿 18 件と B の投稿 2 件、AC-4 の古い通知（91 日前・89 日前・1 日前）は、アプリ自身の E2E ハーネス `/e2e-harness/db`（`insertPost`・`seedUser`・`seedNotification`。[ADR-0041](../adr/0041-e2e-setup-writes-through-an-app-harness-operation.md)）で入れた。D1 の読み取りは `node:sqlite`。
+- データ: A の投稿 18 件と B の投稿 2 件、AC-4 の古い通知（91 日前・89 日前・1 日前）は、アプリ自身の E2E ハーネス `/e2e-harness/db`（`insertPost`・`seedUser`・`seedNotification`。[ADR-0041](../adr/0041-e2e-setup-writes-go-through-the-app.md)）で入れた。D1 の読み取りは `node:sqlite`。
 - 項目ごとの結果・axe・Tab の順・ブラウザの状態・SSE の接続の記録: [summary.json](evidence/epic-0011/summary.json)
 
 ## 結果
