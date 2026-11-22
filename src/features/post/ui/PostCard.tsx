@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { CaptionText } from '../../../shared/ui/CaptionText';
 import { formatRelativeTime } from '../../../shared/time/relative-time';
 import type { PostView } from '../model/schema';
 import { Carousel } from './Carousel';
@@ -73,7 +74,7 @@ export function PostCard({
             <a href={`/${author.username}`} className="font-bold">
               {author.username}
             </a>{' '}
-            {post.caption}
+            <CaptionText caption={post.caption} />
           </p>
         )}
         {footer}
