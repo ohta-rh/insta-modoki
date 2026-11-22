@@ -1,0 +1,564 @@
+{
+ "acs": {
+  "AC-4": [
+   {
+    "name": "/explore -> login",
+    "ok": true,
+    "detail": "http://localhost:3101/accounts/login"
+   },
+   {
+    "name": "/explore/search -> login",
+    "ok": true,
+    "detail": "http://localhost:3101/accounts/login"
+   },
+   {
+    "name": "/explore/tags/tokyo -> login",
+    "ok": true,
+    "detail": "http://localhost:3101/accounts/login"
+   },
+   {
+    "name": "/explore/search?q=ha -> login",
+    "ok": true,
+    "detail": "http://localhost:3101/accounts/login"
+   },
+   {
+    "name": "/explore/tags/%EF%BC%B4%EF%BC%AF%EF%BC%AB%EF%BC%B9%EF%BC%AF -> login",
+    "ok": true,
+    "detail": "http://localhost:3101/accounts/login"
+   }
+  ],
+  "setup": [
+   {
+    "name": "A signed up via UI",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "A has an unread notification (nav link named \"通知（未読 N 件）\")",
+    "ok": true,
+    "detail": "通知（未読 1 件）"
+   },
+   {
+    "name": "A follows e10_fol through the UI",
+    "ok": true,
+    "detail": ""
+   }
+  ],
+  "AC-3": [
+   {
+    "name": "empty slot shows an empty state (no tiles)",
+    "ok": true,
+    "detail": "発見 ユーザーを検索 まだ人気の投稿がありません"
+   },
+   {
+    "name": "top three: hot(30) > mid(12) > edge(5), then fillers",
+    "ok": true,
+    "detail": "[\"/p/352aaf04-569e-4f54-852a-acf64f8dcf33\",\"/p/0aecc8f3-dcfd-41b4-afa2-94dff7fdb6ba\",\"/p/c28a0686-06a2-4059-94ff-11676e95896b\",\"/p/a42e5437-583e-47c7-893d-bfeae91812c1\"]"
+   },
+   {
+    "name": "all 27 (3 + 24 fillers; exact-7d may add one) shown, no duplicates",
+    "ok": true,
+    "detail": "27"
+   },
+   {
+    "name": "edge post at 7 days minus 10 minutes is shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "8-days-old post (50 likes) is NOT shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "own post (45 likes) is NOT shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "followed person post (35 likes) is NOT shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "first tile opens the hot post",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "back returns to /explore",
+    "ok": true,
+    "detail": "http://localhost:3101/explore"
+   },
+   {
+    "name": "when the next page fails an alert is shown and the grid keeps its 24 tiles",
+    "ok": true,
+    "detail": "{\"aborted\":1,\"alertsNow\":[\"読み込めませんでした\\n\\nもう一度読み込む\"]}"
+   }
+  ],
+  "AC-1": [
+   {
+    "name": "\"ha\" shows haru",
+    "ok": true,
+    "detail": "[\"H\\nhana\\nHana\",\"H\\nharu\\nHaru\",\"S\\nshiori\\nHaru Fan\"]"
+   },
+   {
+    "name": "\"ha\" also matches display name (Haru Fan) and hana, not mio",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "choosing haru goes to /haru",
+    "ok": true,
+    "detail": "http://localhost:3101/haru"
+   },
+   {
+    "name": "literal query \"100%\" -> only pct_one (display \"100%\")",
+    "ok": true,
+    "detail": "[\"P\\npct_one\\n100%\"]"
+   },
+   {
+    "name": "literal query \"%\" -> only pct_one, not everyone",
+    "ok": true,
+    "detail": "[\"P\\npct_one\\n100%\"]"
+   },
+   {
+    "name": "literal query \"a_\" -> only a_b, not axb",
+    "ok": true,
+    "detail": "[\"A\\na_b\\nUnder Score\"]"
+   },
+   {
+    "name": "literal query \"_\" -> only names/displays containing \"_\"",
+    "ok": true,
+    "detail": "[\"A\\na_b\\nUnder Score\",\"E\\nepic10_a\\n試験 太郎\",\"P\\npct_one\\n100%\"]"
+   },
+   {
+    "name": "literal query \"\\\" -> nothing",
+    "ok": true,
+    "detail": "[] | 検索 「\\」に一致するユーザーはいません 「\\」に一致するユーザーはいません"
+   },
+   {
+    "name": "literal query no match -> message",
+    "ok": true,
+    "detail": "[] | 検索 「zzqqxx」に一致するユーザーはいません 「zzqqxx」に一致するユーザーはいません"
+   },
+   {
+    "name": "blank input + Enter: nothing is searched, no candidates, hint stays (no error)",
+    "ok": true,
+    "detail": "[] 検索 ユーザー名で検索"
+   },
+   {
+    "name": "31 chars: limited or message (30 max)",
+    "ok": true,
+    "detail": "value length 30, alert []"
+   }
+  ],
+  "AC-2": [
+   {
+    "name": "unknown tag (before any post) is 404 page",
+    "ok": true,
+    "detail": "404"
+   },
+   {
+    "name": "#Tokyo -> /explore/tags/tokyo",
+    "ok": true,
+    "detail": "http://localhost:3101/explore/tags/tokyo"
+   },
+   {
+    "name": "tag list is newest first: C, B, A (3 posts)",
+    "ok": true,
+    "detail": "[\"/p/01a2025d-80eb-7000-9472-6a7fe39ac257\",\"/p/01a2025d-79ca-7000-b309-f6d35be331f6\",\"/p/01a2025d-72b4-7000-b8d1-38cb22f8817b\"]"
+   },
+   {
+    "name": "#TOKYO (upper case) -> same URL",
+    "ok": true,
+    "detail": "http://localhost:3101/explore/tags/tokyo"
+   },
+   {
+    "name": "#ＴＯＫＹＯ (full-width) -> same URL",
+    "ok": true,
+    "detail": "http://localhost:3101/explore/tags/tokyo"
+   },
+   {
+    "name": "same list after full-width link",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "direct /explore/tags/TOKYO shows the same list",
+    "ok": true,
+    "detail": "200 http://localhost:3101/explore/tags/TOKYO [\"/p/01a2025d-80eb-7000-9472-6a7fe39ac257\",\"/p/01a2025d-79ca-7000-b309-f6d35be331f6\",\"/p/01a2025d-72b4-7000-b8d1-38cb22f8817b\"]"
+   },
+   {
+    "name": "direct /explore/tags/Tokyo shows the same list",
+    "ok": true,
+    "detail": "200 http://localhost:3101/explore/tags/Tokyo [\"/p/01a2025d-80eb-7000-9472-6a7fe39ac257\",\"/p/01a2025d-79ca-7000-b309-f6d35be331f6\",\"/p/01a2025d-72b4-7000-b8d1-38cb22f8817b\"]"
+   },
+   {
+    "name": "direct /explore/tags/%EF%BC%B4%EF%BC%AF%EF%BC%AB%EF%BC%B9%EF%BC%AF shows the same list",
+    "ok": true,
+    "detail": "200 http://localhost:3101/explore/tags/%EF%BC%B4%EF%BC%AF%EF%BC%AB%EF%BC%B9%EF%BC%AF [\"/p/01a2025d-80eb-7000-9472-6a7fe39ac257\",\"/p/01a2025d-79ca-7000-b309-f6d35be331f6\",\"/p/01a2025d-72b4-7000-b8d1-38cb22f8817b\"]"
+   },
+   {
+    "name": "#osaka list has only the osaka post",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "full-width ＃ in a caption is not linked (ADR / #49: only half-width #)",
+    "ok": true,
+    "detail": "links 0"
+   },
+   {
+    "name": "a tag with a space in the URL is 404",
+    "ok": true,
+    "detail": "404"
+   }
+  ],
+  "AC-5": [
+   {
+    "name": "home feed post card shows the save button and the unread badge is still on the nav",
+    "ok": true,
+    "detail": "通知（未読 1 件）"
+   },
+   {
+    "name": "axe: home feed (post card with save button, unread badge) 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "ArrowDown/ArrowUp move the active option",
+    "ok": true,
+    "detail": "_R_9bsnpfcnmlb_-0 _R_9bsnpfcnmlb_-1 _R_9bsnpfcnmlb_-0"
+   },
+   {
+    "name": "Enter on the active option opens that profile",
+    "ok": true,
+    "detail": "H hana Hana -> http://localhost:3101/hana"
+   },
+   {
+    "name": "Escape closes the candidate list",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: search page with candidates has 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Tab reaches #Tokyo link on post detail and Enter opens the tag page",
+    "ok": true,
+    "detail": "14 Tab presses"
+   },
+   {
+    "name": "axe: tag page 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: post detail with tag links 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Tab to the 2nd grid tile and Enter opens the 2nd most liked post",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Tab to the search link and Enter opens /explore/search",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: explore grid 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "keyboard: Tab to \"さらに表示\" and Enter loads page 2",
+    "ok": true,
+    "detail": "27 tiles"
+   }
+  ]
+ },
+ "health": {
+  "ac3-empty": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac1-search": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac2-hashtag-404": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3101/explore/tags/tokyo"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": [
+    "404 GET http://localhost:3101/explore/tags/tokyo"
+   ]
+  },
+  "ac2-hashtag": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "unread-setup": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac2-hashtag-bad": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3101/explore/tags/a%20b"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": [
+    "404 GET http://localhost:3101/explore/tags/a%20b"
+   ]
+  },
+  "ac3-explore-setup": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac3-follow": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "home-card": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac3-explore": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac3-loadmore-fail": {
+   "console": [
+    "error: Failed to load resource: net::ERR_FAILED @ http://localhost:3101/explore"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "POST http://localhost:3101/explore net::ERR_FAILED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac5-keyboard": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "GET http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http4xx5xx": []
+  }
+ },
+ "notes": {
+  "chromeVersion": "157.0.8103.80",
+  "ac3EmptyText": "発見 ユーザーを検索 まだ人気の投稿がありません",
+  "ac1_ha_options": [
+   "H\nhana\nHana",
+   "H\nharu\nHaru",
+   "S\nshiori\nHaru Fan"
+  ],
+  "ac2_tag_count_text": "#tokyo 投稿 3 件",
+  "ac3_counts": {
+   "first": 24,
+   "all": 27
+  },
+  "ac3_exact7d_shown_at_request_time": {
+   "shown": false,
+   "position": -1,
+   "reason": "asOf is the request time, a few seconds after the insert, so created_at = now-7d is just outside the window (boundary itself is covered by the int test with a fixed now)"
+  },
+  "ac3_loadmore_fail": {
+   "aborted": 1,
+   "alerts": [
+    "読み込めませんでした\n\nもう一度読み込む"
+   ],
+   "tiles": 24
+  },
+  "ac5_enter_result": {
+   "chosen": "H hana Hana",
+   "url": "http://localhost:3101/hana"
+  },
+  "done": true
+ },
+ "tabOrder": {
+  "search": [
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知（未読 1 件）\" -> /notifications",
+   "a \"プロフィール\" -> /epic10_a",
+   "input[combobox] \"ユーザーを検索\"",
+   "body"
+  ],
+  "tag": [
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知（未読 1 件）\" -> /notifications",
+   "a \"プロフィール\" -> /epic10_a",
+   "a \"\" -> /p/01a2025d-80eb-7000-9472-6a7fe39ac257",
+   "a \"\" -> /p/01a2025d-79ca-7000-b309-f6d35be331f6"
+  ],
+  "explore": [
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知（未読 1 件）\" -> /notifications",
+   "a \"プロフィール\" -> /epic10_a",
+   "a \"ユーザーを検索\" -> /explore/search",
+   "a \"\" -> /p/352aaf04-569e-4f54-852a-acf64f8dcf33",
+   "a \"\" -> /p/0aecc8f3-dcfd-41b4-afa2-94dff7fdb6ba"
+  ]
+ },
+ "axe": {
+  "home-feed": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "search-with-candidates": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "tag-page": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "post-detail": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "explore": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ]
+ },
+ "axeNav": {
+  "home-feed": "通知（未読 1 件）",
+  "search-with-candidates": "通知（未読 1 件）",
+  "tag-page": "通知（未読 1 件）",
+  "post-detail": "通知（未読 1 件）",
+  "explore": "通知（未読 1 件）"
+ }
+}
