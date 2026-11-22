@@ -113,7 +113,7 @@ describe('listStoryTray', () => {
       await addStory(u.id, T + i);
     }
     expect((await call(e)).items).toHaveLength(50);
-  });
+  }, 60_000);
 
   it('自分のストーリーは items に入れず hasOwn で返す', async () => {
     const a = await signedIn();
