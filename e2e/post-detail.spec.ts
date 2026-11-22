@@ -232,7 +232,9 @@ async function holdPosts(page: Page, postId: string) {
   await page.route(
     (url) => url.pathname === `/p/${postId}`,
     async (route) => {
-      if (route.request().method() !== 'POST') return route.continue();
+      // The unread-badge poll (a POST with body `[]`) is not a request of this test.
+      if (route.request().method() !== 'POST' || route.request().postData() === '[]')
+        return route.continue();
       state.posts += 1;
       if (!state.fail) return route.continue();
       await gate;

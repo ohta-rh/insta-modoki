@@ -200,7 +200,9 @@ signedIn('素早く 5 回押すと最後の状態で止まり 同時のリクエ
   await page.route(
     (url) => url.pathname === `/p/${post.id}`,
     async (route) => {
-      if (route.request().method() !== 'POST') return route.continue();
+      // The unread-badge poll (a POST with body `[]`) is not a like request.
+      if (route.request().method() !== 'POST' || route.request().postData() === '[]')
+        return route.continue();
       sent += 1;
       open += 1;
       most = Math.max(most, open);

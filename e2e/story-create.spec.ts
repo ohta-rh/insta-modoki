@@ -64,7 +64,8 @@ test('16 秒の動画は選んだ時点で通信せずに拒まれる', async ({
   const { username } = await start(page);
   const sent: Request[] = [];
   page.on('request', (r) => {
-    if (r.method() !== 'GET' && r.method() !== 'HEAD') sent.push(r);
+    // Not the unread-badge poll (a Server Action POST with no arguments, body `[]`).
+    if (r.method() !== 'GET' && r.method() !== 'HEAD' && r.postData() !== '[]') sent.push(r);
   });
 
   await chooser(page).setInputFiles(fixtureVideo(16));
