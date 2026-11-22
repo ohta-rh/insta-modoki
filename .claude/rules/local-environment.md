@@ -33,8 +33,15 @@ The Director assigns each in-flight PBI a slot `N` in `1..4` (`0` = the main che
   - `node scripts/slot.mjs prepare <N>` - create the bucket and the shared key if missing, enable website access on the bucket, write
     `.dev.vars`, apply `migrations/` with `wrangler d1 migrations apply DB --local` when it exists.
     Idempotent; keeps data and secrets.
-  - `node scripts/slot.mjs reset <N>` - delete `.wrangler/state`, empty the bucket, then prepare.
-  - `node scripts/slot.mjs drop <N>` - delete the bucket and `.wrangler/state`; keeps `.dev.vars`.
+  - `node scripts/slot.mjs reset <N>` - first stop the slot's app server (below), then delete
+    `.wrangler/state`, empty the bucket, then prepare.
+  - `node scripts/slot.mjs drop <N>` - first stop the slot's app server (below), then delete the
+    bucket and `.wrangler/state`; keeps `.dev.vars`.
+  - Stopping the app server (`drop` and `reset` only; `prepare` never touches processes): the
+    listeners on port `3100 + N` and their parents whose command line names that port
+    (`--port <port>`) are sent TERM with their children, KILL after 5 s. It prints
+    `slot N のポート 310N のプロセスを M 個止めました`; if any survive it prints their PIDs and exits 1
+    without deleting anything. Other ports are never touched (#83).
   - Exit codes: 0 ok, 1 stack down or command failed, 2 bad arguments. If the stack is down it
     says so; only the Director starts it.
 - At dispatch the Director runs `prepare` (or `reset`); at cleanup, `drop`, so each PBI starts

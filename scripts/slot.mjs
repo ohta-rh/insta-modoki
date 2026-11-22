@@ -164,6 +164,85 @@ async function emptyBucket(cfg) {
   for (const key of await listObjects(cfg)) await deleteObject(cfg, key);
 }
 
+// --- Stopping the slot's app server (#83) ---
+
+const TERM_WAIT_MS = 5000;
+const POLL_MS = 100;
+
+/** pid -> { ppid, command } from `ps`. */
+function readProcesses(exec) {
+  const procs = new Map();
+  for (const row of exec('ps', ['-axo', 'pid=,ppid=,command=']).stdout.split('\n')) {
+    const m = /^\s*(\d+)\s+(\d+)\s+(.*)$/.exec(row);
+    if (m) procs.set(Number(m[1]), { ppid: Number(m[2]), command: m[3] });
+  }
+  return procs;
+}
+
+/** The running process and all its ancestors: never a target, or `drop` would kill itself and its caller. */
+function selfChain(procs, selfPid) {
+  const chain = new Set([selfPid]);
+  for (let p = procs.get(selfPid)?.ppid; p && p > 1 && !chain.has(p); p = procs.get(p)?.ppid)
+    chain.add(p);
+  return chain;
+}
+
+/**
+ * PIDs listening on the TCP port (`lsof -ti`) plus the ancestors that were started for that port
+ * (their command line has `--port <N>`, `--port=<N>` or `PORT=<N>`): stopping only the listener
+ * leaves wrangler and the preview running. Empty when nobody is. Never climbs into a shell or a
+ * process of another port, and never returns this process or its ancestors.
+ */
+export async function listPortPids(port, exec = realExec, selfPid = process.pid) {
+  const r = exec('lsof', ['-ti', `tcp:${port}`, '-sTCP:LISTEN']);
+  const listeners = [...new Set(r.stdout.split('\n').map((l) => Number(l.trim())))].filter(
+    (p) => Number.isInteger(p) && p > 1,
+  );
+  if (listeners.length === 0) return [];
+  const procs = readProcesses(exec);
+  const self = selfChain(procs, selfPid);
+  const mine = new RegExp(`(--port[ =]|\\bPORT=)${port}(\\s|$)`);
+  const all = new Set(listeners);
+  for (const pid of listeners) {
+    for (
+      let p = procs.get(pid)?.ppid;
+      p && p > 1 && mine.test(procs.get(p)?.command ?? '');
+      p = procs.get(p)?.ppid
+    )
+      all.add(p);
+  }
+  return [...all].filter((p) => !self.has(p));
+}
+
+/**
+ * Signals pid and all its descendants, children first (the preview is sh -> wrangler -> node -> workerd).
+ * This process and its ancestors are skipped.
+ */
+export function killTree(pid, signal, exec = realExec, selfPid = process.pid, send = process.kill) {
+  if (!(pid > 1)) return; // PID 1 would walk every process on the host
+  const procs = readProcesses(exec);
+  const self = selfChain(procs, selfPid);
+  const children = new Map();
+  for (const [c, { ppid }] of procs) children.set(ppid, [...(children.get(ppid) ?? []), c]);
+  const order = [];
+  const seen = new Set();
+  const walk = (p) => {
+    if (seen.has(p)) return;
+    seen.add(p);
+    for (const c of children.get(p) ?? []) walk(c);
+    order.push(p);
+  };
+  walk(pid);
+  for (const p of order) {
+    if (self.has(p)) continue;
+    try {
+      send(p, signal);
+    } catch {
+      // already gone
+    }
+  }
+}
+
 // --- The command ---
 
 function realExec(cmd, args, opts = {}) {
@@ -193,6 +272,36 @@ export async function run(argv, deps = {}) {
     return 2;
   }
   const n = Number(slotArg);
+
+  if (command === 'drop' || command === 'reset') {
+    const list = deps.listPortPids ?? listPortPids;
+    const kill = deps.killTree ?? killTree;
+    const sleep = deps.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
+    const found = await list(names.port);
+    const waitFor = async (ms) => {
+      let left = await list(names.port);
+      for (let t = 0; left.length > 0 && t < ms; t += POLL_MS) {
+        await sleep(POLL_MS);
+        left = await list(names.port);
+      }
+      return left;
+    };
+    if (found.length > 0) {
+      for (const pid of found) kill(pid, 'SIGTERM');
+      let left = await waitFor(deps.termWaitMs ?? TERM_WAIT_MS);
+      if (left.length > 0) {
+        for (const pid of left) kill(pid, 'SIGKILL');
+        left = await waitFor(1000);
+      }
+      if (left.length > 0) {
+        err(
+          `slot ${n} のポート ${names.port} を握るプロセスが止まりません（PID: ${left.join(', ')}）。消す処理には進みません`,
+        );
+        return 1;
+      }
+    }
+    out(`slot ${n} のポート ${names.port} のプロセスを ${found.length} 個止めました`);
+  }
 
   const ps = exec('docker', [
     'ps',
@@ -263,7 +372,7 @@ export async function run(argv, deps = {}) {
       if (garage('bucket', 'info', names.bucket).status === 0) {
         const r = ensureBucket();
         if (r.status !== 0) return fail('バケットの許可', r);
-        await emptyBucket(cfg);
+        await (deps.emptyBucket ?? emptyBucket)(cfg);
         const d = garage('bucket', 'delete', '--yes', names.bucket);
         if (d.status !== 0) return fail('バケットの削除', d);
       }
@@ -276,7 +385,7 @@ export async function run(argv, deps = {}) {
     const b = ensureBucket();
     if (b.status !== 0) return fail('バケットの準備', b);
     await (deps.putCors ?? putBucketCors)(cfg, n);
-    if (command === 'reset') await emptyBucket(cfg);
+    if (command === 'reset') await (deps.emptyBucket ?? emptyBucket)(cfg);
 
     const prev = existsSync(envFile) ? parseEnv(readFileSync(envFile, 'utf8')) : {};
     rmSync(envFile, { force: true }); // never rewrite secrets into a file with an older, looser mode

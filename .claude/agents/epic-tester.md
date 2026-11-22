@@ -42,6 +42,13 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
 4. **Regression** — the E2E specs of every child PBI and the full verify command (supporting
    evidence only; the verdict comes from steps 2–3).
 
+5. **Clean up before you report.** Run `node scripts/slot.mjs drop <slot>` in your worktree: it
+   stops the app server on port `3100 + slot` with all its children (`pnpm start` leaves
+   `workerd` behind when only the shell is stopped) and removes the slot's data. Check its
+   output line (`slot N のポート 310N のプロセスを M 個止めました`: the "止めたプロセス" count), then confirm
+   `lsof -ti tcp:<3100 + slot>` prints nothing. Report the
+   count. Never stop a process on another port.
+
 You do not fix product code. A failure is recorded with reproduction steps, expected vs actual,
 and the screenshot, and reported as `DONE_WITH_CONCERNS` with result `FAIL`.
 
