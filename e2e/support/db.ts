@@ -103,3 +103,17 @@ export function seedFollowers(followeeId: string, n: number): string[] {
   harness({ op: 'seedFollowers', followeeId, followers });
   return followers.map((f) => f.username);
 }
+
+/** How many unread notifications the user has (read directly; every write goes through the app). */
+export function unreadNotificationCount(username: string): number {
+  return withDb(
+    (db) =>
+      (
+        db
+          .prepare(
+            'SELECT count(*) AS n FROM notifications WHERE read_at IS NULL AND recipient_id = (SELECT id FROM users WHERE username = ?)',
+          )
+          .get(username) as { n: number }
+      ).n,
+  );
+}

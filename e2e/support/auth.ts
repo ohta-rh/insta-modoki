@@ -1,6 +1,6 @@
 import { randomInt } from 'node:crypto';
 import { test as base, expect, type BrowserContext, type Page } from '@playwright/test';
-import { rateRows } from './db';
+import { rateRows, unreadNotificationCount } from './db';
 
 /** The origin the app under test listens on (`PORT`, 3100 by default). */
 export const baseURL = () => `http://localhost:${process.env.PORT ?? 3100}`;
@@ -67,7 +67,7 @@ export const test = base.extend({
  * (each sign-up is a burst of writes to the shared D1 file). `account.me` is that user.
  */
 export const signedIn = base.extend<
-  object,
+  { sharedAccountClean: void },
   {
     account: { state: Awaited<ReturnType<BrowserContext['storageState']>>; me: NewUser };
   }
@@ -85,5 +85,19 @@ export const signedIn = base.extend<
   storageState: async ({ account }, use) => {
     await use(account.state);
   },
+  // The account is shared by every test of the worker: a test that leaves it an unread notification
+  // would break whichever test runs next on that worker, so the test that leaks fails itself.
+  sharedAccountClean: [
+    async ({ account }, use) => {
+      await use();
+      const n = unreadNotificationCount(account.me.username);
+      if (n > 0) {
+        throw new Error(
+          `共有アカウント（signedIn）に未読の通知が ${n} 件残っています。通知を作るテストは freshUser を使ってください`,
+        );
+      }
+    },
+    { auto: true },
+  ],
 });
 export { expect };
