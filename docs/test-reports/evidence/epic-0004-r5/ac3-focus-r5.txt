@@ -1,0 +1,38 @@
+## post delete dialog
+before Enter, active: button:削除
+in flight: active=button:削除中…, in dialog=true, posts=1
+in flight: aria-disabled cancel=true, confirm=true
+in flight: after Cancel click, dialog open=true, active=button:キャンセル
+in flight: after Esc, dialog open=true, active=button:キャンセル
+in flight: after second Enter, requests sent=1, active=button:キャンセル, in dialog=true
+after failure message ("エラーが発生しました。しばらくしてからもう一度お試しください"): active=button:キャンセル, in dialog=true
+Tab 1: button:削除 (inside the dialog)
+Tab 2: button:キャンセル (inside the dialog)
+Tab 3: button:削除 (inside the dialog)
+Tab 4: button:キャンセル (inside the dialog)
+Tab 5: button:削除 (inside the dialog)
+Shift+Tab 1: button:キャンセル (inside the dialog)
+Shift+Tab 2: button:削除 (inside the dialog)
+Shift+Tab 3: button:キャンセル (inside the dialog)
+Shift+Tab 4: button:削除 (inside the dialog)
+Shift+Tab 5: button:キャンセル (inside the dialog)
+Esc closes the dialog; active=button:削除
+## comment delete dialog
+before Enter, active: button:削除
+in flight: active=button:削除中…, in dialog=true, posts=1
+in flight: aria-disabled cancel=true, confirm=true
+in flight: after Cancel click, dialog open=true, active=button:キャンセル
+in flight: after Esc, dialog open=true, active=button:キャンセル
+in flight: after second Enter, requests sent=1, active=button:キャンセル, in dialog=true
+after failure message ("エラーが発生しました。しばらくしてからもう一度お試しください"): active=button:キャンセル, in dialog=true
+Tab 1: button:削除 (inside the dialog)
+Tab 2: button:キャンセル (inside the dialog)
+Tab 3: button:削除 (inside the dialog)
+Tab 4: button:キャンセル (inside the dialog)
+Tab 5: button:削除 (inside the dialog)
+Shift+Tab 1: button:キャンセル (inside the dialog)
+Shift+Tab 2: button:削除 (inside the dialog)
+Shift+Tab 3: button:キャンセル (inside the dialog)
+Shift+Tab 4: button:削除 (inside the dialog)
+Shift+Tab 5: button:キャンセル (inside the dialog)
+Esc closes the dialog; active=button:@ep4_mwraj58dbop6 のコ
