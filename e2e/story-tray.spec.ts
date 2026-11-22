@@ -4,7 +4,7 @@ import { expectNoSeriousViolations } from './support/axe';
 import { seedFollow, seedUser, userRow } from './support/db';
 import { waitForHydration } from './support/hydration';
 import { tabTo } from './support/keys';
-import { insertStory, insertStoryView } from './support/stories';
+import { insertStory, insertStoryView, putStoryFiles } from './support/stories';
 
 const HOUR = 3_600_000;
 
@@ -99,6 +99,55 @@ test('項目を開くと並びを storyQueue に保存する', async ({ page }) 
   await expect(page).toHaveURL(new RegExp(`/stories/${c.username}$`));
   const saved = await page.evaluate(() => sessionStorage.getItem('storyQueue'));
   expect(JSON.parse(saved!)).toEqual([b.username, c.username, d.username]);
+});
+
+test('ビューアを閉じるとトレイが読み込み直さずに視聴済みの並びに変わる', async ({ page }) => {
+  const me = await ownUsername(page);
+  for (const how of ['Escape', 'button'] as const) {
+    // A: two stories (newest person); C: two stories, only the first gets seen.
+    const people: { username: string; storyIds: string[] }[] = [];
+    for (const hoursAgo of [1, 2]) {
+      const username = `e2e_t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+      seedUser(username, `${username}@example.com`, { displayName: '見本の人' });
+      seedFollow(userRow(me)!.id as string, userRow(username)!.id as string);
+      const storyIds: string[] = [];
+      for (let i = 0; i < 2; i++) {
+        const story = insertStory({
+          authorUsername: username,
+          createdAt: Date.now() - hoursAgo * HOUR + i * 1000,
+        });
+        await putStoryFiles(page, story);
+        storyIds.push(story.id);
+      }
+      people.push({ username, storyIds });
+    }
+    const [a, c] = people as [(typeof people)[0], (typeof people)[0]];
+    await openHome(page);
+    const unseen = (u: string) => page.getByRole('link', { name: `${u}のストーリー（未視聴）` });
+    await expect(links(page).nth(1)).toHaveAccessibleName(`${a.username}のストーリー（未視聴）`);
+    await expect(links(page).nth(2)).toHaveAccessibleName(`${c.username}のストーリー（未視聴）`);
+
+    await unseen(a.username).click();
+    const viewerA = page.getByRole('dialog', { name: `${a.username}のストーリー` });
+    await expect(viewerA).toBeVisible();
+    const position = page.locator('[aria-live="polite"]', { hasText: /ストーリー \d+ \/ \d+/ });
+    await expect(position).toHaveText('ストーリー 1 / 2');
+    await page.keyboard.press('ArrowRight');
+    await expect(position).toHaveText('ストーリー 2 / 2');
+    await page.keyboard.press('ArrowRight');
+    await expect(page).toHaveURL(new RegExp(`/stories/${c.username}$`));
+    await expect(page.getByRole('dialog', { name: `${c.username}のストーリー` })).toBeVisible();
+    await expect(position).toHaveText('ストーリー 1 / 2');
+
+    if (how === 'Escape') await page.keyboard.press('Escape');
+    else await page.getByRole('button', { name: '閉じる' }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+
+    // No reload: the tray itself is redrawn.
+    await expect(links(page).nth(1)).toHaveAccessibleName(`${c.username}のストーリー（未視聴）`);
+    await expect(links(page).nth(2)).toHaveAccessibleName(`${a.username}のストーリー（視聴済み）`);
+  }
 });
 
 base.describe('視差効果を減らす', () => {
