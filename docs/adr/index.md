@@ -53,6 +53,7 @@
 * [ADR-0046: 性能の基準は THRESHOLDS に 1 か所で定め、初期 JS は verify の既定の手順で、Lighthouse・INP・フィード API の p95 は --with-perf と main への push の CI で検査する](0046-performance-budget-in-verify-and-ci.md) - 採用
 * [ADR-0048: 確かめた AC はその場で issue のチェックを付け、PASS した EPIC の画面に後から触れたら総合試験をやり直す](0048-tick-ac-on-evidence-and-retest-epics-after-later-changes.md) - 採用
 * [ADR-0052: マイルストーンの順番を M1 → M3（Phase 2 をローカルで）→ M2（Cloudflare で公開）→ M4 に変える](0052-phase-2-before-cloudflare-publication.md) - 採用
+* [ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる](0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) - 採用
 
 # ひな形
 

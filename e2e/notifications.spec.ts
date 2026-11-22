@@ -8,10 +8,6 @@ import { tabTo } from './support/keys';
 import { insertPost, putPostFiles } from './support/posts';
 
 const NAV = 'メイン';
-// The link's name is its label and the badge's hidden text. Chrome puts a space between the two
-// (they are separate blocks of the flex link), so the name is matched with optional white space.
-const UNREAD_ONE = /^通知\s*（未読 1 件）$/;
-
 signedIn(
   'いいねの通知がバッジに 10 秒以内に出て、一覧を開くと既読になる',
   async ({ page, browser, account }) => {
@@ -42,11 +38,11 @@ signedIn(
     }
 
     // A did nothing: the name changes by itself within one polling interval (10 s) plus the call.
-    await expect(nav.getByRole('link', { name: UNREAD_ONE })).toBeVisible({
+    await expect(nav.getByRole('link', { name: '通知（未読 1 件）', exact: true })).toBeVisible({
       timeout: 15_000,
     });
 
-    await nav.getByRole('link', { name: UNREAD_ONE }).click();
+    await nav.getByRole('link', { name: '通知（未読 1 件）', exact: true }).click();
     await expect(page).toHaveURL(/\/notifications$/);
     await expect(page.getByRole('heading', { level: 1, name: '通知' })).toBeVisible();
     const row = page.getByRole('link', { name: /さんがあなたの投稿にいいねしました/ });

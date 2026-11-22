@@ -60,4 +60,11 @@ describe('AppShell', () => {
     );
     expect(html.match(/BADGE/g)).toHaveLength(2);
   });
+
+  it('linkAs を渡したときだけその項目の <a> を差し替える', () => {
+    const Marked = (props: React.ComponentProps<'a'>) => <a {...props} data-marked="1" />;
+    expect(render()).not.toContain('data-marked');
+    const html = render({ linkAs: { notifications: Marked } });
+    expect(html.match(/data-marked="1"/g)).toHaveLength(2);
+  });
 });

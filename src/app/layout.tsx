@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactNode } from 'react';
 import { getSessionUser, isValidUsernameFormat } from '@/features/auth';
-import { NotificationBadge } from '@/features/notification/ui';
+import { NotificationBadge, NotificationNavLink } from '@/features/notification/ui';
 import { AppShellClient, HydrationMarker } from '@/shared/ui';
 import './globals.css';
 
@@ -24,6 +24,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <AppShellClient
           viewer={viewer}
           badges={viewer ? { notifications: <NotificationBadge /> } : undefined}
+          linkAs={viewer ? { notifications: NotificationNavLink } : undefined}
         >
           {children}
         </AppShellClient>

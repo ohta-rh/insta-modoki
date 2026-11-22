@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ComponentType, ReactNode } from 'react';
 import { AppShell } from './AppShell';
 import { isAuthScreen, type NavItem, type Viewer } from './nav-items';
 
@@ -9,11 +9,13 @@ import { isAuthScreen, type NavItem, type Viewer } from './nav-items';
 export function AppShellClient({
   viewer,
   badges,
+  linkAs,
   hideNav,
   children,
 }: {
   viewer: Viewer;
   badges?: Partial<Record<NavItem['key'], ReactNode>>;
+  linkAs?: Partial<Record<NavItem['key'], ComponentType<ComponentProps<'a'>>>>;
   hideNav?: boolean;
   children: ReactNode;
 }) {
@@ -23,6 +25,7 @@ export function AppShellClient({
       currentPath={path}
       viewer={viewer}
       badges={badges}
+      linkAs={linkAs}
       hideNav={hideNav ?? isAuthScreen(path)}
     >
       {children}

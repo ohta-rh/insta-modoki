@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import type { ComponentProps, ComponentType, ReactNode } from 'react';
 import { FOOTER_NOTICE } from './brand';
 import { BellIcon, HomeIcon, PlusSquareIcon, SearchIcon, UserIcon, type IconProps } from './icons';
 import { Logo } from './Logo';
@@ -17,6 +17,11 @@ export type AppShellProps = {
   viewer: Viewer;
   /** Extra content placed right after a navigation item's label (the unread badge), by item key. */
   badges?: Partial<Record<NavItem['key'], ReactNode>>;
+  /**
+   * Replaces the `<a>` of a navigation item by a component taking the same props (a client
+   * component of a feature, which sets an `aria-label` from client state such as the unread count).
+   */
+  linkAs?: Partial<Record<NavItem['key'], ComponentType<ComponentProps<'a'>>>>;
   /** Sign-up and log-in screens render without navigation. */
   hideNav?: boolean;
   children: ReactNode;
@@ -40,6 +45,7 @@ type NavProps = {
   current: string;
   viewer: Viewer;
   badges?: AppShellProps['badges'];
+  linkAs?: AppShellProps['linkAs'];
 };
 
 function NavLinks({
@@ -47,6 +53,7 @@ function NavLinks({
   current,
   viewer,
   badges,
+  linkAs,
   layout,
 }: NavProps & { layout: 'side' | 'bottom' }) {
   return (
@@ -54,8 +61,9 @@ function NavLinks({
       {items.map((item) => {
         const Icon = ICONS[item.icon];
         const isHere = isCurrent(item, current, viewer);
+        const Link = linkAs?.[item.key] ?? 'a';
         return (
-          <a
+          <Link
             key={item.key}
             href={item.href}
             aria-current={isHere ? 'page' : undefined}
@@ -74,14 +82,14 @@ function NavLinks({
                 {badges[item.key]}
               </span>
             ) : null}
-          </a>
+          </Link>
         );
       })}
     </>
   );
 }
 
-function SideNav({ items, current, viewer, badges }: NavProps) {
+function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
   return (
     <nav
       aria-label="メイン"
@@ -91,19 +99,33 @@ function SideNav({ items, current, viewer, badges }: NavProps) {
       <div className="mb-4 flex min-h-[var(--tap-min)] items-center px-3">
         <Logo withName />
       </div>
-      <NavLinks items={items} current={current} viewer={viewer} badges={badges} layout="side" />
+      <NavLinks
+        items={items}
+        current={current}
+        viewer={viewer}
+        badges={badges}
+        linkAs={linkAs}
+        layout="side"
+      />
     </nav>
   );
 }
 
-function BottomNav({ items, current, viewer, badges }: NavProps) {
+function BottomNav({ items, current, viewer, badges, linkAs }: NavProps) {
   return (
     <nav
       aria-label="メイン"
       data-nav="bottom"
       className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] border-t border-border bg-bg pb-[env(safe-area-inset-bottom)] nav:hidden"
     >
-      <NavLinks items={items} current={current} viewer={viewer} badges={badges} layout="bottom" />
+      <NavLinks
+        items={items}
+        current={current}
+        viewer={viewer}
+        badges={badges}
+        linkAs={linkAs}
+        layout="bottom"
+      />
     </nav>
   );
 }
@@ -126,6 +148,7 @@ export function AppShell({
   currentPath,
   viewer,
   badges,
+  linkAs,
   hideNav = false,
   children,
 }: AppShellProps) {
@@ -135,7 +158,13 @@ export function AppShell({
       <SkipLink />
       <div className="mx-auto flex min-h-screen w-full justify-center">
         {hideNav ? null : (
-          <SideNav items={items} current={currentPath} viewer={viewer} badges={badges} />
+          <SideNav
+            items={items}
+            current={currentPath}
+            viewer={viewer}
+            badges={badges}
+            linkAs={linkAs}
+          />
         )}
         <div className="flex min-w-0 flex-1 flex-col">
           <main id="main" className="mx-auto w-full max-w-[var(--content-max)] flex-1">
@@ -145,7 +174,13 @@ export function AppShell({
         </div>
       </div>
       {hideNav ? null : (
-        <BottomNav items={items} current={currentPath} viewer={viewer} badges={badges} />
+        <BottomNav
+          items={items}
+          current={currentPath}
+          viewer={viewer}
+          badges={badges}
+          linkAs={linkAs}
+        />
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 const CLIENT_FILES = [
   'ui/NotificationBadge.tsx',
   'ui/NotificationItem.tsx',
+  'ui/NotificationNavLink.tsx',
   'ui/NotificationList.tsx',
   'ui/unread-store.ts',
   'model/notification-text.ts',
