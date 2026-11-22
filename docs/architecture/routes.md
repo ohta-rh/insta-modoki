@@ -70,5 +70,6 @@ status: stable
 | `listFollowers` / `listFollowing` | follow | username, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
 | `getFeed` | feed | cursor? | `Page<PostView>`（12 件） | UNAUTHENTICATED |
 | `searchUsers` | search | q（前後の空白を除いて 1〜30 字） | `{ items: UserSummary[] }`（20 件まで。ユーザー名の前方一致・部分一致・表示名の一致の順。カーソルは無い） | UNAUTHENTICATED、VALIDATION、RATE_LIMITED |
+| `listExplorePosts` | explore | cursor? | `Page<PostTile>`（24 件。直近 7 日間・自分とフォロー中の人を除く・いいね数の多い順。窓の時刻はカーソルの `asOf` で固定） | UNAUTHENTICATED、VALIDATION（壊れたカーソル） |
 
 M2 以降の処理は、その PBI が同じ形でこの表に足す。

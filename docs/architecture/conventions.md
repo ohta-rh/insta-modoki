@@ -88,7 +88,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 
 ## カーソル
 
-- 並びは既定で `(created_at DESC, id DESC)`。コメントと返信の一覧は古い順（`created_at ASC, id ASC`）。フォロワー・フォロー中・いいねした人の一覧は、`id` の位置に相手の利用者の id を入れる。タグの投稿の一覧は `post_hashtags.created_at` の新しい順で、`id` の位置に `post_id` を入れる。カーソルは最後の行の `created_at` と `id` を `|` でつないで base64url にした文字列。OFFSET は使わない。
+- 並びは既定で `(created_at DESC, id DESC)`。コメントと返信の一覧は古い順（`created_at ASC, id ASC`）。フォロワー・フォロー中・いいねした人の一覧は、`id` の位置に相手の利用者の id を入れる。タグの投稿の一覧は `post_hashtags.created_at` の新しい順で、`id` の位置に `post_id` を入れる。カーソルは最後の行の `created_at` と `id` を `|` でつないで base64url にした文字列。OFFSET は使わない。発見の一覧だけは `asOf|like_count|created_at|id`（`asOf` は 1 ページ目を読んだ時刻の epoch ミリ秒。7 日の窓を全ページで同じ時刻から数える）で、並びは `like_count DESC, created_at DESC, id DESC`。`asOf` が現在より未来のカーソルは VALIDATION。
 - 応答は `Page<T> = { items: T[], nextCursor: string | null }`。壊れたカーソルは VALIDATION。
 
 ## 画面に返す形

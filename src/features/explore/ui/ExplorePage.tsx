@@ -1,10 +1,13 @@
+'use client';
+
 import { PostTileGrid, type PostTile } from '../../post';
 import { listExplorePostsAction } from '../api/actions';
 import { SearchLink } from './SearchLink';
 
 /**
  * The discover tab: a link to the user search, then the grid of last week's most liked posts
- * from people the viewer does not follow. Only the grid is client code.
+ * from people the viewer does not follow. A client component, because the grid's `load` is a
+ * function (a Server Action wrapped to take the cursor), which a server component cannot pass down.
  */
 export function ExplorePage({
   initialItems,

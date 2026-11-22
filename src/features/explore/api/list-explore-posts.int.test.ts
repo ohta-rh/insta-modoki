@@ -4,7 +4,7 @@ import { useTestDb } from '../../../../tests/helpers/db';
 import { createPost } from '../../../../tests/helpers/posts';
 import { sessionHeadersFor, testAuthEnv } from '../../../../tests/helpers/session';
 import { loadStorageEnv } from '../../../../tests/helpers/storage';
-import { createUser, type TestUser } from '../../../../tests/helpers/users';
+import { createUser } from '../../../../tests/helpers/users';
 import { follows, posts } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
 import type { StorageEnv } from '../../../shared/storage';
@@ -178,7 +178,13 @@ describe('listExplorePosts', () => {
   it('7 日の窓を posts_created_at_id_idx で絞る', async () => {
     const s = await setup();
     const built = exploreQuery(t.db, s.viewer.id, T, null).toSQL();
-    const plan = await t.d1
+    // The helper's D1 type has no bind(); the real binding does.
+    const d1 = t.d1 as unknown as {
+      prepare(sql: string): {
+        bind(...params: unknown[]): { all<R>(): Promise<{ results: R[] }> };
+      };
+    };
+    const plan = await d1
       .prepare(`EXPLAIN QUERY PLAN ${built.sql}`)
       .bind(...built.params)
       .all<{ detail: string }>();

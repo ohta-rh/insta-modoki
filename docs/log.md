@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Update**: [routes.md](architecture/routes.md)（`listExplorePosts`）、[conventions.md](architecture/conventions.md)（発見の一覧のカーソル）、[overview.md](architecture/overview.md)（`/explore` のルートのファイル）を足し、下部ナビの「検索」の行き先を `/explore` にした（#57）。
 * **Creation**: [ADR-0049](adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)（定期ジョブは Cron Trigger から `src/worker.mjs` で起動し、Worker と Node で同じコードを動かす）を追加し、[overview.md](architecture/overview.md)・[conventions.md](architecture/conventions.md)・[local-development.md](guides/local-development.md) を更新した（#56）。
 * **Update**: [routes.md](architecture/routes.md)（`searchUsers`）、[conventions.md](architecture/conventions.md)（ユーザー検索の上限）、[overview.md](architecture/overview.md)（`/explore/search` のルートのファイル）を足した（#48）。
 * **Update**: ストーリーのビューア（#55）に合わせて [routes.md](architecture/routes.md)（`getStoryReel`・`markStoryViewed`・`listStoryViewers`、`/stories/[username]` がモーダルで重なること）と [overview.md](architecture/overview.md)（ルートのファイルの場所）を更新した。
