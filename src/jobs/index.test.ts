@@ -36,7 +36,9 @@ describe('runAll with the registered jobs', () => {
     const names = Object.keys(jobs);
     const fakes: Record<string, Job> = Object.fromEntries(names.map((n) => [n, stub(1)]));
     fakes['notification-cleanup'] = async () => {
-      throw new Error('D1_ERROR: no such table: notifications: SELECT id FROM notifications at /app/x.ts');
+      throw new Error(
+        'D1_ERROR: no such table: notifications: SELECT id FROM notifications at /app/x.ts',
+      );
     };
     const failure = await runAll(env, NOW, { jobs: fakes }).then(
       () => null,
