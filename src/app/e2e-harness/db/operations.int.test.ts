@@ -7,6 +7,7 @@ import {
   bookmarks,
   comments,
   follows,
+  invites,
   likes,
   media,
   posts,
@@ -401,6 +402,43 @@ describe('E2E ハーネスの操作（保存）', () => {
         userId: viewer.id,
         items: [{ ...item, extra: 1 }],
       }).success,
+    ).toBe(false);
+  });
+
+  it('makeAdmin が利用者の role を admin にし 知らない利用者は失敗する', async () => {
+    const user = await createUser(t.db, { username: 'will_admin' });
+    await run({ op: 'makeAdmin', username: 'will_admin' });
+    const [row] = await t.db.select().from(users).where(eq(users.id, user.id));
+    expect(row!.role).toBe('admin');
+    await expect(run({ op: 'makeAdmin', username: 'nobody_here' })).rejects.toThrow();
+  });
+
+  it('seedInvite が管理者の利用者を 1 人だけ作って その名前で招待コードの行を書く', async () => {
+    const expiresAt = Date.UTC(2026, 10, 30);
+    await run({ op: 'seedInvite', code: 'ABCDE12345', maxUses: 1, expiresAt });
+    await run({
+      op: 'seedInvite',
+      code: 'ZYXWV98765',
+      maxUses: 3,
+      usedCount: 3,
+      expiresAt,
+      revokedAt: expiresAt - 1,
+    });
+    const rows = await t.db.select().from(invites).orderBy(invites.code);
+    expect(rows.map((r) => [r.code, r.maxUses, r.usedCount, r.expiresAt.getTime()])).toEqual([
+      ['ABCDE12345', 1, 0, expiresAt],
+      ['ZYXWV98765', 3, 3, expiresAt],
+    ]);
+    expect(rows[1]!.revokedAt!.getTime()).toBe(expiresAt - 1);
+    const admins = (await t.db.select().from(users)).filter((u) => u.role === 'admin');
+    expect(admins).toHaveLength(1);
+    expect(rows.every((r) => r.createdBy === admins[0]!.id)).toBe(true);
+    expect(
+      operationSchema.safeParse({ op: 'seedInvite', code: 'abc', maxUses: 1, expiresAt }).success,
+    ).toBe(false);
+    expect(
+      operationSchema.safeParse({ op: 'seedInvite', code: 'ABCDE12345', maxUses: 101, expiresAt })
+        .success,
     ).toBe(false);
   });
 });

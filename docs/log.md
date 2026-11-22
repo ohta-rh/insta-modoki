@@ -2,6 +2,8 @@
 
 ## 2026-11-23
 * **Creation**: [Web 版の画面の参照値と今のアプリとの差](research/web-ui-reference.md)（ログインしていない公開ページの実測と参照自身の CSS 変数から、骨格・ホーム・プロフィール・投稿・ログインの寸法と色を今のアプリと比べた調査）を追加し、[research/index.md](research/index.md) に載せた。
+* **Creation**: [ADR-0055](adr/0055-e2e-invite-required-by-request-header.md)（E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする。番号は仮）を追加した（#38）。
+* **Update**: [routes.md](architecture/routes.md) に `createInvite`・`listInvites`・`revokeInvite` と画面 `/admin/invites` を足し、`signUp` の `inviteCode`（`INVITE_REQUIRED` が `true` のとき必須）を書いた（#38）。
 
 ## 2026-11-22
 * **Creation**: [EPIC #11 の総合試験のレポート（2 回目）](test-reports/epic-0011-notifications-r2.md)（PASS。ADR-0048 によるやり直し。5807758 で、#86 のバッジの位置・クリック・名前を含む 5 つの AC を実ブラウザで確かめた）と、その写真・記録（`test-reports/evidence/epic-0011-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

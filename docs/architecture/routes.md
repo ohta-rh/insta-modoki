@@ -23,6 +23,7 @@ status: stable
 | `/[username]` | プロフィール。タブは「投稿」と、本人だけの「保存済み」（`?tab=saved`。本人以外・他の値は「投稿」になり、保存は読まない）。グリッドの投稿を押すと `/p/[postId]` がモーダルで開く（intercepting route。直接開く・再読み込みは通常の投稿詳細。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） | 不要 | M1 |
 | `/[username]/followers` / `/[username]/following` | フォロワー / フォロー中の一覧 | 不要 | M1 |
 | `/admin` | 管理（招待コード・削除・通報） | 管理者 | M2 |
+| `/admin/invites` | 招待コードの管理（発行・一覧・コピー・失効。管理者でない利用者は「ページが見つかりません」） | 管理者 | M2 |
 | `/explore` / `/explore/search` / `/explore/tags/[tag]` | 発見 / 検索 / ハッシュタグ | 要 | M3 |
 | `/notifications` | 通知 | 要 | M3 |
 | `/stories/create` / `/stories/[username]` | ストーリーの投稿 / ビューア（ホームなど `(app)` の画面から開くとモーダルで重なる（intercepting route。直接開く・再読み込みは全画面）） | 要 | M3 |
@@ -42,10 +43,13 @@ status: stable
 
 | 処理 | slice | 入力 | 成功 | 主なエラー |
 |---|---|---|---|---|
-| `signUp` | auth | email, username, displayName, password（8〜72 字）, inviteCode（M2〜） | セッションを作り `{ username }` | VALIDATION、CONFLICT（`username` / `email`）、RATE_LIMITED |
+| `signUp` | auth | email, username, displayName, password（8〜72 字）, inviteCode（M2〜。環境変数 `INVITE_REQUIRED` が `true` のとき必須、そうでなければ省略可で、付いていれば同じ検証。前後の空白を除き大文字にする） | セッションを作り `{ username }` | VALIDATION（`inviteCode`: 不明・失効・期限切れ・使い切り・未入力）、CONFLICT（`username` / `email`）、RATE_LIMITED |
 | `checkUsername` | auth | username | `{ available: boolean }` | VALIDATION |
 | `logIn` | auth | email, password | セッションを作る | UNAUTHENTICATED（文言は 1 つ）、RATE_LIMITED |
 | `logOut` | auth | – | セッションを消す | – |
+| `createInvite` | invite | maxUses（1〜100 の整数）, expiresInDays?（1〜90 の整数、既定 7） | `InviteView`（`code`・`maxUses`・`usedCount`・`expiresAt`・`revokedAt`・`createdAt`・`status`） | UNAUTHENTICATED、FORBIDDEN（管理者のみ）、VALIDATION |
+| `listInvites` | invite | cursor? | `Page<InviteView>`（20 件、新しい発行順） | UNAUTHENTICATED、FORBIDDEN、VALIDATION |
+| `revokeInvite` | invite | code | `{ revoked: true }`（失効済みでも同じ。`revoked_at` は最初の時刻のまま） | UNAUTHENTICATED、FORBIDDEN、VALIDATION、NOT_FOUND |
 | `getProfile` | profile | username | `ProfileView`（[conventions.md](conventions.md)） | NOT_FOUND |
 | `listProfilePosts` | profile | username, cursor? | `Page<PostThumb>`（12 件） | NOT_FOUND |
 | `updateProfile` | profile | displayName, bio, avatarKey? | `ProfileView`（`avatarKey` があれば、`createPost` と同じ所有の検査の後に `HEAD` で `image/webp` と大きさを確かめる） | UNAUTHENTICATED、VALIDATION |

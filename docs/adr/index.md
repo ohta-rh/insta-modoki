@@ -55,6 +55,7 @@
 * [ADR-0048: 確かめた AC はその場で issue のチェックを付け、PASS した EPIC の画面に後から触れたら総合試験をやり直す](0048-tick-ac-on-evidence-and-retest-epics-after-later-changes.md) - 採用
 * [ADR-0052: マイルストーンの順番を M1 → M3（Phase 2 をローカルで）→ M2（Cloudflare で公開）→ M4 に変える](0052-phase-2-before-cloudflare-publication.md) - 採用
 * [ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる](0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) - 採用
+* [ADR-0055: E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする](0055-e2e-invite-required-by-request-header.md) - 採用
 
 # ひな形
 

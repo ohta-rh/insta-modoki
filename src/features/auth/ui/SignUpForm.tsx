@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { checkUsernameAction, signUpAction, type SignUpState } from '../api/actions';
 
 const INPUT =
@@ -8,7 +8,7 @@ const INPUT =
 const ERROR = 'mt-1 text-[length:var(--font-size-sm)] text-red-700';
 
 type FieldProps = {
-  name: 'email' | 'username' | 'displayName' | 'password';
+  name: 'email' | 'username' | 'displayName' | 'password' | 'inviteCode';
   label: string;
   type?: string;
   autoComplete: string;
@@ -16,17 +16,25 @@ type FieldProps = {
   errors?: string[];
   onBlur?: (value: string) => void;
   maxLength?: number;
+  /** The error is announced (role="alert") and the field takes the focus when a new error arrives. */
+  announce?: boolean;
 };
 
-function Field({ name, label, type = 'text', errors, onBlur, ...rest }: FieldProps) {
+function Field({ name, label, type = 'text', errors, onBlur, announce, ...rest }: FieldProps) {
   const errorId = `${name}-error`;
   const invalid = errors !== undefined && errors.length > 0;
+  const input = useRef<HTMLInputElement>(null);
+  // `errors` is a new array for each result of the action, so a repeated error focuses again.
+  useEffect(() => {
+    if (announce && invalid) input.current?.focus();
+  }, [announce, invalid, errors]);
   return (
     <div>
       <label htmlFor={name} className="mb-1 block text-[length:var(--font-size-sm)] font-bold">
         {label}
       </label>
       <input
+        ref={input}
         id={name}
         name={name}
         type={type}
@@ -37,7 +45,7 @@ function Field({ name, label, type = 'text', errors, onBlur, ...rest }: FieldPro
         {...rest}
       />
       {invalid ? (
-        <p id={errorId} className={ERROR}>
+        <p id={errorId} role={announce ? 'alert' : undefined} className={ERROR}>
           {errors.join(' ')}
         </p>
       ) : null}
@@ -45,7 +53,7 @@ function Field({ name, label, type = 'text', errors, onBlur, ...rest }: FieldPro
   );
 }
 
-export function SignUpForm() {
+export function SignUpForm({ inviteRequired = false }: { inviteRequired?: boolean }) {
   const [state, action, pending] = useActionState<SignUpState, FormData>(signUpAction, {});
   // The result of the last on-blur check (not per keystroke); cleared by the next blur.
   const [checked, setChecked] = useState<{ name: string; message: string | null } | null>(null);
@@ -102,6 +110,16 @@ export function SignUpForm() {
         autoComplete="new-password"
         errors={fe.password}
       />
+      {inviteRequired ? (
+        <Field
+          name="inviteCode"
+          label="招待コード"
+          autoComplete="off"
+          defaultValue={state.values?.inviteCode}
+          errors={fe.inviteCode}
+          announce
+        />
+      ) : null}
       <button
         type="submit"
         disabled={pending || taken}

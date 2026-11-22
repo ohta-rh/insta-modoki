@@ -37,6 +37,8 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 
 `.env.example` に名前の一覧がある（値は空）。`SLOT`・`PORT`（`3100 + N`）・`BETTER_AUTH_URL`・`BETTER_AUTH_SECRET`・`AUTH_PEPPER`・`S3_ENDPOINT`・`S3_REGION`・`S3_BUCKET`・`S3_ACCESS_KEY`・`S3_SECRET_KEY`・`S3_PUBLIC_BASE_URL`・`MEDIA_ORIGIN`。`AUTH_PEPPER`・`BETTER_AUTH_SECRET` は初回に乱数で作り、以降は保つ。`.dev.vars` は git に入れない。
 
+`INVITE_REQUIRED` は `.dev.vars` に書かない（未設定 = サインアップに招待コードは要らない。M1 の既定）。`true` にすると招待コードが必須になる。本番の値は配布の設定（#30）で入れる。
+
 `prepare` と `reset` は、スロットのバケットの CORS（アプリの origin `http://localhost:<3100+N>` からの PUT・GET・HEAD）も設定する。ブラウザが署名付き URL へ直接 PUT するために要る。
 
 # シードデータ（デモと計測用）

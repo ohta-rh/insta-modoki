@@ -4,11 +4,18 @@ import { newId } from '../../../shared/db/id';
 import { accounts, users } from '../../../shared/db/schema';
 import { sessions } from '../db/schema';
 import { AppError } from '../../../shared/errors';
+import {
+  assertInviteUsable,
+  inviteBatchStatement,
+  inviteFailure,
+  INVITE_MESSAGES,
+} from '../../invite';
 import { clientIp } from '../../../shared/security/client-ip';
 import { consume } from '../../../shared/security/rate-limit';
 import { hashPassword } from '../model/password';
 import { parseSignUp } from '../model/schema';
 import type { AuthEnv } from './auth-env';
+import { isInviteRequired } from './invite-required';
 import { newSession, sessionSetCookie } from './session';
 
 const USERNAME_TAKEN = 'このユーザー名は使われています';
@@ -58,7 +65,13 @@ export async function signUp(input: unknown, deps: SignUpDeps): Promise<SignUpRe
 
   const parsed = parseSignUp(input);
   if (!parsed.ok) throw new AppError('VALIDATION', { fieldErrors: parsed.fieldErrors });
-  const { username, email, displayName, password } = parsed.data;
+  const { username, email, displayName, password, inviteCode } = parsed.data;
+
+  // An invite code is required only where INVITE_REQUIRED is 'true'; a code that is given is always checked.
+  if (inviteCode === undefined && isInviteRequired(env, headers)) {
+    throw new AppError('VALIDATION', { fieldErrors: { inviteCode: [INVITE_MESSAGES.required] } });
+  }
+  if (inviteCode !== undefined) await assertInviteUsable(db, inviteCode, now);
 
   // Cheap pre-check so both clashes are reported and no hashing is spent; the UNIQUE
   // constraints below remain the final judge (concurrent sign-ups).
@@ -80,7 +93,7 @@ export async function signUp(input: unknown, deps: SignUpDeps): Promise<SignUpRe
     userAgent: headers.get('user-agent'),
   });
   try {
-    await db.batch([
+    const statements = [
       db.insert(users).values({
         id: userId,
         username,
@@ -99,8 +112,14 @@ export async function signUp(input: unknown, deps: SignUpDeps): Promise<SignUpRe
         updatedAt: at,
       }),
       db.insert(sessions).values(session.row),
-    ]);
+    ] as const;
+    await db.batch(
+      // First: if another sign-up took the last use meanwhile, its CHECK fails and nothing is written.
+      inviteCode === undefined ? statements : [inviteBatchStatement(db, inviteCode), ...statements],
+    );
   } catch (error) {
+    const invite = inviteFailure(error);
+    if (invite) throw invite;
     const field = uniqueViolation(error);
     if (field) throw conflict({ [field]: true });
     throw error;

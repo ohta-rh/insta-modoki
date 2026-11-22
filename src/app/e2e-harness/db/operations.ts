@@ -6,6 +6,7 @@ import {
   bookmarks,
   comments,
   follows,
+  invites,
   likes,
   media,
   notifications,
@@ -146,6 +147,16 @@ export const operationSchema = z.discriminatedUnion('op', [
       .array(z.strictObject({ postId: id, savedAt: ms }))
       .min(1)
       .max(50),
+  }),
+  // Invites (#38): an administrator for the admin screen, and codes for the sign-up scenarios.
+  z.strictObject({ op: z.literal('makeAdmin'), username: text(30) }),
+  z.strictObject({
+    op: z.literal('seedInvite'),
+    code: z.string().regex(/^[A-Z0-9]{10}$/),
+    maxUses: z.number().int().min(1).max(100),
+    usedCount: z.number().int().min(0).max(100).optional(),
+    expiresAt: ms,
+    revokedAt: ms.optional(),
   }),
 ]);
 
@@ -357,6 +368,46 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
             .onConflictDoNothing(),
         ) as unknown as Parameters<typeof db.batch>[0],
       );
+      return;
+    }
+    case 'makeAdmin': {
+      const done = await db
+        .update(users)
+        .set({ role: 'admin' })
+        .where(eq(users.username, operation.username))
+        .returning({ id: users.id });
+      if (done.length === 0) throw new Error(`no such user: ${operation.username}`);
+      return;
+    }
+    case 'seedInvite': {
+      // Every seeded code belongs to one administrator, found or made here.
+      const username = 'e2e_inviter';
+      let [admin] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.username, username));
+      if (!admin) {
+        const now = new Date();
+        admin = { id: crypto.randomUUID() };
+        await db.insert(users).values({
+          id: admin.id,
+          username,
+          email: `${username}@example.com`,
+          displayName: username,
+          role: 'admin',
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+      await db.insert(invites).values({
+        code: operation.code,
+        createdBy: admin.id,
+        maxUses: operation.maxUses,
+        usedCount: operation.usedCount ?? 0,
+        expiresAt: new Date(operation.expiresAt),
+        revokedAt: operation.revokedAt === undefined ? null : new Date(operation.revokedAt),
+        createdAt: new Date(),
+      });
       return;
     }
     case 'tagPost': {

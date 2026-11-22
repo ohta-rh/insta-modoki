@@ -7,6 +7,7 @@ import {
   comments,
   follows,
   hashtags,
+  invites,
   likes,
   media,
   postHashtags,
@@ -79,7 +80,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 18 個のテーブルと 11 個の索引ができる', async () => {
+  it('マイグレーションで 19 個のテーブルと 12 個の索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -96,6 +97,7 @@ describe('マイグレーション', () => {
         'post_hashtags',
         'notifications',
         'bookmarks',
+        'invites',
         'job_cursors',
       ]),
     );
@@ -108,16 +110,17 @@ describe('マイグレーション', () => {
         'follows_followee_created_idx',
         'post_hashtags_hashtag_created_post_idx',
         'bookmarks_user_created_post_idx',
+        'invites_created_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(18);
+    expect(await names('table')).toHaveLength(19);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(18);
+    expect(before).toHaveLength(19);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {
@@ -137,6 +140,7 @@ describe('マイグレーション', () => {
       hashtags,
       postHashtags,
       bookmarks,
+      invites,
     ]) {
       const cfg = getTableConfig(table);
       const info = (
@@ -152,6 +156,28 @@ describe('マイグレーション', () => {
 });
 
 describe('制約', () => {
+  it('招待コードの使用回数は 1〜100 で、使用済みは上限を超えられない', async () => {
+    await user('a');
+    const invite = (over: Row) =>
+      insert('invites', {
+        code: `CODE${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+        created_by: 'a',
+        max_uses: 1,
+        used_count: 0,
+        expires_at: NOW,
+        created_at: NOW,
+        ...over,
+      });
+    await invite({ max_uses: 1 });
+    await invite({ max_uses: 100 });
+    await expect(invite({ max_uses: 0 })).rejects.toThrow(/invites_max_uses_check/);
+    await expect(invite({ max_uses: 101 })).rejects.toThrow(/invites_max_uses_check/);
+    await expect(invite({ max_uses: 2, used_count: 3 })).rejects.toThrow(
+      /invites_used_count_check/,
+    );
+    await expect(invite({ used_count: -1 })).rejects.toThrow(/invites_used_count_check/);
+  });
+
   it('同じ利用者が同じ投稿に 2 回いいねすると拒まれる', async () => {
     await user('u1');
     await post('p1', 'u1');
