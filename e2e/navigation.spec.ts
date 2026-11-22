@@ -39,6 +39,11 @@ for (const width of [375, 768]) {
     await page.goto('/');
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: '本文へ移動' })).toBeFocused();
+    if (width === 375) {
+      // The bottom nav follows the main region, whose first stop on the home is the story tray's add button.
+      await page.keyboard.press('Tab');
+      await expect(page.getByRole('link', { name: 'ストーリーを追加' })).toBeFocused();
+    }
     for (const label of LABELS) {
       await page.keyboard.press('Tab');
       await expect(
@@ -61,10 +66,13 @@ test('フォーカスの輪郭が 2px 以上', async ({ page }) => {
   await page.goto('/');
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'ストーリーを追加' })).toBeFocused();
+  await page.keyboard.press('Tab');
   const link = bottom(page).getByRole('link', { name: 'ホーム' });
   await expect(link).toBeFocused();
   const width = await link.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
   expect(width).toBeGreaterThanOrEqual(2);
+  await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Shift+Tab');
   const skip = page.getByRole('link', { name: '本文へ移動' });
   await expect(skip).toBeFocused();
