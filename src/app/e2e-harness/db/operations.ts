@@ -7,6 +7,7 @@ import {
   follows,
   likes,
   media,
+  notifications,
   posts,
   rateLimits,
   stories,
@@ -128,6 +129,14 @@ export const operationSchema = z.discriminatedUnion('op', [
     createdAt: ms,
     names: z.array(text(100)).min(1).max(30),
   }),
+  z.strictObject({
+    op: z.literal('seedNotification'),
+    recipientId: id,
+    actorId: id,
+    type: z.enum(['like', 'follow']),
+    postId: id.optional(),
+    createdAt: ms,
+  }),
 ]);
 
 export type Operation = z.infer<typeof operationSchema>;
@@ -206,6 +215,18 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
         followerId: operation.followerId,
         followeeId: operation.followeeId,
         createdAt: new Date(),
+      });
+      return;
+    }
+    case 'seedNotification': {
+      // A row as the app would write it, for a screen test that needs notifications at once.
+      await db.insert(notifications).values({
+        id: crypto.randomUUID(),
+        recipientId: operation.recipientId,
+        actorId: operation.actorId,
+        type: operation.type,
+        postId: operation.type === 'like' ? (operation.postId ?? null) : null,
+        createdAt: new Date(operation.createdAt),
       });
       return;
     }

@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactNode } from 'react';
 import { getSessionUser, isValidUsernameFormat } from '@/features/auth';
-import { NotificationBadge } from '@/features/notification';
+import { NotificationBadge } from '@/features/notification/ui';
 import { AppShellClient, HydrationMarker } from '@/shared/ui';
 import './globals.css';
 

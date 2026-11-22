@@ -1,5 +1,7 @@
-// The notification slice's public entry. Other slices import only the five statement
-// functions (ADR-0014); the routes and the shell import the screen and the badge.
+// The notification slice's public entry for other slices: only the five statement functions
+// (ADR-0014). It must stay free of components: the like, comment and follow APIs import it, and
+// a component here would drag a server-only screen into the client bundle of every screen that
+// shows a post. The routes and the root layout import the screen and the badge from './ui'.
 export {
   deleteFollowNotification,
   deleteLikeNotification,
@@ -7,5 +9,3 @@ export {
   insertFollowNotification,
   insertLikeNotification,
 } from './db/statements';
-export { NotificationBadge } from './ui/NotificationBadge';
-export { NotificationsPage } from './ui/NotificationsPage';
