@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { getSessionUser } from '@/features/auth';
-import { listSavedPosts, SavedGrid } from '@/features/bookmark';
+import { listSavedPosts } from '@/features/bookmark';
 import { FollowButton, FollowerCount, FollowScope } from '@/features/follow';
 import {
   getProfile,
@@ -13,6 +13,7 @@ import {
   ProfileHeader,
   profileTab,
   ProfileTabs,
+  SavedGrid,
 } from '@/features/profile';
 import { AppError } from '@/shared/errors';
 
