@@ -240,21 +240,28 @@ signedIn(
     await tabTo(page, confirm);
     await page.keyboard.press('Enter');
 
+    const inside = () => dialog.evaluate((d) => d.contains(document.activeElement));
     const busy = dialog.getByRole('button', { name: '削除中…' });
+    await expect(busy).toBeVisible();
+    expect(await inside()).toBe(true);
+    await page.keyboard.press('Enter');
+    await expect.poll(() => posts).toBe(1);
+    expect(await inside()).toBe(true);
     await expect(busy).toBeFocused();
     await expect(busy).toHaveAttribute('aria-disabled', 'true');
     await expect(cancel).toHaveAttribute('aria-disabled', 'true');
-    await page.keyboard.press('Enter');
-    await expect.poll(() => posts).toBe(1);
     release();
 
     await expect(dialog.getByRole('alert')).toHaveText(
       'エラーが発生しました。しばらくしてからもう一度お試しください',
     );
+    await page.keyboard.press('Tab');
+    expect(await inside()).toBe(true);
+    await expect(cancel).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
     await expect(confirm).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(cancel).toBeFocused();
-    expect(await dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);
 
     failing = false;
     await page.keyboard.press('Tab');

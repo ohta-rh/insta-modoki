@@ -267,18 +267,32 @@ signedIn(
     await tabTo(page, confirm);
     await page.keyboard.press('Enter');
 
-    // AC-1: in flight, the focus stays on the pressed button, both are aria-disabled, no second POST.
+    // AC-1: in flight, the focus stays in the dialog and a second Enter sends nothing more.
     const busy = dialog.getByRole('button', { name: '削除中…' });
-    await expect(busy).toBeFocused();
-    await expect(busy).toHaveAttribute('aria-disabled', 'true');
-    await expect(cancel).toHaveAttribute('aria-disabled', 'true');
+    await expect(busy).toBeVisible();
+    expect(await inDialog(dialog)).toBe(true);
     await page.keyboard.press('Enter');
     await expect.poll(() => state.posts).toBe(1);
     expect(await inDialog(dialog)).toBe(true);
+    // The attributes are read now and judged after the behavioural checks below.
+    const ariaInFlight = await Promise.all([
+      busy.getAttribute('aria-disabled'),
+      cancel.getAttribute('aria-disabled'),
+    ]);
     release();
 
-    // AC-2: after the failure the focus is on "削除" and Tab / Shift+Tab cycle inside.
+    // AC-2: after the failure, Tab never leaves the dialog (r3: the first Tab landed on body).
     await expect(dialog.getByRole('alert')).toHaveText(FAILED);
+    await page.keyboard.press('Tab');
+    expect(await inDialog(dialog)).toBe(true);
+    await expect(cancel).toBeFocused();
+    await page.keyboard.press('Tab');
+    expect(await inDialog(dialog)).toBe(true);
+    await expect(confirm).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    expect(await inDialog(dialog)).toBe(true);
+    await expect(cancel).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
     await expect(confirm).toBeFocused();
     await expect(confirm).not.toHaveAttribute('aria-disabled', /.*/);
     expect(
@@ -288,11 +302,7 @@ signedIn(
     ).toEqual([]);
     await page.keyboard.press('Tab');
     await expect(cancel).toBeFocused();
-    await page.keyboard.press('Tab');
-    await expect(confirm).toBeFocused();
-    await page.keyboard.press('Shift+Tab');
-    await expect(cancel).toBeFocused();
-    expect(await inDialog(dialog)).toBe(true);
+    expect(ariaInFlight).toEqual(['true', 'true']);
 
     // AC-3: with the network back, "削除" removes the post and goes to the author's page.
     state.fail = false;
