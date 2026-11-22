@@ -1,4 +1,5 @@
 import { getUnreadNotificationCountAction } from '../api/actions';
+import { openUnreadStream, type UnreadStreamHooks } from './unread-stream';
 
 type CountResult = { ok: true; data: { count: number } } | { ok: false };
 type VisibilityDoc = {
@@ -11,6 +12,8 @@ export type UnreadStoreOptions = {
   fetchCount: () => Promise<CountResult>;
   doc: VisibilityDoc;
   intervalMs: number;
+  /** Opens the push stream and returns its closer. Without it the store only polls. */
+  openStream?: (hooks: UnreadStreamHooks) => () => void;
 };
 
 /**
@@ -19,9 +22,12 @@ export type UnreadStoreOptions = {
  * server once every `intervalMs`, however many subscribers there are. It does not ask while the
  * tab is hidden and asks once as soon as it is shown. A failed ask (a result with `ok: false`, or
  * a thrown error) changes nothing and shows nothing: the number stays and the next ask comes on
- * schedule. #58 replaces only how the number is fetched.
+ * schedule. With `openStream` (ADR-0050) the count is pushed instead: while the stream is open
+ * there is no polling, and while it is down (not yet open, or dropped and being re-opened by the
+ * browser) the polling above is the fallback. A hidden tab closes the stream and shows it again
+ * with a new one, whose first event is the current count.
  */
-export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOptions) {
+export function createUnreadStore({ fetchCount, doc, intervalMs, openStream }: UnreadStoreOptions) {
   let count = 0;
   let version = 0;
   let viewer: string | null = null;
@@ -57,19 +63,53 @@ export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOp
     }
   }
 
+  let closeStream: (() => void) | null = null;
+  let everOpen = false;
+
+  function startPolling(now: boolean) {
+    if (timer === null) timer = setInterval(() => void poll(), intervalMs);
+    if (now) void poll();
+  }
+  function stopPolling() {
+    if (timer !== null) clearInterval(timer);
+    timer = null;
+  }
+  function connect() {
+    if (!openStream || closeStream || doc.hidden) return;
+    everOpen = false;
+    closeStream = openStream({
+      onCount: apply,
+      onOpen: () => {
+        everOpen = true;
+        stopPolling();
+      },
+      // The first drop before any success asks at once; later drops (the 60 s turnover) wait a period.
+      onDown: () => {
+        if (timer === null) startPolling(!everOpen);
+      },
+    });
+  }
+  function disconnect() {
+    closeStream?.();
+    closeStream = null;
+    stopPolling();
+  }
+
   const onVisibility = () => {
-    if (!doc.hidden) void poll();
+    if (!openStream) return void (!doc.hidden && poll());
+    if (doc.hidden) disconnect();
+    else connect();
   };
 
   function start() {
     doc.addEventListener('visibilitychange', onVisibility);
+    if (openStream) return connect();
     void poll();
-    timer = setInterval(() => void poll(), intervalMs);
+    startPolling(false);
   }
   function stop() {
     doc.removeEventListener('visibilitychange', onVisibility);
-    if (timer !== null) clearInterval(timer);
-    timer = null;
+    disconnect();
     // Nobody shows the count any more (the signed-in user left): do not keep it for the next one.
     version += 1;
     count = 0;
@@ -90,7 +130,11 @@ export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOp
     const had = count !== 0;
     count = 0;
     if (had) emit();
-    if (listeners.size > 0) void poll();
+    if (listeners.size === 0) return;
+    if (openStream) {
+      disconnect();
+      connect();
+    } else void poll();
   }
 
   return {
@@ -120,4 +164,5 @@ export const unreadStore = createUnreadStore({
       ? { hidden: true, addEventListener() {}, removeEventListener() {} }
       : document,
   intervalMs: UNREAD_POLL_MS,
+  openStream: typeof EventSource === 'undefined' ? undefined : openUnreadStream,
 });

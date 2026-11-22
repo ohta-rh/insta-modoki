@@ -9,6 +9,8 @@ const CLIENT_FILES = [
   'ui/NotificationNavLink.tsx',
   'ui/NotificationList.tsx',
   'ui/unread-store.ts',
+  'ui/unread-stream.ts',
+  'model/sse.ts',
   'model/notification-text.ts',
   'model/load-more.ts',
   'model/constants.ts',

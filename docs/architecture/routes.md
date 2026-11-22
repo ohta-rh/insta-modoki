@@ -72,6 +72,7 @@ status: stable
 | `listFollowers` / `listFollowing` | follow | username, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
 | `listNotifications` | notification | cursor? | `Page<NotificationView>`（20 件、`created_at` の新しい順、同じ時刻は `id` の降順）。宛先はセッションの利用者だけで、入力に利用者の項目は無い（余計な項目は VALIDATION）。コメントは先頭 100 字と切ったかどうか | UNAUTHENTICATED、VALIDATION（壊れたカーソル・余計な項目） |
 | `getUnreadNotificationCount` | notification | – | `{ count }`（`read_at IS NULL` の数。100 で頭打ち） | UNAUTHENTICATED |
+| `streamNotifications` | notification | –（セッション） | `GET /api/notifications/stream`。`text/event-stream`。最初に `retry: 1000` と `event: unread` / `data: {"unreadCount":N}`、その後は変わったときだけ同じイベント、15 秒ごとに `: ping`、60 秒で終わる（[ADR-0050](../adr/0050-notifications-via-sse-with-d1-checks.md)） | UNAUTHENTICATED（401、JSON。イベントは流さない） |
 | `markNotificationsRead` | notification | – | `{ readCount }`（自分宛ての未読を全て既読にした数。何度呼んでも同じ状態） | UNAUTHENTICATED |
 | `getFeed` | feed | cursor? | `Page<PostView>`（12 件） | UNAUTHENTICATED |
 | `searchUsers` | search | q（前後の空白を除いて 1〜30 字） | `{ items: UserSummary[] }`（20 件まで。ユーザー名の前方一致・部分一致・表示名の一致の順。カーソルは無い） | UNAUTHENTICATED、VALIDATION、RATE_LIMITED |

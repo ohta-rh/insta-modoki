@@ -19,7 +19,11 @@ function setup(initial: Fetched[] = []) {
     doc.hidden = false;
     listeners.forEach((l) => l());
   };
-  return { store, fetchCount, doc, show, answers };
+  const hide = () => {
+    doc.hidden = true;
+    listeners.forEach((l) => l());
+  };
+  return { store, fetchCount, doc, show, hide, answers };
 }
 
 beforeEach(() => vi.useFakeTimers());
@@ -148,5 +152,118 @@ describe('unreadStore の利用者の切り替え', () => {
     expect(store.getSnapshot()).toBe(4);
     unsubscribe();
     expect(store.getSnapshot()).toBe(0);
+  });
+});
+
+describe('unreadStore と配信', () => {
+  type Hooks = { onCount(n: number): void; onOpen(): void; onDown(): void };
+  function withStream(initial: Fetched[] = []) {
+    const base = setup(initial);
+    const opened: Array<{ hooks: Hooks; close: ReturnType<typeof vi.fn> }> = [];
+    const openStream = vi.fn((hooks: Hooks) => {
+      const close = vi.fn();
+      opened.push({ hooks, close });
+      return close;
+    });
+    const store = createUnreadStore({
+      fetchCount: base.fetchCount as never,
+      doc: base.doc,
+      intervalMs: 10_000,
+      openStream,
+    });
+    return { ...base, store, openStream, opened };
+  }
+
+  it('接続が開いている間はポーリングを止め、切れたら再開する', async () => {
+    const { store, fetchCount, openStream, opened } = withStream([
+      { ok: true, data: { count: 6 } },
+    ]);
+    store.subscribe(() => {});
+    await vi.advanceTimersByTimeAsync(0);
+    // The stream is opened once; its first event is the count, so nothing is asked yet.
+    expect(openStream).toHaveBeenCalledTimes(1);
+    expect(fetchCount).toHaveBeenCalledTimes(0);
+    opened[0]!.hooks.onOpen();
+    opened[0]!.hooks.onCount(3);
+    expect(store.getSnapshot()).toBe(3);
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(fetchCount).toHaveBeenCalledTimes(0);
+
+    // The connection drops (the browser reconnects by itself): the polling is back, 10 s later.
+    opened[0]!.hooks.onDown();
+    await vi.advanceTimersByTimeAsync(9_999);
+    expect(fetchCount).toHaveBeenCalledTimes(0);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(fetchCount).toHaveBeenCalledTimes(1);
+    expect(store.getSnapshot()).toBe(6);
+
+    // Open again: it stops again.
+    opened[0]!.hooks.onOpen();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(fetchCount).toHaveBeenCalledTimes(1);
+  });
+
+  it('一度もつながらなかったときは、すぐ 1 回取りに行き、その後は 10 秒おき', async () => {
+    const { store, fetchCount, opened } = withStream([
+      { ok: true, data: { count: 2 } },
+      { ok: true, data: { count: 5 } },
+    ]);
+    store.subscribe(() => {});
+    opened[0]!.hooks.onDown();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(fetchCount).toHaveBeenCalledTimes(1);
+    expect(store.getSnapshot()).toBe(2);
+    opened[0]!.hooks.onDown(); // the browser retries every second and fails again
+    await vi.advanceTimersByTimeAsync(0);
+    expect(fetchCount).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(fetchCount).toHaveBeenCalledTimes(2);
+    expect(store.getSnapshot()).toBe(5);
+  });
+
+  it('隠れている間は接続を閉じ、見えたら開き直す。最後の購読者が外れても閉じる', async () => {
+    const { store, hide, show, openStream, opened } = withStream();
+    const unsubscribe = store.subscribe(() => {});
+    expect(openStream).toHaveBeenCalledTimes(1);
+    hide();
+    expect(opened[0]!.close).toHaveBeenCalledTimes(1);
+    expect(openStream).toHaveBeenCalledTimes(1);
+    show();
+    expect(openStream).toHaveBeenCalledTimes(2);
+    unsubscribe();
+    expect(opened[1]!.close).toHaveBeenCalledTimes(1);
+    expect(opened[0]!.close).toHaveBeenCalledTimes(1);
+  });
+
+  it('配信の数は、それより前に始めた取得の結果で上書きされない', async () => {
+    let release!: (v: Fetched) => void;
+    const fetchCount = vi.fn(() => new Promise<Fetched>((r) => (release = r)));
+    let hooks!: Hooks;
+    const store = createUnreadStore({
+      fetchCount: fetchCount as never,
+      doc: { hidden: false, addEventListener() {}, removeEventListener() {} },
+      intervalMs: 10_000,
+      openStream: (h) => {
+        hooks = h;
+        return () => {};
+      },
+    });
+    store.subscribe(() => {});
+    hooks.onDown();
+    await vi.advanceTimersByTimeAsync(0);
+    hooks.onOpen();
+    hooks.onCount(9);
+    release({ ok: true, data: { count: 4 } });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(store.getSnapshot()).toBe(9);
+  });
+
+  it('利用者が変わったら接続を張り直す', async () => {
+    const { store, openStream, opened } = withStream();
+    store.setViewer('a');
+    store.subscribe(() => {});
+    store.setViewer('b');
+    expect(opened[0]!.close).toHaveBeenCalledTimes(1);
+    expect(openStream).toHaveBeenCalledTimes(2);
   });
 });
