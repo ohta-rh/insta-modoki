@@ -6,6 +6,7 @@ EPIC の総合試験（実ブラウザ）のレポート。書き方は [ADR-001
 
 * [EPIC #1 開発基盤の総合試験（1 回目、FAIL）](epic-0001-dev-foundation.md) - f50238c。AC-6（存在しない静的ファイルの 404 にセキュリティヘッダーが無い）で FAIL。#72 で直してやり直す
 * [EPIC #1 開発基盤の総合試験（2 回目、PASS）](epic-0001-dev-foundation-r2.md) - 36da85b。#72 の修正で AC-6 が満たされ、7 つの AC が全て PASS
+* [EPIC #1 開発基盤の総合試験（3 回目、PASS）](epic-0001-dev-foundation-r3.md) - 4e8191b。ADR-0048 によるやり直し（#78・#83 の後）。7 つの AC が全て PASS。`slot.mjs drop 2` が起動中のサーバーを 5 プロセス止めて 3102 を空にし、`drop 7` は終了 2 で何も触らないことも確かめた
 * [EPIC #2 アカウントの総合試験（1 回目）](epic-0002-account-signup-login.md) - 379a2fb。PASS（AC-4 の Secure は ADR-0030 により https のときだけ。結合テストで確かめた）
 * [EPIC #2 アカウントの総合試験（2 回目、PASS）](epic-0002-account-signup-login-r2.md) - 7e81030。ADR-0048 によるやり直し（リファクタ 52a1ddb..836c2e6 の後）。5 つの AC が全て PASS。ログアウト後に古いセッションは残らず、コンソールの警告・エラーと失敗した通信は 0
 * [EPIC #3 プロフィールの総合試験（1 回目）](epic-0003-profile.md) - 20d04dd。PASS（ヘッダーのアイコンの alt="" は隣に名前がある飾りとして正しい、と Director が判定）

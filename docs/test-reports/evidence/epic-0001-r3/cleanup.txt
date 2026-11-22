@@ -1,0 +1,7 @@
+slot 2 のポート 3102 のプロセスを 0 個止めました
+slot 2 を削除しました（insta-s2、.wrangler/state）。.dev.vars は残しています
+exit=0
+$ lsof -ti tcp:3102
+(end)
+$ pgrep -f .worktrees/epic-1/
+(none; exit 1)
