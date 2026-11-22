@@ -1,0 +1,374 @@
+{
+ "acs": {
+  "setup": [
+   {
+    "name": "A, B, C signed up via the UI",
+    "ok": true,
+    "detail": ""
+   }
+  ],
+  "AC-1": [
+   {
+    "name": "empty saved tab says no saved posts",
+    "ok": true,
+    "detail": "E 保存 A @e12_a プロフィールを編集 1 投稿 0 フォロワー 1 フォロー中 投稿 保存済み 保存した投稿はまだありません"
+   },
+   {
+    "name": "own profile shows 投稿 and 保存済み tabs",
+    "ok": true,
+    "detail": "投稿,保存済み"
+   },
+   {
+    "name": "feed shows save buttons, first is unpressed (outline)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "pressed instantly (aria-pressed true, filled) before the server replied",
+    "ok": true,
+    "detail": "db rows 0"
+   },
+   {
+    "name": "server stored 1 row for the newest post",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "still saved after reload",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "post detail save -> 1 row",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "feed 2nd save (posts[13]) -> 1 row",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "saved tab lists the 3 posts newest-saved first (13, 10, 14)",
+    "ok": true,
+    "detail": "[\"/p/6dfc5f88-634a-4089-92df-863e5358d989\",\"/p/3a499861-2b0f-4202-9a48-18b3161d9316\",\"/p/231e510e-51d4-4bc0-866b-9e013790bcf1\"]"
+   },
+   {
+    "name": "saved tab: tab aria-selected",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "tile opens the post in a modal showing it as saved",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "press again in the modal -> 0 rows (unsaved)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "after reopening the saved tab, the unsaved post is gone",
+    "ok": true,
+    "detail": "[\"/p/6dfc5f88-634a-4089-92df-863e5358d989\",\"/p/231e510e-51d4-4bc0-866b-9e013790bcf1\"]"
+   },
+   {
+    "name": "failed POST rolls the button back and shows the fixed message",
+    "ok": true,
+    "detail": "[\"エラーが発生しました。しばらくしてからもう一度お試しください\"]"
+   },
+   {
+    "name": "visitor pressing save goes to login, 0 rows",
+    "ok": true,
+    "detail": "http://localhost:3104/accounts/login"
+   },
+   {
+    "name": "no-JS: unsaved before",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "no-JS: form submit saved (row + pressed after reload)",
+    "ok": true,
+    "detail": "rows 1"
+   },
+   {
+    "name": "no-JS: form submit again unsaved",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "unsaving the last ones empties the list",
+    "ok": true,
+    "detail": "[]"
+   },
+   {
+    "name": "empty state again after unsaving all",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "first page: 12 tiles",
+    "ok": true,
+    "detail": "12"
+   },
+   {
+    "name": "after scrolling: 13 tiles, no duplicates, newest-saved first",
+    "ok": true,
+    "detail": "13 unique 13"
+   }
+  ],
+  "AC-2": [
+   {
+    "name": "B sees no 保存済み tab on A",
+    "ok": true,
+    "detail": "投稿"
+   },
+   {
+    "name": "B with ?tab=saved: 200, shows 投稿 (A own post), no saved tab, none of the 13 saved ids in HTML",
+    "ok": true,
+    "detail": "status 200 own true leaked 0"
+   },
+   {
+    "name": "B with ?tab=saved: selected tab is 投稿",
+    "ok": true,
+    "detail": "投稿"
+   },
+   {
+    "name": "B's own saved tab is empty (A's saves are not readable from B's session)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "visitor: no saved tab, no saved ids",
+    "ok": true,
+    "detail": "http://localhost:3104/e12_a?tab=saved"
+   },
+   {
+    "name": "A with ?tab=foo shows 投稿",
+    "ok": true,
+    "detail": ""
+   }
+  ],
+  "AC-3": [
+   {
+    "name": "before deletion the victim is in A saved tab",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "author deleted the post through the UI (row gone)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "bookmark rows cascaded away",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "A saved tab no longer shows the deleted post (12 left)",
+    "ok": true,
+    "detail": "12"
+   },
+   {
+    "name": "opening the deleted post is 404",
+    "ok": true,
+    "detail": "404"
+   }
+  ],
+  "AC-4": [
+   {
+    "name": "save button tap area >= 44x44",
+    "ok": true,
+    "detail": "44x44"
+   },
+   {
+    "name": "accessible name is 保存",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Enter saves (aria-pressed true, row, live message 保存しました)",
+    "ok": true,
+    "detail": "|保存しました|"
+   },
+   {
+    "name": "Space unsaves (aria-pressed false, row gone, 保存を取り消しました)",
+    "ok": true,
+    "detail": "|保存を取り消しました|"
+   },
+   {
+    "name": "tablist with role=tab; selected has aria-selected=true tabindex=0, other -1",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "ArrowRight moves focus to 保存済み",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Enter opens the saved tab",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "ArrowLeft moves focus back to 投稿",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: feed 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: post detail 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: saved tab 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: profile (posts tab) 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   }
+  ]
+ },
+ "health": {
+  "ac1-failure-abort": {
+   "console": [
+    "error: Failed to load resource: net::ERR_FAILED @ http://localhost:3104/p/9593f044-1f94-4b75-a28b-fc3784f3bcb2"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "POST http://localhost:3104/p/9593f044-1f94-4b75-a28b-fc3784f3bcb2 net::ERR_FAILED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac1-nojs": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3104/_next/static/chunks/3jd0yvlv1esct.js csp",
+    "GET http://localhost:3104/_next/static/chunks/3jd0yvlv1esct.js csp",
+    "GET http://localhost:3104/_next/static/chunks/3jd0yvlv1esct.js csp",
+    "GET http://localhost:3104/_next/static/chunks/3jd0yvlv1esct.js csp",
+    "GET http://localhost:3104/_next/static/chunks/3jd0yvlv1esct.js csp"
+   ],
+   "http4xx5xx": []
+  },
+  "ac3": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3104/p/5f58830b-bfd5-49fb-9daf-2d14301bc885"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http4xx5xx": [
+    "404 GET http://localhost:3104/p/5f58830b-bfd5-49fb-9daf-2d14301bc885"
+   ]
+  }
+ },
+ "notes": {
+  "chromeVersion": "157.0.8103.80",
+  "posts": {
+   "c": [
+    "a1c1f841-c3c1-4b4b-acd5-9d742130d75b",
+    "fa958f6b-f145-4934-96c0-eab8d09ea6b6",
+    "f9a5989f-04e7-4bf6-933b-b3f731e61208",
+    "d3f35aa7-e80b-4873-9c83-6430a3d52630",
+    "b6494069-1fbe-406f-b0e7-4637b399c5b1",
+    "5f58830b-bfd5-49fb-9daf-2d14301bc885",
+    "111eac38-3697-45ee-9e07-8c00192c7a5b",
+    "4eeb1fc8-99a4-49ce-a45d-422a0d1727fe",
+    "2e8f516b-bf29-4e02-8732-613669d9c03d",
+    "9593f044-1f94-4b75-a28b-fc3784f3bcb2",
+    "3a499861-2b0f-4202-9a48-18b3161d9316",
+    "52fa6e4f-67e6-4463-ae4f-58fa2ec4ea81",
+    "57f1c6f0-4436-49c0-9da3-9f3bd80c3e39",
+    "6dfc5f88-634a-4089-92df-863e5358d989",
+    "231e510e-51d4-4bc0-866b-9e013790bcf1"
+   ],
+   "a": "0e72c387-fa97-4b50-8a6e-c36e5efc1491"
+  },
+  "done": true
+ },
+ "tabOrder": {
+  "postDetail": [
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知\" -> /notifications",
+   "a \"プロフィール\" -> /e12_a",
+   "a \"e12_c\" -> /e12_c",
+   "button \"いいね\"",
+   "button \"0 件のいいね\"",
+   "a \"コメント 0 件\" -> #comment-input",
+   "button \"保存\"",
+   "a \"e12_c\" -> /e12_c"
+  ],
+  "profile": [
+   "a \"\" -> /p/0e72c387-fa97-4b50-8a6e-c36e5efc1491",
+   "body",
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /"
+  ]
+ },
+ "axe": {
+  "feed": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "post-detail": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "saved-tab": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "profile-posts": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ]
+ }
+}
