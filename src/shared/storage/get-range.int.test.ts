@@ -11,7 +11,12 @@ beforeAll(async () => {
 describe('getRange', () => {
   it('指定した範囲のバイトを返し 終わりを越える分は返さない', async () => {
     const key = `stories/range-test/${crypto.randomUUID()}/video.mp4`;
-    await putObject(env, key, Uint8Array.from({ length: 100 }, (_, i) => i), 'video/mp4');
+    await putObject(
+      env,
+      key,
+      Uint8Array.from({ length: 100 }, (_, i) => i),
+      'video/mp4',
+    );
     const client = getStorageClient(env);
     expect([...(await getRange(client, key, 10, 4))]).toEqual([10, 11, 12, 13]);
     expect([...(await getRange(client, key, 0, 1))]).toEqual([0]);
