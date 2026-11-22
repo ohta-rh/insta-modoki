@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'vitest';
-import { corsXml, renderEnv, run, slotIntEnabled, slotNames } from './slot.mjs';
+import { corsXml, listPortPids, renderEnv, run, slotIntEnabled, slotNames } from './slot.mjs';
 
 const secrets = {
   accessKey: 'access-key-for-test',
@@ -309,4 +309,19 @@ test('範囲外のスロットではプロセスを探さない', async () => {
   assert.equal(await run(['drop', '5'], t.deps), 2);
   assert.equal(await run(['drop', '-1'], t.deps), 2);
   t.done();
+});
+
+test('ポートの持ち主に加えて、同じポートで起動した親（wrangler・preview）も対象にする', async () => {
+  const ps = [
+    '  10     1 zsh',
+    '  20    10 node cli/index.js preview --port 3102',
+    '  30    20 node wrangler.js dev --port 3102',
+    '  40    30 node wrangler-dist/cli.js dev --port 3102',
+    '  50    40 workerd serve --socket-addr=entry=localhost:3102',
+  ].join('\n');
+  const exec = (cmd: string) =>
+    cmd === 'lsof'
+      ? { status: 0, stdout: '50\n', stderr: '' }
+      : { status: 0, stdout: ps, stderr: '' };
+  assert.deepEqual((await listPortPids(3102, exec)).sort(), [20, 30, 40, 50]);
 });

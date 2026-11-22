@@ -169,12 +169,33 @@ async function emptyBucket(cfg) {
 const TERM_WAIT_MS = 5000;
 const POLL_MS = 100;
 
-/** PIDs listening on the TCP port (`lsof -ti`); empty when nobody is. */
-async function listPortPids(port, exec = realExec) {
+/**
+ * PIDs listening on the TCP port (`lsof -ti`) plus the ancestors that were started for that port
+ * (their command line names it, e.g. `--port 3102`): stopping only the listener leaves wrangler and
+ * the preview running. Empty when nobody is. Never climbs into a shell or a process of another port.
+ */
+export async function listPortPids(port, exec = realExec) {
   const r = exec('lsof', ['-ti', `tcp:${port}`, '-sTCP:LISTEN']);
-  return [...new Set(r.stdout.split('\n').map((l) => Number(l.trim())))].filter(
+  const listeners = [...new Set(r.stdout.split('\n').map((l) => Number(l.trim())))].filter(
     (p) => Number.isInteger(p) && p > 0,
   );
+  if (listeners.length === 0) return [];
+  const parent = new Map();
+  const command = new Map();
+  for (const row of exec('ps', ['-axo', 'pid=,ppid=,command=']).stdout.split('\n')) {
+    const m = /^\s*(\d+)\s+(\d+)\s+(.*)$/.exec(row);
+    if (m) {
+      parent.set(Number(m[1]), Number(m[2]));
+      command.set(Number(m[1]), m[3]);
+    }
+  }
+  const mine = new RegExp(`(--port[ =]|:)${port}(\\s|$)`);
+  const all = new Set(listeners);
+  for (const pid of listeners) {
+    for (let p = parent.get(pid); p && p > 1 && mine.test(command.get(p) ?? ''); p = parent.get(p))
+      all.add(p);
+  }
+  return [...all];
 }
 
 /** Signals pid and all its descendants, children first (the preview is sh -> wrangler -> node -> workerd). */
