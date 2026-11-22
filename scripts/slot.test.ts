@@ -3,7 +3,15 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'vitest';
-import { corsXml, listPortPids, renderEnv, run, slotIntEnabled, slotNames } from './slot.mjs';
+import {
+  corsXml,
+  killTree,
+  listPortPids,
+  renderEnv,
+  run,
+  slotIntEnabled,
+  slotNames,
+} from './slot.mjs';
 
 const secrets = {
   accessKey: 'access-key-for-test',
@@ -324,4 +332,49 @@ test('ポートの持ち主に加えて、同じポートで起動した親（wr
       ? { status: 0, stdout: '50\n', stderr: '' }
       : { status: 0, stdout: ps, stderr: '' };
   assert.deepEqual((await listPortPids(3102, exec)).sort(), [20, 30, 40, 50]);
+});
+
+const psOf = (rows: string[]) => (cmd: string) =>
+  cmd === 'lsof'
+    ? { status: 0, stdout: '50\n', stderr: '' }
+    : { status: 0, stdout: rows.join('\n'), stderr: '' };
+
+test('このプロセス自身とその親は、command にポートがあっても対象にしない', async () => {
+  const rows = [
+    '  10     1 bash -c pnpm start --port 3102 & node scripts/slot.mjs drop 2',
+    '  20    10 node cli/index.js preview --port 3102',
+    '  50    20 workerd serve --socket-addr=entry=localhost:3102',
+    '  60    10 node scripts/slot.mjs drop 2',
+  ];
+  const got = await listPortPids(3102, psOf(rows), 60);
+  assert.ok(!got.includes(10) && !got.includes(60), `self chain was targeted: ${got}`);
+  assert.deepEqual(got.sort(), [20, 50]);
+});
+
+test('killTree は自分自身とその親には信号を送らない', () => {
+  const rows = ['  10     1 sh', '  20    10 node', '  60    20 node slot.mjs'];
+  const sent: number[] = [];
+  killTree(10, 'SIGTERM', psOf(rows), 60, (pid: number) => sent.push(pid));
+  assert.deepEqual(sent, []);
+  killTree(20, 'SIGTERM', psOf(['  20    10 node', '  70    20 workerd']), 60, (pid: number) =>
+    sent.push(pid),
+  );
+  assert.deepEqual(sent, [70, 20]);
+});
+
+test('command に localhost:ポート しか無い親は、ポートで起動した親とみなさない', async () => {
+  const rows = [
+    '  20     1 node tool.js --host localhost:3102',
+    '  50    20 workerd serve --socket-addr=entry=localhost:3102',
+  ];
+  assert.deepEqual(await listPortPids(3102, psOf(rows), 999), [50]);
+});
+
+test('--port=ポート と PORT=ポート の親は対象にする', async () => {
+  const rows = [
+    '  10     1 node a.js --port=3102',
+    '  20    10 env PORT=3102 node b.js',
+    '  50    20 workerd serve',
+  ];
+  assert.deepEqual((await listPortPids(3102, psOf(rows), 999)).sort(), [10, 20, 50]);
 });

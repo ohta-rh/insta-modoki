@@ -169,55 +169,73 @@ async function emptyBucket(cfg) {
 const TERM_WAIT_MS = 5000;
 const POLL_MS = 100;
 
+/** pid -> { ppid, command } from `ps`. */
+function readProcesses(exec) {
+  const procs = new Map();
+  for (const row of exec('ps', ['-axo', 'pid=,ppid=,command=']).stdout.split('\n')) {
+    const m = /^\s*(\d+)\s+(\d+)\s+(.*)$/.exec(row);
+    if (m) procs.set(Number(m[1]), { ppid: Number(m[2]), command: m[3] });
+  }
+  return procs;
+}
+
+/** The running process and all its ancestors: never a target, or `drop` would kill itself and its caller. */
+function selfChain(procs, selfPid) {
+  const chain = new Set([selfPid]);
+  for (let p = procs.get(selfPid)?.ppid; p && p > 1 && !chain.has(p); p = procs.get(p)?.ppid)
+    chain.add(p);
+  return chain;
+}
+
 /**
  * PIDs listening on the TCP port (`lsof -ti`) plus the ancestors that were started for that port
- * (their command line names it, e.g. `--port 3102`): stopping only the listener leaves wrangler and
- * the preview running. Empty when nobody is. Never climbs into a shell or a process of another port.
+ * (their command line has `--port <N>`, `--port=<N>` or `PORT=<N>`): stopping only the listener
+ * leaves wrangler and the preview running. Empty when nobody is. Never climbs into a shell or a
+ * process of another port, and never returns this process or its ancestors.
  */
-export async function listPortPids(port, exec = realExec) {
+export async function listPortPids(port, exec = realExec, selfPid = process.pid) {
   const r = exec('lsof', ['-ti', `tcp:${port}`, '-sTCP:LISTEN']);
   const listeners = [...new Set(r.stdout.split('\n').map((l) => Number(l.trim())))].filter(
     (p) => Number.isInteger(p) && p > 0,
   );
   if (listeners.length === 0) return [];
-  const parent = new Map();
-  const command = new Map();
-  for (const row of exec('ps', ['-axo', 'pid=,ppid=,command=']).stdout.split('\n')) {
-    const m = /^\s*(\d+)\s+(\d+)\s+(.*)$/.exec(row);
-    if (m) {
-      parent.set(Number(m[1]), Number(m[2]));
-      command.set(Number(m[1]), m[3]);
-    }
-  }
-  const mine = new RegExp(`(--port[ =]|:)${port}(\\s|$)`);
+  const procs = readProcesses(exec);
+  const self = selfChain(procs, selfPid);
+  const mine = new RegExp(`(--port[ =]|\\bPORT=)${port}(\\s|$)`);
   const all = new Set(listeners);
   for (const pid of listeners) {
-    for (let p = parent.get(pid); p && p > 1 && mine.test(command.get(p) ?? ''); p = parent.get(p))
+    for (
+      let p = procs.get(pid)?.ppid;
+      p && p > 1 && mine.test(procs.get(p)?.command ?? '');
+      p = procs.get(p)?.ppid
+    )
       all.add(p);
   }
-  return [...all];
+  return [...all].filter((p) => !self.has(p));
 }
 
-/** Signals pid and all its descendants, children first (the preview is sh -> wrangler -> node -> workerd). */
-function killTree(pid, signal, exec = realExec) {
-  const rows = exec('ps', ['-axo', 'pid=,ppid=']).stdout.split('\n');
+/**
+ * Signals pid and all its descendants, children first (the preview is sh -> wrangler -> node -> workerd).
+ * This process and its ancestors are skipped.
+ */
+export function killTree(pid, signal, exec = realExec, selfPid = process.pid, send = process.kill) {
+  const procs = readProcesses(exec);
+  const self = selfChain(procs, selfPid);
   const children = new Map();
-  for (const row of rows) {
-    const [c, p] = row.trim().split(/\s+/).map(Number);
-    if (!c || !p) continue;
-    children.set(p, [...(children.get(p) ?? []), c]);
-  }
+  for (const [c, { ppid }] of procs) children.set(ppid, [...(children.get(ppid) ?? []), c]);
   const order = [];
-  const walk = (p, seen) => {
+  const seen = new Set();
+  const walk = (p) => {
     if (seen.has(p)) return;
     seen.add(p);
-    for (const c of children.get(p) ?? []) walk(c, seen);
+    for (const c of children.get(p) ?? []) walk(c);
     order.push(p);
   };
-  walk(pid, new Set());
+  walk(pid);
   for (const p of order) {
+    if (self.has(p)) continue;
     try {
-      process.kill(p, signal);
+      send(p, signal);
     } catch {
       // already gone
     }
