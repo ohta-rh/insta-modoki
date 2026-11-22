@@ -79,7 +79,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 16 個のテーブルと 11 個の索引ができる', async () => {
+  it('マイグレーションで 17 個のテーブルと 11 個の索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -94,6 +94,7 @@ describe('マイグレーション', () => {
         'story_views',
         'hashtags',
         'post_hashtags',
+        'notifications',
         'bookmarks',
       ]),
     );

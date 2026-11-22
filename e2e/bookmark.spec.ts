@@ -79,7 +79,9 @@ signedIn(
     await page.route(
       (url) => url.pathname === '/',
       async (route) => {
-        if (route.request().method() === 'POST') await gate;
+        // The unread badge polls with a POST whose body is `[]`; only the save action is held.
+        const request = route.request();
+        if (request.method() === 'POST' && request.postData() !== '[]') await gate;
         await route.continue();
       },
     );
@@ -139,7 +141,10 @@ signedIn('保存に失敗したときだけ元に戻り、理由が出る', asyn
   await waitForHydration(page);
   await page.route(
     (url) => url.pathname === `/p/${lost.id}`,
-    (route) => (route.request().method() === 'POST' ? route.abort() : route.continue()),
+    (route) =>
+      route.request().method() === 'POST' && route.request().postData() !== '[]'
+        ? route.abort()
+        : route.continue(),
   );
   await saveButton(page).click();
   await expect(alert(page)).toHaveText(

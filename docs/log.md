@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Update**: 保存（#51）に合わせて、[data-model.md](architecture/data-model.md) の「bookmarks」を `migrations/0010_bookmarks.sql` と索引 `bookmarks_user_created_post_idx` のとおりにし、[routes.md](architecture/routes.md) に `savePost`・`unsavePost`・`listSavedPosts` と `/[username]?tab=saved` を、[conventions.md](architecture/conventions.md) の `PostView` に `savedByMe` を足した。
 * **Creation**: [EPIC #10 の総合試験のレポート（1 回目）](test-reports/epic-0010-discovery.md)（PASS。統合ブランチ m3/phase2 の dd2bdeb で、ユーザー検索・ハッシュタグ・発見タブ・未ログインの導線・キーボードの 5 つの AC が満たされ、`%` `_` の文字どおりの検索と 7 日の窓の境界を確かめた）と、その写真・記録（`test-reports/evidence/epic-0010/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Update**: [routes.md](architecture/routes.md)（`listExplorePosts`）、[conventions.md](architecture/conventions.md)（発見の一覧のカーソル）、[overview.md](architecture/overview.md)（`/explore` のルートのファイル）を足し、下部ナビの「検索」の行き先を `/explore` にした（#57）。
 * **Creation**: [ADR-0049](adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)（定期ジョブは Cron Trigger から `src/worker.mjs` で起動し、Worker と Node で同じコードを動かす）を追加し、[overview.md](architecture/overview.md)・[conventions.md](architecture/conventions.md)・[local-development.md](guides/local-development.md) を更新した（#56）。
