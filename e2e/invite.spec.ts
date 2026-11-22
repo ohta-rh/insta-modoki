@@ -62,7 +62,8 @@ test('管理者がコードを発行・コピー・失効でき、一般の利�
 
   // The state is the database's: a reload shows the same.
   await page.reload();
-  await expect(page.getByRole('listitem').first()).toContainText('無効');
+  // Other specs seed codes in parallel, so the row is found by its code, not by its place.
+  await expect(page.getByRole('listitem').filter({ hasText: code })).toContainText('無効');
 
   // A signed-in user who is not an administrator gets the 404 page.
   const member = await browser.newContext();
