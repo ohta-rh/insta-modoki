@@ -173,7 +173,8 @@ test('JS の読み込み前に選んだ 16 秒の動画は ハイドレーショ
   const { username } = await signUpViaUi(page);
   const sent: Request[] = [];
   page.on('request', (r) => {
-    if (r.method() !== 'GET' && r.method() !== 'HEAD') sent.push(r);
+    // Not the unread-badge poll (a Server Action POST with no arguments, body `[]`).
+    if (r.method() !== 'GET' && r.method() !== 'HEAD' && r.postData() !== '[]') sent.push(r);
   });
   await pickBeforeHydration(page, fixtureVideo(16));
 
