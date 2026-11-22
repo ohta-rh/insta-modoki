@@ -10,9 +10,9 @@ export function notificationLinkLabel(count: number): string | undefined {
 }
 
 /**
- * The navigation link of 通知. Its name is set with `aria-label`: made from the link's content
- * (the label and the badge's hidden text, separate blocks of a flex link) the name would read
- * "通知 （未読 N 件）" with a space.
+ * The navigation link of 通知. The badge is outside the link and the unread count is told by
+ * `aria-label` alone: the only visible text inside the link is "通知", which the name contains
+ * (WCAG 2.5.3 / ACT 2ee8b8).
  */
 export function NotificationNavLink(props: ComponentProps<'a'>) {
   const count = useSyncExternalStore(unreadStore.subscribe, unreadStore.getSnapshot, () => 0);

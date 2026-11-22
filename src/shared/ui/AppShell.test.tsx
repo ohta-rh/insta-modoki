@@ -52,13 +52,25 @@ describe('AppShell', () => {
   });
 
   it('badges を渡したときだけその項目に差し込む', () => {
-    expect(render()).not.toContain('BADGE');
+    const none = render();
+    expect(none).not.toContain('BADGE');
+    // No badge: the item is the bare <a>, no wrapper.
+    expect(none).not.toContain('pointer-events-none');
     const html = render({ badges: { notifications: <b>BADGE</b> } });
-    // Both navigations (side and bottom) carry it, right after the label of 通知 only.
-    expect(html.match(/<span>通知<\/span><span class="[^"]*"><b>BADGE<\/b><\/span>/g)).toHaveLength(
-      2,
-    );
     expect(html.match(/BADGE/g)).toHaveLength(2);
+    // Only the 通知 item gets a wrapper; the others stay a bare <a> directly in the nav.
+    expect(html.match(/pointer-events-none/g)).toHaveLength(2);
+  });
+
+  it('badges はリンクの外、同じ項目の囲みの中に差し込む', () => {
+    const html = render({ badges: { notifications: <b>BADGE</b> } });
+    // Each navigation: <div class="relative ..."><a ...>…<span>通知</span></a><span class="pointer-events-none absolute ..."><b>BADGE</b></span></div>
+    const wrapped = html.match(
+      /<div class="relative[^"]*"><a [^>]*href="\/notifications"[^>]*>(?:(?!<\/a>).)*<span>通知<\/span><\/a><span class="pointer-events-none absolute [^"]*"><b>BADGE<\/b><\/span><\/div>/g,
+    );
+    expect(wrapped).toHaveLength(2);
+    // Nothing of the badge inside any link.
+    for (const a of html.match(/<a [^>]*>.*?<\/a>/g) ?? []) expect(a).not.toContain('BADGE');
   });
 
   it('linkAs を渡したときだけその項目の <a> を差し替える', () => {

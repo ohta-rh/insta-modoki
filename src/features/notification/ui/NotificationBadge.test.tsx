@@ -8,27 +8,26 @@ describe('NotificationBadge', () => {
     expect(renderToStaticMarkup(<NotificationBadgeView count={0} />)).toBe('');
   });
 
-  it('1 から 99 は数字、100 は 99+、読み上げには未読の数を足す', () => {
+  it('1 から 99 は数字、100 は 99+。読み上げの文字は足さない（名前はリンクが持つ）', () => {
     const one = renderToStaticMarkup(<NotificationBadgeView count={1} />);
     expect(one).toContain('aria-hidden="true"');
     expect(one).toContain('>1</span>');
-    expect(one).toContain('<span class="sr-only">（未読 1 件）</span>');
+    expect(one).not.toContain('sr-only');
+    expect(one).not.toContain('未読');
     const cap = renderToStaticMarkup(<NotificationBadgeView count={100} />);
     expect(cap).toContain('>99+</span>');
-    expect(cap).toContain('（未読 99 件以上）');
+    expect(cap).not.toContain('未読');
     expect(one).not.toContain('aria-live');
   });
 
   it('更新で名前だけが変わり、アニメーションを付けない', () => {
     const one = renderToStaticMarkup(<NotificationBadgeView count={1} />);
     const two = renderToStaticMarkup(<NotificationBadgeView count={2} />);
-    // Only the digit and the spoken name differ: the same elements, classes and attributes.
+    // Only the digit differs: the same elements, classes and attributes.
     const shape = (html: string) => html.replace(/>[^<]*</g, '><');
     expect(shape(two)).toBe(shape(one));
     expect(one).toContain('>1</span>');
     expect(two).toContain('>2</span>');
-    expect(one).toContain('（未読 1 件）');
-    expect(two).toContain('（未読 2 件）');
     // No motion in any form (the same markup serves prefers-reduced-motion: reduce), no live region.
     for (const html of [one, two]) {
       expect(html).not.toMatch(

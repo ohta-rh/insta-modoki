@@ -62,9 +62,10 @@ function NavLinks({
         const Icon = ICONS[item.icon];
         const isHere = isCurrent(item, current, viewer);
         const Link = linkAs?.[item.key] ?? 'a';
-        return (
+        const badge = badges?.[item.key];
+        const link = (
           <Link
-            key={item.key}
+            key={badge ? undefined : item.key}
             href={item.href}
             aria-current={isHere ? 'page' : undefined}
             className={
@@ -75,14 +76,24 @@ function NavLinks({
           >
             <Icon />
             <span>{item.label}</span>
-            {badges?.[item.key] ? (
-              <span
-                className={layout === 'side' ? 'ml-auto' : 'absolute top-1 left-[calc(50%+4px)]'}
-              >
-                {badges[item.key]}
-              </span>
-            ) : null}
           </Link>
+        );
+        if (!badge) return link;
+        // The badge sits beside the link, not in it: its digits would be visible text that the
+        // link's accessible name (set with aria-label) does not contain (WCAG 2.5.3).
+        return (
+          <div key={item.key} className={layout === 'side' ? 'relative' : 'relative flex flex-1'}>
+            {link}
+            <span
+              className={`pointer-events-none absolute ${
+                layout === 'side'
+                  ? 'top-1/2 right-3 -translate-y-1/2'
+                  : 'top-0.5 left-[calc(50%+4px)]'
+              }`}
+            >
+              {badge}
+            </span>
+          </div>
         );
       })}
     </>
