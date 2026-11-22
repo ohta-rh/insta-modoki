@@ -216,7 +216,7 @@ test('直接開いたときは閉じるとホームへ移る', async ({ page }) 
 });
 
 test('期限切れのストーリーは見つからないと表示する', async ({ page }) => {
-  const me = await ownUsername(page);
+  await ownUsername(page);
   const expired = uniqueName('x');
   seedUser(expired, `${expired}@example.com`);
   insertStory({
@@ -229,18 +229,16 @@ test('期限切れのストーリーは見つからないと表示する', async
   const missing = await page.goto('/stories/no_such_user_here');
   expect(missing!.status()).toBe(404);
 
-  // Opened from the tray a moment before it expires: the modal says so and closes.
-  const soon = uniqueName('s');
-  seedUser(soon, `${soon}@example.com`);
-  seedFollow(userRow(me)!.id as string, userRow(soon)!.id as string);
-  const expiresAt = Date.now() + 7000;
-  insertStory({ authorUsername: soon, createdAt: expiresAt - DAY, expiresAt });
+  // Opened over the home (a soft navigation, as the tray's link makes) while the person's only
+  // story has already expired, as when it expires after the tray was drawn: the modal says so.
   await openHome(page);
-  await expect(trayLink(page, soon)).toBeVisible();
-  const wait = expiresAt - Date.now() + 300;
-  expect(wait, 'the home took too long to load for this scenario').toBeGreaterThan(0);
-  await page.waitForTimeout(wait);
-  await trayLink(page, soon).click();
+  await page.evaluate(
+    (name) =>
+      (window as unknown as { next: { router: { push(url: string): void } } }).next.router.push(
+        `/stories/${name}`,
+      ),
+    expired,
+  );
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByText('ページが見つかりません')).toBeVisible();
   await expect(dialog.getByRole('button', { name: '閉じる' })).toBeFocused();
@@ -294,10 +292,11 @@ base.describe('視差効果を減らす', () => {
   test('視差効果を減らす設定で自動進行が止まる', async ({ page }) => {
     const me = await ownUsername(page);
     const b = await followedWith(page, me, [{}, {}]);
+    await page.clock.install();
     await page.goto(`/stories/${b.username}`);
     await waitForHydration(page);
     await expect(position(page)).toHaveText('ストーリー 1 / 2');
-    await page.waitForTimeout(6000);
+    await page.clock.runFor(6000);
     await expect(position(page)).toHaveText('ストーリー 1 / 2');
     // The current bar is a static, filled one.
     const widths = await page.locator('[data-current="true"]').evaluate((el) => ({
@@ -313,17 +312,21 @@ base.describe('視差効果を減らす', () => {
 test('写真は 5 秒で次へ進み、長押しの間は止まり、離すと再開する', async ({ page }) => {
   const me = await ownUsername(page);
   const b = await followedWith(page, me, [{}, {}]);
+  await page.clock.install();
   await page.goto(`/stories/${b.username}`);
   await waitForHydration(page);
   await expect(position(page)).toHaveText('ストーリー 1 / 2');
   const p = await pointOn(page, 0.5);
   await page.mouse.move(p.x, p.y);
   await page.mouse.down();
-  await page.waitForTimeout(6000);
+  await page.clock.runFor(6000);
   await expect(position(page)).toHaveText('ストーリー 1 / 2');
   await page.mouse.up();
   await expect(position(page)).toHaveText('ストーリー 1 / 2'); // the hold does not move
-  await expect(position(page)).toHaveText('ストーリー 2 / 2', { timeout: 8000 });
+  await page.clock.runFor(3000);
+  await expect(position(page)).toHaveText('ストーリー 1 / 2');
+  await page.clock.runFor(3000);
+  await expect(position(page)).toHaveText('ストーリー 2 / 2');
 });
 
 test('フォーカスが閉じ込められ、名前が読み上げられ、axe の重大な違反が 0 件', async ({ page }) => {
@@ -369,11 +372,12 @@ test('動画が読み込めないときは警告を出し、手動で次へ進�
   const me = await ownUsername(page);
   const b = await followedWith(page, me, [{ type: 'video', durationMs: 1500 }, {}]);
   await page.route('**/video.mp4', (route) => route.abort());
+  await page.clock.install();
   await page.goto(`/stories/${b.username}`);
   await waitForHydration(page);
   const alert = page.getByRole('alert').filter({ hasText: '動画を読み込めませんでした' });
   await expect(alert).toBeVisible();
-  await page.waitForTimeout(3000);
+  await page.clock.runFor(3000);
   await expect(position(page)).toHaveText('ストーリー 1 / 2');
   await expect(alert).toBeVisible();
   await page.getByRole('button', { name: '次へ' }).click();

@@ -177,7 +177,7 @@ export function StoryViewer({ reel, mode }: { reel: StoryReel; mode: 'modal' | '
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const rect = e.currentTarget.getBoundingClientRect();
     press.current = {
-      startedAt: e.timeStamp,
+      startedAt: performance.now(),
       x: e.clientX,
       y: e.clientY,
       moved: false,
@@ -201,11 +201,11 @@ export function StoryViewer({ reel, mode }: { reel: StoryReel; mode: 'modal' | '
       close();
     }
   };
-  const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
+  const onPointerUp = () => {
     const p = press.current;
     press.current = null;
     if (!p || p.closed) return;
-    const heldMs = p.moved ? HOLD_MS : e.timeStamp - p.startedAt;
+    const heldMs = p.moved ? HOLD_MS : performance.now() - p.startedAt;
     dispatch({ type: 'pressEnd', heldMs, zone: p.zone });
   };
   const onPointerCancel = () => {
