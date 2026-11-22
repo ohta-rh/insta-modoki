@@ -8,7 +8,7 @@ import { createUser } from '../../tests/helpers/users';
 import type { StorageEnv } from '../shared/storage/client';
 import { listObjects } from '../shared/storage/list';
 import { removeObjects } from '../shared/storage/remove';
-import type { JobEnv } from './types';
+import type { JobD1, JobEnv } from './types';
 import { sweepUnreferencedUploads } from './upload-orphan-sweep';
 
 const t = useTestDb();
@@ -24,6 +24,8 @@ beforeEach(async () => {
 const DAY = 86_400_000;
 /** The slot's Garage stamps files with the real clock: 24 h 1 min later they are past the grace. */
 const later = () => new Date(Date.now() + DAY + 60_000);
+/** The same D1 as `t.d1`, typed with `bind` the way jobs use it. */
+const d1 = (): JobD1 => t.d1 as unknown as JobD1;
 const plainEnv = (): JobEnv => ({ ...storage, DB: t.d1 as never });
 
 const PHOTO = ['orig', 'w320', 'w640', 'w1080'].map((f) => `${f}.webp`);
@@ -42,13 +44,13 @@ async function world() {
   const post = await createPost(t.db, user.id);
   const mediaBase = post.media[0]!.storageKey;
   const avatarBase = `${mediaPrefix}${newId()}`;
-  await t.d1
+  await d1()
     .prepare('UPDATE users SET avatar_key = ? WHERE id = ?')
     .bind(avatarBase, user.id)
     .run();
   const storyBase = `${storiesPrefix}${newId()}`;
   const created = Date.now();
-  await t.d1
+  await d1()
     .prepare(
       `INSERT INTO stories (id, author_id, type, storage_key, width, height, duration_ms, alt_text, created_at, expires_at) VALUES (?, ?, 'image', ?, 10, 10, NULL, '', ?, ?)`,
     )
@@ -226,7 +228,7 @@ describe('sweepUnreferencedUploads', () => {
     const key = `${prefix}a/orig.webp`;
     await putObjects(storage, [key]);
     const name = `upload-orphan-sweep:${prefix}`;
-    await t.d1
+    await d1()
       .prepare("INSERT INTO job_cursors (name, last_key, updated_at) VALUES (?, 'x', 1)")
       .bind(name)
       .run();
