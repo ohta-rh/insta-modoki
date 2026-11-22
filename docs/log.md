@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [EPIC #3 の総合試験のレポート（3 回目）](test-reports/epic-0003-profile-r3.md)（PASS。#80 の修正 ADR-0054 の後、5 つの AC が満たされ、ハイドレーション前に選んだアイコンが読み込み後にプレビューへ入り保存できることを JS を止めた状態と Slow 3G で確かめた）と、その写真・記録（`test-reports/evidence/epic-0003-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #4 の総合試験のレポート（5 回目）](test-reports/epic-0004-post-create-detail-r5.md)（PASS。#80 の修正 ADR-0054 の後、6 つの AC が満たされ、ハイドレーション前に選んだ写真が読み込み後に一覧に入ることを JS を止めた状態と Slow 3G で確かめた）と、その写真・記録（`test-reports/evidence/epic-0004-r5/`）を追加した。
 * **Creation**: [ADR-0054](adr/0054-pick-up-files-chosen-before-hydration-on-mount.md)（ハイドレーション前に選ばれたファイルはマウント時に取り込み、選択は無効にしない）を追加し、[conventions.md](architecture/conventions.md)「ハイドレーション」に取り込みの決まりを足した（#80）。
 * **Creation**: [e2e/keyboard.spec.ts:34 の落ち方の調査](research/e2e-keyboard-photo-pick-under-load.md)（#78。ハイドレーション前に選んだ写真が捨てられる不具合を `holdScripts` で決定的に再現。CPU の遅延 100 回では自然に再現せず）を追加した。
