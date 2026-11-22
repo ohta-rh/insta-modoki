@@ -139,3 +139,23 @@ export function parseCreateStory(input: unknown): ParsedCreateStory {
   }
   return { ok: true, data: result.data };
 }
+
+// ---- The viewer (#55) ----
+
+const storyId = z.uuid();
+/** A story id is a UUID; anything else can never name a story, so it is NOT_FOUND without a query. */
+export const isStoryId = (value: unknown): value is string => storyId.safeParse(value).success;
+
+export const storyReelInput = z.strictObject({ username: z.unknown() });
+export const markStoryViewedInput = z.strictObject({ storyId: z.unknown() });
+export const listStoryViewersInput = z.strictObject({
+  storyId: z.unknown(),
+  cursor: z.unknown().optional(),
+});
+
+const username = z.string().min(1).max(30);
+/** The lower-cased username of a reel request, or null when it cannot name anyone (NOT_FOUND). */
+export function readReelUsername(value: unknown): string | null {
+  const parsed = username.safeParse(value);
+  return parsed.success ? parsed.data.toLowerCase() : null;
+}

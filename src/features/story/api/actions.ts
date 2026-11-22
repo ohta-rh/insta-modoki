@@ -3,7 +3,10 @@
 import { headers } from 'next/headers';
 import { failure } from '../../../shared/action';
 import type { ErrorBody } from '../../../shared/errors';
+import type { Page, UserSummary } from '../../post';
 import { createStory } from './create-story';
+import { listStoryViewers } from './list-story-viewers';
+import { markStoryViewed } from './mark-story-viewed';
 import { requestStoryUpload, type StoryUploadSlot } from './request-story-upload';
 
 export type RequestStoryUploadResult =
@@ -25,5 +28,26 @@ export async function createStoryAction(input: unknown): Promise<CreateStoryResu
     return { ok: true, storyId };
   } catch (error) {
     return failure('createStory', error);
+  }
+}
+
+export type MarkStoryViewedResult = { ok: true } | { ok: false; error: ErrorBody };
+export type StoryViewersResult =
+  { ok: true; page: Page<UserSummary> } | { ok: false; error: ErrorBody };
+
+export async function markStoryViewedAction(input: unknown): Promise<MarkStoryViewedResult> {
+  try {
+    await markStoryViewed(input, { headers: await headers() });
+    return { ok: true };
+  } catch (error) {
+    return failure('markStoryViewed', error);
+  }
+}
+
+export async function listStoryViewersAction(input: unknown): Promise<StoryViewersResult> {
+  try {
+    return { ok: true, page: await listStoryViewers(input, { headers: await headers() }) };
+  } catch (error) {
+    return failure('listStoryViewers', error);
   }
 }
