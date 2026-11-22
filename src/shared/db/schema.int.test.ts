@@ -9,6 +9,7 @@ import {
   likes,
   media,
   postHashtags,
+  notifications,
   posts,
   rateLimits,
   sessions,
@@ -77,7 +78,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 15 個のテーブルと 10 個の索引ができる', async () => {
+  it('マイグレーションで 16 個のテーブルと 10 個の索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -92,6 +93,7 @@ describe('マイグレーション', () => {
         'story_views',
         'hashtags',
         'post_hashtags',
+        'notifications',
       ]),
     );
     expect(await names('index')).toEqual(
@@ -104,14 +106,14 @@ describe('マイグレーション', () => {
         'post_hashtags_hashtag_created_post_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(15);
+    expect(await names('table')).toHaveLength(16);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(15);
+    expect(before).toHaveLength(16);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {
@@ -124,6 +126,7 @@ describe('マイグレーション', () => {
       follows,
       rateLimits,
       storageOrphans,
+      notifications,
       sessions,
       accounts,
       verifications,
@@ -290,6 +293,81 @@ describe('制約', () => {
     await expect(post('p', 'u', { comment_count: -1 })).rejects.toThrow(
       /posts_comment_count_check/,
     );
+  });
+});
+
+const notification = (id: string, over: Row) =>
+  insert('notifications', {
+    id,
+    recipient_id: 'a',
+    actor_id: 'b',
+    type: 'like',
+    post_id: 'p1',
+    comment_id: null,
+    read_at: null,
+    created_at: NOW,
+    ...over,
+  });
+
+describe('notifications の制約', () => {
+  const seedPeople = async () => {
+    await user('a');
+    await user('b');
+    await post('p1', 'a');
+    await comment('c1', 'p1', 'b');
+  };
+
+  it('type は like・comment・follow だけ', async () => {
+    await seedPeople();
+    await expect(notification('n1', { type: 'share' })).rejects.toThrow(/notifications_type_check/);
+  });
+
+  it('自分宛ての通知は拒まれる', async () => {
+    await seedPeople();
+    await expect(notification('n1', { actor_id: 'a' })).rejects.toThrow(
+      /notifications_actor_id_check/,
+    );
+  });
+
+  it.each([
+    ['like に comment_id', { type: 'like', comment_id: 'c1' }],
+    ['like に post_id なし', { type: 'like', post_id: null }],
+    ['comment に comment_id なし', { type: 'comment', comment_id: null }],
+    ['follow に post_id', { type: 'follow', post_id: 'p1' }],
+  ])('%s は拒まれる', async (_name, over) => {
+    await seedPeople();
+    await expect(notification('n1', over)).rejects.toThrow(/notifications_target_check/);
+  });
+
+  it('like は (recipient, actor, post) で 1 行だけ。comment は何行でも', async () => {
+    await seedPeople();
+    await notification('n1', {});
+    await expect(notification('n2', {})).rejects.toThrow(/UNIQUE constraint failed/);
+    await comment('c2', 'p1', 'b');
+    await notification('n3', { type: 'comment', comment_id: 'c1' });
+    await notification('n4', { type: 'comment', comment_id: 'c2' });
+    expect(await count('notifications')).toBe(3);
+  });
+
+  it('follow は (recipient, actor) で 1 行だけ', async () => {
+    await seedPeople();
+    await notification('n1', { type: 'follow', post_id: null });
+    await expect(notification('n2', { type: 'follow', post_id: null })).rejects.toThrow(
+      /UNIQUE constraint failed/,
+    );
+  });
+
+  it('投稿・コメント・利用者を消すと通知も消える', async () => {
+    await seedPeople();
+    await notification('n1', {});
+    await notification('n2', { type: 'comment', comment_id: 'c1' });
+    await notification('n3', { type: 'follow', post_id: null });
+    await t.d1.prepare("DELETE FROM comments WHERE id = 'c1'").run();
+    expect(await count('notifications', "id = 'n2'")).toBe(0);
+    await t.d1.prepare("DELETE FROM posts WHERE id = 'p1'").run();
+    expect(await count('notifications', "id = 'n1'")).toBe(0);
+    await t.d1.prepare("DELETE FROM users WHERE id = 'b'").run();
+    expect(await count('notifications')).toBe(0);
   });
 });
 
