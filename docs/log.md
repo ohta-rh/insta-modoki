@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [EPIC #4 の総合試験のレポート（4 回目）](test-reports/epic-0004-post-create-detail-r4.md)（PASS。バグ #76 の修正 42d6e49..265411e の後、6 つの AC が満たされ、投稿・コメントの削除ダイアログの focus の懸念が解消した）と、その写真・記録（`test-reports/evidence/epic-0004-r4/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #7 の総合試験のレポート（2 回目）](test-reports/epic-0007-mvp-quality-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 6 つの AC が満たされ、性能の基準は全て以内、4 つのモーダルのフォーカストラップも変わらない）と、その写真・記録（`test-reports/evidence/epic-0007-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #6 の総合試験のレポート（2 回目）](test-reports/epic-0006-reactions-like-comment-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 7 つの AC が満たされ、いいねした人 45 人・コメント 45 件のページ送りに重複・抜けは無く、2 つのダイアログのフォーカスと JS 無しのフォームも変わらない）と、その写真・記録（`test-reports/evidence/epic-0006-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #5 の総合試験のレポート（2 回目）](test-reports/epic-0005-follow-feed-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 7 つの AC が満たされ、フィード 48 件・フォロー中一覧 100 件のページ送りに重複・抜けは無く、JS 無しのフォームの動きも変わらない）と、その写真・記録（`test-reports/evidence/epic-0005-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
