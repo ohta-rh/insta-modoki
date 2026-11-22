@@ -99,6 +99,34 @@ describe('getStoryReel', () => {
     expect((await call(a, b.username)).startIndex).toBe(0);
   });
 
+  it('全件を見終えた人は次の人にしない', async () => {
+    const a = await signedIn();
+    const b = await createUser(t.db);
+    const c = await createUser(t.db);
+    await follow(a.user.id, b.id);
+    await follow(a.user.id, c.id);
+    const b1 = await addStory(b.id, T + 300);
+    await addStory(c.id, T + 100);
+    await view(b1, a.user.id);
+    // the tray is now [c, b]; b has nothing unseen, so c has no next person
+    expect((await call(a, c.username)).nextUsername).toBeNull();
+  });
+
+  it('未視聴が残っている人は次の人になる', async () => {
+    const a = await signedIn();
+    const b = await createUser(t.db);
+    const c = await createUser(t.db);
+    const d = await createUser(t.db);
+    for (const u of [b, c, d]) await follow(a.user.id, u.id);
+    const b1 = await addStory(b.id, T + 400);
+    await addStory(c.id, T + 300);
+    await addStory(d.id, T + 100);
+    await view(b1, a.user.id);
+    // the tray is [c, d, b]: after c comes d (unseen), and after d nobody (b is seen)
+    expect((await call(a, c.username)).nextUsername).toBe(d.username);
+    expect((await call(a, d.username)).nextUsername).toBeNull();
+  });
+
   it('自分のストーリーは先頭から始まり、閲覧者の数を返し、次は並びの先頭', async () => {
     const a = await signedIn();
     const b = await createUser(t.db);

@@ -13,7 +13,7 @@ import { trapTab } from '../../../shared/ui/focus-trap';
 import { markStoryViewedAction } from '../api/actions';
 import type { StoryReel } from '../api/get-story-reel';
 import { VIDEO_UNREADABLE } from '../model/limits';
-import { nextInQueue } from '../model/story-queue';
+import { nextFromQueue } from '../model/story-queue';
 import {
   HOLD_MS,
   initialState,
@@ -48,7 +48,7 @@ const BUTTON =
  * on, hold to pause, swipe down or Esc to close, ← / → for the keys. In `modal` mode it sits over
  * the page it was opened from (an intercepting route, ADR-0043) and closing is one step back; in
  * `page` mode (a direct load) closing goes home. Past the last story it moves to the next person
- * (the tray's order, else the server's) without adding history.
+ * (the saved tray order when the person is in it, else the server's) without adding history.
  */
 export function StoryViewer({ reel, mode }: { reel: StoryReel; mode: 'modal' | 'page' }) {
   const router = useRouter();
@@ -104,7 +104,8 @@ export function StoryViewer({ reel, mode }: { reel: StoryReel; mode: 'modal' | '
   // Past the last story: on to the next person, else close.
   useEffect(() => {
     if (state.done !== 'next-user' || leaving.current) return;
-    const next = nextInQueue(username) ?? reel.nextUsername;
+    const queued = nextFromQueue(username);
+    const next = queued.inQueue ? queued.next : reel.nextUsername;
     if (!next) {
       close();
       return;

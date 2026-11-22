@@ -38,8 +38,8 @@ export type GetStoryReelDeps = { env?: AuthEnv & StorageEnv; headers: Headers; n
 
 /**
  * One person's unexpired stories, oldest first, for the viewer: where to start (the first one the
- * viewer has not seen; 0 when all are seen or they are their own), and who comes next in the
- * viewer's tray order. A person who does not exist or has nothing unexpired is NOT_FOUND. No
+ * viewer has not seen; 0 when all are seen or they are their own), and who comes next: the first person after
+ * this one in the viewer's tray order who still has an unseen story. A person who does not exist or has nothing unexpired is NOT_FOUND. No
  * session is UNAUTHENTICATED. The storage key never leaves; only the URLs built from it do.
  */
 export async function getStoryReel(input: unknown, deps: GetStoryReelDeps): Promise<StoryReel> {
@@ -88,13 +88,16 @@ export async function getStoryReel(input: unknown, deps: GetStoryReelDeps): Prom
   }
 
   const firstUnseen = rows.findIndex((r) => !seen.has(r.id));
-  const order = buildTray(
+  const tray = buildTray(
     followed.filter((s) => s.authorId !== me.id),
     seen,
     now,
-  ).map((e) => e.user.username);
-  const at = order.indexOf(author.username);
-  const nextUsername = isMe ? (order[0] ?? null) : at >= 0 ? (order[at + 1] ?? null) : null;
+  );
+  const at = tray.findIndex((e) => e.user.username === author.username);
+  // After this person, the first one who still has something unseen; their own reel goes to the
+  // tray's first. A person who is not in the tray has no next.
+  const after = isMe ? tray : at >= 0 ? tray.slice(at + 1) : [];
+  const nextUsername = after.find((e) => e.hasUnseen)?.user.username ?? null;
 
   return {
     user: {

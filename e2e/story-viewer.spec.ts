@@ -124,6 +124,30 @@ test('左右のタップと ← / → で前後に移り、最後は次の人へ
   );
 });
 
+test('順番の最後の人を見終えると 見終えたばかりの人に戻らずに閉じる', async ({ page }) => {
+  const me = await ownUsername(page);
+  const c = await followedWith(page, me, [{ hoursAgo: 5 }]);
+  const b = await followedWith(page, me, [{ hoursAgo: 2 }, { hoursAgo: 2 }, { hoursAgo: 2 }]);
+  await openHome(page);
+
+  await trayLink(page, b.username).click();
+  await expect(viewerOf(page, b.username)).toBeVisible();
+  await expect(position(page)).toHaveText('ストーリー 1 / 3');
+  await tap(page, 'right');
+  await expect(position(page)).toHaveText('ストーリー 2 / 3');
+  await tap(page, 'right');
+  await expect(position(page)).toHaveText('ストーリー 3 / 3');
+  // Every one of b's views is recorded before the walk goes on to c (so c's reel sees b as seen).
+  for (const story of b.stories) await expect.poll(() => viewRows(story.id)).toBe(1);
+
+  await tap(page, 'right');
+  await expect(page).toHaveURL(new RegExp(`/stories/${c.username}$`));
+  await expect(position(page)).toHaveText('ストーリー 1 / 1');
+  await tap(page, 'right');
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+});
+
 test('閉じると元のスクロール位置と読み込んだフィードが保たれる', async ({ page }) => {
   const me = await ownUsername(page);
   const author = uniqueName('a');
