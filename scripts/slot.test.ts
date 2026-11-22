@@ -175,3 +175,138 @@ test('prepare が スロットのバケットのウェブ公開を許可する�
     );
   }
 });
+
+// --- Stopping the slot's app server on drop / reset (#83) ---
+
+function stackDeps(over: Record<string, unknown> = {}) {
+  const log: string[] = [];
+  const out: string[] = [];
+  const err: string[] = [];
+  const dir = mkdtempSync(join(tmpdir(), 'slot-unit-'));
+  const deps = {
+    exec: (cmd: string, args: string[]) => {
+      if (cmd === 'docker' && args[0] === 'ps') return { status: 0, stdout: 'cid\n', stderr: '' };
+      if (cmd === 'docker') log.push(`garage ${args.slice(3).join(' ')}`);
+      return { status: 0, stdout: 'Key ID:  GK\nSecret key:  sek\n', stderr: '' };
+    },
+    cwd: dir,
+    putCors: async () => '',
+    emptyBucket: async () => {},
+    sleep: async () => {},
+    stdout: (s: string) => out.push(s),
+    stderr: (s: string) => err.push(s),
+    ...over,
+  };
+  return { deps, log, out, err, done: () => rmSync(dir, { recursive: true, force: true }) };
+}
+
+test('drop はスロットのポートで待ち受けるプロセスを子ごと止めてから消す', async () => {
+  const order: string[] = [];
+  const listening = new Set([111, 222]);
+  const t = stackDeps({
+    listPortPids: async (port: number) => {
+      order.push(`list ${port}`);
+      return [...listening];
+    },
+    killTree: (pid: number, signal: string) => {
+      order.push(`${signal} ${pid}`);
+      listening.delete(pid);
+    },
+  });
+  t.deps.exec = ((orig) => (cmd: string, args: string[]) => {
+    if (cmd === 'docker' && args[0] !== 'ps') order.push(`garage ${args.slice(3).join(' ')}`);
+    return orig(cmd, args);
+  })(t.deps.exec);
+  const code = await run(['drop', '2'], t.deps);
+  t.done();
+  assert.equal(code, 0);
+  assert.ok(order.includes('list 3102'));
+  assert.ok(order.includes('SIGTERM 111') && order.includes('SIGTERM 222'));
+  const lastKill = Math.max(...order.map((s, i) => (s.startsWith('SIG') ? i : -1)));
+  const firstGarage = order.findIndex((s) => s.startsWith('garage'));
+  assert.ok(lastKill < firstGarage, `stop before delete: ${order.join(' | ')}`);
+  assert.ok(t.out.some((s) => s === 'slot 2 のポート 3102 のプロセスを 2 個止めました'));
+});
+
+test('reset もスロットのポートのプロセスを止める', async () => {
+  const killed: string[] = [];
+  const listening = new Set([7]);
+  const t = stackDeps({
+    listPortPids: async () => [...listening],
+    killTree: (pid: number, signal: string) => {
+      killed.push(`${signal} ${pid}`);
+      listening.delete(pid);
+    },
+  });
+  const code = await run(['reset', '2'], t.deps);
+  t.done();
+  assert.equal(code, 0);
+  assert.deepEqual(killed, ['SIGTERM 7']);
+  assert.ok(t.out.some((s) => s.includes('3102 のプロセスを 1 個止めました')));
+});
+
+test('prepare はプロセスに触れない', async () => {
+  let listed = 0;
+  const t = stackDeps({
+    listPortPids: async () => {
+      listed++;
+      return [1];
+    },
+    killTree: () => assert.fail('prepare must not stop anything'),
+  });
+  const code = await run(['prepare', '2'], t.deps);
+  t.done();
+  assert.equal(code, 0);
+  assert.equal(listed, 0);
+});
+
+test('ポートに誰もいなければ何も止めずに消す', async () => {
+  const t = stackDeps({
+    listPortPids: async () => [],
+    killTree: () => assert.fail('nothing to stop'),
+  });
+  const code = await run(['drop', '3'], t.deps);
+  t.done();
+  assert.equal(code, 0);
+  assert.ok(t.out.some((s) => s === 'slot 3 のポート 3103 のプロセスを 0 個止めました'));
+  assert.ok(t.out.some((s) => s.includes('slot 3 を削除しました')));
+});
+
+test('TERM で止まらなければ KILL で止める', async () => {
+  const signals: string[] = [];
+  let alive = true;
+  const t = stackDeps({
+    listPortPids: async () => (alive ? [9] : []),
+    killTree: (pid: number, signal: string) => {
+      signals.push(signal);
+      if (signal === 'SIGKILL') alive = false;
+    },
+  });
+  const code = await run(['drop', '1'], t.deps);
+  t.done();
+  assert.equal(code, 0);
+  assert.deepEqual(signals, ['SIGTERM', 'SIGKILL']);
+});
+
+test('止まらないプロセスがあれば消さずに 1 で終わる', async () => {
+  const t = stackDeps({
+    listPortPids: async () => [4242],
+    killTree: () => {},
+  });
+  const code = await run(['drop', '1'], t.deps);
+  const garageCalls = t.log.length;
+  t.done();
+  assert.equal(code, 1);
+  assert.match(t.err.join('\n'), /4242/);
+  assert.equal(garageCalls, 0, 'nothing is deleted');
+});
+
+test('範囲外のスロットではプロセスを探さない', async () => {
+  const t = stackDeps({
+    listPortPids: async () => assert.fail('must not look for processes'),
+    killTree: () => assert.fail('must not stop anything'),
+  });
+  assert.equal(await run(['drop', '5'], t.deps), 2);
+  assert.equal(await run(['drop', '-1'], t.deps), 2);
+  t.done();
+});

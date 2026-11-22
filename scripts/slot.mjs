@@ -164,6 +164,45 @@ async function emptyBucket(cfg) {
   for (const key of await listObjects(cfg)) await deleteObject(cfg, key);
 }
 
+// --- Stopping the slot's app server (#83) ---
+
+const TERM_WAIT_MS = 5000;
+const POLL_MS = 100;
+
+/** PIDs listening on the TCP port (`lsof -ti`); empty when nobody is. */
+async function listPortPids(port, exec = realExec) {
+  const r = exec('lsof', ['-ti', `tcp:${port}`, '-sTCP:LISTEN']);
+  return [...new Set(r.stdout.split('\n').map((l) => Number(l.trim())))].filter(
+    (p) => Number.isInteger(p) && p > 0,
+  );
+}
+
+/** Signals pid and all its descendants, children first (the preview is sh -> wrangler -> node -> workerd). */
+function killTree(pid, signal, exec = realExec) {
+  const rows = exec('ps', ['-axo', 'pid=,ppid=']).stdout.split('\n');
+  const children = new Map();
+  for (const row of rows) {
+    const [c, p] = row.trim().split(/\s+/).map(Number);
+    if (!c || !p) continue;
+    children.set(p, [...(children.get(p) ?? []), c]);
+  }
+  const order = [];
+  const walk = (p, seen) => {
+    if (seen.has(p)) return;
+    seen.add(p);
+    for (const c of children.get(p) ?? []) walk(c, seen);
+    order.push(p);
+  };
+  walk(pid, new Set());
+  for (const p of order) {
+    try {
+      process.kill(p, signal);
+    } catch {
+      // already gone
+    }
+  }
+}
+
 // --- The command ---
 
 function realExec(cmd, args, opts = {}) {
@@ -193,6 +232,36 @@ export async function run(argv, deps = {}) {
     return 2;
   }
   const n = Number(slotArg);
+
+  if (command === 'drop' || command === 'reset') {
+    const list = deps.listPortPids ?? listPortPids;
+    const kill = deps.killTree ?? killTree;
+    const sleep = deps.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
+    const found = await list(names.port);
+    const waitFor = async (ms) => {
+      let left = await list(names.port);
+      for (let t = 0; left.length > 0 && t < ms; t += POLL_MS) {
+        await sleep(POLL_MS);
+        left = await list(names.port);
+      }
+      return left;
+    };
+    if (found.length > 0) {
+      for (const pid of found) kill(pid, 'SIGTERM');
+      let left = await waitFor(deps.termWaitMs ?? TERM_WAIT_MS);
+      if (left.length > 0) {
+        for (const pid of left) kill(pid, 'SIGKILL');
+        left = await waitFor(1000);
+      }
+      if (left.length > 0) {
+        err(
+          `slot ${n} のポート ${names.port} を握るプロセスが止まりません（PID: ${left.join(', ')}）。消す処理には進みません`,
+        );
+        return 1;
+      }
+    }
+    out(`slot ${n} のポート ${names.port} のプロセスを ${found.length} 個止めました`);
+  }
 
   const ps = exec('docker', [
     'ps',
@@ -263,7 +332,7 @@ export async function run(argv, deps = {}) {
       if (garage('bucket', 'info', names.bucket).status === 0) {
         const r = ensureBucket();
         if (r.status !== 0) return fail('バケットの許可', r);
-        await emptyBucket(cfg);
+        await (deps.emptyBucket ?? emptyBucket)(cfg);
         const d = garage('bucket', 'delete', '--yes', names.bucket);
         if (d.status !== 0) return fail('バケットの削除', d);
       }
@@ -276,7 +345,7 @@ export async function run(argv, deps = {}) {
     const b = ensureBucket();
     if (b.status !== 0) return fail('バケットの準備', b);
     await (deps.putCors ?? putBucketCors)(cfg, n);
-    if (command === 'reset') await emptyBucket(cfg);
+    if (command === 'reset') await (deps.emptyBucket ?? emptyBucket)(cfg);
 
     const prev = existsSync(envFile) ? parseEnv(readFileSync(envFile, 'utf8')) : {};
     rmSync(envFile, { force: true }); // never rewrite secrets into a file with an older, looser mode
