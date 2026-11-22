@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [EPIC #11 の総合試験のレポート（2 回目）](test-reports/epic-0011-notifications-r2.md)（PASS。ADR-0048 によるやり直し。5807758 で、#86 のバッジの位置・クリック・名前を含む 5 つの AC を実ブラウザで確かめた）と、その写真・記録（`test-reports/evidence/epic-0011-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #9 の総合試験のレポート（2 回目）](test-reports/epic-0009-stories-r2.md)（PASS。統合ブランチ m3/phase2 の 80aa192 で、#84 の修正により閉じたあとのトレイが再読み込みなしで更新されることを、3 つの閉じ方を各 3 回で確かめた）と、その写真・記録（`test-reports/evidence/epic-0009-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #10 の総合試験のレポート（2 回目）](test-reports/epic-0010-discovery-r2.md)（PASS。統合ブランチ m3/phase2 の 80aa192 で、未読バッジ・保存ボタンが入ったあとの再試験。5 つの AC を満たし、未読の通知があるアカウントで axe の違反は 0 件）と、その写真・記録（`test-reports/evidence/epic-0010-r2/`）を足した。
 * **Creation**: [EPIC #9 の総合試験のレポート（1 回目）](test-reports/epic-0009-stories.md)（FAIL。統合ブランチ m3/phase2 の c81288b で、AC-1・3・4・5 は満たし、AC-2 は閉じたあとのトレイが古いまま）と、その写真・記録（`test-reports/evidence/epic-0009/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
