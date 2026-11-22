@@ -1,0 +1,18 @@
+[s1] before hydration: {"hydrated":false,"counter":"0 / 10 枚","items":0,"tabs":6,"inputFiles":2}
+[s1] hydrated after 87 ms of loading
+[s1] after hydration: items=2 (after 1s: 2), counter=2 / 10 枚, alerts=0
+[s1] posted: 01a2015a-ac65-7000-9046-dfdce163e8ca, slides=["早く選んだ赤","早く選んだ緑"]
+[s2] before hydration: {"hydrated":false,"counter":"0 / 10 枚","items":0,"tabs":6,"inputFiles":1}
+[s2] network throttled: 500 kbps down, 400 ms latency (Slow 3G class)
+[s2] hydrated after 3294 ms of loading
+[s2] after hydration: items=1 (after 1s: 1), counter=1 / 10 枚
+[s2] same photo picked again after hydration: items=2, counter=2 / 10 枚
+[s3] before hydration: {"hydrated":false,"counter":"0 / 10 枚","items":0,"tabs":6,"inputFiles":11}
+[s3] hydrated after 89 ms of loading
+[s3] after hydration: items=10, counter=10 / 10 枚, alert="写真は 10 枚までです"
+[s4] before hydration: {"hydrated":false,"counter":"0 / 10 枚","items":0,"tabs":6,"inputFiles":1}
+[s4] hydrated after 87 ms of loading
+[s4] after hydration: items=0, counter=0 / 10 枚, alert="too-large.jpg: ファイルが大きすぎます（1 枚 10MB まで）"
+[s5] before hydration: {"hydrated":false,"counter":"none","items":0,"tabs":6,"inputFiles":1}
+[s5] hydrated after 75 ms of loading
+[s5] after hydration: new-icon preview=1
