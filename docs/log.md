@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [EPIC #9 の総合試験のレポート（1 回目）](test-reports/epic-0009-stories.md)（FAIL。統合ブランチ m3/phase2 の c81288b で、AC-1・3・4・5 は満たし、AC-2 は閉じたあとのトレイが古いまま）と、その写真・記録（`test-reports/evidence/epic-0009/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Update**: [conventions.md](architecture/conventions.md) の「削除」を、日次のジョブ `upload-orphan-sweep` が参照されない古いアップロードを消す内容にし、[data-model.md](architecture/data-model.md) に `job_cursors` を足した（#77）。
 * **Creation**: [EPIC #11 の総合試験のレポート（1 回目）](test-reports/epic-0011-notifications.md)（PASS。統合ブランチ m3/phase2 の 19648d3 で、いいねの通知が 5 秒以内（6 回の実測は最大 3,026 ms）、切断からの復帰、配信を塞いだときのポーリング、90 日の削除、他人の通知の非表示と axe・キーボードの 5 つの AC が満たされた）と、その写真・記録（`test-reports/evidence/epic-0011/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Update**: [data-model.md](architecture/data-model.md) の「notifications」に、作成から 90 日を過ぎた行を日次のジョブ `notification-cleanup` が消すことを足した（#59）。

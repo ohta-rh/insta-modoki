@@ -1,0 +1,6 @@
+$ pnpm jobs:run story-cleanup
+Using secrets defined in .dev.vars
+story-cleanup: deleted=1
+$ node scripts/run-job.ts story-cleanup
+
+exit=0
