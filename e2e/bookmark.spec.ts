@@ -207,10 +207,11 @@ signedIn('保存すると保存済みタブに出て、解除すると消える'
   ]);
   await expect(savedGrid(page).locator(`a[href="/p/${third.id}"]`)).toHaveCount(0);
 
-  // A tile opens the post in the modal; saving state is shown and can be undone there.
+  // A tile opens the post in the modal (a soft navigation, so the page is hydrated first); the
+  // saved state is shown and can be undone there.
+  await waitForHydration(page);
   await tiles(page).first().click();
   await expect(dialog(page)).toBeVisible();
-  await waitForHydration(page);
   await expect(saveButton(page)).toHaveAttribute('aria-pressed', 'true');
   await saveButton(page).click();
   await expect(saveButton(page)).toHaveAttribute('aria-pressed', 'false');
