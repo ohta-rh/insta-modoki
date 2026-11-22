@@ -66,5 +66,6 @@ status: stable
 | `follow` / `unfollow` | follow | username | `{ following, followerCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、VALIDATION（自分自身）、NOT_FOUND |
 | `listFollowers` / `listFollowing` | follow | username, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
 | `getFeed` | feed | cursor? | `Page<PostView>`（12 件） | UNAUTHENTICATED |
+| `searchUsers` | search | q（前後の空白を除いて 1〜30 字） | `{ items: UserSummary[] }`（20 件まで。ユーザー名の前方一致・部分一致・表示名の一致の順。カーソルは無い） | UNAUTHENTICATED、VALIDATION、RATE_LIMITED |
 
 M2 以降の処理は、その PBI が同じ形でこの表に足す。
