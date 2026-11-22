@@ -130,3 +130,56 @@ signedIn('キーボードだけで通知を開け、axe の重大な違反が 0 
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(new RegExp(`/${actor}$`));
 });
+
+base('同じタブで別の人がログインしても、前の人の未読の数は出ない', async ({ page, browser }) => {
+  base.setTimeout(90_000);
+  // B is registered from a second context; A signs up on `page` and has one unread notification.
+  const context = await browser.newContext({
+    baseURL: baseURL(),
+    storageState: { cookies: [], origins: [] },
+  });
+  let bob;
+  try {
+    bob = await signUpViaUi(await context.newPage());
+  } finally {
+    await context.close();
+  }
+  const alice = await signUpViaUi(page);
+  const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  const actor = `e2e_n${stamp}`;
+  seedUser(actor, `${actor}@example.com`);
+  harness({
+    op: 'seedNotification',
+    recipientId: userRow(alice.username)!.id as string,
+    actorId: userRow(actor)!.id as string,
+    type: 'follow',
+    createdAt: Date.now() - 60_000,
+  });
+
+  await page.goto('/');
+  await waitForHydration(page);
+  const nav = page.getByRole('navigation', { name: NAV }).first();
+  await expect(nav.getByRole('link', { name: '通知（未読 1 件）', exact: true })).toBeVisible({
+    timeout: 15_000,
+  });
+
+  // Client-side navigations only (no reload), so the browser keeps the same unread store:
+  // log out (the action redirects to the login screen), then B logs in on the same page.
+  await page.evaluate(() =>
+    (window as unknown as { next: { router: { push(url: string): void } } }).next.router.push(
+      '/accounts/logout',
+    ),
+  );
+  await page.getByRole('button', { name: 'ログアウト' }).click();
+  await expect(page).toHaveURL(/\/accounts\/login$/);
+  await page.getByLabel('メールアドレス').fill(bob.email);
+  await page.getByLabel('パスワード').fill(bob.password);
+  await page.getByRole('button', { name: 'ログイン' }).click();
+  await expect(page).toHaveURL(/\/$/);
+
+  // B has nothing unread: A's number must not be shown, not even until the next poll.
+  const bobNav = page.getByRole('navigation', { name: NAV }).first();
+  await expect(bobNav.getByRole('link', { name: '通知', exact: true })).toBeVisible();
+  await expect(page.getByTestId('notification-badge')).toHaveCount(0);
+  await expect(bobNav.getByRole('link', { name: /未読/ })).toHaveCount(0);
+});

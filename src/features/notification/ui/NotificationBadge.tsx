@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { badgeAccessibleText, badgeText } from '../model/notification-text';
 import { unreadStore } from './unread-store';
 
@@ -25,7 +25,13 @@ export function NotificationBadgeView({ count }: { count: number }) {
   );
 }
 
-export function NotificationBadge() {
-  const count = useSyncExternalStore(unreadStore.subscribe, unreadStore.getSnapshot, () => 0);
+/** `viewerId` is the signed-in user: the count in the store belongs to one person only. */
+export function NotificationBadge({ viewerId }: { viewerId: string }) {
+  const count = useSyncExternalStore(
+    unreadStore.subscribe,
+    () => unreadStore.getSnapshotFor(viewerId),
+    () => 0,
+  );
+  useEffect(() => unreadStore.setViewer(viewerId), [viewerId]);
   return <NotificationBadgeView count={count} />;
 }

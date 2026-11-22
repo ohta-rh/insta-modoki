@@ -23,8 +23,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <HydrationMarker />
         <AppShellClient
           viewer={viewer}
-          badges={viewer ? { notifications: <NotificationBadge /> } : undefined}
-          linkAs={viewer ? { notifications: NotificationNavLink } : undefined}
+          badges={
+            viewer && user ? { notifications: <NotificationBadge viewerId={user.id} /> } : undefined
+          }
+          linkAs={viewer && user ? { notifications: NotificationNavLink } : undefined}
         >
           {children}
         </AppShellClient>

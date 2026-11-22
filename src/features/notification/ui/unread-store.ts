@@ -24,9 +24,10 @@ export type UnreadStoreOptions = {
 export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOptions) {
   let count = 0;
   let version = 0;
+  let viewer: string | null = null;
   const listeners = new Set<() => void>();
   let timer: ReturnType<typeof setInterval> | null = null;
-  let inFlight = false;
+  let inFlight: number | null = null;
 
   const emit = () => listeners.forEach((l) => l());
   const apply = (next: number) => {
@@ -37,9 +38,9 @@ export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOp
   };
 
   async function poll() {
-    if (doc.hidden || inFlight) return;
-    inFlight = true;
+    if (doc.hidden || inFlight === version) return;
     const started = version;
+    inFlight = started;
     try {
       const result = await fetchCount();
       // A set() made while the ask was out is newer than its answer.
@@ -52,7 +53,7 @@ export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOp
     } catch {
       // keep the previous number
     } finally {
-      inFlight = false;
+      if (inFlight === started) inFlight = null;
     }
   }
 
@@ -71,7 +72,28 @@ export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOp
     timer = null;
   }
 
+  /**
+   * Tells the store whose count it holds. When the person changes (a log-out and a log-in are client
+   * navigations, so this module outlives them) the count goes back to 0 and an ask still out for
+   * the previous person is dropped; the new person's own ask starts at once.
+   */
+  function setViewer(next: string | null) {
+    if (next === viewer) return;
+    const previous = viewer;
+    viewer = next;
+    // The first person the store is told about changes nothing: no earlier person's count or ask exists.
+    if (previous === null) return;
+    version += 1;
+    const had = count !== 0;
+    count = 0;
+    if (had) emit();
+    if (listeners.size > 0) void poll();
+  }
+
   return {
+    setViewer,
+    /** The count for `forViewer`: 0 until the store has been told that person (never a previous one's). */
+    getSnapshotFor: (forViewer: string | null): number => (forViewer === viewer ? count : 0),
     subscribe(listener: () => void): () => void {
       listeners.add(listener);
       if (listeners.size === 1) start();
