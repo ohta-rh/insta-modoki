@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [e2e/keyboard.spec.ts:34 の落ち方の調査](research/e2e-keyboard-photo-pick-under-load.md)（#78。ハイドレーション前に選んだ写真が捨てられる不具合を `holdScripts` で決定的に再現。CPU の遅延 100 回では自然に再現せず）を追加した。
 * **Creation**: [EPIC #4 の総合試験のレポート（4 回目）](test-reports/epic-0004-post-create-detail-r4.md)（PASS。バグ #76 の修正 42d6e49..265411e の後、6 つの AC が満たされ、投稿・コメントの削除ダイアログの focus の懸念が解消した）と、その写真・記録（`test-reports/evidence/epic-0004-r4/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #7 の総合試験のレポート（2 回目）](test-reports/epic-0007-mvp-quality-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 6 つの AC が満たされ、性能の基準は全て以内、4 つのモーダルのフォーカストラップも変わらない）と、その写真・記録（`test-reports/evidence/epic-0007-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #6 の総合試験のレポート（2 回目）](test-reports/epic-0006-reactions-like-comment-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 7 つの AC が満たされ、いいねした人 45 人・コメント 45 件のページ送りに重複・抜けは無く、2 つのダイアログのフォーカスと JS 無しのフォームも変わらない）と、その写真・記録（`test-reports/evidence/epic-0006-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
