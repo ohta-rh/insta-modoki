@@ -1,0 +1,190 @@
+{
+  "version": "157.0.8103.80",
+  "visitorUrl": "http://localhost:3102/accounts/login",
+  "afterSignup": "http://localhost:3102/",
+  "home": {
+    "375": {
+      "navs": [
+        {
+          "label": "メイン",
+          "position": "fixed",
+          "x": 0,
+          "y": 844,
+          "w": 375,
+          "h": 56,
+          "items": [
+            "ホーム",
+            "検索",
+            "投稿",
+            "通知",
+            "プロフィール"
+          ]
+        }
+      ],
+      "foot": [
+        "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"
+      ],
+      "scrollW": 375,
+      "clientW": 375
+    },
+    "768": {
+      "navs": [
+        {
+          "label": "メイン",
+          "position": "sticky",
+          "x": 0,
+          "y": 0,
+          "w": 244,
+          "h": 900,
+          "items": [
+            "ホーム",
+            "検索",
+            "投稿",
+            "通知",
+            "プロフィール"
+          ]
+        }
+      ],
+      "foot": [
+        "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"
+      ],
+      "scrollW": 768,
+      "clientW": 768
+    },
+    "1280": {
+      "navs": [
+        {
+          "label": "メイン",
+          "position": "sticky",
+          "x": 0,
+          "y": 0,
+          "w": 244,
+          "h": 900,
+          "items": [
+            "ホーム",
+            "検索",
+            "投稿",
+            "通知",
+            "プロフィール"
+          ]
+        }
+      ],
+      "foot": [
+        "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"
+      ],
+      "scrollW": 1280,
+      "clientW": 1280
+    }
+  },
+  "tabs": [
+    "A:本文へ移動",
+    "A:ホーム",
+    "A:検索",
+    "A:投稿",
+    "A:通知",
+    "A:プロフィール",
+    "BODY:本文へ移動Madoホーム検索投稿通知プロフィールホームフォローすると、",
+    "A:本文へ移動",
+    "A:ホーム",
+    "A:検索"
+  ],
+  "headers": {
+    "/": {
+      "status": 200,
+      "ct": "text/html; charset=utf-8",
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-ZjBkZWQ4MTAtOTA1MS00M2I3LWJjNWItNWFkMTQ1ZWY3YmI0'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s2.web.localhost:3912; media-src 'self' http://insta-s2.web.localhost:3912; connect-src 'self' http://insta-s2.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    },
+    "/does-not-exist": {
+      "status": 404,
+      "ct": "text/html; charset=utf-8",
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-YTE2MjE5ZWYtNzA4Ny00MWQxLTkxNDMtMmFhNDIwOGY2YWRm'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s2.web.localhost:3912; media-src 'self' http://insta-s2.web.localhost:3912; connect-src 'self' http://insta-s2.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    },
+    "/brand/favicon.svg": {
+      "status": 200,
+      "ct": "image/svg+xml",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    },
+    "/nope.png": {
+      "status": 404,
+      "ct": "text/html; charset=utf-8",
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-NWEwNjkwZWItZjg5Yy00M2YwLWE2NmMtMmYyZDk3ZmM5ODRj'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s2.web.localhost:3912; media-src 'self' http://insta-s2.web.localhost:3912; connect-src 'self' http://insta-s2.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    },
+    "/favicon.ico": {
+      "status": 404,
+      "ct": "text/html; charset=utf-8",
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-ZWNmYWE0NjgtNzY0OC00ZDM0LWExN2ItMzhjZmM2ZjdmZDkz'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s2.web.localhost:3912; media-src 'self' http://insta-s2.web.localhost:3912; connect-src 'self' http://insta-s2.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    },
+    "/_next/static/nope.js": {
+      "status": 404,
+      "ct": "text/html; charset=utf-8",
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-YTk4YWEzZDAtZmFmMS00NmIwLThlMWUtMzRlOWYyMjBmZGMx'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s2.web.localhost:3912; media-src 'self' http://insta-s2.web.localhost:3912; connect-src 'self' http://insta-s2.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    }
+  },
+  "nav": {
+    "/favicon.ico": {
+      "status": 404,
+      "csp": "default-src 'self'; script-src 'self' 'nonce-YzcxY2RlM2MtN2E1NC00ZGJmLThmMjUtNTQ1ZWNiMmFjZjQ2'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s2.web.localhost:3912; media-src 'self' http://insta-s2.web.localhost:3912; connect-src 'self' http://insta-s2.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "xcto": "nosniff",
+      "rp": "strict-origin-when-cross-origin",
+      "pp": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    },
+    "/_next/static/nope.js": {
+      "status": 404,
+      "csp": "default-src 'self'; script-src 'self' 'nonce-ZmZiNmE3MzItYWY1ZC00ZjM5LTg1NTItZjQzYjQ1NjhkMjE3'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s2.web.localhost:3912; media-src 'self' http://insta-s2.web.localhost:3912; connect-src 'self' http://insta-s2.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "xcto": "nosniff",
+      "rp": "strict-origin-when-cross-origin",
+      "pp": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    }
+  },
+  "health": {
+    "ac6": {
+      "console": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [],
+      "http4xx": [
+        "404 http://localhost:3102/does-not-exist",
+        "404 http://localhost:3102/nope.png",
+        "404 http://localhost:3102/_next/static/nope.js"
+      ]
+    },
+    "ac6-nav": {
+      "console": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "http://localhost:3102/",
+        "http://localhost:3102/does-not-exist",
+        "http://localhost:3102/nope.png",
+        "http://localhost:3102/_next/static/nope.js"
+      ],
+      "http4xx": [
+        "404 http://localhost:3102/_next/static/nope.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+$ lsof -ti tcp:3102 (before)
+10401
+$ pgrep -f .worktrees/epic-1/ (before)
+10362
+10372
+10396
+10400
+10401
+10405
+$ node scripts/slot.mjs drop 2
+slot 2 のポート 3102 のプロセスを 5 個止めました
+slot 2 を削除しました（insta-s2、.wrangler/state）。.dev.vars は残しています
+exit=0
+$ lsof -ti tcp:3102 (after)
+(end)
+$ pgrep -f .worktrees/epic-1/ (after)
+11067
+(end)
+$ ls .wrangler/state (after drop)
+ls: .wrangler/state: No such file or directory
+$ node scripts/slot.mjs drop 7
+slot は 0〜4 の整数です
+exit=2
+$ lsof -ti tcp:3100 tcp:3101 tcp:3103 tcp:3104 (others untouched)
+3100: 87129
+3101:
+3103:
+3104:
+$ node scripts/slot.mjs prepare 2
+slot 2 を準備しました（insta-s2、PORT=3102、.dev.vars）
+exit=0
