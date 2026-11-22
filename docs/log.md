@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Update**: [data-model.md](architecture/data-model.md)（`stories`・`story_views` の列・制約・索引を `migrations/0007_stories.sql` のとおりに）、[routes.md](architecture/routes.md)（`requestStoryUpload`・`createStory`）、[conventions.md](architecture/conventions.md)（ストーリーの上限）、[overview.md](architecture/overview.md)（`/stories/create`）を更新した（#47）。
 * **Creation**: [ADR-0052](adr/0052-phase-2-before-cloudflare-publication.md)（マイルストーンの順番を M1 → M3 → M2 → M4 に変える）を追加し、[ADR-0013](adr/0013-four-milestones-local-mvp-then-cloudflare.md) を置き換えにした。
 * **Creation**: [EPIC #3 の総合試験のレポート（2 回目）](test-reports/epic-0003-profile-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 5 つの AC が満たされ、28 件のグリッドの無限スクロールに重複・抜けは無い）と、その写真・記録（`test-reports/evidence/epic-0003-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #2 の総合試験のレポート（2 回目）](test-reports/epic-0002-account-signup-login-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 5 つの AC が満たされ、ログアウト後に古いセッションは残らない）と、その写真・記録（`test-reports/evidence/epic-0002-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

@@ -113,7 +113,8 @@ PBI の「検証」は、このファイル名と名前で書く。
 | ユーザー名の空き確認（`checkUsername`） | 同じ IP から 1 分あたり 30 回（`consume('checkname:ip:<ip>', 30, 60)`） |
 | 投稿 | 1 ユーザー 1 時間あたり 30 件 |
 | コメント | 1 ユーザー 1 時間あたり 120 件 |
-| アップロード URL の発行 | 1 ユーザー 1 時間あたり 300 枚 |
+| アップロード URL の発行 | 1 ユーザー 1 時間あたり 300 枚（写真の投稿とストーリーで同じ枠 `upload:user:<id>`） |
+| ストーリー | 1 ユーザー 1 時間あたり 30 件（`story:user:<id>`）。動画は 1 本 30MB・15 秒・MP4 だけ。24 時間で見えなくなる |
 
 レート制限は固定の窓で数え、`src/shared/security/rate-limit.ts` の `consume(key, limit, windowSec, cost = 1, deps?)` で行い（1 回の upsert。`deps` は `{ db, now }` でテストが差し替える。窓の始まりは `now` を `windowSec` で切り捨てたミリ秒）、`rate_limits` テーブルに記録する（[data-model.md](data-model.md)）。
 

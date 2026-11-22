@@ -78,6 +78,7 @@ Next.js の App Router の規約に従い、`src/app/` に置く。ルートの�
 | `/accounts/login` | `src/app/accounts/login/page.tsx` |
 | `/accounts/edit` | `src/app/(app)/accounts/edit/page.tsx` |
 | `/create` | `src/app/(app)/create/page.tsx` |
+| `/stories/create` | `src/app/(app)/stories/create/page.tsx` |
 | `/p/[postId]` | `src/app/p/[postId]/page.tsx` |
 | `/[username]` | `src/app/[username]/page.tsx` |
 | `/[username]/followers` | `src/app/[username]/followers/page.tsx` |
