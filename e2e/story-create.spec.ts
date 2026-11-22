@@ -2,6 +2,7 @@ import { expect, test, type Page, type Request } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
 import { makeJpeg } from './support/fixtures';
+import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 import { tabTo } from './support/keys';
 import { fixtureVideo, storyRows } from './support/stories';
 
@@ -125,4 +126,77 @@ test('エラーは代替テキストと結ばれ 画面は axe の重大な違�
   });
   await expect(alerts(page)).toHaveText('この形式は使えません（JPEG・PNG・WebP・HEIC・MP4）');
   await expect(submit(page)).toBeDisabled();
+});
+
+/**
+ * Opens /stories/create with every script held back, chooses `file` from the picker with the
+ * keyboard while the page is still un-hydrated, then lets the scripts load and waits for hydration.
+ */
+async function pickBeforeHydration(
+  page: Page,
+  file: string | { name: string; mimeType: string; buffer: Buffer },
+): Promise<void> {
+  const fileChooser = page.waitForEvent('filechooser');
+  fileChooser.catch(() => {});
+  const release = await holdScripts(page);
+  await page.goto('/stories/create', { waitUntil: 'commit' });
+  const picker = page.getByRole('button', { name: '写真または動画を選ぶ' });
+  await picker.waitFor();
+  await tabTo(page, picker);
+  await page.keyboard.press('Enter');
+  expect(await page.locator('html[data-hydrated="1"]').count()).toBe(0);
+  await (await fileChooser).setFiles(file);
+  release();
+  await waitForHydration(page);
+}
+
+const preview = (page: Page) => page.getByRole('img', { name: '選んだ写真のプレビュー' });
+
+test('JS の読み込み前に選んだ写真が ハイドレーションの後にプレビューに入り 投稿できる', async ({
+  page,
+}) => {
+  const { username } = await signUpViaUi(page);
+  const jpeg = await makeJpeg(page, 600, 800);
+  await pickBeforeHydration(page, { name: 'early.jpg', mimeType: 'image/jpeg', buffer: jpeg });
+
+  await expect(preview(page)).toHaveCount(1);
+  await expect(submit(page)).toBeEnabled();
+  await submit(page).click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(storyRows(username)).toHaveLength(1);
+});
+
+test('JS の読み込み前に選んだ 16 秒の動画は ハイドレーションの後に理由が出て送られない', async ({
+  page,
+}) => {
+  const { username } = await signUpViaUi(page);
+  const sent: Request[] = [];
+  page.on('request', (r) => {
+    if (r.method() !== 'GET' && r.method() !== 'HEAD') sent.push(r);
+  });
+  await pickBeforeHydration(page, fixtureVideo(16));
+
+  await expect(alerts(page)).toHaveText(TOO_LONG);
+  await expect(submit(page)).toBeDisabled();
+  await nextFrames(page);
+  expect(sent.map((r) => `${r.method()} ${r.url()}`)).toEqual([]);
+  expect(storyRows(username)).toHaveLength(0);
+});
+
+test('JS の読み込み前に選んだ写真の後 同じ写真を選び直しても 1 つのまま', async ({ page }) => {
+  await signUpViaUi(page);
+  const jpeg = await makeJpeg(page, 600, 800);
+  const same = { name: 'same.jpg', mimeType: 'image/jpeg', buffer: jpeg };
+  await pickBeforeHydration(page, same);
+  await expect(preview(page)).toHaveCount(1);
+
+  const fileChooser = page.waitForEvent('filechooser');
+  fileChooser.catch(() => {});
+  const picker = page.getByRole('button', { name: '写真または動画を選ぶ' });
+  await tabTo(page, picker);
+  await page.keyboard.press('Enter');
+  await (await fileChooser).setFiles([same]);
+  await nextFrames(page);
+  await expect(preview(page)).toHaveCount(1);
+  await expect(submit(page)).toBeEnabled();
 });

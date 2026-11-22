@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { processImage } from '../../media-upload';
+import { useFilesPickedBeforeHydration } from '../../../shared/ui/files-picked-before-hydration';
 import { createStoryAction, requestStoryUploadAction } from '../api/actions';
 import {
   composeStory,
@@ -73,6 +74,8 @@ export function StoryComposer() {
     }
     setReading(false);
   }
+
+  useFilesPickedBeforeHydration(input, (files) => void pick(files));
 
   async function post() {
     if (!picked) return;
