@@ -25,6 +25,7 @@ export type PostView = {
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+  savedByMe: boolean;
   /** ISO 8601, UTC. */
   createdAt: string;
 };

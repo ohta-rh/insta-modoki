@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { hashtagStatements } from '../../../features/hashtag';
 import { getDb, type DbEnv } from '../../../shared/db/client';
 import {
+  bookmarks,
   comments,
   follows,
   likes,
@@ -136,6 +137,15 @@ export const operationSchema = z.discriminatedUnion('op', [
     type: z.enum(['like', 'follow']),
     postId: id.optional(),
     createdAt: ms,
+  }),
+  // Saved posts (#51): one insert per row in one batch; a repeat is ignored.
+  z.strictObject({
+    op: z.literal('insertBookmarks'),
+    userId: id,
+    items: z
+      .array(z.strictObject({ postId: id, savedAt: ms }))
+      .min(1)
+      .max(50),
   }),
 ]);
 
@@ -330,6 +340,21 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
       await db.batch(
         operation.views.map((r) =>
           db.insert(storyViews).values({ ...r, createdAt: new Date(r.createdAt) }),
+        ) as unknown as Parameters<typeof db.batch>[0],
+      );
+      return;
+    }
+    case 'insertBookmarks': {
+      await db.batch(
+        operation.items.map((item) =>
+          db
+            .insert(bookmarks)
+            .values({
+              userId: operation.userId,
+              postId: item.postId,
+              createdAt: new Date(item.savedAt),
+            })
+            .onConflictDoNothing(),
         ) as unknown as Parameters<typeof db.batch>[0],
       );
       return;

@@ -20,7 +20,7 @@ status: stable
 | `/accounts/edit` | プロフィールの編集 | 要 | M1 |
 | `/create` | 投稿の作成 | 要 | M1 |
 | `/p/[postId]` | 投稿詳細 | 不要 | M1 |
-| `/[username]` | プロフィール。グリッドの投稿を押すと `/p/[postId]` がモーダルで開く（intercepting route。直接開く・再読み込みは通常の投稿詳細。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） | 不要 | M1 |
+| `/[username]` | プロフィール。タブは「投稿」と、本人だけの「保存済み」（`?tab=saved`。本人以外・他の値は「投稿」になり、保存は読まない）。グリッドの投稿を押すと `/p/[postId]` がモーダルで開く（intercepting route。直接開く・再読み込みは通常の投稿詳細。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） | 不要 | M1 |
 | `/[username]/followers` / `/[username]/following` | フォロワー / フォロー中の一覧 | 不要 | M1 |
 | `/admin` | 管理（招待コード・削除・通報） | 管理者 | M2 |
 | `/explore` / `/explore/search` / `/explore/tags/[tag]` | 発見 / 検索 / ハッシュタグ | 要 | M3 |
@@ -61,6 +61,8 @@ status: stable
 | `getPost` | post | postId | `PostView` | NOT_FOUND |
 | `deletePost` | post | postId | `{ deleted: true }`（既に無い投稿には、ログインしていれば誰にでも同じ結果を返す。持ち主を確かめる対象が無いため） | UNAUTHENTICATED、FORBIDDEN、NOT_FOUND |
 | `likePost` / `unlikePost` | like | postId | `{ liked, likeCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、NOT_FOUND |
+| `savePost` / `unsavePost` | bookmark | postId | `{ saved }`（何度呼んでも同じ結果） | UNAUTHENTICATED、VALIDATION（余計な項目）、NOT_FOUND |
+| `listSavedPosts` | bookmark | cursor?（本人の保存だけ。利用者を指定する項目は無い） | `Page<PostTile>`（12 件、保存した新しい順。カーソルの id は `post_id`） | UNAUTHENTICATED、VALIDATION（壊れたカーソル・余計な項目） |
 | `listLikers` | like | postId, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
 | `listReplies` | comment | commentId（親のコメントの ID）, cursor? | `Page<CommentView>`（20 件、古い順）。親でない・存在しないコメントは NOT_FOUND、壊れたカーソルは VALIDATION | NOT_FOUND、VALIDATION |
 | `listComments` | comment | postId, cursor? | `Page<CommentView>`（親 20 件、返信は親ごとに最初の 3 件と件数） | NOT_FOUND |

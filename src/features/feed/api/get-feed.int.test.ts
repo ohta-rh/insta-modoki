@@ -155,6 +155,7 @@ describe('getFeed', () => {
         'likeCount',
         'likedByMe',
         'media',
+        'savedByMe',
       ].sort(),
     );
     expect(Object.keys(item.author).sort()).toEqual(['avatarUrl', 'displayName', 'username']);

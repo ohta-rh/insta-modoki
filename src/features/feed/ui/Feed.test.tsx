@@ -21,6 +21,7 @@ const post = (id: string, photos: number, over: Partial<PostView> = {}): PostVie
   likeCount: 0,
   commentCount: 0,
   likedByMe: false,
+  savedByMe: false,
   createdAt: new Date(NOW - 3_600_000).toISOString(),
   ...over,
 });

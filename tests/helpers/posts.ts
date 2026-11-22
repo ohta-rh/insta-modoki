@@ -1,5 +1,5 @@
 import { newId } from '../../src/shared/db/id';
-import { comments, likes, media, posts } from '../../src/shared/db/schema';
+import { bookmarks, comments, likes, media, posts } from '../../src/shared/db/schema';
 import type { Db } from '../../src/shared/db/client';
 
 export type TestMedia = { id: string; storageKey: string; position: number };
@@ -54,6 +54,16 @@ export async function createPost(
 
 export async function createLike(db: Db, userId: string, postId: string): Promise<void> {
   await db.insert(likes).values({ userId, postId, createdAt: new Date() });
+}
+
+/** Saves a post for a user at an exact time (the bookmark slice's tests). */
+export async function createBookmark(
+  db: Db,
+  userId: string,
+  postId: string,
+  createdAt: Date = new Date(),
+): Promise<void> {
+  await db.insert(bookmarks).values({ userId, postId, createdAt });
 }
 
 export async function createComment(

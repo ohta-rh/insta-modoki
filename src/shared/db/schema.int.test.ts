@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { applyMigrations, useTestDb } from '../../../tests/helpers/db';
 import {
   accounts,
+  bookmarks,
   comments,
   follows,
   hashtags,
@@ -78,7 +79,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 16 個のテーブルと 10 個の索引ができる', async () => {
+  it('マイグレーションで 16 個のテーブルと 11 個の索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -93,7 +94,7 @@ describe('マイグレーション', () => {
         'story_views',
         'hashtags',
         'post_hashtags',
-        'notifications',
+        'bookmarks',
       ]),
     );
     expect(await names('index')).toEqual(
@@ -104,16 +105,17 @@ describe('マイグレーション', () => {
         'comments_post_parent_created_idx',
         'follows_followee_created_idx',
         'post_hashtags_hashtag_created_post_idx',
+        'bookmarks_user_created_post_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(16);
+    expect(await names('table')).toHaveLength(17);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(16);
+    expect(before).toHaveLength(17);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {
@@ -132,6 +134,7 @@ describe('マイグレーション', () => {
       verifications,
       hashtags,
       postHashtags,
+      bookmarks,
     ]) {
       const cfg = getTableConfig(table);
       const info = (

@@ -55,13 +55,21 @@ const page = (ids: string[], nextCursor: string | null): Page<PostTile> => ({
 type Load = (
   c: string,
 ) => Promise<{ ok: true; page: Page<PostTile> } | { ok: false; error: never }>;
-const grid = (over: { items?: PostTile[]; cursor?: string | null; load?: Load } = {}) =>
+const grid = (
+  over: {
+    items?: PostTile[];
+    cursor?: string | null;
+    load?: Load;
+    hiddenIds?: ReadonlySet<string>;
+  } = {},
+) =>
   PostTileGrid({
     label: '#tokyo の投稿',
     initialItems: over.items ?? [tile('a')],
     initialCursor: over.cursor === undefined ? 'c1' : over.cursor,
     load: over.load ?? (async () => ({ ok: true, page: page([], null) })),
     emptyText: 'まだ投稿がありません',
+    hiddenIds: over.hiddenIds,
   });
 
 beforeEach(() => {
@@ -79,6 +87,21 @@ afterEach(() => {
 });
 
 describe('PostTileGrid', () => {
+  it('hiddenIds の投稿は描かず、省けば全て描く', () => {
+    const items = [tile('a'), tile('b'), tile('c')];
+    const all = renderToStaticMarkup(grid({ items }));
+    expect(all).toContain('href="/p/a"');
+    expect(all).toContain('href="/p/b"');
+    expect(all).toContain('href="/p/c"');
+    const some = renderToStaticMarkup(grid({ items, hiddenIds: new Set(['b']) }));
+    expect(some).toContain('href="/p/a"');
+    expect(some).not.toContain('href="/p/b"');
+    expect(some).toContain('href="/p/c"');
+    // When everything is hidden the empty text shows.
+    const none = renderToStaticMarkup(grid({ items, hiddenIds: new Set(['a', 'b', 'c']) }));
+    expect(none).toContain('まだ投稿がありません');
+  });
+
   it('さらに表示と交差で続きを読み、失敗すると警告と再試行を出す', async () => {
     // The markup: a named region, a 3-column grid, the keyboard button while more exist.
     const html = renderToStaticMarkup(grid());

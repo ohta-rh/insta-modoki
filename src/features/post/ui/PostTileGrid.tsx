@@ -147,6 +147,7 @@ export function PostTileGrid({
   initialCursor,
   load,
   emptyText,
+  hiddenIds,
 }: {
   label: string;
   initialItems: PostTile[];
@@ -155,6 +156,8 @@ export function PostTileGrid({
     cursor: string,
   ) => Promise<{ ok: true; page: Page<PostTile> } | { ok: false; error: ErrorBody }>;
   emptyText: string;
+  /** Posts to leave out (deleted since the page was read). Left out: every post is drawn. */
+  hiddenIds?: ReadonlySet<string>;
 }) {
   const [items, setItems] = useState(initialItems);
   const [cursor, setCursor] = useState(initialCursor);
@@ -194,7 +197,7 @@ export function PostTileGrid({
   return (
     <PostTileGridView
       label={label}
-      items={items}
+      items={hiddenIds ? items.filter((p) => !hiddenIds.has(p.id)) : items}
       hasMore={cursor !== null}
       failed={failed}
       emptyText={emptyText}

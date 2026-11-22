@@ -96,7 +96,7 @@ PBI の「検証」は、このファイル名と名前で書く。
 - `UserSummary = { username, displayName, avatarUrl | null }`
 - `ProfileView = UserSummary & { bio, postCount, followerCount, followingCount, isMe, isFollowing }`
 - `MediaView = { type, width, height, altText, thumbhash, srcset: { w320, w640, w1080 } }`
-- `PostView = { id, author: UserSummary, caption, media: MediaView[], likeCount, commentCount, likedByMe, createdAt }`
+- `PostView = { id, author: UserSummary, caption, media: MediaView[], likeCount, commentCount, likedByMe, savedByMe, createdAt }`
 - `PostThumb = { id, cover: MediaView, mediaCount }`
 - `PostTile = { id, cover: MediaView, mediaCount, username }`（`PostThumb` に投稿者の `username` を足した形。いろいろな人の投稿が並ぶグリッド `PostTileGrid` の `alt` に使う）
 - `CommentView = { id, author: UserSummary, body, parentId | null, createdAt, canDelete, replies?: CommentView[], replyCount? }`

@@ -14,6 +14,7 @@ const TABLES = [
   'verifications',
   'story_views',
   'stories',
+  'bookmarks',
   'likes',
   'follows',
   'comments',

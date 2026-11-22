@@ -7,8 +7,8 @@ import { PostActionBar } from './PostActionBar';
 
 /**
  * One post: the author, the photos, the action row, the caption and the time. The feed (#44)
- * and the modal (#41) use it too. `menu` is the author's own controls (delete); `like` and
- * `comment` fill the action row's slots.
+ * and the modal (#41) use it too. `menu` is the author's own controls (delete); `like`,
+ * `comment` and `save` fill the action row's slots.
  */
 export function PostCard({
   post,
@@ -17,6 +17,7 @@ export function PostCard({
   menu,
   like,
   comment,
+  save,
   wrapMedia,
   footer,
 }: {
@@ -28,6 +29,7 @@ export function PostCard({
   menu?: ReactNode;
   like?: ReactNode;
   comment?: ReactNode;
+  save?: ReactNode;
   /** Wraps the photos (the like slice's double tap goes here). */
   wrapMedia?: (media: ReactNode) => ReactNode;
   /** Under the caption, above the time (the feed's link to all the comments). */
@@ -67,7 +69,7 @@ export function PostCard({
       ) : (
         <Carousel media={post.media} username={author.username} priority={priority} />
       )}
-      <PostActionBar like={like} comment={comment} />
+      <PostActionBar like={like} comment={comment} save={save} />
       <div className="px-3 pb-4">
         {post.caption !== '' && (
           <p className="text-[length:var(--font-size-sm)] break-words whitespace-pre-wrap">

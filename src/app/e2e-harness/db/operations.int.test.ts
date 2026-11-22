@@ -4,6 +4,7 @@ import { useTestDb } from '../../../../tests/helpers/db';
 import { createPost, createLike } from '../../../../tests/helpers/posts';
 import { createUser } from '../../../../tests/helpers/users';
 import {
+  bookmarks,
   comments,
   follows,
   likes,
@@ -364,5 +365,42 @@ describe('E2E ハーネスの操作（ストーリー）', () => {
     const dup = story(author.id);
     await expect(run({ op: 'insertStories', stories: [dup, dup] })).rejects.toThrow();
     expect(await t.db.select().from(stories)).toEqual([]);
+  });
+});
+
+describe('E2E ハーネスの操作（保存）', () => {
+  it('insertBookmarks が保存の行を時刻つきで書き、重複は無視し、上限を超える入力を拒む', async () => {
+    const author = await createUser(t.db);
+    const viewer = await createUser(t.db);
+    const a = await createPost(t.db, author.id);
+    const b = await createPost(t.db, author.id);
+    const items = [
+      { postId: a.id, savedAt: Date.UTC(2026, 10, 1, 1) },
+      { postId: b.id, savedAt: Date.UTC(2026, 10, 1, 2) },
+    ];
+    await run({ op: 'insertBookmarks', userId: viewer.id, items });
+    await run({ op: 'insertBookmarks', userId: viewer.id, items: [items[0]] });
+    const rows = await t.db.select().from(bookmarks).orderBy(bookmarks.createdAt);
+    expect(rows.map((r) => [r.userId, r.postId, r.createdAt.getTime()])).toEqual(
+      items.map((i) => [viewer.id, i.postId, i.savedAt]),
+    );
+
+    const item = { postId: a.id, savedAt: 1 };
+    const schema = (n: number) =>
+      operationSchema.safeParse({
+        op: 'insertBookmarks',
+        userId: viewer.id,
+        items: Array(n).fill(item),
+      }).success;
+    expect(schema(50)).toBe(true);
+    expect(schema(51)).toBe(false);
+    expect(schema(0)).toBe(false);
+    expect(
+      operationSchema.safeParse({
+        op: 'insertBookmarks',
+        userId: viewer.id,
+        items: [{ ...item, extra: 1 }],
+      }).success,
+    ).toBe(false);
   });
 });

@@ -1,3 +1,4 @@
+import { SaveButton } from '../../bookmark';
 import { CommentCountLink, CommentCountProvider } from '../../comment';
 import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like';
 import { PostCard, type PostView } from '../../post';
@@ -32,6 +33,7 @@ export function FeedPostCard({
             </>
           }
           comment={<CommentCountLink href={postHref} />}
+          save={<SaveButton postId={post.id} initialSaved={post.savedByMe} />}
           footer={
             post.commentCount > 0 ? (
               <a
