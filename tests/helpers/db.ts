@@ -18,6 +18,8 @@ const TABLES = [
   'follows',
   'comments',
   'media',
+  'post_hashtags',
+  'hashtags',
   'posts',
   'users',
 ] as const;

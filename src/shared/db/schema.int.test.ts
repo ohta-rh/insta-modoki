@@ -5,8 +5,10 @@ import {
   accounts,
   comments,
   follows,
+  hashtags,
   likes,
   media,
+  postHashtags,
   posts,
   rateLimits,
   sessions,
@@ -75,7 +77,7 @@ const names = async (type: 'table' | 'index') =>
   ).results.map((r) => r.name);
 
 describe('マイグレーション', () => {
-  it('マイグレーションで 13 個のテーブルと 9 つの索引ができる', async () => {
+  it('マイグレーションで 15 個のテーブルと 10 個の索引ができる', async () => {
     expect(await names('table')).toEqual(
       expect.arrayContaining([
         'users',
@@ -88,6 +90,8 @@ describe('マイグレーション', () => {
         'storage_orphans',
         'stories',
         'story_views',
+        'hashtags',
+        'post_hashtags',
       ]),
     );
     expect(await names('index')).toEqual(
@@ -97,16 +101,17 @@ describe('マイグレーション', () => {
         'likes_post_id_created_at_idx',
         'comments_post_parent_created_idx',
         'follows_followee_created_idx',
+        'post_hashtags_hashtag_created_post_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(13);
+    expect(await names('table')).toHaveLength(15);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(13);
+    expect(before).toHaveLength(15);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {
@@ -122,6 +127,8 @@ describe('マイグレーション', () => {
       sessions,
       accounts,
       verifications,
+      hashtags,
+      postHashtags,
     ]) {
       const cfg = getTableConfig(table);
       const info = (

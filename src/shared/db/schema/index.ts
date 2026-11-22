@@ -9,3 +9,4 @@ export * from './rate-limits';
 export * from './storage-orphans';
 export * from '../../../features/auth/db/schema';
 export * from '../../../features/story/db/schema';
+export * from '../../../features/hashtag/db/schema';
