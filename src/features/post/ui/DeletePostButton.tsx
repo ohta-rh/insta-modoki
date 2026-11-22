@@ -21,6 +21,8 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
   const trigger = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const [pending, setPending] = useState(false);
+  // aria-disabled buttons stay pressable, so a second press is dropped here.
+  const inFlight = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const titleId = useId();
   const messageId = useId();
@@ -38,6 +40,8 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
   };
 
   const confirm = async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setPending(true);
     setError(null);
     try {
@@ -52,6 +56,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
     } catch {
       setError(INTERNAL_MESSAGE);
     }
+    inFlight.current = false;
     setPending(false);
   };
 
@@ -96,16 +101,20 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
         <form method="dialog" className="mt-5 flex justify-end gap-2">
           <button
             type="submit"
-            disabled={pending}
-            className={`${secondary} border border-border hover:bg-surface disabled:opacity-50`}
+            aria-disabled={pending || undefined}
+            // Not `disabled`: that would drop the focus out of the dialog. Stay open while running.
+            onClick={(e) => {
+              if (pending) e.preventDefault();
+            }}
+            className={`${secondary} border border-border hover:bg-surface aria-disabled:opacity-50`}
           >
             キャンセル
           </button>
           <button
             type="button"
             onClick={confirm}
-            disabled={pending}
-            className={`${secondary} bg-text text-bg disabled:opacity-50`}
+            aria-disabled={pending || undefined}
+            className={`${secondary} bg-text text-bg aria-disabled:opacity-50`}
           >
             {pending ? '削除中…' : '削除'}
           </button>

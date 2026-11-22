@@ -1,0 +1,590 @@
+{
+  "acs": {},
+  "axe": [
+    {
+      "label": "likers dialog open",
+      "width": 1280,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "likers dialog open",
+      "width": 768,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "likers dialog open",
+      "width": 375,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "delete confirm dialog",
+      "width": 1280,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "delete confirm dialog",
+      "width": 768,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "delete confirm dialog",
+      "width": 375,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail (liked state off)",
+      "width": 1280,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail (liked state off)",
+      "width": 768,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail (liked state off)",
+      "width": 375,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail with comments",
+      "width": 1280,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail with comments",
+      "width": 768,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail with comments",
+      "width": 375,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail with 20 comments + load more",
+      "width": 1280,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail with 20 comments + load more",
+      "width": 768,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail with 20 comments + load more",
+      "width": 375,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail as author",
+      "width": 1280,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail as author",
+      "width": 768,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    },
+    {
+      "label": "post detail as author",
+      "width": 375,
+      "serious_critical": 0,
+      "all": [],
+      "ids": []
+    }
+  ],
+  "tabOrder": {
+    "375": [
+      "a[本文へ移動]",
+      "a[ep6_amwr475uzesi]",
+      "button[いいね]",
+      "button[0 件のいいね]",
+      "a[コメント 2 件]",
+      "a[ep6_amwr475uzesi]",
+      "a[ep6_bmwr47630loj]",
+      "button[@ep6_bmwr47630loj に返信する]",
+      "button[@ep6_bmwr47630loj のコメントを削除]",
+      "a[ep6_bmwr47630loj]",
+      "button[@ep6_bmwr47630loj に返信する]",
+      "button[@ep6_bmwr47630loj のコメントを削除]",
+      "input[コメントを追加…]",
+      "a[ホーム]",
+      "a[検索]",
+      "a[投稿]",
+      "a[通知]",
+      "a[プロフィール]"
+    ],
+    "768": [
+      "a[本文へ移動]",
+      "a[ホーム]",
+      "a[検索]",
+      "a[投稿]",
+      "a[通知]",
+      "a[プロフィール]",
+      "a[ep6_amwr475uzesi]",
+      "button[いいね]",
+      "button[0 件のいいね]",
+      "a[コメント 1 件]",
+      "a[ep6_amwr475uzesi]",
+      "a[ep6_bmwr47630loj]",
+      "button[@ep6_bmwr47630loj に返信する]",
+      "button[@ep6_bmwr47630loj のコメントを削除]",
+      "input[コメントを追加…]",
+      "BODY"
+    ],
+    "1280": [
+      "a[本文へ移動]",
+      "a[ホーム]",
+      "a[検索]",
+      "a[投稿]",
+      "a[通知]",
+      "a[プロフィール]",
+      "a[ep6_amwr475uzesi]",
+      "button[いいね]",
+      "button[0 件のいいね]",
+      "a[コメント 0 件]",
+      "a[ep6_amwr475uzesi]",
+      "input[コメントを追加…]"
+    ]
+  },
+  "chrome": "157.0.8103.80",
+  "users": {
+    "A": "ep6_Amwr475uzesi",
+    "B": "ep6_Bmwr47630loj",
+    "C": "ep6_Cmwr476abhxi"
+  },
+  "P1": "01a200b6-6f50-7000-83b0-210bd36f5d4b",
+  "P2": "01a200b6-72ed-7000-b56f-e9e415c7bd30",
+  "P3": "01a200b6-763f-7000-bc45-f82b0c1183a5",
+  "P4": "01a200b6-7978-7000-833e-1801170f390c",
+  "anon": {
+    "url": "/accounts/login",
+    "hearts": 0,
+    "pressed": "none"
+  },
+  "likersTrap": {
+    "okF": true,
+    "okB": true,
+    "fw": [
+      "a[E ep6_l44mwr49e239fb 試験 ](dialog)",
+      "a[E ep6_l43mwr49cqsjr8 試験 ](dialog)",
+      "a[E ep6_l42mwr49bf6sbw 試験 ](dialog)",
+      "a[E ep6_l41mwr49a4gv89 試験 ](dialog)",
+      "a[E ep6_l40mwr498t9swn 試験 ](dialog)",
+      "a[E ep6_l39mwr497j17wc 試験 ](dialog)"
+    ],
+    "bw": [
+      "a[E ep6_l37mwr494x3kpg 試験 ](dialog)",
+      "a[E ep6_l38mwr49683hbk 試験 ](dialog)",
+      "a[E ep6_l39mwr497j17wc 試験 ](dialog)",
+      "a[E ep6_l40mwr498t9swn 試験 ](dialog)",
+      "a[E ep6_l41mwr49a4gv89 試験 ](dialog)",
+      "a[E ep6_l42mwr49bf6sbw 試験 ](dialog)"
+    ]
+  },
+  "likersAfterFirstScroll": 45,
+  "likerAvatar": {
+    "src": "http://insta-s1.web.localhost:3912/media/01a200b6-6b1a-7000-b949-33fc5",
+    "loaded": true
+  },
+  "deleteTrap": {
+    "okF": true,
+    "okB": true,
+    "fw": [
+      "button[削除](dialog)",
+      "button[キャンセル](dialog)",
+      "button[削除](dialog)",
+      "button[キャンセル](dialog)",
+      "button[削除](dialog)",
+      "button[キャンセル](dialog)"
+    ],
+    "bw": [
+      "button[削除](dialog)",
+      "button[キャンセル](dialog)",
+      "button[削除](dialog)",
+      "button[キャンセル](dialog)",
+      "button[削除](dialog)",
+      "button[キャンセル](dialog)"
+    ]
+  },
+  "afterFailedDeleteFirstTab": "BODY",
+  "deleteEscFocus": "button[@ep6_bmwr47630loj のコメントを]",
+  "replyToggleCount": 0,
+  "commentAvatars": [
+    {
+      "src": "http://insta-s1.web.localhost:3912/media/01a200b6-6b1a-7000-",
+      "loaded": true
+    }
+  ],
+  "state": {
+    "off": {
+      "pressed": "false",
+      "fill": "none"
+    },
+    "on": {
+      "pressed": "true",
+      "fill": "currentColor",
+      "count": "1 件のいいね"
+    }
+  },
+  "results": {
+    "AC-2": [
+      {
+        "step": "empty-likers",
+        "ok": true,
+        "text": "0 件のとき件数から一覧を開くと「まだいいねはありません」（空の状態）"
+      },
+      {
+        "step": "unlike",
+        "ok": true,
+        "text": "ハートを押すと取り消され（fill=none）件数 1 → 0。再読み込みしても 0 のまま"
+      },
+      {
+        "step": "likers-20",
+        "ok": true,
+        "text": "件数（45 件のいいね）から一覧を開くと 20 人"
+      },
+      {
+        "step": "likers-focus-trap",
+        "ok": true,
+        "text": "一覧のダイアログで Tab 30 回・Shift+Tab 30 回、フォーカスはダイアログの外へ出ない（Tab=true、Shift+Tab=true。先頭の遷移: a[E ep6_l44mwr49e239fb 試験 ](dialog) → a[E ep6_l43mwr49cqsjr8 試験 ](dialog) → a[E ep6_l42mwr49bf6sbw 試験 ](dialog) → a[E ep6_l41mwr49a4gv89 試験 ](dialog) → a[E ep6_l40mwr498t9swn 試験 ](dialog) → a[E ep6_l39mwr497j17wc 試験 ](dialog)）"
+      },
+      {
+        "step": "likers-all",
+        "ok": true,
+        "text": "スクロールで 20 → 45 → 45 人と 3 ページ目まで追加され、重複なし（45 人）、抜けなし（DB の 45 人）"
+      },
+      {
+        "step": "likers-order",
+        "ok": true,
+        "text": "順番は新しいいいね順で、DB の並び（created_at 降順・user_id 降順）と一致=true、いいねした順の逆と一致=true"
+      },
+      {
+        "step": "likers-avatar",
+        "ok": true,
+        "text": "B（アバターあり）の行の画像が読み込まれる: {\"src\":\"http://insta-s1.web.localhost:3912/media/01a200b6-6b1a-7000-b949-33fc5\",\"loaded\":true}"
+      },
+      {
+        "step": "esc",
+        "ok": true,
+        "text": "Esc で一覧が閉じ、フォーカスは「45 件のいいね」に戻る"
+      }
+    ],
+    "AC-1": [
+      {
+        "step": "dbl-tap",
+        "ok": true,
+        "text": "ダブルタップ直後: aria-pressed=true、ハートの fill=currentColor、件数 1 件のいいね"
+      },
+      {
+        "step": "persist",
+        "ok": true,
+        "text": "再読み込み後もいいね済み（aria-pressed=true）・件数 1"
+      },
+      {
+        "step": "second-dbl-tap",
+        "ok": true,
+        "text": "2 回目のダブルタップでも取り消されない（aria-pressed=true・件数 1）"
+      },
+      {
+        "step": "second-dbl-tap-reload",
+        "ok": true,
+        "text": "2 回目の後に再読み込みしてもいいね済みのまま"
+      },
+      {
+        "step": "signed-out",
+        "ok": true,
+        "text": "ログアウト中のダブルタップ: URL=/accounts/login、ハート 0 個、aria-pressed=none"
+      }
+    ],
+    "AC-3": [
+      {
+        "step": "rollback",
+        "ok": true,
+        "text": "通信を失敗させて押すと元（aria-pressed=false・0 件）に戻り、エラーの文「エラーが発生しました。しばらくしてからもう一度お試しください」（押した直後の aria-pressed=true）"
+      },
+      {
+        "step": "rollback-500",
+        "ok": true,
+        "text": "500 応答でも元に戻り、文「エラーが発生しました。しばらくしてからもう一度お試しください」"
+      },
+      {
+        "step": "recovery",
+        "ok": true,
+        "text": "通信が戻ればいいねでき、再読み込みしても残る（失敗の巻き戻しのあとに復帰できる）"
+      }
+    ],
+    "AC-4": [
+      {
+        "step": "empty-state",
+        "ok": true,
+        "text": "空の状態: 「まだコメントはありません」"
+      },
+      {
+        "step": "empty-send-disabled",
+        "ok": true,
+        "text": "空の入力では「投稿」が無効"
+      },
+      {
+        "step": "reply-indent",
+        "ok": true,
+        "text": "返信の x=701px、親の x=657px（字下げ 44px）"
+      },
+      {
+        "step": "persist",
+        "ok": true,
+        "text": "再読み込み後も親と返信が残り、字下げも同じ（44px）。件数リンク: 4"
+      },
+      {
+        "step": "too-long",
+        "ok": true,
+        "text": "2,201 字: 「投稿」無効=false、カウンタ表示=true、エラー文「コメントは 2,200 字までです」。コメントは増えていない=true"
+      }
+    ],
+    "AC-5": [
+      {
+        "step": "no-delete-on-others",
+        "ok": true,
+        "text": "他人（B）が A の投稿を見ると: A のコメントの削除=0、C のコメントの削除=0、自分の親=1、自分の返信=1"
+      },
+      {
+        "step": "delete-focus-trap",
+        "ok": true,
+        "text": "削除の確認で Tab 10 回・Shift+Tab 10 回、フォーカスは確認の中に留まる（Tab=true、Shift+Tab=true。順: button[削除](dialog) → button[キャンセル](dialog) → button[削除](dialog) → button[キャンセル](dialog) → button[削除](dialog) → button[キャンセル](dialog)）"
+      },
+      {
+        "step": "delete-failure-message",
+        "ok": true,
+        "text": "通信を失敗させて「削除」を押すと確認の中に文「エラーが発生しました。しばらくしてからもう一度お試しください」が出て、コメントは消えない"
+      },
+      {
+        "step": "delete-esc",
+        "ok": true,
+        "text": "Esc で確認が閉じ、コメントは残る。フォーカスの行き先: button[@ep6_bmwr47630loj のコメントを]（失敗の後の最初の Tab の行き先: BODY。#76 の既知の挙動）"
+      },
+      {
+        "step": "delete-esc-clean",
+        "ok": true,
+        "text": "失敗の無い確認を Esc で閉じると、フォーカスは開いたボタンに戻る: button[@ep6_bmwr47630loj のコメントを]"
+      },
+      {
+        "step": "cancel",
+        "ok": true,
+        "text": "確認で「キャンセル」すると消えない（失敗・取り消しの経路）"
+      },
+      {
+        "step": "delete-own",
+        "ok": true,
+        "text": "自分のコメント（返信）を確認して削除すると消え、再読み込みしても戻らない"
+      },
+      {
+        "step": "author-sees-delete",
+        "ok": true,
+        "text": "投稿者（A）には全てのコメントに削除がある（C=1、B=1、自分=1）"
+      },
+      {
+        "step": "author-deletes-others",
+        "ok": true,
+        "text": "投稿者が自分の投稿についた他人のコメントを確認して削除すると消え、再読み込みしても戻らない"
+      },
+      {
+        "step": "third-user",
+        "ok": true,
+        "text": "第三者（C、自分のコメントはもう無い）には 削除 が 1 つも出ない"
+      }
+    ],
+    "AC-6": [
+      {
+        "step": "first-page",
+        "ok": true,
+        "text": "最初は 20 件と「コメントをさらに読み込む」"
+      },
+      {
+        "step": "second-page",
+        "ok": true,
+        "text": "1 回押すと 40 件になり、ボタンはまだある"
+      },
+      {
+        "step": "third-page",
+        "ok": true,
+        "text": "2 回押すと 45 件（重複なし 45）、古い順に 01 から 45 まで抜けなく並ぶ=true、ボタンは消える"
+      },
+      {
+        "step": "replies-order",
+        "ok": true,
+        "text": "返信は古い順: 返信 1, 返信 2, 返信 3"
+      },
+      {
+        "step": "db-count",
+        "ok": true,
+        "text": "DB のコメント 48 件（親 45 + 返信 3）"
+      },
+      {
+        "step": "single-page-no-button",
+        "ok": true,
+        "text": "21 件に満たない投稿（P3）には「さらに読み込む」が出ない（境界）"
+      },
+      {
+        "step": "comment-avatar",
+        "ok": true,
+        "text": "コメント欄のアバター画像 1 個がすべて読み込まれる"
+      }
+    ],
+    "AC-7": [
+      {
+        "step": "tab-1280",
+        "ok": true,
+        "text": "Tab で 12 個に順に届く。ハート・件数・コメント欄・「投稿」を含む=true"
+      },
+      {
+        "step": "kbd-ops-1280",
+        "ok": true,
+        "text": "キーボードだけで: いいね（読み上げ文「いいね済み（1 件）」）→ 件数の Enter で一覧が開く（Tab はダイアログ内に留まる=true）→ Esc で閉じてフォーカスが「1 件のいいね」に戻る → コメント欄に入力して Enter で送信"
+      },
+      {
+        "step": "tab-768",
+        "ok": true,
+        "text": "Tab で 16 個に順に届く。ハート・件数・コメント欄・「投稿」を含む=true"
+      },
+      {
+        "step": "kbd-ops-768",
+        "ok": true,
+        "text": "キーボードだけで: いいね（読み上げ文「いいね済み（1 件）」）→ 件数の Enter で一覧が開く（Tab はダイアログ内に留まる=true）→ Esc で閉じてフォーカスが「1 件のいいね」に戻る → コメント欄に入力して Enter で送信"
+      },
+      {
+        "step": "tab-375",
+        "ok": true,
+        "text": "Tab で 18 個に順に届く。ハート・件数・コメント欄・「投稿」を含む=true"
+      },
+      {
+        "step": "kbd-ops-375",
+        "ok": true,
+        "text": "キーボードだけで: いいね（読み上げ文「いいね済み（1 件）」）→ 件数の Enter で一覧が開く（Tab はダイアログ内に留まる=true）→ Esc で閉じてフォーカスが「1 件のいいね」に戻る → コメント欄に入力して Enter で送信"
+      },
+      {
+        "step": "not-colour-alone",
+        "ok": true,
+        "text": "いいね前 aria-pressed=false・fill=none（輪郭）／後 aria-pressed=true・fill=currentColor（塗りつぶし）・「1 件のいいね」"
+      }
+    ],
+    "NOJS": [
+      {
+        "step": "render",
+        "ok": true,
+        "text": "JS 無しで投稿を開くとフォームのハート（aria-pressed=false）"
+      },
+      {
+        "step": "like",
+        "ok": true,
+        "text": "JS 無しで押すとページが描き直され aria-pressed=true、DB の行 1"
+      },
+      {
+        "step": "unlike",
+        "ok": true,
+        "text": "もう一度押すと取り消され aria-pressed=false、DB の行 0"
+      },
+      {
+        "step": "signed-out-redirect",
+        "ok": true,
+        "text": "セッションが無い状態でフォームを送ると /accounts/login へ移り、行は作られない（行 0）"
+      },
+      {
+        "step": "unknown-post",
+        "ok": true,
+        "text": "存在しない投稿へのフォームの送信は HTTP 404"
+      }
+    ]
+  },
+  "health": {
+    "AC-3 server failure": {
+      "console": [
+        "error: Failed to load resource: net::ERR_FAILED",
+        "error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "POST http://localhost:3101/p/01a200b6-6f50-7000-83b0-210bd36f5d4b net::ERR_FAILED"
+      ],
+      "http": [
+        "500 POST http://localhost:3101/p/01a200b6-6f50-7000-83b0-210bd36f5d4b"
+      ]
+    },
+    "AC-5 delete": {
+      "console": [
+        "error: Failed to load resource: net::ERR_FAILED"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "POST http://localhost:3101/p/01a200b6-763f-7000-bc45-f82b0c1183a5 net::ERR_FAILED"
+      ],
+      "http": []
+    },
+    "NOJS: like form without JS": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp",
+        "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp",
+        "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"
+      ],
+      "http": []
+    },
+    "NOJS: session gone": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"
+      ],
+      "http": []
+    },
+    "NOJS: unknown post (404 expected)": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp",
+        "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"
+      ],
+      "http": [
+        "404 POST http://localhost:3101/p/01a200b6-6f50-7000-83b0-210bd36f5d4b"
+      ]
+    }
+  }
+}

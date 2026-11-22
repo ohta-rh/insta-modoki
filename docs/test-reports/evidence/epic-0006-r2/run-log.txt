@@ -1,0 +1,77 @@
+chrome 157.0.8103.80
+[AC-2] OK  empty-likers: 0 件のとき件数から一覧を開くと「まだいいねはありません」（空の状態）
+[AC-1] OK  dbl-tap: ダブルタップ直後: aria-pressed=true、ハートの fill=currentColor、件数 1 件のいいね
+[AC-1] OK  persist: 再読み込み後もいいね済み（aria-pressed=true）・件数 1
+[AC-1] OK  second-dbl-tap: 2 回目のダブルタップでも取り消されない（aria-pressed=true・件数 1）
+[AC-1] OK  second-dbl-tap-reload: 2 回目の後に再読み込みしてもいいね済みのまま
+[AC-1] OK  signed-out: ログアウト中のダブルタップ: URL=/accounts/login、ハート 0 個、aria-pressed=none
+[AC-2] OK  unlike: ハートを押すと取り消され（fill=none）件数 1 → 0。再読み込みしても 0 のまま
+45 likers took 80s
+[AC-2] OK  likers-20: 件数（45 件のいいね）から一覧を開くと 20 人
+[AC-2] OK  likers-focus-trap: 一覧のダイアログで Tab 30 回・Shift+Tab 30 回、フォーカスはダイアログの外へ出ない（Tab=true、Shift+Tab=true。先頭の遷移: a[E ep6_l44mwr49e239fb 試験 ](dialog) → a[E ep6_l43mwr49cqsjr8 試験 ](dialog) → a[E ep6_l42mwr49bf6sbw 試験 ](dialog) → a[E ep6_l41mwr49a4gv89 試験 ](dialog) → a[E ep6_l40mwr498t9swn 試験 ](dialog) → a[E ep6_l39mwr497j17wc 試験 ](dialog)）
+[AC-2] OK  likers-all: スクロールで 20 → 45 → 45 人と 3 ページ目まで追加され、重複なし（45 人）、抜けなし（DB の 45 人）
+[AC-2] OK  likers-order: 順番は新しいいいね順で、DB の並び（created_at 降順・user_id 降順）と一致=true、いいねした順の逆と一致=true
+[AC-2] OK  likers-avatar: B（アバターあり）の行の画像が読み込まれる: {"src":"http://insta-s1.web.localhost:3912/media/01a200b6-6b1a-7000-b949-33fc5","loaded":true}
+axe likers dialog open 1280: serious/critical=0 all=
+axe likers dialog open 768: serious/critical=0 all=
+axe likers dialog open 375: serious/critical=0 all=
+[AC-2] OK  esc: Esc で一覧が閉じ、フォーカスは「45 件のいいね」に戻る
+[AC-3] OK  rollback: 通信を失敗させて押すと元（aria-pressed=false・0 件）に戻り、エラーの文「エラーが発生しました。しばらくしてからもう一度お試しください」（押した直後の aria-pressed=true）
+[AC-3] OK  rollback-500: 500 応答でも元に戻り、文「エラーが発生しました。しばらくしてからもう一度お試しください」
+[AC-3] OK  recovery: 通信が戻ればいいねでき、再読み込みしても残る（失敗の巻き戻しのあとに復帰できる）
+[AC-4] OK  empty-state: 空の状態: 「まだコメントはありません」
+[AC-4] OK  empty-send-disabled: 空の入力では「投稿」が無効
+[AC-4] OK  reply-indent: 返信の x=701px、親の x=657px（字下げ 44px）
+[AC-4] OK  persist: 再読み込み後も親と返信が残り、字下げも同じ（44px）。件数リンク: 4
+[AC-4] OK  too-long: 2,201 字: 「投稿」無効=false、カウンタ表示=true、エラー文「コメントは 2,200 字までです」。コメントは増えていない=true
+[AC-5] OK  no-delete-on-others: 他人（B）が A の投稿を見ると: A のコメントの削除=0、C のコメントの削除=0、自分の親=1、自分の返信=1
+axe delete confirm dialog 1280: serious/critical=0 all=
+axe delete confirm dialog 768: serious/critical=0 all=
+axe delete confirm dialog 375: serious/critical=0 all=
+[AC-5] OK  delete-focus-trap: 削除の確認で Tab 10 回・Shift+Tab 10 回、フォーカスは確認の中に留まる（Tab=true、Shift+Tab=true。順: button[削除](dialog) → button[キャンセル](dialog) → button[削除](dialog) → button[キャンセル](dialog) → button[削除](dialog) → button[キャンセル](dialog)）
+[AC-5] OK  delete-failure-message: 通信を失敗させて「削除」を押すと確認の中に文「エラーが発生しました。しばらくしてからもう一度お試しください」が出て、コメントは消えない
+[AC-5] OK  delete-esc: Esc で確認が閉じ、コメントは残る。フォーカスの行き先: button[@ep6_bmwr47630loj のコメントを]（失敗の後の最初の Tab の行き先: BODY。#76 の既知の挙動）
+[AC-5] OK  delete-esc-clean: 失敗の無い確認を Esc で閉じると、フォーカスは開いたボタンに戻る: button[@ep6_bmwr47630loj のコメントを]
+[AC-5] OK  cancel: 確認で「キャンセル」すると消えない（失敗・取り消しの経路）
+[AC-5] OK  delete-own: 自分のコメント（返信）を確認して削除すると消え、再読み込みしても戻らない
+[AC-5] OK  author-sees-delete: 投稿者（A）には全てのコメントに削除がある（C=1、B=1、自分=1）
+[AC-5] OK  author-deletes-others: 投稿者が自分の投稿についた他人のコメントを確認して削除すると消え、再読み込みしても戻らない
+[AC-5] OK  third-user: 第三者（C、自分のコメントはもう無い）には 削除 が 1 つも出ない
+[AC-6] OK  first-page: 最初は 20 件と「コメントをさらに読み込む」
+[AC-6] OK  second-page: 1 回押すと 40 件になり、ボタンはまだある
+[AC-6] OK  third-page: 2 回押すと 45 件（重複なし 45）、古い順に 01 から 45 まで抜けなく並ぶ=true、ボタンは消える
+[AC-6] OK  replies-order: 返信は古い順: 返信 1, 返信 2, 返信 3
+[AC-6] OK  db-count: DB のコメント 48 件（親 45 + 返信 3）
+[AC-6] OK  single-page-no-button: 21 件に満たない投稿（P3）には「さらに読み込む」が出ない（境界）
+[AC-6] OK  comment-avatar: コメント欄のアバター画像 1 個がすべて読み込まれる
+[AC-7] OK  tab-1280: Tab で 12 個に順に届く。ハート・件数・コメント欄・「投稿」を含む=true
+[AC-7] OK  kbd-ops-1280: キーボードだけで: いいね（読み上げ文「いいね済み（1 件）」）→ 件数の Enter で一覧が開く（Tab はダイアログ内に留まる=true）→ Esc で閉じてフォーカスが「1 件のいいね」に戻る → コメント欄に入力して Enter で送信
+[AC-7] OK  tab-768: Tab で 16 個に順に届く。ハート・件数・コメント欄・「投稿」を含む=true
+[AC-7] OK  kbd-ops-768: キーボードだけで: いいね（読み上げ文「いいね済み（1 件）」）→ 件数の Enter で一覧が開く（Tab はダイアログ内に留まる=true）→ Esc で閉じてフォーカスが「1 件のいいね」に戻る → コメント欄に入力して Enter で送信
+[AC-7] OK  tab-375: Tab で 18 個に順に届く。ハート・件数・コメント欄・「投稿」を含む=true
+[AC-7] OK  kbd-ops-375: キーボードだけで: いいね（読み上げ文「いいね済み（1 件）」）→ 件数の Enter で一覧が開く（Tab はダイアログ内に留まる=true）→ Esc で閉じてフォーカスが「1 件のいいね」に戻る → コメント欄に入力して Enter で送信
+[AC-7] OK  not-colour-alone: いいね前 aria-pressed=false・fill=none（輪郭）／後 aria-pressed=true・fill=currentColor（塗りつぶし）・「1 件のいいね」
+axe post detail (liked state off) 1280: serious/critical=0 all=
+axe post detail (liked state off) 768: serious/critical=0 all=
+axe post detail (liked state off) 375: serious/critical=0 all=
+axe post detail with comments 1280: serious/critical=0 all=
+axe post detail with comments 768: serious/critical=0 all=
+axe post detail with comments 375: serious/critical=0 all=
+axe post detail with 20 comments + load more 1280: serious/critical=0 all=
+axe post detail with 20 comments + load more 768: serious/critical=0 all=
+axe post detail with 20 comments + load more 375: serious/critical=0 all=
+axe post detail as author 1280: serious/critical=0 all=
+axe post detail as author 768: serious/critical=0 all=
+axe post detail as author 375: serious/critical=0 all=
+[NOJS] OK  render: JS 無しで投稿を開くとフォームのハート（aria-pressed=false）
+[NOJS] OK  like: JS 無しで押すとページが描き直され aria-pressed=true、DB の行 1
+[NOJS] OK  unlike: もう一度押すと取り消され aria-pressed=false、DB の行 0
+[NOJS] OK  signed-out-redirect: セッションが無い状態でフォームを送ると /accounts/login へ移り、行は作られない（行 0）
+[NOJS] OK  unknown-post: 存在しない投稿へのフォームの送信は HTTP 404
+evidence bytes 1393936
+NG steps: none
+HEALTH AC-3 server failure {"console":["error: Failed to load resource: net::ERR_FAILED","error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)"],"pageerror":[],"requestfailed":["POST http://localhost:3101/p/01a200b6-6f50-7000-83b0-210bd36f5d4b net::ERR_FAILED"],"http":["500 POST http://localhost:3101/p/01a200b6-6f50-7000-83b0-210bd36f5d4b"]}
+HEALTH AC-5 delete {"console":["error: Failed to load resource: net::ERR_FAILED"],"pageerror":[],"requestfailed":["POST http://localhost:3101/p/01a200b6-763f-7000-bc45-f82b0c1183a5 net::ERR_FAILED"],"http":[]}
+HEALTH NOJS: like form without JS {"console":[],"pageerror":[],"requestfailed":["GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp","GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp","GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"],"http":[]}
+HEALTH NOJS: session gone {"console":[],"pageerror":[],"requestfailed":["GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"],"http":[]}
+HEALTH NOJS: unknown post (404 expected) {"console":["error: Failed to load resource: the server responded with a status of 404 (Not Found)","error: Failed to load resource: the server responded with a status of 404 (Not Found)"],"pageerror":[],"requestfailed":["GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp","GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"],"http":["404 POST http://localhost:3101/p/01a200b6-6f50-7000-83b0-210bd36f5d4b"]}

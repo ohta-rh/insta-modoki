@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 import { signUpViaUi, type NewUser } from './support/auth';
@@ -220,6 +220,141 @@ signedIn('自分の投稿を確認ダイアログのあとで削除できる', a
 
   const gone = await page.goto(`/p/${post.id}`);
   expect(gone!.status()).toBe(404);
+});
+
+const FAILED = 'エラーが発生しました。しばらくしてからもう一度お試しください';
+
+/** Holds every Server Action POST of the post page until `release()`, then aborts or lets it through. */
+async function holdPosts(page: Page, postId: string) {
+  const state = { posts: 0, fail: true };
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  await page.route(
+    (url) => url.pathname === `/p/${postId}`,
+    async (route) => {
+      if (route.request().method() !== 'POST') return route.continue();
+      state.posts += 1;
+      if (!state.fail) return route.continue();
+      await gate;
+      await route.abort();
+    },
+  );
+  return { state, release };
+}
+
+const inDialog = (dialog: Locator) => dialog.evaluate((d) => d.contains(document.activeElement));
+
+signedIn(
+  '削除の通信が失敗しても フォーカスが確認のダイアログの中に残り Tab で中を回る',
+  async ({ page, me }) => {
+    const post = insertPost({
+      authorUsername: me.username,
+      mediaCount: 1,
+      caption: '消せない投稿',
+    });
+    await putPostFiles(page, post);
+    await page.goto(`/p/${post.id}`);
+    await waitForHydration(page);
+    const { state, release } = await holdPosts(page, post.id);
+
+    const open = page.getByRole('button', { name: '削除', exact: true });
+    const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
+    await tabTo(page, open);
+    await page.keyboard.press('Enter');
+    await expect(dialog).toBeVisible();
+    const confirm = dialog.getByRole('button', { name: '削除', exact: true });
+    const cancel = dialog.getByRole('button', { name: 'キャンセル' });
+    await tabTo(page, confirm);
+    await page.keyboard.press('Enter');
+
+    // AC-1: in flight, the focus stays in the dialog and a second Enter sends nothing more.
+    const busy = dialog.getByRole('button', { name: '削除中…' });
+    await expect(busy).toBeVisible();
+    expect(await inDialog(dialog)).toBe(true);
+    await page.keyboard.press('Enter');
+    await expect.poll(() => state.posts).toBe(1);
+    expect(await inDialog(dialog)).toBe(true);
+    // The attributes are read now and judged after the behavioural checks below.
+    const ariaInFlight = await Promise.all([
+      busy.getAttribute('aria-disabled'),
+      cancel.getAttribute('aria-disabled'),
+    ]);
+    release();
+
+    // AC-2: after the failure, Tab never leaves the dialog (r3: the first Tab landed on body).
+    await expect(dialog.getByRole('alert')).toHaveText(FAILED);
+    await page.keyboard.press('Tab');
+    expect(await inDialog(dialog)).toBe(true);
+    await expect(cancel).toBeFocused();
+    await page.keyboard.press('Tab');
+    expect(await inDialog(dialog)).toBe(true);
+    await expect(confirm).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    expect(await inDialog(dialog)).toBe(true);
+    await expect(cancel).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(confirm).toBeFocused();
+    await expect(confirm).not.toHaveAttribute('aria-disabled', /.*/);
+    expect(
+      (await new AxeBuilder({ page }).analyze()).violations.filter(
+        (v) => v.impact === 'critical' || v.impact === 'serious',
+      ),
+    ).toEqual([]);
+    await page.keyboard.press('Tab');
+    await expect(cancel).toBeFocused();
+    expect(ariaInFlight).toEqual(['true', 'true']);
+
+    // AC-3: with the network back, "削除" removes the post and goes to the author's page.
+    state.fail = false;
+    await page.keyboard.press('Tab');
+    await expect(confirm).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(new RegExp(`/${me.username}$`));
+    expect(postRowCount(post.id)).toBe(0);
+  },
+);
+
+signedIn(
+  '削除の通信が失敗した後の Esc は ダイアログを閉じて 削除を開いたボタンに戻る',
+  async ({ page, me }) => {
+    const post = insertPost({ authorUsername: me.username, mediaCount: 1 });
+    await putPostFiles(page, post);
+    await page.goto(`/p/${post.id}`);
+    await waitForHydration(page);
+    const { release } = await holdPosts(page, post.id);
+    const open = page.getByRole('button', { name: '削除', exact: true });
+    const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
+    await open.click();
+    await dialog.getByRole('button', { name: '削除', exact: true }).click();
+    release();
+    await expect(dialog.getByRole('alert')).toHaveText(FAILED);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(open).toBeFocused();
+    expect(postRowCount(post.id)).toBe(1);
+  },
+);
+
+signedIn('削除の通信の最中は キャンセルと Esc でダイアログが閉じない', async ({ page, me }) => {
+  const post = insertPost({ authorUsername: me.username, mediaCount: 1 });
+  await putPostFiles(page, post);
+  await page.goto(`/p/${post.id}`);
+  await waitForHydration(page);
+  const { release } = await holdPosts(page, post.id);
+  const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
+  await page.getByRole('button', { name: '削除', exact: true }).click();
+  await dialog.getByRole('button', { name: '削除', exact: true }).click();
+  await expect(dialog.getByRole('button', { name: '削除中…' })).toBeVisible();
+
+  // Playwright treats aria-disabled as not actionable, so the click is forced.
+  await dialog.getByRole('button', { name: 'キャンセル' }).click({ force: true });
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeVisible();
+  expect(postRowCount(post.id)).toBe(1);
+  release();
+  await expect(dialog.getByRole('alert')).toHaveText(FAILED);
+  await expect(dialog).toBeVisible();
 });
 
 signedIn(

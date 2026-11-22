@@ -56,16 +56,20 @@ export function DeleteCommentDialog({
       <form method="dialog" className="mt-5 flex justify-end gap-2">
         <button
           type="submit"
-          disabled={pending}
-          className={`${button} border border-border hover:bg-surface disabled:opacity-50`}
+          aria-disabled={pending || undefined}
+          // Not `disabled`: that would drop the focus out of the dialog. Stay open while running.
+          onClick={(e) => {
+            if (pending) e.preventDefault();
+          }}
+          className={`${button} border border-border hover:bg-surface aria-disabled:opacity-50`}
         >
           キャンセル
         </button>
         <button
           type="button"
           onClick={onConfirm}
-          disabled={pending}
-          className={`${button} bg-text text-bg disabled:opacity-50`}
+          aria-disabled={pending || undefined}
+          className={`${button} bg-text text-bg aria-disabled:opacity-50`}
         >
           {pending ? '削除中…' : '削除'}
         </button>
