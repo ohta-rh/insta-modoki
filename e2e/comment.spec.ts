@@ -5,6 +5,7 @@ import { signUpViaUi, type NewUser } from './support/auth';
 import { commentRows, insertComments, postCommentCount } from './support/comments';
 import { seedUser } from './support/db';
 import { holdScripts, waitForHydration } from './support/hydration';
+import { tabTo } from './support/keys';
 import { insertPost, putPostFiles } from './support/posts';
 
 /** `page` signed in as a new user, who is `me`. */
@@ -203,6 +204,64 @@ signedIn(
       item(page, '自分の別のコメント').getByRole('button', { name: /のコメントを削除/ }),
     ).toHaveCount(1);
     expect(username).not.toBe(me.username);
+  },
+);
+
+signedIn(
+  'コメントの削除の通信が失敗しても フォーカスが確認のダイアログの中に残る',
+  async ({ page, me }) => {
+    const mine = insertPost({ authorUsername: me.username, mediaCount: 1 });
+    await putPostFiles(page, mine);
+    insertComments([{ postId: mine.id, authorUsername: me.username, body: '消せないコメント' }]);
+    await page.goto(`/p/${mine.id}`);
+    await waitForHydration(page);
+
+    let posts = 0;
+    let failing = true;
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    await page.route(
+      (url) => url.pathname === `/p/${mine.id}`,
+      async (route) => {
+        if (route.request().method() !== 'POST') return route.continue();
+        posts += 1;
+        if (!failing) return route.continue();
+        await gate;
+        await route.abort();
+      },
+    );
+
+    await item(page, '消せないコメント')
+      .getByRole('button', { name: /のコメントを削除/ })
+      .click();
+    const dialog = page.getByRole('alertdialog', { name: 'このコメントを削除しますか？' });
+    const confirm = dialog.getByRole('button', { name: '削除', exact: true });
+    const cancel = dialog.getByRole('button', { name: 'キャンセル' });
+    await tabTo(page, confirm);
+    await page.keyboard.press('Enter');
+
+    const busy = dialog.getByRole('button', { name: '削除中…' });
+    await expect(busy).toBeFocused();
+    await expect(busy).toHaveAttribute('aria-disabled', 'true');
+    await expect(cancel).toHaveAttribute('aria-disabled', 'true');
+    await page.keyboard.press('Enter');
+    await expect.poll(() => posts).toBe(1);
+    release();
+
+    await expect(dialog.getByRole('alert')).toHaveText(
+      'エラーが発生しました。しばらくしてからもう一度お試しください',
+    );
+    await expect(confirm).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(cancel).toBeFocused();
+    expect(await dialog.evaluate((d) => d.contains(document.activeElement))).toBe(true);
+
+    failing = false;
+    await page.keyboard.press('Tab');
+    await expect(confirm).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(item(page, '消せないコメント')).toHaveCount(0);
+    expect(commentRows(mine.id)).toHaveLength(0);
   },
 );
 

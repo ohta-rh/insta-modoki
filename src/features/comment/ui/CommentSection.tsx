@@ -160,7 +160,7 @@ export function CommentSection({
   };
 
   const confirmDelete = async () => {
-    if (!target) return;
+    if (!target || deleting) return;
     setDeleting(true);
     setDeleteError(null);
     const result = await call(() => deleteCommentAction({ commentId: target.id }));
