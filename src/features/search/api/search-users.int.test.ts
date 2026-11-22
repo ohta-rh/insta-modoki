@@ -88,7 +88,8 @@ describe('searchUsers', () => {
     // Another user is not counted; the next minute starts again.
     await call(b, 'x');
     await call(a, 'x', NOW + 60_000);
-  });
+    // 62 sequential D1 calls: an explicit timeout, since vitest's 5 s default is too tight on a loaded host.
+  }, 60_000);
 
   it('未ログインを UNAUTHENTICATED で拒む', async () => {
     const s = await signedIn();
