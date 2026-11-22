@@ -139,4 +139,14 @@ describe('unreadStore の利用者の切り替え', () => {
     expect(store.getSnapshot()).toBe(1);
     expect(seen).toContain(0);
   });
+
+  it('最後の購読者が外れたら数を 0 に戻す', async () => {
+    const { store } = setup([{ ok: true, data: { count: 4 } }]);
+    store.setViewer('a');
+    const unsubscribe = store.subscribe(() => {});
+    await vi.advanceTimersByTimeAsync(0);
+    expect(store.getSnapshot()).toBe(4);
+    unsubscribe();
+    expect(store.getSnapshot()).toBe(0);
+  });
 });

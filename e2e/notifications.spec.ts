@@ -186,7 +186,7 @@ base('同じタブで別の人がログインしても、前の人の未読の�
   await page.getByRole('button', { name: 'ログイン' }).click();
   await expect(page).toHaveURL(/\/$/);
 
-  // B has nothing unread: A's number must not be shown, not even until the next poll.
+  // B's poll is blocked, so A's number could only be on screen if the store kept it.
   const bobNav = page.getByRole('navigation', { name: NAV }).first();
   await expect(bobNav.getByRole('link', { name: '通知', exact: true })).toBeVisible();
   await expect(page.getByTestId('notification-badge')).toHaveCount(0);

@@ -70,6 +70,9 @@ export function createUnreadStore({ fetchCount, doc, intervalMs }: UnreadStoreOp
     doc.removeEventListener('visibilitychange', onVisibility);
     if (timer !== null) clearInterval(timer);
     timer = null;
+    // Nobody shows the count any more (the signed-in user left): do not keep it for the next one.
+    version += 1;
+    count = 0;
   }
 
   /**
