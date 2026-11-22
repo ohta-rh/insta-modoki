@@ -84,6 +84,7 @@ Next.js の App Router の規約に従い、`src/app/` に置く。ルートの�
 | `/explore` | `src/app/(app)/explore/page.tsx` |
 | `/explore/search` | `src/app/(app)/explore/search/page.tsx` |
 | `/stories/[username]` | `src/app/(app)/stories/[username]/page.tsx`（`(app)` の画面から開くときは `src/app/(app)/@modal/(.)stories/[username]/page.tsx` が重なる。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） |
+| `/notifications` | `src/app/(app)/notifications/page.tsx` |
 | `/p/[postId]` | `src/app/p/[postId]/page.tsx` |
 | `/explore/tags/[tag]` | `src/app/(app)/explore/tags/[tag]/page.tsx` |
 | `/[username]` | `src/app/[username]/page.tsx` |

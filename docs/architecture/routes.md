@@ -68,6 +68,9 @@ status: stable
 | `deleteComment` | comment | commentId | `{ deleted: true }`（親を消すと返信も消え、`comment_count` は消えた行の数だけ減る） | UNAUTHENTICATED、FORBIDDEN（本人でも投稿者でもない）、NOT_FOUND |
 | `follow` / `unfollow` | follow | username | `{ following, followerCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、VALIDATION（自分自身）、NOT_FOUND |
 | `listFollowers` / `listFollowing` | follow | username, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
+| `listNotifications` | notification | cursor? | `Page<NotificationView>`（20 件、`created_at` の新しい順、同じ時刻は `id` の降順）。宛先はセッションの利用者だけで、入力に利用者の項目は無い（余計な項目は VALIDATION）。コメントは先頭 100 字と切ったかどうか | UNAUTHENTICATED、VALIDATION（壊れたカーソル・余計な項目） |
+| `getUnreadNotificationCount` | notification | – | `{ count }`（`read_at IS NULL` の数。100 で頭打ち） | UNAUTHENTICATED |
+| `markNotificationsRead` | notification | – | `{ readCount }`（自分宛ての未読を全て既読にした数。何度呼んでも同じ状態） | UNAUTHENTICATED |
 | `getFeed` | feed | cursor? | `Page<PostView>`（12 件） | UNAUTHENTICATED |
 | `searchUsers` | search | q（前後の空白を除いて 1〜30 字） | `{ items: UserSummary[] }`（20 件まで。ユーザー名の前方一致・部分一致・表示名の一致の順。カーソルは無い） | UNAUTHENTICATED、VALIDATION、RATE_LIMITED |
 | `listExplorePosts` | explore | cursor? | `Page<PostTile>`（24 件。直近 7 日間・自分とフォロー中の人を除く・いいね数の多い順。窓の時刻はカーソルの `asOf` で固定） | UNAUTHENTICATED、VALIDATION（壊れたカーソル） |
