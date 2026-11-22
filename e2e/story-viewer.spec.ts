@@ -194,7 +194,8 @@ test('閉じると元のスクロール位置と読み込んだフィードが�
 
 test('直接開いたときは閉じるとホームへ移る', async ({ page }) => {
   const me = await ownUsername(page);
-  const b = await followedWith(page, me, [{}, {}]);
+  // One story: after the first visit it is seen, and a viewer with everything seen starts at 0 again.
+  const b = await followedWith(page, me, [{}]);
   for (const reload of [false, true]) {
     // Something to go "back" to that is not the home: closing must not walk the history.
     await page.goto(`/${me}`);
@@ -207,7 +208,7 @@ test('直接開いたときは閉じるとホームへ移る', async ({ page }) 
     const box = (await viewer.boundingBox())!;
     const size = page.viewportSize()!;
     expect(box.height).toBeGreaterThanOrEqual(size.height - 1);
-    await expect(position(page)).toHaveText('ストーリー 1 / 2');
+    await expect(position(page)).toHaveText('ストーリー 1 / 1');
     await page.getByRole('button', { name: '閉じる' }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('dialog')).toHaveCount(0);
