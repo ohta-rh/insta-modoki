@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-22
+* **Creation**: [EPIC #5 の総合試験のレポート（2 回目）](test-reports/epic-0005-follow-feed-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 7 つの AC が満たされ、フィード 48 件・フォロー中一覧 100 件のページ送りに重複・抜けは無く、JS 無しのフォームの動きも変わらない）と、その写真・記録（`test-reports/evidence/epic-0005-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #4 の総合試験のレポート（3 回目）](test-reports/epic-0004-post-create-detail-r3.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 6 つの AC が満たされた。削除の失敗後に focus が一度 body に落ちる軽微な挙動を記録）と、その写真・記録（`test-reports/evidence/epic-0004-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #3 の総合試験のレポート（2 回目）](test-reports/epic-0003-profile-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 5 つの AC が満たされ、28 件のグリッドの無限スクロールに重複・抜けは無い）と、その写真・記録（`test-reports/evidence/epic-0003-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #2 の総合試験のレポート（2 回目）](test-reports/epic-0002-account-signup-login-r2.md)（PASS。ADR-0048 によるやり直しで、リファクタ 52a1ddb..836c2e6 の後も 5 つの AC が満たされ、ログアウト後に古いセッションは残らない）と、その写真・記録（`test-reports/evidence/epic-0002-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

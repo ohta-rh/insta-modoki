@@ -1,0 +1,514 @@
+{
+ "axe": [
+  {
+   "label": "followers list",
+   "width": 1280,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "followers list",
+   "width": 768,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "followers list",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "following list",
+   "width": 1280,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "following list",
+   "width": 768,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "following list",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "own profile",
+   "width": 1280,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "own profile",
+   "width": 768,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "own profile",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "B profile",
+   "width": 1280,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "B profile",
+   "width": 768,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "B profile",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "empty home",
+   "width": 1280,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "empty home",
+   "width": 768,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "empty home",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "home feed (A, 12 posts)",
+   "width": 1280,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "home feed (A, 12 posts)",
+   "width": 768,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "home feed (A, 12 posts)",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "K profile (not followed)",
+   "width": 1280,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "K profile (not followed)",
+   "width": 768,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "K profile (not followed)",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  }
+ ],
+ "tabOrder": {
+  "followers": [
+   "a[本文へ移動]",
+   "a[ホーム]",
+   "a[検索]",
+   "a[投稿]",
+   "a[通知]",
+   "a[プロフィール]",
+   "a[@seed_user_132]",
+   "a[S seed_user_406 あきら]",
+   "a[S seed_user_435 なぎさ]",
+   "a[D demo デモ 太郎]",
+   "a[S seed_user_322 ふうか]",
+   "a[S seed_user_781 あおい]",
+   "a[S seed_user_408 しずく]",
+   "a[S seed_user_291 こうき]",
+   "a[S seed_user_880 かいと]",
+   "a[S seed_user_490 かいと]",
+   "a[S seed_user_326 しょうた]",
+   "a[S seed_user_851 ことは]",
+   "a[S seed_user_890 みお]",
+   "a[S seed_user_466 あきら]",
+   "a[E ep5_amwr365gxjbn 試験 A]",
+   "a[S seed_user_708 しずく]",
+   "a[S seed_user_190 かいと]",
+   "a[S seed_user_857 ほのか]",
+   "a[S seed_user_785 みなと]",
+   "a[S seed_user_491 ことは]",
+   "a[S seed_user_703 つむぎ]",
+   "a[S seed_user_855 なぎさ]",
+   "BODY"
+  ],
+  "emptyHome": [
+   "a[本文へ移動]",
+   "a[ホーム]",
+   "a[検索]",
+   "a[投稿]",
+   "a[通知]",
+   "a[プロフィール]",
+   "BODY"
+  ],
+  "homeFeed": [
+   "a[本文へ移動]",
+   "a[ホーム]",
+   "a[検索]",
+   "a[投稿]",
+   "a[通知]",
+   "a[プロフィール]",
+   "a[seed_user_745]",
+   "button[いいね]",
+   "button[3 件のいいね]",
+   "a[コメント 2 件]",
+   "a[seed_user_745]",
+   "a[コメント 2 件をすべて見る]",
+   "a[seed_user_489]",
+   "div[投稿の写真]",
+   "button[前の写真]",
+   "button[次の写真]",
+   "button[いいね]",
+   "button[4 件のいいね]",
+   "a[コメント 4 件]",
+   "a[seed_user_489]",
+   "a[コメント 4 件をすべて見る]",
+   "a[seed_user_745]",
+   "button[いいね]",
+   "button[10 件のいいね]",
+   "a[コメント 1 件]",
+   "a[seed_user_745]",
+   "a[コメント 1 件をすべて見る]",
+   "a[seed_user_489]",
+   "button[いいね]",
+   "button[12 件のいいね]"
+  ],
+  "profile": [
+   "a[本文へ移動]",
+   "a[ホーム]",
+   "a[検索]",
+   "a[投稿]",
+   "a[通知]",
+   "a[プロフィール]",
+   "button[フォローする]",
+   "a[19 フォロワー]",
+   "a[9 フォロー中]",
+   "a[/p/01a2009a-6a32-724d-853d-592]",
+   "a[5]",
+   "a[/p/01a2009a-6a2f-717a-8010-75f]",
+   "a[/p/01a2009a-6a2d-7185-8c95-e55]",
+   "a[/p/01a2009a-6a2b-70a6-8cf6-22a]",
+   "a[/p/01a2009a-6a29-7172-bcc8-63f]",
+   "a[/p/01a2009a-6a27-7245-b996-ab7]",
+   "a[/p/01a2009a-6a26-70a6-8793-d3f]",
+   "a[5]",
+   "a[/p/01a2009a-6a22-720f-8c0a-0cc]",
+   "BODY"
+  ]
+ },
+ "data": {
+  "bPosts": 10,
+  "all30": 30
+ },
+ "chrome": "157.0.8103.80",
+ "users": {
+  "A": "ep5_Amwr365gxjbn",
+  "E": "ep5_Emwr365ok63z",
+  "B": "seed_user_132",
+  "C": "seed_user_489",
+  "D": "seed_user_745"
+ },
+ "results": {
+  "AC-1": [
+   {
+    "step": "before",
+    "ok": true,
+    "text": "ボタン=フォローする / 20 フォロワー"
+   },
+   {
+    "step": "after",
+    "ok": true,
+    "text": "ボタン=フォロー中 / 20 フォロワー -> 21 フォロワー"
+   },
+   {
+    "step": "reload",
+    "ok": true,
+    "text": "再読み込み後 フォロー中 / 21 フォロワー"
+   },
+   {
+    "step": "home",
+    "ok": true,
+    "text": "ホームの投稿 10 件、全て seed_user_132、先頭 01a2009a-6a33-7076-a520-c5304b04b239 （B の最新 01a2009a-6a33-7076-a520-c5304b04b239）、順序は B の新着順と 一致"
+   },
+   {
+    "step": "failure",
+    "ok": true,
+    "text": "通信失敗で「エラーが発生しました。しばらくしてからもう一度お試しください」、ボタン=フォローする、20 フォロワー に戻る"
+   },
+   {
+    "step": "unknown-user",
+    "ok": true,
+    "text": "存在しない利用者のプロフィールは HTTP 404"
+   }
+  ],
+  "AC-2": [
+   {
+    "step": "first-page",
+    "ok": true,
+    "text": "最初の読み込み 12 件"
+   },
+   {
+    "step": "scroll",
+    "ok": true,
+    "text": "件数の推移 [12,24,30]、重複 0、順序は DB の新着順（B・C・D の 30 件）と 一致、「ここまでです」表示、番兵 0"
+   },
+   {
+    "step": "failure",
+    "ok": true,
+    "text": "次ページ失敗で通信失敗の案内、表示済み 12 件は残り、「もう一度読み込む」で 24 → 30 件"
+   },
+   {
+    "step": "demo",
+    "ok": true,
+    "text": "100 人をフォロー中の demo: 最初 12 件、次で 24 件、重複 0"
+   },
+   {
+    "step": "demo-48",
+    "ok": true,
+    "text": "demo のフィードを 4 ページ（48 件）まで読み込み、重複 0、順序は DB の新着順（フォロー中 100 人の投稿）と 一致"
+   }
+  ],
+  "AC-4": [
+   {
+    "step": "followers-20",
+    "ok": true,
+    "text": "フォロワー一覧 20 件、A（試験 A）が一覧にある=true、先頭は DB の新着順の先頭（別の利用者）と一致=true"
+   },
+   {
+    "step": "followers-order",
+    "ok": true,
+    "text": "フォロワー 21 件の順序は DB の新着順と 一致"
+   },
+   {
+    "step": "followers-21",
+    "ok": true,
+    "text": "スクロールで 21 件目が追加、重複 0"
+   },
+   {
+    "step": "following",
+    "ok": true,
+    "text": "フォロー中一覧（demo, 100 人）最初 20 件、スクロールで 40 件"
+   },
+   {
+    "step": "following-100",
+    "ok": true,
+    "text": "フォロー中一覧を最後まで: 100 件、重複 0、順序は DB の新着順と 一致"
+   },
+   {
+    "step": "empty-404",
+    "ok": true,
+    "text": "空の一覧の案内 1/1、存在しない利用者の一覧は HTTP 404"
+   }
+  ],
+  "AC-3": [
+   {
+    "step": "unfollow",
+    "ok": true,
+    "text": "解除: ボタン=フォローする、21 フォロワー -> 20 フォロワー"
+   },
+   {
+    "step": "reload",
+    "ok": true,
+    "text": "再読み込み後 フォローする / 20 フォロワー"
+   },
+   {
+    "step": "home",
+    "ok": true,
+    "text": "ホームを開き直すと B の投稿は無い。最初の 12 件の作者 seed_user_745,seed_user_489"
+   },
+   {
+    "step": "home-all",
+    "ok": true,
+    "text": "最後まで進むと 20 件（C と D の 20 件）、B は 0 件"
+   },
+   {
+    "step": "failure",
+    "ok": true,
+    "text": "解除の通信失敗で「エラーが発生しました。しばらくしてからもう一度お試しください」、ボタン=フォロー中、21 フォロワー に戻る"
+   }
+  ],
+  "AC-5": [
+   {
+    "step": "logged-out-home",
+    "ok": true,
+    "text": "未ログインの / は /accounts/login へ移る"
+   },
+   {
+    "step": "logged-out-profile",
+    "ok": true,
+    "text": "未ログインでは B のプロフィールの「フォローする」はログインへのリンク（/accounts/login）"
+   },
+   {
+    "step": "self",
+    "ok": true,
+    "text": "自分のプロフィールにフォローボタン 0 個、「プロフィールを編集」1 個"
+   }
+  ],
+  "NOJS": [
+   {
+    "step": "render",
+    "ok": true,
+    "text": "JS 無しで K のプロフィールにフォームのボタン「フォローする」"
+   },
+   {
+    "step": "follow",
+    "ok": true,
+    "text": "JS 無しで押すとページが描き直され「フォロー中」、DB の行 1"
+   },
+   {
+    "step": "unfollow",
+    "ok": true,
+    "text": "JS 無しで解除すると「フォローする」、DB の行 0"
+   },
+   {
+    "step": "signed-out-redirect",
+    "ok": true,
+    "text": "セッションが無い状態でフォームを送ると /accounts/login へ移る（フォロー行は作られない: 0）"
+   },
+   {
+    "step": "signed-out-link",
+    "ok": true,
+    "text": "ログアウト中、JS 無しで「フォローする」を押すと /accounts/login へ移る"
+   },
+   {
+    "step": "unknown-target",
+    "ok": true,
+    "text": "存在しない利用者へのフォームの送信は HTTP 404"
+   }
+  ],
+  "AC-6": [
+   {
+    "step": "empty",
+    "ok": true,
+    "text": "案内 1 件、投稿 0 件、エラーの案内 0 件"
+   }
+  ],
+  "AC-7": [
+   {
+    "step": "keyboard-follow",
+    "ok": true,
+    "text": "Tab でフォローボタンに届き、Enter で「フォロー中」(aria-pressed=true)、Space で戻る。DB も同じ"
+   }
+  ]
+ },
+ "health": {
+  "AC-1: failure path (aborted follow, expected)": {
+   "console": [
+    "error: Failed to load resource: net::ERR_FAILED"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "POST http://localhost:3101/seed_user_489 net::ERR_FAILED"
+   ],
+   "http": []
+  },
+  "AC-1: unknown user 404 (expected)": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http": [
+    "404 GET http://localhost:3101/nobody_such_user_zz"
+   ]
+  },
+  "AC-2: failure path (aborted next page, expected)": {
+   "console": [
+    "error: Failed to load resource: net::ERR_FAILED"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "POST http://localhost:3101/ net::ERR_FAILED"
+   ],
+   "http": []
+  },
+  "AC-4: empty list and 404 (expected)": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http": [
+    "404 GET http://localhost:3101/nobody_such_user_zz/followers"
+   ]
+  },
+  "AC-3: failure path (aborted unfollow, expected)": {
+   "console": [
+    "error: Failed to load resource: net::ERR_FAILED"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "POST http://localhost:3101/seed_user_489 net::ERR_FAILED"
+   ],
+   "http": []
+  },
+  "NOJS: signed-in form without JS": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp",
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp",
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"
+   ],
+   "http": []
+  },
+  "NOJS: stale form after logout (login redirect)": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"
+   ],
+   "http": []
+  },
+  "NOJS: signed-out visitor": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp",
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"
+   ],
+   "http": []
+  },
+  "NOJS: unknown target (404 expected)": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp",
+    "GET http://localhost:3101/_next/static/chunks/33c9mz4k5v18i.js csp"
+   ],
+   "http": [
+    "404 POST http://localhost:3101/seed_user_10"
+   ]
+  }
+ }
+}
