@@ -1,0 +1,10 @@
+probe: delete dialog after the delete request failed (Server Action POST aborted)
+after the failure message appears, document.activeElement: body (outside the dialog)
+Tab 1: body (outside the dialog)
+Tab 2: button "キャンセル" (inside the dialog)
+Tab 3: button "削除" (inside the dialog)
+Tab 4: button "キャンセル" (inside the dialog)
+Tab 5: button "削除" (inside the dialog)
+Escape still closes the dialog.
+cause: the pressed "削除" button is disabled while the request runs, so the focus falls to body.
+the trap logic is unchanged by the refactor (git diff 52a1ddb..836c2e6 only moves it to trapTab).
