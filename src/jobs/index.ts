@@ -2,6 +2,7 @@ import { cleanupOldNotifications } from './notification-cleanup.ts';
 import { retryStorageOrphans } from './storage-orphans-retry.ts';
 import { cleanupExpiredStories } from './story-cleanup.ts';
 import type { Job, JobEnv } from './types.ts';
+import { sweepUnreferencedUploads } from './upload-orphan-sweep.ts';
 
 /**
  * The scheduled jobs, in the order they run: files that failed yesterday are retried first.
@@ -11,6 +12,7 @@ export const jobs = {
   'storage-orphans-retry': retryStorageOrphans,
   'story-cleanup': cleanupExpiredStories,
   'notification-cleanup': cleanupOldNotifications,
+  'upload-orphan-sweep': sweepUnreferencedUploads,
 } satisfies Record<string, Job>;
 
 /**

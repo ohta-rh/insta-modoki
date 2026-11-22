@@ -28,7 +28,11 @@ describe('listObjects', () => {
           { status: 200 },
         ),
     );
-    const result = await listObjects(client, { prefix: 'media/u/', startAfter: 'media/u/a', maxKeys: 2 });
+    const result = await listObjects(client, {
+      prefix: 'media/u/',
+      startAfter: 'media/u/a',
+      maxKeys: 2,
+    });
     expect(result).toEqual({
       objects: [
         { key: 'media/u/a & b <> ".webp', lastModified: Date.parse('2026-11-22T00:00:00.123Z') },

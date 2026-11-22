@@ -8,11 +8,12 @@ const env = {} as JobEnv;
 const NOW = new Date('2026-11-22T00:00:00.000Z');
 
 describe('jobs', () => {
-  it('登録順は storage-orphans-retry、story-cleanup、notification-cleanup', () => {
+  it('登録順は storage-orphans-retry、story-cleanup、notification-cleanup、upload-orphan-sweep', () => {
     expect(Object.keys(jobs)).toEqual([
       'storage-orphans-retry',
       'story-cleanup',
       'notification-cleanup',
+      'upload-orphan-sweep',
     ]);
   });
 });
@@ -20,10 +21,9 @@ describe('jobs', () => {
 describe('runAll with the registered jobs', () => {
   const stub = (deleted: number) => vi.fn<Job>(async () => ({ deleted }));
 
-  it('notification-cleanup を最後に登録し、runAll が全てを実行する', async () => {
+  it('runAll が登録された全てを順に実行する', async () => {
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     const names = Object.keys(jobs);
-    expect(names.at(-1)).toBe('notification-cleanup');
     const fakes = Object.fromEntries(names.map((n, i) => [n, stub(i)]));
     await runAll(env, NOW, { jobs: fakes });
     for (const fake of Object.values(fakes)) expect(fake).toHaveBeenCalledOnce();
@@ -44,7 +44,9 @@ describe('runAll with the registered jobs', () => {
       () => null,
       (e: unknown) => e as Error,
     );
-    for (const n of names.slice(0, -1)) expect(fakes[n]).toHaveBeenCalledOnce();
+    for (const n of names.filter((x) => x !== 'notification-cleanup')) {
+      expect(fakes[n]).toHaveBeenCalledOnce();
+    }
     expect(failure!.message).toBe('ジョブが失敗しました: notification-cleanup');
     expect(failure!.message).not.toMatch(/D1_ERROR|SELECT|\/app/);
   });
