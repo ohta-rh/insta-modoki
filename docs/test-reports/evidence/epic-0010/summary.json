@@ -1,0 +1,417 @@
+{
+ "acs": {
+  "AC-4": [
+   {
+    "name": "/explore -> login",
+    "ok": true,
+    "detail": "http://localhost:3102/accounts/login"
+   },
+   {
+    "name": "/explore/search -> login",
+    "ok": true,
+    "detail": "http://localhost:3102/accounts/login"
+   },
+   {
+    "name": "/explore/tags/tokyo -> login",
+    "ok": true,
+    "detail": "http://localhost:3102/accounts/login"
+   },
+   {
+    "name": "/explore/search?q=ha -> login",
+    "ok": true,
+    "detail": "http://localhost:3102/accounts/login"
+   },
+   {
+    "name": "/explore/tags/%EF%BC%B4%EF%BC%AF%EF%BC%AB%EF%BC%B9%EF%BC%AF -> login",
+    "ok": true,
+    "detail": "http://localhost:3102/accounts/login"
+   }
+  ],
+  "setup": [
+   {
+    "name": "A signed up via UI",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "A follows e10_fol through the UI",
+    "ok": true,
+    "detail": ""
+   }
+  ],
+  "AC-3": [
+   {
+    "name": "empty slot shows an empty state (no tiles)",
+    "ok": true,
+    "detail": "発見 ユーザーを検索 まだ人気の投稿がありません"
+   },
+   {
+    "name": "top three: hot(30) > mid(12) > edge(5), then fillers",
+    "ok": true,
+    "detail": "[\"/p/b81d2e2f-909a-44c9-a8a8-4101276f116d\",\"/p/8b02c271-540a-46ac-9eac-318751609444\",\"/p/3e3e5cfc-04c0-4187-911a-f7e012cfd08b\",\"/p/0a368098-52c2-4d3f-974e-63e2149cac5a\"]"
+   },
+   {
+    "name": "all 27 (3 + 24 fillers; exact-7d may add one) shown, no duplicates",
+    "ok": true,
+    "detail": "27"
+   },
+   {
+    "name": "edge post at 7 days minus 10 minutes is shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "8-days-old post (50 likes) is NOT shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "own post (45 likes) is NOT shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "followed person post (35 likes) is NOT shown",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "first tile opens the hot post",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "back returns to /explore",
+    "ok": true,
+    "detail": "http://localhost:3102/explore"
+   },
+   {
+    "name": "when the next page fails an alert is shown and the grid keeps its 24 tiles",
+    "ok": true,
+    "detail": "{\"aborted\":1,\"alertsNow\":[\"読み込めませんでした\\n\\nもう一度読み込む\"]}"
+   }
+  ],
+  "AC-1": [
+   {
+    "name": "\"ha\" shows haru",
+    "ok": true,
+    "detail": "[\"H\\nhana\\nHana\",\"H\\nharu\\nHaru\",\"S\\nshiori\\nHaru Fan\"]"
+   },
+   {
+    "name": "\"ha\" also matches display name (Haru Fan) and hana, not mio",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "choosing haru goes to /haru",
+    "ok": true,
+    "detail": "http://localhost:3102/haru"
+   },
+   {
+    "name": "literal query \"100%\" -> only pct_one (display \"100%\")",
+    "ok": true,
+    "detail": "[\"P\\npct_one\\n100%\"]"
+   },
+   {
+    "name": "literal query \"%\" -> only pct_one, not everyone",
+    "ok": true,
+    "detail": "[\"P\\npct_one\\n100%\"]"
+   },
+   {
+    "name": "literal query \"a_\" -> only a_b, not axb",
+    "ok": true,
+    "detail": "[\"A\\na_b\\nUnder Score\"]"
+   },
+   {
+    "name": "literal query \"_\" -> only names/displays containing \"_\"",
+    "ok": true,
+    "detail": "[\"A\\na_b\\nUnder Score\",\"E\\nepic10_a\\n試験 太郎\",\"P\\npct_one\\n100%\"]"
+   },
+   {
+    "name": "literal query \"\\\" -> nothing",
+    "ok": true,
+    "detail": "[] | 検索 「\\」に一致するユーザーはいません 「\\」に一致するユーザーはいません"
+   },
+   {
+    "name": "literal query no match -> message",
+    "ok": true,
+    "detail": "[] | 検索 「zzqqxx」に一致するユーザーはいません 「zzqqxx」に一致するユーザーはいません"
+   },
+   {
+    "name": "blank input + Enter: nothing is searched, no candidates, hint stays (no error)",
+    "ok": true,
+    "detail": "[] 検索 ユーザー名で検索"
+   },
+   {
+    "name": "31 chars: limited or message (30 max)",
+    "ok": true,
+    "detail": "value length 30, alert []"
+   }
+  ],
+  "AC-2": [
+   {
+    "name": "unknown tag (before any post) is 404 page",
+    "ok": true,
+    "detail": "404"
+   },
+   {
+    "name": "#Tokyo -> /explore/tags/tokyo",
+    "ok": true,
+    "detail": "http://localhost:3102/explore/tags/tokyo"
+   },
+   {
+    "name": "tag list is newest first: C, B, A (3 posts)",
+    "ok": true,
+    "detail": "[\"/p/01a20193-e064-7000-9c9a-4e4a57945dbd\",\"/p/01a20193-d950-7000-8769-6ddd95b4a4ff\",\"/p/01a20193-d231-7000-b159-ea993a206395\"]"
+   },
+   {
+    "name": "#TOKYO (upper case) -> same URL",
+    "ok": true,
+    "detail": "http://localhost:3102/explore/tags/tokyo"
+   },
+   {
+    "name": "#ＴＯＫＹＯ (full-width) -> same URL",
+    "ok": true,
+    "detail": "http://localhost:3102/explore/tags/tokyo"
+   },
+   {
+    "name": "same list after full-width link",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "direct /explore/tags/TOKYO shows the same list",
+    "ok": true,
+    "detail": "200 http://localhost:3102/explore/tags/TOKYO [\"/p/01a20193-e064-7000-9c9a-4e4a57945dbd\",\"/p/01a20193-d950-7000-8769-6ddd95b4a4ff\",\"/p/01a20193-d231-7000-b159-ea993a206395\"]"
+   },
+   {
+    "name": "direct /explore/tags/Tokyo shows the same list",
+    "ok": true,
+    "detail": "200 http://localhost:3102/explore/tags/Tokyo [\"/p/01a20193-e064-7000-9c9a-4e4a57945dbd\",\"/p/01a20193-d950-7000-8769-6ddd95b4a4ff\",\"/p/01a20193-d231-7000-b159-ea993a206395\"]"
+   },
+   {
+    "name": "direct /explore/tags/%EF%BC%B4%EF%BC%AF%EF%BC%AB%EF%BC%B9%EF%BC%AF shows the same list",
+    "ok": true,
+    "detail": "200 http://localhost:3102/explore/tags/%EF%BC%B4%EF%BC%AF%EF%BC%AB%EF%BC%B9%EF%BC%AF [\"/p/01a20193-e064-7000-9c9a-4e4a57945dbd\",\"/p/01a20193-d950-7000-8769-6ddd95b4a4ff\",\"/p/01a20193-d231-7000-b159-ea993a206395\"]"
+   },
+   {
+    "name": "#osaka list has only the osaka post",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "full-width ＃ in a caption is not linked (ADR / #49: only half-width #)",
+    "ok": true,
+    "detail": "links 0"
+   },
+   {
+    "name": "a tag with a space in the URL is 404",
+    "ok": true,
+    "detail": "404"
+   }
+  ],
+  "AC-5": [
+   {
+    "name": "ArrowDown/ArrowUp move the active option",
+    "ok": true,
+    "detail": "_R_9bsnpfcnmlb_-0 _R_9bsnpfcnmlb_-1 _R_9bsnpfcnmlb_-0"
+   },
+   {
+    "name": "Enter on the active option opens that profile",
+    "ok": true,
+    "detail": "H hana Hana -> http://localhost:3102/hana"
+   },
+   {
+    "name": "Escape closes the candidate list",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: search page with candidates has 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Tab reaches #Tokyo link on post detail and Enter opens the tag page",
+    "ok": true,
+    "detail": "13 Tab presses"
+   },
+   {
+    "name": "axe: tag page 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: post detail with tag links 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Tab to the 2nd grid tile and Enter opens the 2nd most liked post",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "Tab to the search link and Enter opens /explore/search",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: explore grid 0 serious/critical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "keyboard: Tab to \"さらに表示\" and Enter loads page 2",
+    "ok": true,
+    "detail": "27 tiles"
+   }
+  ]
+ },
+ "health": {
+  "ac2-hashtag-404": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3102/explore/tags/tokyo"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http4xx5xx": [
+    "404 GET http://localhost:3102/explore/tags/tokyo"
+   ]
+  },
+  "ac2-hashtag-bad": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3102/explore/tags/a%20b"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http4xx5xx": [
+    "404 GET http://localhost:3102/explore/tags/a%20b"
+   ]
+  },
+  "ac3-loadmore-fail": {
+   "console": [
+    "error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/explore"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "POST http://localhost:3102/explore net::ERR_FAILED"
+   ],
+   "http4xx5xx": []
+  }
+ },
+ "notes": {
+  "chromeVersion": "157.0.8103.80",
+  "ac3EmptyText": "発見 ユーザーを検索 まだ人気の投稿がありません",
+  "ac1_ha_options": [
+   "H\nhana\nHana",
+   "H\nharu\nHaru",
+   "S\nshiori\nHaru Fan"
+  ],
+  "ac2_tag_count_text": "#tokyo 投稿 3 件",
+  "ac3_counts": {
+   "first": 24,
+   "all": 27
+  },
+  "ac3_exact7d_shown_at_request_time": {
+   "shown": false,
+   "position": -1,
+   "reason": "asOf is the request time, a few seconds after the insert, so created_at = now-7d is just outside the window (boundary itself is covered by the int test with a fixed now)"
+  },
+  "ac3_loadmore_fail": {
+   "aborted": 1,
+   "alerts": [
+    "読み込めませんでした\n\nもう一度読み込む"
+   ],
+   "tiles": 24
+  },
+  "ac5_enter_result": {
+   "chosen": "H hana Hana",
+   "url": "http://localhost:3102/hana"
+  },
+  "done": true
+ },
+ "tabOrder": {
+  "search": [
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知\" -> /notifications",
+   "a \"プロフィール\" -> /epic10_a",
+   "input[combobox] \"ユーザーを検索\"",
+   "body"
+  ],
+  "tag": [
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知\" -> /notifications",
+   "a \"プロフィール\" -> /epic10_a",
+   "a \"\" -> /p/01a20193-e064-7000-9c9a-4e4a57945dbd",
+   "a \"\" -> /p/01a20193-d950-7000-8769-6ddd95b4a4ff"
+  ],
+  "explore": [
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知\" -> /notifications",
+   "a \"プロフィール\" -> /epic10_a",
+   "a \"ユーザーを検索\" -> /explore/search",
+   "a \"\" -> /p/b81d2e2f-909a-44c9-a8a8-4101276f116d",
+   "a \"\" -> /p/8b02c271-540a-46ac-9eac-318751609444"
+  ]
+ },
+ "axe": {
+  "search-with-candidates": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "tag-page": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "post-detail": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "explore": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ]
+ }
+}
