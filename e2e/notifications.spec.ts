@@ -1,7 +1,7 @@
 import { expect, test as base } from '@playwright/test';
 import { baseURL, freshUser, signedIn, signUpViaUi } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
-import { seedUser, unreadNotificationCount, userRow, withDb } from './support/db';
+import { seedUser, unreadNotificationCount, userRow } from './support/db';
 import { harness } from './support/harness';
 import { waitForHydration } from './support/hydration';
 import { tabTo } from './support/keys';

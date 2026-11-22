@@ -1,6 +1,6 @@
 import { expect, test as base, type Browser, type Page } from '@playwright/test';
 import { baseURL, freshUser, signedIn, signUpViaUi, type NewUser } from './support/auth';
-import { unreadNotificationCount, withDb } from './support/db';
+import { unreadNotificationCount } from './support/db';
 import { waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
 
