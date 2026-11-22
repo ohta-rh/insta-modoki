@@ -6,7 +6,6 @@ import type { UserSummary } from '../../post';
  */
 export function AddStoryButton({ me }: { me: UserSummary | null }) {
   return (
-    // eslint-disable-next-line @next/next/no-html-link-for-pages -- a full navigation is intended
     <a
       href="/stories/create"
       className="group relative flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] w-[72px] shrink-0 flex-col items-center gap-1 text-center"
