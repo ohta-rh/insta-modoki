@@ -67,7 +67,7 @@ export function StoryViewer({ reel, mode }: { reel: StoryReel; mode: 'modal' | '
   const closeButton = useRef<HTMLButtonElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const leaving = useRef(false);
-  const closedModal = useRef(false);
+  const closedByUser = useRef(false);
   const press = useRef<{
     startedAt: number;
     x: number;
@@ -84,18 +84,17 @@ export function StoryViewer({ reel, mode }: { reel: StoryReel; mode: 'modal' | '
   const close = useCallback(() => {
     if (leaving.current) return;
     leaving.current = true;
-    if (mode === 'modal') {
-      closedModal.current = true;
-      router.back();
-    } else router.replace('/');
+    closedByUser.current = true;
+    if (mode === 'modal') router.back();
+    else router.replace('/');
   }, [mode, router]);
 
   // The home's server parts (the tray) were drawn before the views were recorded. Refresh once the
-  // modal has gone, i.e. once the URL is the home's: a refresh issued right after `back()` would
+  // viewer has gone, i.e. once the URL is the home's: a refresh issued right after `back()` would
   // still target the viewer's URL and leave the cached home as it was.
   useEffect(
     () => () => {
-      if (closedModal.current) router.refresh();
+      if (closedByUser.current) router.refresh();
     },
     [router],
   );
