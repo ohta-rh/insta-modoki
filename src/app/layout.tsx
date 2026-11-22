@@ -2,6 +2,7 @@ import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactNode } from 'react';
 import { getSessionUser, isValidUsernameFormat } from '@/features/auth';
+import { NotificationBadge } from '@/features/notification';
 import { AppShellClient, HydrationMarker } from '@/shared/ui';
 import './globals.css';
 
@@ -20,7 +21,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="ja">
       <body>
         <HydrationMarker />
-        <AppShellClient viewer={viewer}>{children}</AppShellClient>
+        <AppShellClient
+          viewer={viewer}
+          badges={viewer ? { notifications: <NotificationBadge /> } : undefined}
+        >
+          {children}
+        </AppShellClient>
       </body>
     </html>
   );

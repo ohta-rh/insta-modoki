@@ -50,4 +50,14 @@ describe('AppShell', () => {
   it('ナビは aria-label="メイン"', () => {
     expect(render().match(/<nav[^>]*aria-label="メイン"/g)).toHaveLength(2);
   });
+
+  it('badges を渡したときだけその項目に差し込む', () => {
+    expect(render()).not.toContain('BADGE');
+    const html = render({ badges: { notifications: <b>BADGE</b> } });
+    // Both navigations (side and bottom) carry it, right after the label of 通知 only.
+    expect(html.match(/<span>通知<\/span><span class="[^"]*"><b>BADGE<\/b><\/span>/g)).toHaveLength(
+      2,
+    );
+    expect(html.match(/BADGE/g)).toHaveLength(2);
+  });
 });

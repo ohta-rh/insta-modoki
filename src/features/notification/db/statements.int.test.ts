@@ -1,18 +1,25 @@
 import { and, eq } from 'drizzle-orm';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { useTestDb } from '../../../../tests/helpers/db';
 import { createPost } from '../../../../tests/helpers/posts';
 import { sessionHeadersFor, testAuthEnv } from '../../../../tests/helpers/session';
+import { loadStorageEnv } from '../../../../tests/helpers/storage';
 import { createUser } from '../../../../tests/helpers/users';
 import { notifications, posts } from '../../../shared/db/schema';
+import type { StorageEnv } from '../../../shared/storage';
 import { addComment, deleteComment } from '../../comment';
 import { follow, unfollow } from '../../follow';
 import { likePost, unlikePost } from '../../like';
 
 const t = useTestDb();
 
+let storage: StorageEnv;
+beforeAll(async () => {
+  storage = await loadStorageEnv();
+});
+
 const setup = async () => {
-  const env = testAuthEnv(t.d1);
+  const env = { ...testAuthEnv(t.d1), ...storage };
   const a = await createUser(t.db);
   const b = await createUser(t.db);
   const post = await createPost(t.db, a.id);

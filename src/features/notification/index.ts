@@ -7,3 +7,5 @@ export {
   insertFollowNotification,
   insertLikeNotification,
 } from './db/statements';
+export { NotificationBadge } from './ui/NotificationBadge';
+export { NotificationsPage } from './ui/NotificationsPage';
