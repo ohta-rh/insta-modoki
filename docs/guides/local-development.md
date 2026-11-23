@@ -28,8 +28,10 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 | コマンド | することと結果 |
 |---|---|
 | `node scripts/slot.mjs prepare <N>` | バケット `insta-s<N>` と鍵 `insta-local` を無ければ作り、バケットをウェブ公開にし、`.dev.vars` を書く。`migrations/` があれば D1 に流す。何回流しても、データと秘密の値は残る |
-| `node scripts/slot.mjs reset <N>` | 先に `drop` と同じにスロットのポートのプロセスを止め、`.wrangler/state` を消し、バケットを空にして、`prepare` と同じに整える |
-| `node scripts/slot.mjs drop <N>` | 先にポート `3100 + N` で待ち受けるプロセスを子ごと止め（TERM、5 秒待って KILL。止まらなければ PID を出して 1 で終わり、消さない）、`slot N のポート 310N のプロセスを M 個止めました` と出す。そのあとバケットを削除し、`.wrangler/state` を消す。`.dev.vars` は残す |
+| `node scripts/slot.mjs reset <N>` | 先に `drop` と同じにスロットのポートのプロセスを止め、`.wrangler/state` を消し、バケットを 32 本並べて消し（1 万個ごとに消した数を出す）、`prepare` と同じに整える |
+| `node scripts/slot.mjs drop <N>` | 先にポート `3100 + N` で待ち受けるプロセスを子ごと止め（TERM、5 秒待って KILL。止まらなければ PID を出して 1 で終わり、消さない）、`slot N のポート 310N のプロセスを M 個止めました` と出す。そのあとバケットの中身を 32 本並べて消し（1 万個ごとに消した数を出す）、バケットを削除し、`.wrangler/state` を消す。`.dev.vars` は残す |
+
+結合テストは、スロットのバケットに作ったファイルを最後に消して終わる（ADR-0060）。
 
 終了コードは、成功 0、スタックが止まっている・コマンドの失敗 1、引数の誤り 2。
 

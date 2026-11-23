@@ -492,6 +492,8 @@ test('バケットを空にする途中の失敗で reset は 1 を返し .dev.v
   t.done();
   assert.equal(code, 1);
   assert.ok(calls >= 3);
-  assert.ok(t.err.some((s) => s.includes('slot 2 の reset に失敗しました: S3 DELETE /insta-s2/k3 -> 500')));
+  assert.ok(
+    t.err.some((s) => s.includes('slot 2 の reset に失敗しました: S3 DELETE /insta-s2/k3 -> 500')),
+  );
   assert.equal(wrote, false);
 });

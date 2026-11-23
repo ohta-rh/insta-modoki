@@ -168,6 +168,14 @@ const PROGRESS_EVERY = 10_000;
  * each: 450,000 objects = 2.5 h; 32 at a time ~1-4 ms each, ADR-0060). Prints progress every
  * 10,000 objects and at the end. After the first failure no new DELETE starts; the ones running
  * finish, then the first error is thrown. Deleting a missing key succeeds, so a rerun is safe.
+ *
+ * @param {{ bucket: string }} cfg
+ * @param {{
+ *   list?: (cfg: any) => Promise<string[]>,
+ *   del?: (cfg: any, key: string) => Promise<unknown>,
+ *   out?: (line: string) => unknown,
+ *   concurrency?: number,
+ * }} [deps]
  */
 export async function emptyBucket(
   cfg,
