@@ -1,10 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { signUpViaUi } from './support/auth';
+import { rect, VIEWPORTS } from './support/measure';
 import { clearRateLimits } from './support/db';
 import { ownIpLastOctet, startInFreshWindow, waitUntilSecondOfMinute } from './support/rate-window';
 
-const submit = (page: Page) => page.getByRole('button', { name: 'ログイン' });
+const submit = (page: Page) => page.getByRole('button', { name: 'ログイン', exact: true });
 
 /**
  * A private IP for one test, so other specs sharing "local" do not count against it. Distinct per
@@ -117,12 +118,30 @@ test('ログイン済みでログイン画面を開くとホームに移る', as
 
 test('キーボードだけでログインでき axe の重大な違反が無い', async ({ page }) => {
   const user = await registeredUser(page);
+  for (const viewport of Object.values(VIEWPORTS)) {
+    await page.setViewportSize(viewport);
+    await page.goto('/accounts/login');
+    await page.waitForLoadState('networkidle');
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(
+      results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
+      `${viewport.width}px`,
+    ).toEqual([]);
+    for (const target of await page
+      .locator('main a, main button, main input:not([type=hidden])')
+      .all()) {
+      const box = await rect(target);
+      expect(
+        box.width >= 44 && box.height >= 44,
+        `${viewport.width}px 操作できる要素の大きさ: ${await target.evaluate((el) => el.outerHTML.slice(0, 120))} ${box.width}x${box.height}`,
+      ).toBe(true);
+    }
+  }
+  await page.setViewportSize(VIEWPORTS.wide);
   await page.goto('/accounts/login');
   await page.waitForLoadState('networkidle');
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(
-    results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
-  ).toEqual([]);
+  // The drawing on the left is hidden from the screen reader.
+  await expect(page.locator('[data-auth="hero"]')).toHaveAttribute('aria-hidden', 'true');
 
   await page.getByRole('link', { name: '本文へ移動' }).focus();
   await page.keyboard.press('Tab');
@@ -133,6 +152,9 @@ test('キーボードだけでログインでき axe の重大な違反が無い
   await page.keyboard.type(user.password);
   await page.keyboard.press('Tab');
   await expect(submit(page)).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: '新しいアカウントを作成' })).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/$/);
 

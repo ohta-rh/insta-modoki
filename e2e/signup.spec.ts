@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { fillSignUp, newUser, signUpViaUi } from './support/auth';
 import { clearRateLimits, seedUser, userRow } from './support/db';
+import { rect, styles, VIEWPORTS } from './support/measure';
 
 const submit = (page: import('@playwright/test').Page) =>
   page.getByRole('button', { name: 'サインアップ' });
@@ -77,6 +78,9 @@ test('入力が不正なとき 項目ごとの理由が表示され 入力が残
     const describedBy = await field.getAttribute('aria-describedby');
     expect(describedBy, label).toBeTruthy();
     await expect(page.locator(`#${describedBy}`)).toHaveText(message);
+    expect((await styles(page.locator(`#${describedBy}`), ['color']))['color'], label).toBe(
+      'rgb(214, 45, 60)',
+    );
   }
   await expect(page.getByLabel('メールアドレス')).toHaveValue(bad.email);
   await expect(page.getByLabel('ユーザー名')).toHaveValue(bad.username);
@@ -96,24 +100,46 @@ test('入力が不正なとき 項目ごとの理由が表示され 入力が残
 
 test('キーボードだけでサインアップでき axe の重大な違反が無い', async ({ page }) => {
   clearRateLimits();
+  for (const viewport of Object.values(VIEWPORTS)) {
+    await page.setViewportSize(viewport);
+    await page.goto('/accounts/signup');
+    await page.waitForLoadState('networkidle');
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(
+      results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
+      `${viewport.width}px`,
+    ).toEqual([]);
+    for (const target of await page
+      .locator('main a, main button, main input:not([type=hidden])')
+      .all()) {
+      const box = await rect(target);
+      expect(
+        box.width >= 44 && box.height >= 44,
+        `${viewport.width}px 操作できる要素の大きさ: ${await target.evaluate((el) => el.outerHTML.slice(0, 120))} ${box.width}x${box.height}`,
+      ).toBe(true);
+    }
+  }
+
+  await page.setViewportSize(VIEWPORTS.wide);
   await page.goto('/accounts/signup');
   await page.waitForLoadState('networkidle');
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(
-    results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious'),
-  ).toEqual([]);
-
   const user = newUser();
   await page.getByRole('link', { name: '本文へ移動' }).focus();
+  // Back first, then the fields, the submit, and the button to the other screen.
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'ログイン画面に戻る' })).toBeFocused();
+  await page.keyboard.press('Tab');
   const order = ['メールアドレス', 'ユーザー名', '表示名', 'パスワード'];
   const values = [user.email, user.username, user.displayName, user.password];
-  await page.keyboard.press('Tab');
   for (const [i, label] of order.entries()) {
     await expect(page.getByLabel(label)).toBeFocused();
     await page.keyboard.type(values[i]!);
     await page.keyboard.press('Tab');
   }
   await expect(submit(page)).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'アカウントをお持ちの場合' })).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/$/);
 });

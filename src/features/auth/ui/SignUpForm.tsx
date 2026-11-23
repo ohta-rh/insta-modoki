@@ -2,10 +2,9 @@
 
 import { useActionState, useEffect, useRef, useState } from 'react';
 import { checkUsernameAction, signUpAction, type SignUpState } from '../api/actions';
+import { FloatingField } from './FloatingField';
 
-const INPUT =
-  'min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-red-600';
-const ERROR = 'mt-1 text-[length:var(--font-size-sm)] text-red-700';
+const ERROR = 'mt-1 text-[length:var(--font-size-sm)] text-danger';
 
 type FieldProps = {
   name: 'email' | 'username' | 'displayName' | 'password' | 'inviteCode';
@@ -20,8 +19,7 @@ type FieldProps = {
   announce?: boolean;
 };
 
-function Field({ name, label, type = 'text', errors, onBlur, announce, ...rest }: FieldProps) {
-  const errorId = `${name}-error`;
+function Field({ errors, onBlur, announce, ...rest }: FieldProps) {
   const invalid = errors !== undefined && errors.length > 0;
   const input = useRef<HTMLInputElement>(null);
   // `errors` is a new array for each result of the action, so a repeated error focuses again.
@@ -29,27 +27,13 @@ function Field({ name, label, type = 'text', errors, onBlur, announce, ...rest }
     if (announce && invalid) input.current?.focus();
   }, [announce, invalid, errors]);
   return (
-    <div>
-      <label htmlFor={name} className="mb-1 block text-[length:var(--font-size-sm)] font-bold">
-        {label}
-      </label>
-      <input
-        ref={input}
-        id={name}
-        name={name}
-        type={type}
-        className={INPUT}
-        aria-invalid={invalid ? 'true' : undefined}
-        aria-describedby={invalid ? errorId : undefined}
-        onBlur={onBlur ? (e) => onBlur(e.currentTarget.value) : undefined}
-        {...rest}
-      />
-      {invalid ? (
-        <p id={errorId} role={announce ? 'alert' : undefined} className={ERROR}>
-          {errors.join(' ')}
-        </p>
-      ) : null}
-    </div>
+    <FloatingField
+      ref={input}
+      error={invalid ? errors.join(' ') : undefined}
+      announce={announce}
+      onBlur={onBlur ? (e) => onBlur(e.currentTarget.value) : undefined}
+      {...rest}
+    />
   );
 }
 
@@ -74,7 +58,7 @@ export function SignUpForm({ inviteRequired = false }: { inviteRequired?: boolea
   const taken = checked?.message === 'このユーザー名は使われています';
 
   return (
-    <form action={action} className="flex flex-col gap-4" noValidate>
+    <form action={action} className="flex w-full flex-col gap-3" noValidate>
       {state.message ? (
         <p role="alert" className={ERROR}>
           {state.fieldErrors ? '入力を確認してください' : state.message}
@@ -123,7 +107,7 @@ export function SignUpForm({ inviteRequired = false }: { inviteRequired?: boolea
       <button
         type="submit"
         disabled={pending || taken}
-        className="min-h-[var(--tap-min)] rounded-lg bg-indigo px-4 font-bold text-white disabled:opacity-50"
+        className="mt-3 h-11 w-full rounded-pill bg-indigo text-[15px] font-medium text-white disabled:opacity-40"
       >
         サインアップ
       </button>
