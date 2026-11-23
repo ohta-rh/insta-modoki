@@ -45,7 +45,8 @@ describe('deletePost', () => {
     expect(await count(media)).toBe(0);
     expect(await count(likes)).toBe(0);
     expect(await count(comments)).toBe(0);
-    for (const key of keys) expect(await headObject(storage, key), key).toBeNull();
+    const heads = await Promise.all(keys.map((key) => headObject(storage, key)));
+    heads.forEach((head, i) => expect(head, keys[i]).toBeNull());
     expect(await count(storageOrphans as never)).toBe(0);
 
     expect(await deletePost({ postId: post.id }, { env, headers })).toEqual({ deleted: true });
