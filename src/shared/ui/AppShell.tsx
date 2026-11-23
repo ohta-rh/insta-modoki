@@ -1,18 +1,12 @@
 import type { ComponentProps, ComponentType, ReactNode } from 'react';
 import { FOOTER_NOTICE } from './brand';
 import {
-  BellFilledIcon,
   BellIcon,
-  CompassFilledIcon,
   CompassIcon,
-  HomeFilledIcon,
   HomeIcon,
   MenuIcon,
-  PlusSquareFilledIcon,
   PlusSquareIcon,
-  SearchFilledIcon,
   SearchIcon,
-  UserFilledIcon,
   UserIcon,
   type IconProps,
 } from './icons';
@@ -20,15 +14,13 @@ import { Logo } from './Logo';
 import { MORE_MENU_ID, MoreMenu } from './MoreMenu';
 import { isCurrent, navItems, type NavIcon, type NavItem, type Viewer } from './nav-items';
 
-type IconPair = { outline: ComponentType<IconProps>; filled: ComponentType<IconProps> };
-
-const ICONS: Record<NavIcon, IconPair> = {
-  home: { outline: HomeIcon, filled: HomeFilledIcon },
-  search: { outline: SearchIcon, filled: SearchFilledIcon },
-  compass: { outline: CompassIcon, filled: CompassFilledIcon },
-  'plus-square': { outline: PlusSquareIcon, filled: PlusSquareFilledIcon },
-  bell: { outline: BellIcon, filled: BellFilledIcon },
-  user: { outline: UserIcon, filled: UserFilledIcon },
+const ICONS: Record<NavIcon, ComponentType<IconProps>> = {
+  home: HomeIcon,
+  search: SearchIcon,
+  compass: CompassIcon,
+  'plus-square': PlusSquareIcon,
+  bell: BellIcon,
+  user: UserIcon,
 };
 
 export type AppShellProps = {
@@ -80,9 +72,8 @@ function NavLinks({
       {items
         .filter((item) => layout === 'side' || item.placement === 'all')
         .map((item) => {
-          const icons = ICONS[item.icon];
+          const Icon = ICONS[item.icon];
           const isHere = isCurrent(item, current, viewer);
-          const Icon = isHere ? icons.filled : icons.outline;
           const Link = linkAs?.[item.key] ?? 'a';
           const badge = badges?.[item.key];
           const link = (
@@ -96,7 +87,7 @@ function NavLinks({
                   : `relative flex h-full min-h-[var(--tap-min)] min-w-[var(--tap-min)] flex-1 items-center justify-center text-text ${TRANSITION}`
               }
             >
-              <Icon />
+              <Icon filled={isHere} />
               <span className={layout === 'side' ? 'sr-only nav-wide:not-sr-only' : 'sr-only'}>
                 {item.label}
               </span>
@@ -142,6 +133,7 @@ function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
     <nav
       aria-label="メイン"
       data-nav="side"
+      // pr-[11px]: 72 - 1 (border) - 12 - 11 = 48px wide items at the narrow width.
       className="sticky top-0 hidden h-screen w-[var(--nav-narrow-width)] shrink-0 flex-col gap-1 border-r border-border p-3 pr-[11px] nav:flex nav-wide:w-[var(--nav-wide-width)]"
     >
       <div className="mb-4 flex min-h-12 items-center px-3">

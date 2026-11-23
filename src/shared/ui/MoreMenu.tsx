@@ -9,7 +9,7 @@ export const MORE_MENU_ID = 'more-menu';
  * The 「その他」 menu. A native popover (`popover="auto"`) opened by the buttons whose
  * `popovertarget` is its id: it opens without JavaScript, Esc and a press outside close it, and
  * the browser returns the focus to the button. The effect only mirrors the open state into the
- * buttons' `aria-expanded` and restores the focus where the browser does not.
+ * buttons' `aria-expanded`.
  */
 export function MoreMenu() {
   const ref = useRef<HTMLDivElement>(null);
@@ -24,14 +24,6 @@ export function MoreMenu() {
       const next = (event as Event & { newState?: string }).newState;
       const open = next === 'open';
       for (const button of buttons()) button.setAttribute('aria-expanded', String(open));
-      if (!open && menu.contains(document.activeElement)) {
-        const source = (event as Event & { source?: Element | null }).source;
-        const target =
-          source instanceof HTMLElement
-            ? source
-            : buttons().find((button) => button.getClientRects().length > 0);
-        target?.focus();
-      }
     };
     menu.addEventListener('toggle', onToggle);
     return () => menu.removeEventListener('toggle', onToggle);

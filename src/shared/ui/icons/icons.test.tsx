@@ -24,7 +24,7 @@ describe('アイコン', () => {
       expect(render(`${base}FilledIcon`), base).toContain('data-filled="true"');
       expect(render(`${base}Icon`), base).not.toContain('data-filled');
     }
-    for (const name of ['MenuIcon', 'GridIcon', 'CarouselIcon']) {
+    for (const name of ['MenuIcon']) {
       expect(render(name), name).toContain('<svg');
     }
   });

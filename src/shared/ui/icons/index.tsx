@@ -13,16 +13,17 @@ export const HomeIcon = (p: IconProps) => (
     <path d={HOME} />
   </Icon>
 );
-export const SearchIcon = (p: IconProps) => (
-  <Icon {...p}>
-    <circle cx="10.5" cy="10.5" r="6.5" />
-    <path d="m15.5 15.5 5 5" />
+export const SearchIcon = ({ filled, ...p }: IconProps) => (
+  // Solid = heavier lens and handle (3), not a filled lens; the svg keeps stroke-width 2.
+  <Icon {...p} fill="none" data-filled={filled ? 'true' : undefined}>
+    <circle cx="10.5" cy="10.5" r="6.5" strokeWidth={filled ? 3 : undefined} />
+    <path d="m15.5 15.5 5 5" strokeWidth={filled ? 3 : undefined} />
   </Icon>
 );
-export const PlusSquareIcon = (p: IconProps) => (
-  <Icon {...p}>
+export const PlusSquareIcon = ({ filled, ...p }: IconProps) => (
+  <Icon filled={filled} {...p}>
     <rect x="3.5" y="3.5" width="17" height="17" rx="4" />
-    <path d="M12 8v8M8 12h8" />
+    <path className={filled ? 'stroke-bg' : undefined} d="M12 8v8M8 12h8" />
   </Icon>
 );
 export const BellIcon = (p: IconProps) => (
@@ -34,7 +35,7 @@ export const BellIcon = (p: IconProps) => (
 export const UserIcon = (p: IconProps) => (
   <Icon {...p}>
     <circle cx="12" cy="8" r="4" />
-    <path d="M4.5 20.5c.8-4 3.7-6 7.5-6s6.7 2 7.5 6" />
+    <path d={`M4.5 20.5c.8-4 3.7-6 7.5-6s6.7 2 7.5 6${p.filled ? 'z' : ''}`} />
   </Icon>
 );
 export const HeartIcon = (p: IconProps) => (
@@ -91,10 +92,10 @@ export const MoreIcon = (p: IconProps) => (
   </Icon>
 );
 
-export const CompassIcon = (p: IconProps) => (
-  <Icon {...p}>
+export const CompassIcon = ({ filled, ...p }: IconProps) => (
+  <Icon filled={filled} {...p}>
     <circle cx="12" cy="12" r="9" />
-    <path d="m15.5 8.5-2 5-5 2 2-5z" />
+    <path className={filled ? 'stroke-bg' : undefined} d="m15.5 8.5-2 5-5 2 2-5z" />
   </Icon>
 );
 export const MenuIcon = (p: IconProps) => (
@@ -102,54 +103,11 @@ export const MenuIcon = (p: IconProps) => (
     <path d="M4 7h16M4 12h16M4 17h16" />
   </Icon>
 );
-export const GridIcon = (p: IconProps) => (
-  <Icon {...p}>
-    <rect x="3.5" y="3.5" width="17" height="17" rx="1.5" />
-    <path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17" />
-  </Icon>
-);
-export const CarouselIcon = (p: IconProps) => (
-  <Icon {...p}>
-    <rect x="3.5" y="7.5" width="13" height="13" rx="2.5" />
-    <path d="M7.5 4.5h10a3 3 0 0 1 3 3v10" />
-  </Icon>
-);
 
-/* Solid versions of the six navigation icons: the current item is drawn with these.
-   Cut-outs (the plus, the needle) are stroked in the page background color. */
-export const HomeFilledIcon = (p: IconProps) => (
-  <Icon filled {...p}>
-    <path d={HOME} />
-  </Icon>
-);
-export const SearchFilledIcon = (p: IconProps) => (
-  <Icon data-filled="true" {...p}>
-    {/* The svg keeps stroke-width 2; the lens and handle are drawn heavier (3) for "solid". */}
-    <circle cx="10.5" cy="10.5" r="6.5" strokeWidth={3} />
-    <path d="m15.5 15.5 5 5" strokeWidth={3} />
-  </Icon>
-);
-export const CompassFilledIcon = (p: IconProps) => (
-  <Icon filled {...p}>
-    <circle cx="12" cy="12" r="9" />
-    <path className="stroke-bg" d="m15.5 8.5-2 5-5 2 2-5z" />
-  </Icon>
-);
-export const PlusSquareFilledIcon = (p: IconProps) => (
-  <Icon filled {...p}>
-    <rect x="3.5" y="3.5" width="17" height="17" rx="4" />
-    <path className="stroke-bg" d="M12 8v8M8 12h8" />
-  </Icon>
-);
-export const BellFilledIcon = (p: IconProps) => (
-  <Icon filled {...p}>
-    <path d={BELL} />
-    <path d="M10 21h4" />
-  </Icon>
-);
-export const UserFilledIcon = (p: IconProps) => (
-  <Icon filled {...p}>
-    <circle cx="12" cy="8" r="4" />
-    <path d="M4.5 20.5c.8-4 3.7-6 7.5-6s6.7 2 7.5 6z" />
-  </Icon>
-);
+/* Solid versions of the navigation icons (the current item): the outline drawn with `filled`. */
+export const HomeFilledIcon = (p: IconProps) => <HomeIcon {...p} filled />;
+export const SearchFilledIcon = (p: IconProps) => <SearchIcon {...p} filled />;
+export const CompassFilledIcon = (p: IconProps) => <CompassIcon {...p} filled />;
+export const PlusSquareFilledIcon = (p: IconProps) => <PlusSquareIcon {...p} filled />;
+export const BellFilledIcon = (p: IconProps) => <BellIcon {...p} filled />;
+export const UserFilledIcon = (p: IconProps) => <UserIcon {...p} filled />;

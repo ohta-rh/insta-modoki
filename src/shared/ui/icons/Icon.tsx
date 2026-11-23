@@ -1,8 +1,12 @@
 import type { ReactNode, SVGProps } from 'react';
 
-export type IconProps = Omit<SVGProps<SVGSVGElement>, 'children' | 'viewBox'> & { size?: number };
+export type IconProps = Omit<SVGProps<SVGSVGElement>, 'children' | 'viewBox'> & {
+  size?: number;
+  /** The solid version (the current navigation item). */
+  filled?: boolean;
+};
 
-type BaseProps = IconProps & { children: ReactNode; filled?: boolean };
+type BaseProps = IconProps & { children: ReactNode };
 
 /** 24px grid, 2 stroke (ADR-0056); `filled` draws the solid version (`data-filled`). Decorative: the button or link using it carries the name. */
 export function Icon({ size = 24, filled = false, children, ...rest }: BaseProps) {
