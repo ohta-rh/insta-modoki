@@ -86,10 +86,13 @@ describe('streamNotifications', () => {
     const headers = await sessionHeadersFor(t.db, env, a);
     await seedNotifications(t.db, { recipientId: a.id, actorId: b.id, count: 2 });
 
+    // The test lasts about as long as the window (1,562-1,584ms alone with 1500; 25% of the 5s limit
+    // is 1,250ms, ADR-0059). The steps before the close take ~250ms, so 900 keeps 3x headroom.
+    const windowMs = 900;
     const started = Date.now();
     const response = await streamNotifications(new Request(URL_, { headers }), {
       env,
-      intervals: { tickMs: 20, pingMs: 50, windowMs: 1500 },
+      intervals: { tickMs: 20, pingMs: 50, windowMs },
     });
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toBe('text/event-stream; charset=utf-8');
@@ -123,7 +126,7 @@ describe('streamNotifications', () => {
 
     // The response ends by itself when the window is over.
     await s.until(() => s.state.done, 4000);
-    expect(Date.now() - started).toBeGreaterThanOrEqual(1500);
+    expect(Date.now() - started).toBeGreaterThanOrEqual(windowMs);
   });
 
   it('他人宛ての通知ではイベントを送らない', async () => {

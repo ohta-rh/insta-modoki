@@ -95,7 +95,8 @@ describe('adminDeleteUser', () => {
     expect(await t.db.select().from(posts).where(eq(posts.authorId, u.id))).toHaveLength(0);
     expect(await t.db.select().from(stories).where(eq(stories.authorId, u.id))).toHaveLength(0);
     expect(await t.db.select().from(sessions).where(eq(sessions.userId, u.id))).toHaveLength(0);
-    for (const key of keys) expect(await headObject(storage, key), key).toBeNull();
+    const heads = await Promise.all(keys.map((key) => headObject(storage, key)));
+    heads.forEach((head, i) => expect(head, keys[i]).toBeNull());
     expect(await t.db.select().from(storageOrphans)).toHaveLength(0);
 
     for (const p of [p1, p2, p3]) {
@@ -181,12 +182,16 @@ describe('adminDeleteUser', () => {
     const headers = await sessionHeadersFor(t.db, env, admin);
     const fan = await createUser(t.db, { username: 'bigfan' });
     const author = await createUser(t.db);
-    const ids: string[] = [];
+    // 91 posts and 91 likes in one batch (one row per statement), not 182 round trips.
+    const statements = [];
     for (let i = 0; i < 91; i++) {
-      const p = await createPost(t.db, author.id, { mediaCount: 0 });
-      await createLike(t.db, fan.id, p.id);
-      ids.push(p.id);
+      const id = newId();
+      statements.push(
+        t.db.insert(posts).values({ id, authorId: author.id, caption: '', createdAt: new Date() }),
+        t.db.insert(likes).values({ userId: fan.id, postId: id, createdAt: new Date() }),
+      );
     }
+    await t.db.batch(statements as unknown as Parameters<typeof t.db.batch>[0]);
     await t.db.update(posts).set({ likeCount: 1 }).where(eq(posts.authorId, author.id));
 
     await adminDeleteUser({ username: 'bigfan' }, { env, headers });
