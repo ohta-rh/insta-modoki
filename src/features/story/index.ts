@@ -11,3 +11,4 @@ export { listStoryTray, type StoryTrayItem, type StoryTrayView } from './api/lis
 export { StoryViewer } from './ui/StoryViewer';
 export { StoryMissing } from './ui/StoryMissing';
 export { getStoryReel, type StoryReel, type StoryItemView } from './api/get-story-reel';
+export { storyFileKeys } from './model/files';

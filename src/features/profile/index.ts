@@ -12,3 +12,4 @@ export { ProfilePostsProvider, useDeletedPosts } from './ui/ProfilePostsProvider
 export { profileTab, type ProfileTab } from './model/tab';
 export { ProfileTabs } from './ui/ProfileTabs';
 export { SavedGrid } from './ui/SavedGrid';
+export { avatarFileKeys } from './model/files';

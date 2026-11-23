@@ -7,6 +7,7 @@ import {
   comments,
   follows,
   hashtags,
+  adminActions,
   invites,
   likes,
   media,
@@ -98,6 +99,7 @@ describe('マイグレーション', () => {
         'notifications',
         'bookmarks',
         'invites',
+        'admin_actions',
         'job_cursors',
       ]),
     );
@@ -113,14 +115,14 @@ describe('マイグレーション', () => {
         'invites_created_idx',
       ]),
     );
-    expect(await names('table')).toHaveLength(19);
+    expect(await names('table')).toHaveLength(20);
   });
 
   it('マイグレーションを 2 回当てても失敗しない', async () => {
     const before = await names('table');
     await applyMigrations(t.d1 as never);
     expect(await names('table')).toEqual(before);
-    expect(before).toHaveLength(19);
+    expect(before).toHaveLength(20);
   });
 
   it('Drizzle のスキーマの列はマイグレーションと一致する', async () => {
@@ -141,6 +143,7 @@ describe('マイグレーション', () => {
       postHashtags,
       bookmarks,
       invites,
+      adminActions,
     ]) {
       const cfg = getTableConfig(table);
       const info = (

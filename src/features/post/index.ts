@@ -22,3 +22,4 @@ export { PostDetail } from './ui/PostDetail';
 export { PostTileGrid } from './ui/PostTileGrid';
 export { thumbhashDataUrl } from './model/thumbhash';
 export { PostDeletedProvider, usePostDeletedHandler } from './ui/PostDeletedContext';
+export { removePost, photoFileKeys } from './api/remove-post';
