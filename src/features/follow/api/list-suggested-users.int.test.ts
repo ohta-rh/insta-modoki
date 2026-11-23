@@ -124,6 +124,30 @@ describe('listSuggestedUsers', () => {
     expect(second.slice(2).every((i) => i.reason === 'おすすめ')).toBe(true);
   });
 
+  it('フォロワーで埋めるときも、既にフォローしている人は入れない', async () => {
+    const v = await person('viewer', 100);
+    const star = await person('star', 5);
+    await follow(v, star);
+    const fans = [
+      await person('fan1', 1),
+      await person('fan2', 2),
+      await person('fan3', 3),
+      await person('fan4', 4),
+    ];
+    for (const f of fans) await follow(f, star);
+    const o1 = await person('oo1', 10);
+    const o2 = await person('oo2', 20);
+    const o3 = await person('oo3', 21);
+    await follow(fans[0]!, o1);
+    await follow(fans[1]!, o1);
+    await follow(fans[0]!, o2);
+    await follow(fans[0]!, o3);
+    // star has the most followers but the viewer follows star already; nobody the viewer follows
+    // follows anyone, so every row is the fill-up.
+    const { items } = await call(v);
+    expect(items.map((i) => i.username)).toEqual(['oo1', 'oo3', 'oo2', 'fan4', 'fan3']);
+  });
+
   it('他に誰もいなければ空を返す', async () => {
     const v = await person('viewer');
     expect(await call(v)).toEqual({ items: [] });
