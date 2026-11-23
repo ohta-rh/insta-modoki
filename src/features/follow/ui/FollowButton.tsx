@@ -5,21 +5,28 @@ import { useFollowScope } from './FollowScope';
 
 const BASE =
   'inline-flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] items-center justify-center rounded-lg px-4 text-[length:var(--font-size-sm)] font-bold';
+// The small coloured word of a list row (the home's right column): "フォロー" / "フォロー中".
+const TEXT =
+  'inline-flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] items-center justify-center px-2 text-[length:var(--font-size-xs)] font-semibold';
 
 /**
  * The follow button. It is a `<form>` whose Server Action sets the wanted state, so it works before
  * the page is hydrated; once hydrated the submit is taken over for the optimistic update. The state
  * is told by the label ("フォローする" / "フォロー中"), by `aria-pressed` and by a polite live
  * message. The server's message of a failure is shown in `role="alert"`. A visitor who is not
- * signed in gets a link to the login page.
+ * signed in gets a link to the login page. `variant="text"` is the list row's coloured word.
  */
-export function FollowButton() {
+export function FollowButton({ variant = 'button' }: { variant?: 'button' | 'text' }) {
   const { username, signedIn, snapshot, press } = useFollowScope();
   const { following, count, error, touched } = snapshot;
+  const text = variant === 'text';
   if (!signedIn) {
     return (
-      <a href="/accounts/login" className={`${BASE} bg-link text-white`}>
-        フォローする
+      <a
+        href="/accounts/login"
+        className={text ? `${TEXT} text-indigo` : `${BASE} bg-link text-white`}
+      >
+        {text ? 'フォロー' : 'フォローする'}
       </a>
     );
   }
@@ -38,9 +45,13 @@ export function FollowButton() {
         <button
           type="submit"
           aria-pressed={following}
-          className={`${BASE} ${following ? 'bg-surface text-text' : 'bg-link text-white'}`}
+          className={
+            text
+              ? `${TEXT} ${following ? 'text-text' : 'text-indigo'}`
+              : `${BASE} ${following ? 'bg-surface text-text' : 'bg-link text-white'}`
+          }
         >
-          {following ? 'フォロー中' : 'フォローする'}
+          {following ? 'フォロー中' : text ? 'フォロー' : 'フォローする'}
         </button>
       </form>
       <span aria-live="polite" className="sr-only">

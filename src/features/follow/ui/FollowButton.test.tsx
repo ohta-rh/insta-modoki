@@ -1,4 +1,7 @@
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { FollowButton } from './FollowButton';
+import { FollowScope } from './FollowScope';
 import {
   createFollowController,
   type FollowSendResult,
@@ -172,5 +175,33 @@ describe('FollowButton', () => {
     server.settleNext({ ok: false, code: 'RATE_LIMITED', message: 'x' });
     await tick();
     expect(c.snapshot()).toMatchObject({ following: true, count: 1, error: 'x' });
+  });
+});
+
+describe('FollowButton の見た目', () => {
+  const render = (variant?: 'button' | 'text', following = false) =>
+    renderToStaticMarkup(
+      <FollowScope username="bob" initialFollowing={following} initialFollowerCount={0} signedIn>
+        <FollowButton variant={variant} />
+      </FollowScope>,
+    );
+
+  it('variant が text のとき インディゴの 12px の文字で「フォロー」と描く', () => {
+    const html = render('text');
+    expect(html).toContain('text-indigo');
+    expect(html).toContain('text-[length:var(--font-size-xs)]');
+    expect(html).toMatch(/<button[^>]*>フォロー<\/button>/);
+  });
+
+  it('variant が text でフォロー中のとき 「フォロー中」と描き インディゴでなくなる', () => {
+    const html = render('text', true);
+    expect(html).toMatch(/<button[^>]*>フォロー中<\/button>/);
+    expect(html).not.toContain('text-indigo');
+  });
+
+  it('variant が無いとき 今までの「フォローする」のボタンのまま', () => {
+    const html = render();
+    expect(html).toMatch(/<button[^>]*>フォローする<\/button>/);
+    expect(html).toContain('bg-link');
   });
 });
