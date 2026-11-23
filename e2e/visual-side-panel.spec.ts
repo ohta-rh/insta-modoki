@@ -224,3 +224,20 @@ test('今いるプロフィールの人を候補から選ぶとパネルが閉�
   await expect(panel(page)).toBeHidden();
   await expect(searchItem(page)).toHaveAttribute('aria-expanded', 'false');
 });
+
+test('今いるプロフィールの人をキーボードの Enter で選ぶとパネルが閉じる', async ({ page }) => {
+  const p = prefix();
+  const username = `${p}_key`;
+  seedUser(username, `${username}@example.com`, { displayName: 'Key' });
+  await open(page, VIEWPORTS.wide, `/${username}`);
+  await searchItem(page).click();
+  await expect(panel(page)).toBeVisible();
+  await input(page).fill(`${p}_ke`);
+  await expect(panel(page).getByRole('option')).toHaveCount(1);
+  await input(page).press('ArrowDown');
+  await expect(panel(page).getByRole('option', { selected: true })).toHaveCount(1);
+  await input(page).press('Enter');
+  await expect(page).toHaveURL(new RegExp(`/${username}$`));
+  await expect(panel(page)).toBeHidden();
+  await expect(searchItem(page)).toHaveAttribute('aria-expanded', 'false');
+});

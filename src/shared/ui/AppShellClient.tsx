@@ -63,6 +63,18 @@ export function AppShellClient({
   useEffect(() => {
     if (open === null) return;
     const onKey = (e: KeyboardEvent) => {
+      // Enter on a highlighted candidate of a combobox in the panel navigates with no click, and
+      // possibly to the path already shown: close the panel here (the box handles Enter first).
+      if (e.key === 'Enter') {
+        const t = e.target as Element | null;
+        if (
+          t?.closest(`#${SIDE_PANEL_ID}`) &&
+          t.getAttribute('role') === 'combobox' &&
+          (t.getAttribute('aria-activedescendant') ?? '') !== ''
+        )
+          close();
+        return;
+      }
       if (e.key !== 'Escape' || e.defaultPrevented) return;
       // A modal dialog over the page takes the Escape key first.
       if (document.querySelector('dialog[open], [role="dialog"][aria-modal="true"]')) return;
