@@ -33,12 +33,8 @@ export function PostDetail({
             post={post}
             priority
             wrapMedia={(media) => <DoubleTapLike>{media}</DoubleTapLike>}
-            like={
-              <>
-                <LikeButton />
-                <LikersDialog />
-              </>
-            }
+            like={<LikeButton />}
+            likes={<LikersDialog />}
             comment={<CommentCountLink />}
             save={<SaveButton postId={post.id} initialSaved={post.savedByMe} />}
             menu={

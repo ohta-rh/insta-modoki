@@ -4,5 +4,6 @@ export { deleteComment } from './api/delete-comment';
 export { listComments } from './api/list-comments';
 export { listReplies } from './api/list-replies';
 export type { CommentView, Page } from './model/schema';
-export { CommentCountLink, CommentCountProvider } from './ui/CommentCount';
+export { CommentCountAllLink, CommentCountLink, CommentCountProvider } from './ui/CommentCount';
+export { FeedCommentField } from './ui/FeedCommentField';
 export { CommentSection } from './ui/CommentSection';

@@ -1,14 +1,13 @@
 import { z } from 'zod';
 import { charLength } from '../../../shared/text';
-import { MAX_BODY } from './limits';
+import { MAX_BODY, TOO_LONG_MESSAGE } from './limits';
 
-export { MAX_BODY };
+export { MAX_BODY, TOO_LONG_MESSAGE };
 export const PAGE_SIZE = 20;
 /** How many replies each parent carries in `listComments`; the rest come from `listReplies`. */
 export const INLINE_REPLIES = 3;
 
 export const EMPTY_MESSAGE = 'コメントを入力してください';
-export const TOO_LONG_MESSAGE = 'コメントは 2,200 字までです';
 const NUL_MESSAGE = '使えない文字が含まれています';
 
 /** Anything but a UUID can never name a row, so it is NOT_FOUND without a query. */

@@ -38,10 +38,23 @@ export function CommentCountLink({ href }: { href?: string } = {}) {
     <a
       href={href ?? `#${COMMENT_INPUT_ID}`}
       aria-label={`コメント ${count} 件`}
-      className="flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] items-center justify-center gap-1 rounded-lg px-2 text-text"
+      className="flex h-[var(--tap-min)] w-[var(--tap-min)] items-center justify-center rounded-full text-text hover:bg-surface"
     >
       <CommentIcon />
-      <span className="text-[length:var(--font-size-sm)] tabular-nums">{count}</span>
+    </a>
+  );
+}
+
+/** "コメント N 件をすべて見る" under a feed card's caption; follows the count, absent at 0. */
+export function CommentCountAllLink({ href }: { href: string }) {
+  const { count } = useCommentCount();
+  if (count === 0) return null;
+  return (
+    <a
+      href={href}
+      className="flex min-h-[var(--tap-min)] items-center px-3 text-[length:var(--font-size-sm)] text-text-secondary"
+    >
+      {`コメント ${count} 件をすべて見る`}
     </a>
   );
 }

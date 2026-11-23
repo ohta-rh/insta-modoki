@@ -101,7 +101,7 @@ export function LikersDialog() {
           }
           restart();
         }}
-        className="min-h-[var(--tap-min)] rounded-lg px-2 text-[length:var(--font-size-sm)] font-bold hover:bg-surface"
+        className="min-h-[var(--tap-min)] px-0 text-[length:var(--font-size-sm)] font-semibold"
       >
         {`${snapshot.count} 件のいいね`}
       </button>
