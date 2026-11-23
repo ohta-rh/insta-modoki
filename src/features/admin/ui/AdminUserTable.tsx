@@ -91,12 +91,12 @@ export function AdminUserTable({ initialItems, initialCursor }: Props) {
         </button>
       </form>
       {snapshot.error ? (
-        <p role="alert" className="mb-2 text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="mb-2 text-[length:var(--font-size-sm)] text-danger">
           {snapshot.error}
         </p>
       ) : null}
       {listError ? (
-        <p role="alert" className="mb-2 text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="mb-2 text-[length:var(--font-size-sm)] text-danger">
           {listError}
         </p>
       ) : null}
@@ -149,7 +149,7 @@ export function AdminUserTable({ initialItems, initialCursor }: Props) {
                         type="button"
                         onClick={() => controller.ask(r.username)}
                         aria-label={`${labelOf(r)} を削除`}
-                        className={`${BUTTON} text-red-700 hover:bg-surface`}
+                        className={`${BUTTON} text-danger hover:bg-wash`}
                       >
                         削除
                       </button>

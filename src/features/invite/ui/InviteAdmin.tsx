@@ -18,7 +18,7 @@ const INPUT =
   'min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-red-600';
 const BUTTON =
   'min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-4 text-[length:var(--font-size-sm)] font-bold';
-const ERROR = 'mt-1 text-[length:var(--font-size-sm)] text-red-700';
+const ERROR = 'mt-1 text-[length:var(--font-size-sm)] text-danger';
 
 const formatDate = (d: Date) =>
   new Date(d).toLocaleString('ja-JP', { dateStyle: 'medium', timeStyle: 'short' });
@@ -246,7 +246,7 @@ export function InviteAdmin({ initialItems, initialCursor }: Props) {
                       type="button"
                       onClick={(e) => askRevoke(invite.code, e.currentTarget)}
                       aria-label={`招待コード ${invite.code} を失効`}
-                      className={`${BUTTON} text-red-700 hover:bg-surface`}
+                      className={`${BUTTON} text-danger hover:bg-wash`}
                     >
                       失効
                     </button>

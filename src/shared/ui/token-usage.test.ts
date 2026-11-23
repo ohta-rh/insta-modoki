@@ -61,4 +61,28 @@ describe('色の使い方', () => {
     }
     expect(violations).toEqual([]);
   });
+
+  it('エラーの赤（text-danger）を面の上に置くクラスの組が無い（surface の上で 4.47:1）', () => {
+    const violations: string[] = [];
+    for (const file of tsxFiles(SRC)) {
+      const rel = file.slice(ROOT.length + 1);
+      for (const { text, line } of literals(readFileSync(file, 'utf8'))) {
+        const classes = text.split(/\s+/).filter(Boolean);
+        if (!has(classes, 'text-danger')) continue;
+        for (const surface of [
+          'bg-surface',
+          'bg-highlight',
+          'hover:bg-surface',
+          'hover:bg-highlight',
+        ]) {
+          if (has(classes, surface)) {
+            violations.push(
+              `${rel}:${line} text-danger を ${surface} の上に置いています（hover:bg-wash を使う）`,
+            );
+          }
+        }
+      }
+    }
+    expect(violations).toEqual([]);
+  });
 });
