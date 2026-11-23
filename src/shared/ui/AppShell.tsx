@@ -39,6 +39,7 @@ export type AppShellProps = {
 };
 
 const TRANSITION = 'transition-colors duration-[var(--motion-fast)]';
+const SIDE_ITEM = `flex min-h-12 items-center gap-4 rounded-lg p-3 text-base hover:bg-surface ${TRANSITION}`;
 
 function SkipLink() {
   return (
@@ -83,8 +84,8 @@ function NavLinks({
               aria-current={isHere ? 'page' : undefined}
               className={
                 layout === 'side'
-                  ? `flex min-h-12 items-center gap-4 rounded-lg p-3 text-[length:var(--font-size-md)] leading-[var(--leading-md)] text-text hover:bg-surface aria-[current=page]:font-bold ${TRANSITION}`
-                  : `relative flex h-full min-h-[var(--tap-min)] min-w-[var(--tap-min)] flex-1 items-center justify-center text-text ${TRANSITION}`
+                  ? `${SIDE_ITEM} aria-[current=page]:font-bold`
+                  : `relative flex h-full min-h-11 min-w-11 flex-1 items-center justify-center ${TRANSITION}`
               }
             >
               <Icon filled={isHere} />
@@ -117,11 +118,7 @@ function NavLinks({
 
 function MoreButton() {
   return (
-    <button
-      type="button"
-      popoverTarget={MORE_MENU_ID}
-      className={`flex min-h-12 w-full items-center gap-4 rounded-lg p-3 text-left text-[length:var(--font-size-md)] leading-[var(--leading-md)] text-text hover:bg-surface ${TRANSITION}`}
-    >
+    <button type="button" popoverTarget={MORE_MENU_ID} className={`${SIDE_ITEM} w-full text-left`}>
       <MenuIcon />
       <span className="sr-only nav-wide:not-sr-only">その他</span>
     </button>
@@ -171,7 +168,7 @@ function TopBar() {
       <button
         type="button"
         popoverTarget={MORE_MENU_ID}
-        className="-mr-3 flex h-[var(--tap-min)] w-[var(--tap-min)] items-center justify-center rounded-lg text-text"
+        className="-mr-3 flex size-11 items-center justify-center rounded-lg"
       >
         <MenuIcon />
         <span className="sr-only">その他</span>
