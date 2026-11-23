@@ -53,10 +53,26 @@
 
   body {
     font-size: var(--font-size-sm);
-    /* A ratio (18px / 14px), not 18px: headings keep a line height proportional to their size.
-       Written with var() so the minifier cannot round it to 1.28571 (17.9999px). */
-    line-height: calc(var(--leading-sm) / var(--font-size-sm));
+    line-height: var(--leading-sm);
     color: var(--color-text);
+  }
+
+  /* A component that sets its own size through a font-size token gets the matching line height,
+     so it does not inherit body's 18px (utilities such as leading-* still win: they are in a later layer). */
+  [class~='text-[length:var(--font-size-xs)]'] {
+    line-height: var(--leading-xs);
+  }
+  [class~='text-[length:var(--font-size-sm)]'] {
+    line-height: var(--leading-sm);
+  }
+  [class~='text-[length:var(--font-size-md)]'] {
+    line-height: var(--leading-md);
+  }
+  [class~='text-[length:var(--font-size-lg)]'] {
+    line-height: var(--leading-lg);
+  }
+  [class~='text-[length:var(--font-size-xl)]'] {
+    line-height: var(--leading-xl);
   }
 
   :focus-visible {

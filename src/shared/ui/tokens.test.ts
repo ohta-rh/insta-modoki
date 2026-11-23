@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { TOKENS } from './tokens';
 
 const css = readFileSync(new URL('./tokens.css', import.meta.url), 'utf8');
+const globals = readFileSync(new URL('../../app/globals.css', import.meta.url), 'utf8');
 
 function parseCssVariables(source: string): Record<string, string> {
   const vars: Record<string, string> = {};
@@ -102,5 +103,13 @@ describe('tokens.css と tokens.ts', () => {
   it('視差効果を減らす設定のとき --motion-fast が 0ms', () => {
     const block = css.match(/@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\{[^}]*\}/);
     expect(block?.[0]).toMatch(/--motion-fast:\s*0ms/);
+  });
+
+  it('body の行の高さは絶対値で、文字の大きさを自分で決める部品には対の行の高さが付く', () => {
+    expect(globals).toMatch(/body\s*\{[^}]*line-height:\s*var\(--leading-sm\)/);
+    for (const size of ['xs', 'sm', 'md', 'lg', 'xl']) {
+      const rule = `[class~='text-[length:var(--font-size-${size})]'] { line-height: var(--leading-${size}); }`;
+      expect(globals.replace(/\s+/g, ' '), size).toContain(rule.replace(/\s+/g, ' '));
+    }
   });
 });
