@@ -69,8 +69,9 @@ test('キーボードだけでトレイを操作でき、タップ領域が 44px
   await openHome(page);
 
   const all = links(page);
+  // The tray is fetched after hydration: wait for its three links, do not count them at once.
+  await expect(all).toHaveCount(3);
   const count = await all.count();
-  expect(count).toBe(3);
   for (let i = 0; i < count; i++) {
     const box = (await all.nth(i).boundingBox())!;
     expect(box.width).toBeGreaterThanOrEqual(44);
