@@ -2,7 +2,7 @@
 // only processing and types, so importing a process never loads a component.
 export { Carousel } from './Carousel';
 export { DeletePostButton } from './DeletePostButton';
-export { PostTileGrid } from './PostTileGrid';
+export { PostTileGrid, PostTileItem } from './PostTileGrid';
 export { PostDeletedProvider, usePostDeletedHandler } from './PostDeletedContext';
 export { MediaImage } from './MediaImage';
 export { PostActionBar } from './PostActionBar';

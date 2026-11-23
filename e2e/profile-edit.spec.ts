@@ -56,7 +56,8 @@ test('表示名と自己紹介とアイコンを変えて保存すると 自分�
   await save(page).click();
 
   await expect(page).toHaveURL(new RegExp(`/${user.username}$`));
-  await expect(page.getByRole('heading', { level: 1, name: '新しい名前 😀' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: user.username })).toBeVisible();
+  await expect(page.getByText('新しい名前 😀', { exact: true })).toBeVisible();
   await expect(page.getByText('新しい自己紹介')).toBeVisible();
   await expect(page.getByText('二行目')).toBeVisible();
   const row = userRow(user.username)!;
@@ -78,7 +79,8 @@ test('表示名と自己紹介とアイコンを変えて保存すると 自分�
     const viewer = await context.newPage();
     await viewer.goto(`/${user.username}`);
     await viewer.reload();
-    await expect(viewer.getByRole('heading', { level: 1, name: '新しい名前 😀' })).toBeVisible();
+    await expect(viewer.getByRole('heading', { level: 1, name: user.username })).toBeVisible();
+    await expect(viewer.getByText('新しい名前 😀', { exact: true })).toBeVisible();
     await expect(viewer.getByText('新しい自己紹介')).toBeVisible();
     await expect(viewer.locator('header img')).toHaveAttribute(
       'src',
@@ -201,7 +203,8 @@ test('他人のプロフィールには編集ボタンが出ない', async ({ pa
 
   const me = await signUpViaUi(page);
   await page.goto(`/${other}`);
-  await expect(page.getByRole('heading', { level: 1, name: '他人' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: other })).toBeVisible();
+  await expect(page.getByText('他人', { exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: 'プロフィールを編集' })).toHaveCount(0);
 
   await page.goto(`/${me.username}`);
@@ -296,7 +299,8 @@ test('JS が読み込まれる前でも 保存を押すと 保存されてプロ
     await pressSave(page);
 
     await expect(page).toHaveURL(new RegExp(`/${user.username}$`));
-    await expect(page.getByRole('heading', { level: 1, name: 'JS なしの名前' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: user.username })).toBeVisible();
+    await expect(page.getByText('JS なしの名前', { exact: true })).toBeVisible();
     await expect(page.getByText('JS なしの自己紹介')).toBeVisible();
     const row = userRow(user.username)!;
     expect(row.display_name).toBe('JS なしの名前');

@@ -46,7 +46,7 @@ export default async function ProfilePage({ params, searchParams }: Props) {
   // Someone else's profile gets the follow button; your own keeps the edit link (ProfileHeader).
   const viewer = profile.isMe ? null : await getSessionUser(await headers());
   return (
-    <div className="mx-auto w-full max-w-[var(--content-max)]">
+    <div data-page-width="wide" className="mx-auto w-full max-w-[var(--site-width-wide)] pt-[30px]">
       {profile.isMe ? (
         <ProfileHeader profile={profile} />
       ) : (

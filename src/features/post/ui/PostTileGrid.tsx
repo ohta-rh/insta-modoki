@@ -3,38 +3,33 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import type { ErrorBody } from '../../../shared/errors';
+import { CarouselIcon } from '../../../shared/ui/icons';
 import { photoAlt } from '../model/alt-text';
 import type { Page, PostTile } from '../model/schema';
 import { thumbhashDataUrl } from '../model/thumbhash';
 
 /** The first six tiles are on the first screen; the rest load lazily. */
 const EAGER_TILES = 6;
-const SIZES = '(min-width: 768px) 205px, 33vw';
+const SIZES = '(min-width: 768px) 311px, 33vw';
 
-function StackIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <rect x="8" y="3" width="13" height="13" rx="3" />
-      <path d="M5 7a3 3 0 0 0-2 2.8V17a4 4 0 0 0 4 4h7.2A3 3 0 0 0 17 19H7.5A1.5 1.5 0 0 1 6 17.5z" />
-    </svg>
-  );
-}
-
-function Tile({ post, eager }: { post: PostTile; eager: boolean }) {
+/** One tile: a 3:4 photo that links to the post. `scroll={false}` keeps the page where it is (the profile opens the post in a modal). */
+export function PostTileItem({
+  post,
+  eager,
+  scroll,
+}: {
+  post: PostTile;
+  eager: boolean;
+  scroll?: boolean;
+}) {
   const { cover } = post;
   const placeholder = thumbhashDataUrl(cover.thumbhash);
   return (
     <Link
       href={`/p/${post.id}`}
       prefetch={false}
-      className="relative block aspect-square overflow-hidden bg-surface"
+      scroll={scroll}
+      className="relative block aspect-[3/4] overflow-hidden bg-highlight"
     >
       <img
         src={cover.srcset.w320}
@@ -52,7 +47,7 @@ function Tile({ post, eager }: { post: PostTile; eager: boolean }) {
         decoding="async"
         className="block h-full w-full bg-cover object-cover"
         style={{
-          aspectRatio: '1',
+          aspectRatio: '3 / 4',
           backgroundImage: placeholder ? `url("${placeholder}")` : undefined,
         }}
       />
@@ -60,10 +55,9 @@ function Tile({ post, eager }: { post: PostTile; eager: boolean }) {
         <span
           role="img"
           aria-label={`${post.mediaCount} 枚の写真`}
-          className="absolute top-1 right-1 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[length:var(--font-size-xs)] font-bold text-white"
+          className="absolute top-2 right-2 flex h-5 w-5 text-white drop-shadow"
         >
-          <StackIcon />
-          <span aria-hidden="true">{post.mediaCount}</span>
+          <CarouselIcon size={20} filled />
         </span>
       )}
     </Link>
@@ -99,9 +93,9 @@ export function PostTileGridView({
       {items.length === 0 ? (
         <p className="px-4 py-16 text-center text-text-secondary">{emptyText}</p>
       ) : (
-        <div data-testid="post-grid" className="grid grid-cols-3 gap-[2px]">
+        <div data-testid="post-grid" className="grid grid-cols-3 gap-px">
           {items.map((post, i) => (
-            <Tile key={post.id} post={post} eager={i < EAGER_TILES} />
+            <PostTileItem key={post.id} post={post} eager={i < EAGER_TILES} />
           ))}
         </div>
       )}

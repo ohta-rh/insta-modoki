@@ -98,6 +98,22 @@ export const CompassIcon = ({ filled, ...p }: IconProps) => (
     <path className={filled ? 'stroke-bg' : undefined} d="m15.5 8.5-2 5-5 2 2-5z" />
   </Icon>
 );
+export const GridIcon = ({ filled, ...p }: IconProps) => (
+  <Icon filled={filled} {...p}>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="2" />
+    <path
+      className={filled ? 'stroke-bg' : undefined}
+      d="M3.5 9.2h17M3.5 14.8h17M9.2 3.5v17M14.8 3.5v17"
+    />
+  </Icon>
+);
+/** Two stacked photos: the mark of a post with several photos. */
+export const CarouselIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M8 3.5h9a3.5 3.5 0 0 1 3.5 3.5v9" fill="none" />
+    <rect x="3.5" y="7.5" width="13" height="13" rx="3" />
+  </Icon>
+);
 export const MenuIcon = (p: IconProps) => (
   <Icon {...p}>
     <path d="M4 7h16M4 12h16M4 17h16" />

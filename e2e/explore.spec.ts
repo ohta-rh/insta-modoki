@@ -93,9 +93,9 @@ signedIn('発見タブにいいねの多い順のグリッドが出て、検索�
     const s = getComputedStyle(el);
     return { columns: s.gridTemplateColumns.split(' ').length, gap: s.columnGap, rowGap: s.rowGap };
   });
-  expect(style).toEqual({ columns: 3, gap: '2px', rowGap: '2px' });
+  expect(style).toEqual({ columns: 3, gap: '1px', rowGap: '1px' });
   const first = (await tiles(page).first().boundingBox())!;
-  expect(Math.abs(first.width - first.height)).toBeLessThan(1);
+  expect(Math.abs(first.width * (4 / 3) - first.height)).toBeLessThan(1);
 
   const mine = new Set([top.id, mid.id, low.id].map((id) => `/p/${id}`));
   const order = (await hrefsOf(tiles(page))).filter((h) => mine.has(h));

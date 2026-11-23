@@ -91,7 +91,7 @@ test('グリッドの投稿をクリックすると モーダルで開き URL �
   // The post detail (#28) is inside the dialog, and the profile stays behind it.
   await expect(dialog(page).getByText(/モーダル試験の投稿 \d+/)).toBeVisible();
   await expect(page.getByTestId('post-grid')).toBeAttached();
-  await expect(page.getByRole('heading', { name: 'モーダルの人' })).toBeAttached();
+  await expect(page.getByRole('heading', { level: 1, name: username, exact: true })).toBeAttached();
   expect(await scrollY(page)).toBe(before);
 
   // The page behind does not scroll.

@@ -1,78 +1,13 @@
 'use client';
 
-import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { photoAlt, thumbhashDataUrl } from '../../post';
+import { PostTileItem } from '../../post/ui';
 import { listProfilePostsAction } from '../api/actions';
 import type { PostThumb } from '../model/schema';
 import { useDeletedPosts } from './ProfilePostsProvider';
 
 /** The first six tiles are on the first screen; the rest load lazily. */
 const EAGER_TILES = 6;
-const SIZES = '(min-width: 768px) 205px, 33vw';
-
-function StackIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <rect x="8" y="3" width="13" height="13" rx="3" />
-      <path d="M5 7a3 3 0 0 0-2 2.8V17a4 4 0 0 0 4 4h7.2A3 3 0 0 0 17 19H7.5A1.5 1.5 0 0 1 6 17.5z" />
-    </svg>
-  );
-}
-
-function Tile({ post, username, eager }: { post: PostThumb; username: string; eager: boolean }) {
-  const { cover } = post;
-  const placeholder = thumbhashDataUrl(cover.thumbhash);
-  return (
-    // Next's Link opens the post in the modal (intercepting route) on a plain click, keeps the
-    // scroll position, and leaves Ctrl/Cmd/middle clicks and a click before hydration to the
-    // browser: they load the normal post page.
-    <Link
-      href={`/p/${post.id}`}
-      prefetch={false}
-      scroll={false}
-      className="relative block aspect-square overflow-hidden bg-surface"
-    >
-      <img
-        src={cover.srcset.w320}
-        srcSet={`${cover.srcset.w320} 320w, ${cover.srcset.w640} 640w`}
-        sizes={SIZES}
-        width={cover.width}
-        height={cover.height}
-        alt={photoAlt({
-          altText: cover.altText,
-          username,
-          position: 1,
-          count: post.mediaCount,
-        })}
-        loading={eager ? undefined : 'lazy'}
-        decoding="async"
-        className="block h-full w-full bg-cover object-cover"
-        style={{
-          aspectRatio: '1',
-          backgroundImage: placeholder ? `url("${placeholder}")` : undefined,
-        }}
-      />
-      {post.mediaCount > 1 && (
-        <span
-          role="img"
-          aria-label={`${post.mediaCount} 枚の写真`}
-          className="absolute top-1 right-1 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[length:var(--font-size-xs)] font-bold text-white"
-        >
-          <StackIcon />
-          <span aria-hidden="true">{post.mediaCount}</span>
-        </span>
-      )}
-    </Link>
-  );
-}
 
 /**
  * The 3-column grid of a user's posts. The first page comes from the server and works without
@@ -131,9 +66,17 @@ export function PostGrid({
 
   return (
     <section aria-label="投稿">
-      <div data-testid="post-grid" className="grid grid-cols-3 gap-[2px]">
+      <div data-testid="post-grid" className="grid grid-cols-3 gap-px">
         {items.map((post, i) => (
-          <Tile key={post.id} post={post} username={username} eager={i < EAGER_TILES} />
+          // Next's Link opens the post in the modal (intercepting route) on a plain click, keeps the
+          // scroll position, and leaves Ctrl/Cmd/middle clicks and a click before hydration to the
+          // browser: they load the normal post page.
+          <PostTileItem
+            key={post.id}
+            post={{ ...post, username }}
+            eager={i < EAGER_TILES}
+            scroll={false}
+          />
         ))}
       </div>
       {cursor !== null && !failed && (

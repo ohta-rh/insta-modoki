@@ -60,8 +60,8 @@ test('他人のプロフィールを開くと ヘッダーと投稿のグリッ�
   const response = await page.goto(`/${haru.username}`);
   expect(response!.status()).toBe(200);
 
-  await expect(page.getByRole('heading', { level: 1, name: 'ハル' })).toBeVisible();
-  await expect(page.getByText(`@${haru.username}`, { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: haru.username })).toBeVisible();
+  await expect(page.getByText('ハル', { exact: true })).toBeVisible();
   await expect(page.getByText('猫と散歩')).toBeVisible();
   await expect(page.getByText('毎日更新')).toBeVisible();
   // No avatar is stored, so the first letter of the username shows in a circle.
@@ -139,7 +139,8 @@ test('存在しないユーザー名では 404 の画面が出る', async ({ pag
   const haru = newProfileUser({ displayName: '大文字' });
   const response = await page.goto(`/${haru.username.toUpperCase()}`);
   expect(response!.status()).toBe(200);
-  await expect(page.getByRole('heading', { level: 1, name: '大文字' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: haru.username })).toBeVisible();
+  await expect(page.getByText('大文字', { exact: true })).toBeVisible();
 });
 
 test('グリッドの画像が全て alt を持ち axe の重大な違反が無い', async ({ page }) => {
@@ -195,7 +196,7 @@ test('複数枚の投稿だけに 枚数が表示される', async ({ page }) =>
   const singleTile = grid(page).locator(`a[href="/p/${single.id}"]`);
   const badge = threeTile.getByRole('img', { name: '3 枚の写真' });
   await expect(badge).toBeVisible();
-  await expect(badge).toHaveText('3');
+  await expect(badge).toHaveText('');
   await expect(singleTile.getByRole('img', { name: /枚の写真/ })).toHaveCount(0);
   // The badge sits in the top-right corner of the thumbnail.
   const tile = await boxOf(threeTile);
@@ -204,7 +205,7 @@ test('複数枚の投稿だけに 枚数が表示される', async ({ page }) =>
   expect(mark.y).toBeLessThan(tile.y + tile.height * 0.4);
 });
 
-test('375px と 1280px でグリッドが 3 列の正方形で並ぶ', async ({ page }) => {
+test('375px と 1280px でグリッドが 3 列の 3:4 で並ぶ', async ({ page }) => {
   const user = newProfileUser();
   for (let i = 0; i < 6; i++) await postAt(page, user.username, 60 - i);
 
@@ -218,11 +219,11 @@ test('375px と 1280px でグリッドが 3 列の正方形で並ぶ', async ({ 
     const lefts = [...new Set(boxes.map((b) => Math.round(b.x)))];
     expect(lefts, `${width}px の列`).toHaveLength(3);
     for (const [i, box] of boxes.entries()) {
-      expect(Math.abs(box.width - box.height), `${width}px の ${i} 番目`).toBeLessThan(1);
+      expect(Math.abs(box.width * (4 / 3) - box.height), `${width}px の ${i} 番目`).toBeLessThan(1);
     }
-    // Neighbours are 2px apart, across and down.
-    expect(boxes[1]!.x - (boxes[0]!.x + boxes[0]!.width)).toBeCloseTo(2, 0);
-    expect(boxes[3]!.y - (boxes[0]!.y + boxes[0]!.height)).toBeCloseTo(2, 0);
+    // Neighbours are 1px apart, across and down.
+    expect(boxes[1]!.x - (boxes[0]!.x + boxes[0]!.width)).toBeCloseTo(1, 0);
+    expect(boxes[3]!.y - (boxes[0]!.y + boxes[0]!.height)).toBeCloseTo(1, 0);
     expect(boxes[3]!.x).toBeCloseTo(boxes[0]!.x, 0);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
