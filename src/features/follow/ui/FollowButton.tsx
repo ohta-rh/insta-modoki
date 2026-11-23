@@ -45,6 +45,7 @@ export function FollowButton({ variant = 'button' }: { variant?: 'button' | 'tex
         <button
           type="submit"
           aria-pressed={following}
+          aria-label={text ? `${username} ${following ? 'をフォロー中' : 'をフォロー'}` : undefined}
           className={
             text
               ? `${TEXT} ${following ? 'text-text' : 'text-indigo'}`

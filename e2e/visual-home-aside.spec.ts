@@ -117,7 +117,7 @@ test('候補の行はアバター・名前・理由・フォローのボタン',
     'font-size': '12px',
     color: GRAY,
   });
-  const button = item.getByRole('button', { name: 'フォロー', exact: true });
+  const button = item.getByRole('button', { name: `${cand} をフォロー`, exact: true });
   expect(await styles(button, ['font-size', 'font-weight', 'color'])).toEqual({
     'font-size': '12px',
     'font-weight': '600',
@@ -134,7 +134,7 @@ test('おすすめの行からフォローできる', async ({ page, me }) => {
   const { cand, candId } = suggestion(me);
   await home(page, 1280);
   const item = row(page, cand);
-  const button = item.getByRole('button', { name: /^フォロー/ });
+  const button = item.getByRole('button', { name: new RegExp(`^${cand} をフォロー`) });
   await button.click();
   await expect(button).toHaveText('フォロー中');
   await expect(button).toHaveAttribute('aria-pressed', 'true');
@@ -208,5 +208,5 @@ test('右の列に axe の重大な違反が無く、キーボードで辿れる
   await page.keyboard.press('Tab');
   await expect(item.getByRole('link', { name: cand })).toBeFocused();
   await page.keyboard.press('Tab');
-  await expect(item.getByRole('button', { name: /^フォロー/ })).toBeFocused();
+  await expect(item.getByRole('button', { name: new RegExp(`^${cand} をフォロー`) })).toBeFocused();
 });

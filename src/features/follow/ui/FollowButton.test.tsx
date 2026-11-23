@@ -199,6 +199,13 @@ describe('FollowButton の見た目', () => {
     expect(html).not.toContain('text-indigo');
   });
 
+  it('variant が text のとき 行ごとに違う名前を aria-label に持ち aria-pressed も付く', () => {
+    const html = render('text');
+    expect(html).toContain('aria-label="bob をフォロー"');
+    expect(html).toContain('aria-pressed="false"');
+    expect(render('text', true)).toMatch(/aria-label="bob をフォロー中"/);
+  });
+
   it('variant が無いとき 今までの「フォローする」のボタンのまま', () => {
     const html = render();
     expect(html).toMatch(/<button[^>]*>フォローする<\/button>/);
