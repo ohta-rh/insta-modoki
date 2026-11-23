@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { listNotificationsAction, markNotificationsReadAction } from '../api/actions';
 import { initList, loadMore, type ListState } from '../model/load-more';
+import { groupByPeriod } from '../model/period';
 import type { NotificationPage } from '../model/schema';
 import { NotificationItem } from './NotificationItem';
 import { unreadStore } from './unread-store';
@@ -19,6 +20,7 @@ export function NotificationListView({
   loading?: boolean;
   onMore?: () => void;
 }) {
+  const idBase = useId();
   if (state.items.length === 0) {
     return (
       <p className="py-10 text-center text-[length:var(--font-size-sm)] text-text-secondary">
@@ -29,8 +31,22 @@ export function NotificationListView({
   return (
     <>
       <ul aria-label="通知の一覧">
-        {state.items.map((view) => (
-          <NotificationItem key={view.id} view={view} now={now} />
+        {groupByPeriod(state.items, now).map(({ period, items }) => (
+          <li key={period}>
+            <section aria-labelledby={`${idBase}-${period}`}>
+              <h3
+                id={`${idBase}-${period}`}
+                className="px-6 pt-4 pb-2 text-[length:var(--font-size-md)] font-bold"
+              >
+                {period}
+              </h3>
+              <ul>
+                {items.map((view) => (
+                  <NotificationItem key={view.id} view={view} now={now} />
+                ))}
+              </ul>
+            </section>
+          </li>
         ))}
       </ul>
       {state.error ? (

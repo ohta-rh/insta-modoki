@@ -66,4 +66,26 @@ describe('NotificationList', () => {
     );
     expect(html).toContain('まだ通知はありません');
   });
+
+  it('期間ごとに h3 の見出しと一覧で区切り、通知の無い期間は出さない', () => {
+    const DAY = 24 * 3_600_000;
+    const at = (id: string, ms: number): NotificationView => ({
+      ...row(id),
+      createdAt: new Date(ms).toISOString(),
+    });
+    const html = renderToStaticMarkup(
+      <NotificationListView
+        state={initList({
+          items: [at('a', NOW), at('b', NOW - 3 * DAY), at('c', NOW - 40 * DAY)],
+          nextCursor: null,
+        })}
+        now={NOW}
+      />,
+    );
+    const headings = [...html.matchAll(/<h3[^>]*>([^<]*)<\/h3>/g)].map((m) => m[1]);
+    expect(headings).toEqual(['今日', '今週', 'それ以前']);
+    expect(html).not.toContain('今月');
+    expect(html.match(/<section /g)).toHaveLength(3);
+    expect(html).toContain('aria-label="通知の一覧"');
+  });
 });

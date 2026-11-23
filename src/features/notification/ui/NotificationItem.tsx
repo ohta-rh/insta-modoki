@@ -13,12 +13,14 @@ export function notificationHref(view: NotificationView): string {
  */
 export function NotificationItem({ view, now }: { view: NotificationView; now: number }) {
   const cover = view.post?.cover ?? null;
+  const text = notificationText(view);
+  const name = view.actor.displayName;
   return (
     <li>
       <a
         href={notificationHref(view)}
         data-unread={view.read ? undefined : 'true'}
-        className={`flex min-h-[var(--tap-min)] items-center gap-3 border-l-4 px-4 py-3 hover:bg-surface ${
+        className={`flex min-h-[var(--tap-min)] items-center gap-3 border-l-4 px-6 py-2 hover:bg-wash ${
           view.read ? 'border-transparent' : 'border-indigo'
         }`}
       >
@@ -39,7 +41,10 @@ export function NotificationItem({ view, now }: { view: NotificationView; now: n
           </span>
         )}
         <span className="min-w-0 flex-1 text-[length:var(--font-size-sm)]">
-          <span className="block break-words">{notificationText(view)}</span>
+          <span className="block break-words">
+            <span className="font-semibold">{name}</span>
+            {text.slice(name.length)}
+          </span>
           <span className="flex items-center gap-2 text-text-secondary">
             <time dateTime={view.createdAt}>
               {formatRelativeTime(new Date(view.createdAt), now)}
@@ -57,7 +62,7 @@ export function NotificationItem({ view, now }: { view: NotificationView; now: n
             alt={cover.altText}
             loading="lazy"
             decoding="async"
-            className="h-11 w-11 shrink-0 rounded-md bg-surface object-cover"
+            className="h-11 w-11 shrink-0 rounded bg-surface object-cover"
           />
         ) : null}
       </a>

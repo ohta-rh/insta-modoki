@@ -38,7 +38,8 @@ const render = (v: NotificationView) =>
 describe('NotificationItem', () => {
   it('種類ごとの文言とリンクと画像を出す', () => {
     const like = render(view({}));
-    expect(like).toContain('はるさんがあなたの投稿にいいねしました');
+    // The name leads the sentence in semibold; the rest follows it directly.
+    expect(like).toContain('<span class="font-semibold">はる</span>さんがあなたの投稿にいいねしました');
     expect(like).toContain('href="/p/p1"');
     expect(like).toContain('alt="海の写真"');
     expect(like).toContain('新着');
@@ -48,12 +49,12 @@ describe('NotificationItem', () => {
     const comment = render(
       view({ type: 'comment', comment: { id: 'c1', body: 'すてき', truncated: false } }),
     );
-    expect(comment).toContain('はるさんがコメントしました: すてき');
+    expect(comment).toContain('<span class="font-semibold">はる</span>さんがコメントしました: すてき');
     expect(comment).toContain('href="/p/p1"');
     expect(comment).toContain('alt="海の写真"');
 
     const follow = render(view({ type: 'follow', post: null, read: true }));
-    expect(follow).toContain('はるさんがあなたをフォローしました');
+    expect(follow).toContain('<span class="font-semibold">はる</span>さんがあなたをフォローしました');
     expect(follow).toContain('href="/haru"');
     expect(follow).not.toContain('<img');
     expect(follow).not.toContain('新着');
