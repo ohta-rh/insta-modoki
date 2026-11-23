@@ -4,3 +4,4 @@ export { FollowButton } from './FollowButton';
 export { FollowerCount } from './FollowerCount';
 export { FollowList } from './FollowList';
 export { FollowScope } from './FollowScope';
+export { HomeAside } from './HomeAside';

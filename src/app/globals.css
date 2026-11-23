@@ -44,6 +44,14 @@
   }
 }
 
+/* From 1160px (--breakpoint-aside) the home's right column carries the footer; the page's own is
+   hidden then, so the notice shows once. */
+@media (min-width: 1160px) {
+  body:has([data-aside-footer]) [data-shell-footer] {
+    display: none;
+  }
+}
+
 @layer base {
   html {
     font-family: var(--font-family);
