@@ -204,7 +204,8 @@ test('その他のメニューはスクリプトの前でも開く', async ({ pa
 });
 
 test('data-page-width="wide" の画面だけ main が 630px を超える', async ({ page }) => {
-  await open(page, VIEWPORTS.wide);
+  // Not the home: it is itself a wide screen (630px column + 319px right column).
+  await open(page, VIEWPORTS.wide, '/explore');
   const main = page.locator('main');
   expectPx((await rect(main)).width, 630, '通常の main の幅');
   await main.evaluate((el) => {

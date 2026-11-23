@@ -153,7 +153,8 @@ test.describe('視差効果を減らす設定', () => {
 });
 
 test('フッターに非公式の表記が出る', async ({ page }) => {
-  await page.goto('/');
+  // Not the home: from 1160px its footer moves into the right column (visual-home-aside.spec.ts).
+  await page.goto('/explore');
   await expect(page.getByRole('contentinfo')).toHaveText(
     '学習目的の非公式プロジェクトです。Meta 社とは関係ありません。',
   );
