@@ -40,6 +40,7 @@ describe('tokens.css と tokens.ts', () => {
       '--color-danger': '#d62d3c',
       '--color-like': '#f2545b',
       '--color-teal': '#0bb8a9',
+      '--color-blue': '#2b6cf6',
       '--color-coral': '#ff6b5e',
       '--gradient-window': 'linear-gradient(120deg, #0bb8a9, #2b6cf6 62%, #4f46c8)',
     });

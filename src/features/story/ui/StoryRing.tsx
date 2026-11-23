@@ -1,36 +1,50 @@
 import type { UserSummary } from '../../post';
 
-// The own gradient of --gradient-window (teal, blue, indigo); the state is also in the link's name.
-const UNSEEN = 'conic-gradient(var(--color-teal), #2b6cf6, var(--color-indigo), var(--color-teal))';
-const SEEN = 'var(--color-icon-secondary)';
-
 /**
- * A 64px round avatar inside a 3px ring: a gradient while there is something unseen, gray once
- * everything was seen. The state is also in the link's name, so the color is never the only cue.
- * The name belongs to the link, so the image is decorative (`alt=""`).
+ * A 56px round avatar in a 66px ring: the own gradient (`--gradient-window`, ADR-0056) with a 2px
+ * white gap while there is something unseen, a 1px gray ring once everything was seen. The state
+ * is also in the link's name, so the color is never the only cue. The name belongs to the link,
+ * so the image is decorative (`alt=""`).
  */
 export function StoryRing({ user, unseen }: { user: UserSummary; unseen: boolean }) {
+  const avatar = (
+    <span
+      data-story-avatar
+      className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-surface"
+    >
+      {user.avatarUrl ? (
+        <img
+          src={user.avatarUrl}
+          alt=""
+          width={56}
+          height={56}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <span className="text-lg text-text-secondary">
+          {[...user.displayName][0]?.toUpperCase() ?? ''}
+        </span>
+      )}
+    </span>
+  );
   return (
     <span
       aria-hidden="true"
-      className="flex h-[70px] w-[70px] items-center justify-center rounded-full motion-safe:transition-transform motion-safe:group-hover:scale-105"
-      style={{ background: unseen ? UNSEEN : SEEN }}
+      data-story-ring
+      className="flex h-[66px] w-[66px] shrink-0 items-center justify-center rounded-full motion-safe:transition-transform motion-safe:group-hover:scale-105"
+      style={
+        unseen
+          ? { background: 'var(--gradient-window)', padding: 3 }
+          : { boxShadow: 'inset 0 0 0 1px var(--color-border)' }
+      }
     >
-      <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-bg bg-surface">
-        {user.avatarUrl ? (
-          <img
-            src={user.avatarUrl}
-            alt=""
-            width={60}
-            height={60}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <span className="text-lg text-text-secondary">
-            {[...user.displayName][0]?.toUpperCase() ?? ''}
-          </span>
-        )}
-      </span>
+      {unseen ? (
+        <span className="flex h-[60px] w-[60px] items-center justify-center rounded-full border-2 border-bg bg-bg">
+          {avatar}
+        </span>
+      ) : (
+        avatar
+      )}
     </span>
   );
 }

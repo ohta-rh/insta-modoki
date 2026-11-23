@@ -44,24 +44,29 @@ describe('StoryTray', () => {
     expect(html).not.toContain('href="/stories/bob"');
   });
 
-  it('未視聴のリングは 2 色以上の違う色のグラデーションで、視聴済みは補助のアイコンの色', () => {
+  it('未読の輪は自前のグラデーション、見た人は 1px の灰色の輪で、名前にも状態が出る', () => {
     const html = render(view());
-    const ring = html.match(/background:conic-gradient\((.*?)\)"/)?.[1] ?? '';
-    const colors = ring
-      .split(/,\s*(?![^(]*\))/)
-      .map((c) => c.trim())
-      .map((c) => {
-        const v = c.match(/^var\((--color-[a-z]+)\)$/)?.[1];
-        return v ? TOKENS[v as keyof typeof TOKENS] : c;
-      });
-    expect(colors.length).toBeGreaterThanOrEqual(3);
-    expect(new Set(colors).size, colors.join(' ')).toBeGreaterThanOrEqual(2);
-    expect(html).toContain('var(--color-icon-secondary)');
-    expect(html).not.toContain('--color-border');
+    const rings = [...html.matchAll(/<span aria-hidden="true"[^>]*data-story-ring[^>]*>/g)].map(
+      (m) => m[0],
+    );
+    // The first ring is the add button's; the people's carry their state as a style.
+    expect(rings).toHaveLength(3);
+    rings.shift();
+    expect(rings[0]).toContain('background:var(--gradient-window)');
+    expect(rings[0]).not.toContain('conic-gradient');
+    expect(rings[1]).toContain('box-shadow:inset 0 0 0 1px var(--color-border)');
+    expect(rings[1]).not.toContain('--gradient-window');
+    expect(html).not.toContain('#2b6cf6');
+    expect(html).toContain('>bobのストーリー（未視聴）<');
+    expect(html).toContain('>catのストーリー（視聴済み）<');
   });
 
   it('リングの図形の色（インディゴ・青・補助のアイコン）は白の上で 3:1 以上', () => {
-    for (const color of [TOKENS['--color-indigo'], '#2b6cf6', TOKENS['--color-icon-secondary']]) {
+    for (const color of [
+      TOKENS['--color-indigo'],
+      TOKENS['--color-blue'],
+      TOKENS['--color-icon-secondary'],
+    ]) {
       expect(contrastRatio(color, TOKENS['--color-bg']), color).toBeGreaterThanOrEqual(3);
     }
   });
