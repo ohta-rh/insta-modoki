@@ -328,6 +328,8 @@ test('メニューから Tab で出ると閉じる', async ({ page, me }) => {
   await menuButton(page).click();
   const sheet = page.getByRole('dialog', { name: 'その他の操作' });
   await expect(sheet).toBeVisible();
+  // The focus moves into the menu (async, on its toggle); Tab only after it is on the first row.
+  await expect(sheet.getByRole('button', { name: '削除', exact: true })).toBeFocused();
   for (let i = 0; i < 6; i += 1) await page.keyboard.press('Tab');
   await expect(sheet).toBeHidden();
   expect(
