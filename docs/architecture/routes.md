@@ -22,7 +22,7 @@ status: stable
 | `/p/[postId]` | 投稿詳細 | 不要 | M1 |
 | `/[username]` | プロフィール。タブは「投稿」と、本人だけの「保存済み」（`?tab=saved`。本人以外・他の値は「投稿」になり、保存は読まない）。グリッドの投稿を押すと `/p/[postId]` がモーダルで開く（intercepting route。直接開く・再読み込みは通常の投稿詳細。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） | 不要 | M1 |
 | `/[username]/followers` / `/[username]/following` | フォロワー / フォロー中の一覧 | 不要 | M1 |
-| `/admin` | 管理（招待コード・削除・通報） | 管理者 | M2 |
+| `/admin` | 管理。タブ「投稿」「利用者」（`role="tablist"`）に 20 件ずつの一覧と「削除」（確認の `<dialog>` つき）、`/admin/invites` へのリンク。管理者でない利用者は「ページが見つかりません」（存在を知らせない）、未ログインは `/accounts/login` へ。通報は M4 | 管理者 | M2 |
 | `/admin/invites` | 招待コードの管理（発行・一覧・コピー・失効。管理者でない利用者は「ページが見つかりません」） | 管理者 | M2 |
 | `/explore` / `/explore/search` / `/explore/tags/[tag]` | 発見 / 検索 / ハッシュタグ | 要 | M3 |
 | `/notifications` | 通知 | 要 | M3 |
@@ -50,6 +50,10 @@ status: stable
 | `createInvite` | invite | maxUses（1〜100 の整数）, expiresInDays?（1〜90 の整数、既定 7） | `InviteView`（`code`・`maxUses`・`usedCount`・`expiresAt`・`revokedAt`・`createdAt`・`status`） | UNAUTHENTICATED、FORBIDDEN（管理者のみ）、VALIDATION |
 | `listInvites` | invite | cursor? | `Page<InviteView>`（20 件、新しい発行順） | UNAUTHENTICATED、FORBIDDEN、VALIDATION |
 | `revokeInvite` | invite | code | `{ revoked: true }`（失効済みでも同じ。`revoked_at` は最初の時刻のまま） | UNAUTHENTICATED、FORBIDDEN、VALIDATION、NOT_FOUND |
+| `adminDeletePost` | admin | postId | `{ deleted: true }`（行と、media・likes・comments の連鎖、ファイルを消す。`admin_actions` の行を同じ batch で足す。ファイルの削除が失敗しても行は戻さず `storage_orphans` に記録する） | UNAUTHENTICATED、FORBIDDEN（`users.role` が `'admin'` でない）、NOT_FOUND（無い・UUID でない）、VALIDATION（余計な項目） |
+| `adminDeleteUser` | admin | username（小文字にしてから引く） | `{ deleted: true }`（利用者の行・投稿・media・いいね・コメント・フォロー・セッション・ストーリー・通知・保存と、写真・ストーリー・アイコンのファイルを消す。触れられた他人の投稿の `like_count` と `comment_count` は実際の行の数に数え直す。`admin_actions` の行を同じ batch で足す） | UNAUTHENTICATED、FORBIDDEN（管理者でない・自分・別の管理者）、NOT_FOUND、VALIDATION（余計な項目） |
+| `listAdminPosts` | admin | cursor? | `Page<AdminPostRow>`（20 件、新しい順。`{ id, authorUsername, captionExcerpt（先頭 50 字）, createdAt }`） | UNAUTHENTICATED、FORBIDDEN、VALIDATION（壊れたカーソル・余計な項目） |
+| `listAdminUsers` | admin | query?（ユーザー名の前方一致。小文字にして、`%` `_` は文字として扱う）, cursor? | `Page<AdminUserRow>`（20 件、新しい登録順。`{ username, displayName, role, postCount, createdAt }`） | UNAUTHENTICATED、FORBIDDEN、VALIDATION |
 | `getProfile` | profile | username | `ProfileView`（[conventions.md](conventions.md)） | NOT_FOUND |
 | `listProfilePosts` | profile | username, cursor? | `Page<PostThumb>`（12 件） | NOT_FOUND |
 | `updateProfile` | profile | displayName, bio, avatarKey? | `ProfileView`（`avatarKey` があれば、`createPost` と同じ所有の検査の後に `HEAD` で `image/webp` と大きさを確かめる） | UNAUTHENTICATED、VALIDATION |
