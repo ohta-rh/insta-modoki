@@ -20,7 +20,7 @@ import { AppError } from '../../../shared/errors';
 import type { StorageEnv } from '../../../shared/storage';
 import { dataOrThrow } from '../model/parse-or-throw';
 import { recountPostCounters } from '../model/recount';
-import { requireAdmin } from '../model/require-admin';
+import { requireAdmin } from '../../auth';
 import { parseAdminDeleteUser } from '../model/schema';
 import type { AdminDeps } from './deps';
 

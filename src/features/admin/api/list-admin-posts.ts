@@ -5,7 +5,7 @@ import { keysetBefore, readCursor, toPage } from '../../../shared/db/cursor';
 import { getRequestEnv } from '../../../shared/db/request';
 import { posts, users } from '../../../shared/db/schema';
 import { dataOrThrow } from '../model/parse-or-throw';
-import { requireAdmin } from '../model/require-admin';
+import { requireAdmin } from '../../auth';
 import {
   ADMIN_PAGE_SIZE,
   CAPTION_EXCERPT_LENGTH,

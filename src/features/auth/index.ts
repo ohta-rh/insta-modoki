@@ -8,3 +8,4 @@ export { LogOutConfirm } from './ui/LogOutConfirm';
 export { isUnauthenticated } from './model/unauthenticated';
 export type { AuthEnv } from './api/auth-env';
 export { isInviteRequired } from './api/invite-required';
+export { requireAdmin } from './api/require-admin';

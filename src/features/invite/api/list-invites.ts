@@ -5,7 +5,7 @@ import { keysetBefore, readCursor, toPage } from '../../../shared/db/cursor';
 import { getRequestEnv } from '../../../shared/db/request';
 import { invites } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
-import { requireAdmin } from '../model/require-admin';
+import { requireAdmin } from '../../auth';
 import { INVITE_PAGE_SIZE, parseListInvites } from '../model/schema';
 import { toInviteView, type InviteView } from '../model/view';
 import type { InviteDeps } from './create-invite';

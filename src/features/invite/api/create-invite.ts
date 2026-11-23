@@ -4,7 +4,7 @@ import { getRequestEnv } from '../../../shared/db/request';
 import { invites } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
 import { generateCode } from '../model/code';
-import { requireAdmin } from '../model/require-admin';
+import { requireAdmin } from '../../auth';
 import { parseCreateInvite } from '../model/schema';
 import { toInviteView, type InviteView } from '../model/view';
 

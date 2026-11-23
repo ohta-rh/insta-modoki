@@ -1,9 +1,9 @@
 import { eq } from 'drizzle-orm';
-import { requireUser, type SessionUser } from '../../auth';
-import type { AuthEnv } from '../../auth/api/auth-env';
 import { getDb } from '../../../shared/db/client';
 import { users } from '../../../shared/db/schema';
 import { AppError } from '../../../shared/errors';
+import type { AuthEnv } from './auth-env';
+import { requireUser, type SessionUser } from './session-user';
 
 /**
  * The signed-in administrator. Not signed in is UNAUTHENTICATED; a user whose `users.role` row is
