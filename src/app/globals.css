@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '../shared/ui/tokens.css';
+@import '../shared/ui/shell.css';
 
 /* The heart that flashes over a photo after a double tap (it is not rendered with reduced motion). */
 @keyframes like-burst {

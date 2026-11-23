@@ -38,15 +38,9 @@ export type AppShellProps = {
   children: ReactNode;
 };
 
-const TRANSITION = 'transition-colors duration-[var(--motion-fast)]';
-const SIDE_ITEM = `flex min-h-12 items-center gap-4 rounded-lg p-3 text-base hover:bg-surface ${TRANSITION}`;
-
 function SkipLink() {
   return (
-    <a
-      href="#main"
-      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-bg focus:px-4 focus:py-3 focus:text-text"
-    >
+    <a href="#main" className="shell-skip">
       本文へ移動
     </a>
   );
@@ -82,11 +76,7 @@ function NavLinks({
               key={badge ? undefined : item.key}
               href={item.href}
               aria-current={isHere ? 'page' : undefined}
-              className={
-                layout === 'side'
-                  ? `${SIDE_ITEM} aria-[current=page]:font-bold`
-                  : `relative flex h-full min-h-11 min-w-11 flex-1 items-center justify-center ${TRANSITION}`
-              }
+              className={layout === 'side' ? 'shell-item' : 'shell-tab'}
             >
               <Icon filled={isHere} />
               <span className={layout === 'side' ? 'sr-only nav-wide:not-sr-only' : 'sr-only'}>
@@ -101,11 +91,7 @@ function NavLinks({
             <div key={item.key} className={layout === 'side' ? 'relative' : 'relative flex flex-1'}>
               {link}
               <span
-                className={`pointer-events-none absolute ${
-                  layout === 'side'
-                    ? 'top-1.5 left-[26px] nav-wide:top-1/2 nav-wide:right-3 nav-wide:left-auto nav-wide:-translate-y-1/2'
-                    : 'top-0.5 left-[calc(50%+4px)]'
-                }`}
+                className={`pointer-events-none absolute ${layout === 'side' ? 'shell-badge-side' : 'shell-badge-tab'}`}
               >
                 {badge}
               </span>
@@ -118,7 +104,7 @@ function NavLinks({
 
 function MoreButton() {
   return (
-    <button type="button" popoverTarget={MORE_MENU_ID} className={`${SIDE_ITEM} w-full text-left`}>
+    <button type="button" popoverTarget={MORE_MENU_ID} className="shell-item w-full text-left">
       <MenuIcon />
       <span className="sr-only nav-wide:not-sr-only">その他</span>
     </button>
@@ -131,7 +117,7 @@ function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
       aria-label="メイン"
       data-nav="side"
       // pr-[11px]: 72 - 1 (border) - 12 - 11 = 48px wide items at the narrow width.
-      className="sticky top-0 hidden h-screen w-[var(--nav-narrow-width)] shrink-0 flex-col gap-1 border-r border-border p-3 pr-[11px] nav:flex nav-wide:w-[var(--nav-wide-width)]"
+      className="shell-side"
     >
       <div className="mb-4 flex min-h-12 items-center px-3">
         <span className="nav-wide:hidden">
@@ -160,16 +146,9 @@ function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
 
 function TopBar() {
   return (
-    <header
-      data-shell-top-bar
-      className="sticky top-0 z-40 flex h-[var(--mobile-top-bar-height)] items-center justify-between border-b border-border bg-bg px-4 nav:hidden"
-    >
+    <header data-shell-top-bar className="shell-top">
       <Logo size={24} withName />
-      <button
-        type="button"
-        popoverTarget={MORE_MENU_ID}
-        className="-mr-3 flex size-11 items-center justify-center rounded-lg"
-      >
+      <button type="button" popoverTarget={MORE_MENU_ID} className="shell-top-more">
         <MenuIcon />
         <span className="sr-only">その他</span>
       </button>
@@ -179,11 +158,7 @@ function TopBar() {
 
 function BottomNav({ items, current, viewer, badges, linkAs }: NavProps) {
   return (
-    <nav
-      aria-label="メイン"
-      data-nav="bottom"
-      className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] border-t border-border bg-bg pb-[env(safe-area-inset-bottom)] nav:hidden"
-    >
+    <nav aria-label="メイン" data-nav="bottom" className="shell-bottom">
       <NavLinks
         items={items}
         current={current}
@@ -200,7 +175,7 @@ function Footer({ hideNav }: { hideNav: boolean }) {
   return (
     <footer
       data-shell-footer
-      className={`px-4 py-6 text-center text-[length:var(--font-size-xs)] text-text-secondary ${
+      className={`shell-footer ${
         hideNav
           ? ''
           : 'pb-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom)+var(--space-4))] nav:pb-6'
