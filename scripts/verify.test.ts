@@ -58,7 +58,7 @@ describe('verify', () => {
     expect(main([], deps)).toBe(1);
   });
 
-  it('手順の順番は typecheck → lint → format → docs → unit → integration → build → e2e → perf-budget', () => {
+  it('手順の順番は typecheck → lint → format → docs → unit → integration → integration-seed → int-budget → build → e2e → perf-budget', () => {
     expect(STEPS.map((s: { name: string }) => s.name)).toEqual([
       'typecheck',
       'lint',
@@ -66,6 +66,8 @@ describe('verify', () => {
       'docs',
       'unit',
       'integration',
+      'integration-seed',
+      'int-budget',
       'build',
       'e2e',
       'perf-budget',
@@ -79,6 +81,8 @@ describe('verify', () => {
       'docs',
       'unit',
       'integration',
+      'integration-seed',
+      'int-budget',
       'build',
       'e2e',
       'perf-budget',

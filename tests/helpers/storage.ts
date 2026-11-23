@@ -51,7 +51,17 @@ export async function putPhoto(env: StorageEnv, key: string): Promise<void> {
   }
 }
 
-/** Stores a few bytes under each key with the slot's own key. */
+/** How many PUTs `putObjects` keeps in flight: enough to cut the round trips, few enough to be polite to the shared Garage. */
+const PUT_CONCURRENCY = 8;
+
+/**
+ * Stores a few bytes under each key with the slot's own key, 8 at a time. Waits for every batch;
+ * a refused PUT rejects with `PUT <key>: <status>`.
+ */
 export async function putObjects(env: StorageEnv, keys: string[]): Promise<void> {
-  for (const key of keys) await putObject(env, key, new Uint8Array(5));
+  for (let i = 0; i < keys.length; i += PUT_CONCURRENCY) {
+    await Promise.all(
+      keys.slice(i, i + PUT_CONCURRENCY).map((key) => putObject(env, key, new Uint8Array(5))),
+    );
+  }
 }

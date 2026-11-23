@@ -21,7 +21,9 @@ status: stable
 | `format` | `pnpm format:check` | Prettier の形式に合っていないファイルがある |
 | `docs` | `node scripts/check-docs.mjs docs` | `docs/` が OKF v0.3 の規則（下の「docs の検査」）に合っていない |
 | `unit` | `pnpm exec vitest run --coverage --exclude "**/*.int.test.ts"` | 単体テストの失敗、または `src/**/model/**` と `src/shared/config/**` の行カバレッジが 80% 未満 |
-| `integration` | `pnpm exec vitest run --passWithNoTests .int.test.ts` | 結合テストの失敗（`src/`・`scripts/`・`tests/` の `*.int.test.ts` が 1 つも無いときは `integration: テストなし` を出して成功） |
+| `integration` | `pnpm exec vitest run --passWithNoTests .int.test.ts --exclude src/shared/db/seed/seed.int.test.ts` | `seed.int.test.ts` を除く結合テストの失敗（`src/`・`scripts/`・`tests/` の `*.int.test.ts` が 1 つも無いときは `integration: テストなし` を出して成功） |
+| `integration-seed` | `pnpm exec vitest run src/shared/db/seed/seed.int.test.ts` | seed の結合テスト（bench を含む）の失敗。共有の Garage に CopyObject を大量に投げるので、他の結合テストと重ねず後から流す（[ADR-0058](../adr/0058-seed-integration-test-runs-in-its-own-verify-step.md)） |
+| `int-budget` | `node scripts/int-budget.mjs` | 変わった結合テストの 1 本が、単独で流して上限の 25% を超えた（`int-budget: FAIL <file> › <name> <最小>ms > <予算>ms（上限 <timeout>ms）`）。[結合テストの時間の予算](#結合テストの時間の予算) |
 | `build` | `pnpm build` | OpenNext のビルドの失敗 |
 | `e2e` | `pnpm e2e` | Playwright の失敗（ビルドの成果物を `pnpm start` で workerd に載せて開く） |
 | `perf-budget` | `node scripts/perf/bundle.mjs` | `/` を最初に開いたときの初期 JS が gzip で 170,000 バイトを超えた（`perf: FAIL initialJsGzipBytes / <値> > 170000`）。[性能の基準](#性能の基準) |
@@ -36,6 +38,14 @@ status: stable
 `perf-budget` も `build` の成果物を使う（アプリが `PORT` で動いていなければ自分で `pnpm start` を起動して止める）。
 
 `e2e` は `build` の成果物を使うので、単独で流す前に `pnpm build` が要る。Chromium は初回に `pnpm exec playwright install chromium` で入れる。
+
+## 結合テストの時間の予算
+
+`int-budget`（[ADR-0059](../adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)）は、`git merge-base HEAD origin/main` から変わった `*.int.test.ts` を 1 本ずつ（`--no-file-parallelism`）流し、各テストの所要時間が、そのテストの上限（既定 5,000ms、`it(…, 60_000)` ならその値）の 25% 以下かを見る。超えたテストがあるファイルだけをもう 2 回流し、3 回の最小が 25% を超えたものを全て `int-budget: FAIL …` で出して 1 で終わる（ホストの混み具合は時間を延ばす方向にしか働かないため、最小で判定する）。直し方は、往復をまとめる（`t.db.batch`）・並べる（`Promise.all`）か、計測した時間を書いたコメントつきで個別の上限を付けること。vitest の既定の上限は変えない。
+
+- 変わったファイルが無ければ `int-budget: 変わった結合テストなし` で 0。基準のコミットが見つからない（CI の浅い checkout など）ときは `int-budget: 基準のコミットが無いので全ての結合テストを測ります` を出して全部を測る。
+- `node scripts/int-budget.mjs --all` で全部を測る。`src/shared/db/seed/seed.int.test.ts` と `scripts/slot.int.test.ts` は、どちらも計測した上限を持ち、測ると数分かかりバケットを触るので測らない。
+- 結果は `node_modules/.cache/int-budget/results.json`（reporter `scripts/int-budget-reporter.mjs` が書く）。
 
 ## 性能の基準
 

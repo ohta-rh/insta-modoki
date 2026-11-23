@@ -21,9 +21,18 @@ export const STEPS = [
   },
   {
     name: 'integration',
-    command: 'pnpm exec vitest run --passWithNoTests .int.test.ts',
+    command:
+      'pnpm exec vitest run --passWithNoTests .int.test.ts --exclude src/shared/db/seed/seed.int.test.ts',
     skipUnlessIntegrationTests: true,
   },
+  // The bench seed floods the shared Garage, so it runs after, not beside, the other tests (ADR-0058).
+  {
+    name: 'integration-seed',
+    command: 'pnpm exec vitest run src/shared/db/seed/seed.int.test.ts',
+    skipUnlessIntegrationTests: true,
+  },
+  // Each changed integration test, alone, stays within 25% of its timeout (ADR-0059).
+  { name: 'int-budget', command: 'node scripts/int-budget.mjs' },
   { name: 'build', command: 'pnpm build' },
   { name: 'e2e', command: 'pnpm e2e' },
   // Fast (one page load): the initial JS stays within budget. Needs the build (ADR-0046).

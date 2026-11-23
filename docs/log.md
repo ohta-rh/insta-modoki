@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-23
+* **Creation**: [ADR-0058](adr/0058-seed-integration-test-runs-in-its-own-verify-step.md)（結合テストの seed は他の結合テストと重ねず、verify の別の手順 `integration-seed` で後から流す）と [ADR-0059](adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)（結合テストは単独で上限の 25% 以内。verify の `int-budget` で変わったファイルを測る）を追加し、[verify.md](guides/verify.md) の表と「結合テストの時間の予算」を合わせた（#107）。
 * **Creation**: [ADR-0057](adr/0057-slice-index-exports-no-client-components.md)（slice の入口 `index.ts` は `'use client'` の部品を公開せず、画面の部品は `ui/index.ts` から公開する。[ADR-0053](adr/0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) を置き換える）を追加し、[conventions.md](architecture/conventions.md) の slice の節を合わせた（#106）。
 * **Creation**: [管理者の手順](guides/admin.md)（管理者を作るコマンド、`/admin` の削除、削除は取り消せないこと）を追加し、[guides/index.md](guides/index.md) に載せた（#39）。
 * **Update**: [routes.md](architecture/routes.md) に `adminDeletePost`・`adminDeleteUser`・`listAdminPosts`・`listAdminUsers` と画面 `/admin` を、[data-model.md](architecture/data-model.md) に `admin_actions` の制約と索引を書いた（#39）。
