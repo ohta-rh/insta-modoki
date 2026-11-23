@@ -14,7 +14,7 @@ import { PhotoList, type PhotoAction, type PhotoItem } from './PhotoList';
 
 const UPLOAD_FAILED = 'アップロードに失敗しました。もう一度お試しください';
 const NOT_READABLE = 'この形式の写真は、このブラウザでは読み込めません';
-const ERROR = 'text-[length:var(--font-size-sm)] text-red-700';
+const ERROR = 'text-[length:var(--font-size-sm)] text-danger';
 const SECONDARY =
   'min-h-[var(--tap-min)] rounded-lg border border-border px-4 font-bold disabled:opacity-50';
 
@@ -191,7 +191,7 @@ export function CreatePostForm() {
               />
               写真を選ぶ
             </label>
-            <span className="text-[length:var(--font-size-sm)] text-text-muted">
+            <span className="text-[length:var(--font-size-sm)] text-text-secondary">
               {photos.length} / {MAX_PHOTOS} 枚
             </span>
           </div>

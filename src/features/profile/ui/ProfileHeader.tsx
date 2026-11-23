@@ -44,7 +44,7 @@ export function ProfileHeader({
         <span
           data-testid="avatar-initial"
           aria-hidden="true"
-          className="flex h-[77px] w-[77px] shrink-0 items-center justify-center rounded-full bg-surface text-[length:var(--font-size-xl)] font-bold text-text-secondary md:h-[150px] md:w-[150px] md:text-[48px]"
+          className="flex h-[77px] w-[77px] shrink-0 items-center justify-center rounded-full bg-surface text-[length:var(--font-size-xl)] font-bold text-text md:h-[150px] md:w-[150px] md:text-[48px]"
         >
           {Array.from(profile.username)[0]?.toUpperCase()}
         </span>

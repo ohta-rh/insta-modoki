@@ -14,7 +14,7 @@ import {
 } from '../model/compose-story';
 import { MAX_ALT_TEXT } from '../model/limits';
 
-const ERROR = 'text-[length:var(--font-size-sm)] text-red-700';
+const ERROR = 'text-[length:var(--font-size-sm)] text-danger';
 const SECONDARY =
   'min-h-[var(--tap-min)] rounded-lg border border-border px-4 font-bold disabled:opacity-50';
 const ERROR_ID = 'story-error';

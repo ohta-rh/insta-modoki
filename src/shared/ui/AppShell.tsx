@@ -70,7 +70,7 @@ function NavLinks({
             aria-current={isHere ? 'page' : undefined}
             className={
               layout === 'side'
-                ? `flex min-h-[var(--tap-min)] items-center gap-3 rounded-lg border-l-2 border-transparent px-3 text-[length:var(--font-size-md)] text-text-secondary hover:bg-surface aria-[current=page]:border-indigo aria-[current=page]:font-bold aria-[current=page]:text-text ${TRANSITION}`
+                ? `flex min-h-[var(--tap-min)] items-center gap-3 rounded-lg border-l-2 border-transparent px-3 text-[length:var(--font-size-md)] text-text hover:bg-surface aria-[current=page]:border-indigo aria-[current=page]:font-bold aria-[current=page]:text-text ${TRANSITION}`
                 : `relative flex h-full min-h-[var(--tap-min)] min-w-[var(--tap-min)] flex-1 flex-col items-center justify-center gap-0.5 border-t-2 border-transparent text-[length:var(--font-size-xs)] text-text-secondary aria-[current=page]:border-indigo aria-[current=page]:font-bold aria-[current=page]:text-text ${TRANSITION}`
             }
           >

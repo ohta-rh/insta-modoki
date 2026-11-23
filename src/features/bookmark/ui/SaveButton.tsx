@@ -65,7 +65,7 @@ export function SaveButton({ postId, initialSaved }: { postId: string; initialSa
       {error && (
         <p
           role="alert"
-          className="order-last basis-full px-2 pb-1 text-[length:var(--font-size-sm)] text-red-700"
+          className="order-last basis-full px-2 pb-1 text-[length:var(--font-size-sm)] text-danger"
         >
           {error}
         </p>

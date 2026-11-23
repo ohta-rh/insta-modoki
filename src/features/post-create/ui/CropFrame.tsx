@@ -103,7 +103,7 @@ export function CropFrame({
           style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
         />
       </div>
-      <p id={hintId} className="mt-1 text-[length:var(--font-size-sm)] text-text-muted">
+      <p id={hintId} className="mt-1 text-[length:var(--font-size-sm)] text-text-secondary">
         矢印キーかドラッグで切り抜きの位置を動かせます
       </p>
     </div>

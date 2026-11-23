@@ -45,14 +45,14 @@ describe('StoryTray', () => {
   });
 
   it('リングの色のコントラストが 3:1 以上', () => {
-    for (const color of ['--color-indigo', '--color-link', '--color-text-muted'] as const) {
+    for (const color of ['--color-indigo', '--color-link', '--color-icon-secondary'] as const) {
       expect(contrastRatio(TOKENS[color], TOKENS['--color-bg']), color).toBeGreaterThanOrEqual(3);
     }
     const html = render(view());
     expect(html).toContain(
       'conic-gradient(var(--color-indigo), var(--color-link), var(--color-indigo))',
     );
-    expect(html).toContain('var(--color-text-muted)');
+    expect(html).toContain('var(--color-icon-secondary)');
     expect(html).not.toContain('--color-border');
   });
 });

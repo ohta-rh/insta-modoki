@@ -51,6 +51,14 @@
     color: var(--color-text);
   }
 
+  body {
+    font-size: var(--font-size-sm);
+    /* A ratio (18px / 14px), not 18px: headings keep a line height proportional to their size.
+       Written with var() so the minifier cannot round it to 1.28571 (17.9999px). */
+    line-height: calc(var(--leading-sm) / var(--font-size-sm));
+    color: var(--color-text);
+  }
+
   :focus-visible {
     outline: 2px solid var(--color-indigo);
     outline-offset: 2px;

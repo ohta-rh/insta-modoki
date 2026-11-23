@@ -33,7 +33,7 @@ export function NotificationItem({ view, now }: { view: NotificationView; now: n
         ) : (
           <span
             aria-hidden="true"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface font-bold text-text-secondary"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface font-bold text-text"
           >
             {Array.from(view.actor.username)[0]?.toUpperCase()}
           </span>

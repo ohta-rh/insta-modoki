@@ -22,20 +22,66 @@ describe('tokens.css と tokens.ts', () => {
     }
   });
 
-  it('色の値は企画書のパレットと同じ', () => {
+  it('色のトークンが参照の Web 版の値（自前の主の色・いいねの赤を除く）になっている', () => {
     expect(TOKENS).toMatchObject({
       '--color-bg': '#ffffff',
-      '--color-surface': '#f4f6f9',
-      '--color-text': '#111827',
-      '--color-text-secondary': '#374151',
-      '--color-text-muted': '#6b7280',
-      '--color-border': '#e5e7eb',
-      '--color-link': '#2b6cf6',
-      '--color-teal': '#0bb8a9',
+      '--color-surface': '#f3f5f7',
+      '--color-highlight': '#efefef',
+      '--color-wash': '#fafafa',
+      '--color-text': '#000000',
+      '--color-text-secondary': '#737373',
+      '--color-icon': '#262626',
+      '--color-icon-secondary': '#737373',
+      '--color-border': '#dbdbdb',
+      '--color-input-border': '#8e8e8e',
+      '--color-link': '#4f46c8',
       '--color-indigo': '#4f46c8',
+      '--color-danger': '#d62d3c',
+      '--color-like': '#f2545b',
+      '--color-teal': '#0bb8a9',
       '--color-coral': '#ff6b5e',
       '--gradient-window': 'linear-gradient(120deg, #0bb8a9, #2b6cf6 62%, #4f46c8)',
     });
+    expect(TOKENS).not.toHaveProperty('--color-text-muted');
+  });
+
+  it('骨格の幅と境目のトークンが参照の Web 版の値になっている', () => {
+    expect(TOKENS).toMatchObject({
+      '--nav-wide-width': '244px',
+      '--nav-narrow-width': '72px',
+      '--bottom-nav-height': '50px',
+      '--mobile-top-bar-height': '45px',
+      '--public-top-bar-height': '60px',
+      '--feed-width': '470px',
+      '--feed-item-gap': '20px',
+      '--content-max': '630px',
+      '--aside-width': '319px',
+      '--aside-gap': '64px',
+      '--site-width-wide': '935px',
+      '--post-aside-width': '335px',
+      '--side-panel-width': '397px',
+      '--breakpoint-nav': '768px',
+      '--breakpoint-aside': '1160px',
+      '--breakpoint-nav-wide': '1264px',
+    });
+  });
+
+  it('文字・角丸・影・動きのトークンが決めた値になっている', () => {
+    expect(TOKENS).toMatchObject({
+      '--font-family':
+        "-apple-system, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, 'Noto Sans JP', sans-serif",
+      '--leading-xs': '16px',
+      '--leading-sm': '18px',
+      '--leading-md': '24px',
+      '--leading-lg': '25px',
+      '--leading-xl': '30px',
+      '--radius-pill': '22px',
+      '--shadow-panel': '0 4px 32px 0 rgba(11, 16, 20, 0.16)',
+      '--ease-move-in': 'cubic-bezier(0.17, 0.17, 0, 1)',
+      '--motion-panel': '200ms',
+    });
+    const block = css.match(/@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*\{[^}]*\}/);
+    expect(block?.[0]).toMatch(/--motion-panel:\s*0ms/);
   });
 
   it('余白・文字の大きさ・切り替えの幅・タップ領域の値がある', () => {

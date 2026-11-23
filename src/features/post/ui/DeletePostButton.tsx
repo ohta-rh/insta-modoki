@@ -71,7 +71,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
         // Invoker commands are not in @types/react yet; React passes unknown attributes through.
         {...({ commandfor: dialogId, command: 'show-modal' } as object)}
         onClick={open}
-        className={`${secondary} text-text-secondary hover:bg-surface`}
+        className={`${secondary} text-text-secondary hover:bg-surface hover:text-text`}
       >
         削除
       </button>
@@ -94,7 +94,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
           削除した投稿は元に戻せません。
         </p>
         {error && (
-          <p role="alert" className="mt-3 text-[length:var(--font-size-sm)] text-red-700">
+          <p role="alert" className="mt-3 text-[length:var(--font-size-sm)] text-danger">
             {error}
           </p>
         )}

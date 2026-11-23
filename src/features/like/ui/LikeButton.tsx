@@ -32,7 +32,7 @@ export function LikeButton() {
           data-testid="like-button"
           className="flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] items-center justify-center rounded-full hover:bg-surface"
         >
-          {liked ? <HeartFilledIcon className="text-red-600" /> : <HeartIcon />}
+          {liked ? <HeartFilledIcon className="text-like" /> : <HeartIcon />}
         </button>
       </form>
       <span aria-live="polite" className="sr-only">
@@ -41,7 +41,7 @@ export function LikeButton() {
       {error && (
         <p
           role="alert"
-          className="order-last basis-full px-2 pb-1 text-[length:var(--font-size-sm)] text-red-700"
+          className="order-last basis-full px-2 pb-1 text-[length:var(--font-size-sm)] text-danger"
         >
           {error}
         </p>

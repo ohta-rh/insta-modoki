@@ -98,7 +98,7 @@ export function FollowList({
               ) : (
                 <span
                   aria-hidden="true"
-                  className="flex h-11 w-11 items-center justify-center rounded-full bg-surface font-bold text-text-secondary"
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-surface font-bold text-text"
                 >
                   {Array.from(u.username)[0]?.toUpperCase()}
                 </span>
@@ -123,7 +123,7 @@ export function FollowList({
       )}
       {status === 'error' && (
         <div className="py-2 text-center">
-          <p role="alert" className="text-[length:var(--font-size-sm)] text-red-700">
+          <p role="alert" className="text-[length:var(--font-size-sm)] text-danger">
             {message}
           </p>
           <button

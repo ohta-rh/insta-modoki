@@ -123,7 +123,7 @@ export function ViewerListSheet({
                   ) : (
                     <span
                       aria-hidden="true"
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-surface font-bold text-text-secondary"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-surface font-bold text-text"
                     >
                       {Array.from(u.username)[0]?.toUpperCase()}
                     </span>
@@ -148,7 +148,7 @@ export function ViewerListSheet({
           {status === 'error' && (
             <p
               role="alert"
-              className="py-2 text-center text-[length:var(--font-size-sm)] text-red-700"
+              className="py-2 text-center text-[length:var(--font-size-sm)] text-danger"
             >
               {message}
             </p>

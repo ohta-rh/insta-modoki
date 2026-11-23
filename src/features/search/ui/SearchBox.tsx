@@ -108,7 +108,7 @@ export function SearchBox({ defaultValue = '' }: { defaultValue?: string }) {
         </p>
       )}
       {snap.error !== null && (
-        <p role="alert" className="py-2 text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="py-2 text-[length:var(--font-size-sm)] text-danger">
           {snap.error}
         </p>
       )}

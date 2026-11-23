@@ -3,6 +3,7 @@
 ## 2026-11-23
 * **Creation**: [管理者の手順](guides/admin.md)（管理者を作るコマンド、`/admin` の削除、削除は取り消せないこと）を追加し、[guides/index.md](guides/index.md) に載せた（#39）。
 * **Update**: [routes.md](architecture/routes.md) に `adminDeletePost`・`adminDeleteUser`・`listAdminPosts`・`listAdminUsers` と画面 `/admin` を、[data-model.md](architecture/data-model.md) に `admin_actions` の制約と索引を書いた（#39）。
+* **Update**: [ADR-0056](adr/0056-ui-follows-measured-web-reference-under-own-brand.md)（UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする）を追加し、[design-system.md](architecture/design-system.md) のトークン・色の使い方の決まり・アイコンの線の太さを参照の値に更新した（#88）。
 * **Creation**: [Web 版の画面の参照値と今のアプリとの差](research/web-ui-reference.md)（ログインしていない公開ページの実測と参照自身の CSS 変数から、骨格・ホーム・プロフィール・投稿・ログインの寸法と色を今のアプリと比べた調査）を追加し、[research/index.md](research/index.md) に載せた。
 * **Creation**: [ADR-0055](adr/0055-e2e-invite-required-by-request-header.md)（E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする）を追加した（#38）。
 * **Update**: [routes.md](architecture/routes.md) に `createInvite`・`listInvites`・`revokeInvite` と画面 `/admin/invites` を足し、`signUp` の `inviteCode`（`INVITE_REQUIRED` が `true` のとき必須）を書いた（#38）。

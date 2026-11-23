@@ -28,7 +28,7 @@ import { DeleteCommentDialog } from './DeleteCommentDialog';
 
 const NETWORK_MESSAGE = INTERNAL_MESSAGE;
 const more =
-  'min-h-[var(--tap-min)] rounded-lg px-3 text-[length:var(--font-size-sm)] font-bold text-text-secondary hover:bg-surface disabled:opacity-50';
+  'min-h-[var(--tap-min)] rounded-lg px-3 text-[length:var(--font-size-sm)] font-bold text-text-secondary hover:bg-surface hover:text-text disabled:opacity-50';
 
 type Viewer = { username: string } | null;
 type Reply<T> = { ok: true; data: T } | { ok: false; error: { message: string } };
@@ -178,7 +178,7 @@ export function CommentSection({
   return (
     <section aria-label="コメント">
       {state.items.length === 0 && (
-        <p className="px-3 py-6 text-center text-[length:var(--font-size-sm)] text-text-muted">
+        <p className="px-3 py-6 text-center text-[length:var(--font-size-sm)] text-text-secondary">
           まだコメントはありません
         </p>
       )}

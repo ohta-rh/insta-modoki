@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BODY_PAIRS, contrastRatio, meetsAA } from './contrast';
+import { BODY_PAIRS, NON_TEXT_PAIRS, contrastRatio, meetsAA, meetsNonText } from './contrast';
 import { TOKENS } from './tokens';
 
 describe('contrastRatio', () => {
@@ -30,36 +30,49 @@ describe('contrastRatio', () => {
 });
 
 describe('本文の組', () => {
-  it('本文の組が全て 4.5:1 以上', () => {
+  it('本文の組は全て 4.5:1 以上で、補助の文字を面の上の組に入れない', () => {
+    expect(BODY_PAIRS).toEqual([
+      ['--color-text', '--color-bg'],
+      ['--color-text', '--color-surface'],
+      ['--color-text', '--color-highlight'],
+      ['--color-text-secondary', '--color-bg'],
+      ['--color-text-secondary', '--color-wash'],
+      ['--color-link', '--color-bg'],
+      ['--color-danger', '--color-bg'],
+      ['--color-bg', '--color-indigo'],
+    ]);
     for (const [fg, bg] of BODY_PAIRS) {
       const ratio = contrastRatio(TOKENS[fg], TOKENS[bg]);
       expect(ratio, `${fg} / ${bg} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(4.5);
     }
-  });
-
-  it('決まった 5 組だけが一覧にある', () => {
-    expect(BODY_PAIRS).toEqual([
-      ['--color-text', '--color-bg'],
-      ['--color-text-secondary', '--color-bg'],
-      ['--color-text-secondary', '--color-surface'],
-      ['--color-text-muted', '--color-bg'],
-      ['--color-link', '--color-bg'],
-    ]);
+    const onSurface = BODY_PAIRS.filter(
+      ([fg, bg]) =>
+        fg === '--color-text-secondary' && (bg === '--color-surface' || bg === '--color-highlight'),
+    );
+    expect(onSurface).toEqual([]);
   });
 
   it('4.5 ちょうどは通り 4.49 は落ちる', () => {
     expect(meetsAA(4.5)).toBe(true);
     expect(meetsAA(4.49)).toBe(false);
   });
+});
 
-  it('text-muted と surface の組は一覧に無い', () => {
-    const has = BODY_PAIRS.some(
-      ([fg, bg]) => fg === '--color-text-muted' && bg === '--color-surface',
-    );
-    expect(has).toBe(false);
-    const linkOnSurface = BODY_PAIRS.some(
-      ([fg, bg]) => fg === '--color-link' && bg === '--color-surface',
-    );
-    expect(linkOnSurface).toBe(false);
+describe('図形の組', () => {
+  it('図形の組（いいねの赤・補助のアイコン・入力の枠）は 3:1 以上', () => {
+    expect(NON_TEXT_PAIRS).toEqual([
+      ['--color-like', '--color-bg'],
+      ['--color-icon-secondary', '--color-bg'],
+      ['--color-input-border', '--color-bg'],
+    ]);
+    for (const [fg, bg] of NON_TEXT_PAIRS) {
+      const ratio = contrastRatio(TOKENS[fg], TOKENS[bg]);
+      expect(ratio, `${fg} / ${bg} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it('3 ちょうどは通り 2.99 は落ちる', () => {
+    expect(meetsNonText(3)).toBe(true);
+    expect(meetsNonText(2.99)).toBe(false);
   });
 });

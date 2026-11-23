@@ -63,7 +63,7 @@ export function CommentForm({
         </p>
       )}
       {error && (
-        <p role="alert" className="mb-1 text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="mb-1 text-[length:var(--font-size-sm)] text-danger">
           {error}
         </p>
       )}
@@ -94,7 +94,7 @@ export function CommentForm({
       {length >= COUNTER_FROM && (
         <p
           aria-live="polite"
-          className={`mt-1 text-right text-[length:var(--font-size-xs)] ${length > MAX_BODY ? 'text-red-700' : 'text-text-muted'}`}
+          className={`mt-1 text-right text-[length:var(--font-size-xs)] ${length > MAX_BODY ? 'text-danger' : 'text-text-secondary'}`}
         >
           {`${length} / 2,200`}
         </p>

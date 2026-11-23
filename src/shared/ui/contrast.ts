@@ -21,16 +21,29 @@ export function contrastRatio(fg: string, bg: string): number {
 /** WCAG AA for body text. */
 export const meetsAA = (ratio: number): boolean => ratio >= 4.5;
 
+/** WCAG 1.4.11 for graphics and input borders. */
+export const meetsNonText = (ratio: number): boolean => ratio >= 3;
+
 /**
- * Text color / background pairs used for body text. text-muted and link are for white (bg)
- * only: they are not listed on surface because they fall under 4.5:1 there.
+ * Text color / background pairs used for body text. text-secondary is for bg and wash only:
+ * it is not listed on surface or highlight because it falls under 4.5:1 there (4.34, 4.12).
  */
 export const BODY_PAIRS: ReadonlyArray<readonly [TokenName, TokenName]> = [
   ['--color-text', '--color-bg'],
+  ['--color-text', '--color-surface'],
+  ['--color-text', '--color-highlight'],
   ['--color-text-secondary', '--color-bg'],
-  ['--color-text-secondary', '--color-surface'],
-  ['--color-text-muted', '--color-bg'],
+  ['--color-text-secondary', '--color-wash'],
   ['--color-link', '--color-bg'],
+  ['--color-danger', '--color-bg'],
+  ['--color-bg', '--color-indigo'],
+];
+
+/** Shapes that carry meaning (not text): at least 3:1 on the page background. */
+export const NON_TEXT_PAIRS: ReadonlyArray<readonly [TokenName, TokenName]> = [
+  ['--color-like', '--color-bg'],
+  ['--color-icon-secondary', '--color-bg'],
+  ['--color-input-border', '--color-bg'],
 ];
 
 export const pairRatio = (fg: TokenName, bg: TokenName): number =>

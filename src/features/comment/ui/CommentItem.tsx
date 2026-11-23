@@ -2,7 +2,7 @@ import { formatRelativeTime } from '../../../shared/time/relative-time';
 import type { CommentView } from '../model/schema';
 
 const action =
-  'min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-2 text-[length:var(--font-size-xs)] font-bold text-text-secondary hover:bg-surface';
+  'min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-2 text-[length:var(--font-size-xs)] font-bold text-text-secondary hover:bg-surface hover:text-text';
 
 /** A comment that has been added but not yet answered by the server has a temporary id. */
 export const isPending = (comment: CommentView): boolean => comment.id.startsWith('tmp-');
@@ -47,7 +47,7 @@ export function CommentItem({
       ) : (
         <span
           aria-hidden="true"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-[length:var(--font-size-sm)] font-bold text-text-secondary"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-[length:var(--font-size-sm)] font-bold text-text"
         >
           {Array.from(author.username)[0]?.toUpperCase()}
         </span>
@@ -63,7 +63,7 @@ export function CommentItem({
           <time
             dateTime={createdAt.toISOString()}
             suppressHydrationWarning
-            className="text-[length:var(--font-size-xs)] text-text-muted"
+            className="text-[length:var(--font-size-xs)] text-text-secondary"
           >
             {formatRelativeTime(createdAt, now)}
           </time>

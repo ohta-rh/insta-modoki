@@ -1,7 +1,7 @@
 import type { UserSummary } from '../../post';
 
 const UNSEEN = 'conic-gradient(var(--color-indigo), var(--color-link), var(--color-indigo))';
-const SEEN = 'var(--color-text-muted)';
+const SEEN = 'var(--color-icon-secondary)';
 
 /**
  * A 64px round avatar inside a 3px ring: a gradient while there is something unseen, gray once

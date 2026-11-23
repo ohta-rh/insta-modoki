@@ -27,17 +27,17 @@ export function CaptionField({ value, onChange, disabled = false }: CaptionField
         disabled={disabled}
         aria-invalid={over ? 'true' : undefined}
         aria-describedby="caption-count"
-        className="min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 py-2 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-red-600"
+        className="min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 py-2 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-danger"
         onChange={(e) => onChange(e.currentTarget.value)}
       />
       <p
         id="caption-count"
-        className={`mt-1 text-right text-[length:var(--font-size-sm)] ${over ? 'font-bold text-red-700' : 'text-text-muted'}`}
+        className={`mt-1 text-right text-[length:var(--font-size-sm)] ${over ? 'font-bold text-danger' : 'text-text-secondary'}`}
       >
         {format(length)} / {format(MAX_CAPTION)}
       </p>
       {over && (
-        <p role="alert" className="text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="text-[length:var(--font-size-sm)] text-danger">
           {CAPTION_MESSAGE}
         </p>
       )}

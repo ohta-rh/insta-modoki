@@ -51,7 +51,7 @@ export function PostCard({
         ) : (
           <span
             aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-[length:var(--font-size-sm)] font-bold text-text-secondary"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-[length:var(--font-size-sm)] font-bold text-text"
           >
             {Array.from(author.username)[0]?.toUpperCase()}
           </span>
@@ -83,7 +83,7 @@ export function PostCard({
         <time
           dateTime={createdAt.toISOString()}
           suppressHydrationWarning
-          className="mt-1 block text-[length:var(--font-size-xs)] text-text-muted"
+          className="mt-1 block text-[length:var(--font-size-xs)] text-text-secondary"
         >
           {formatRelativeTime(createdAt, now ?? Date.now())}
         </time>

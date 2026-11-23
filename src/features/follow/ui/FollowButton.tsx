@@ -49,7 +49,7 @@ export function FollowButton() {
           : ''}
       </span>
       {error && (
-        <p role="alert" className="basis-full text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="basis-full text-[length:var(--font-size-sm)] text-danger">
           {error}
         </p>
       )}

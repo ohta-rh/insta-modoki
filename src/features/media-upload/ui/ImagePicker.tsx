@@ -10,7 +10,7 @@ const BUTTON =
   'min-h-[var(--tap-min)] rounded-lg bg-indigo px-4 font-bold text-white disabled:opacity-50';
 const SECONDARY =
   'min-h-[var(--tap-min)] rounded-lg border border-border px-4 font-bold disabled:opacity-50';
-const ERROR = 'text-[length:var(--font-size-sm)] text-red-700';
+const ERROR = 'text-[length:var(--font-size-sm)] text-danger';
 
 type Rejection = { name: string; message: string };
 

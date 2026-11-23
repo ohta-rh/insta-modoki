@@ -13,7 +13,7 @@ function Avatar({ user }: { user: UserSummary }) {
   ) : (
     <span
       aria-hidden="true"
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface font-bold text-text-secondary"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface font-bold text-text"
     >
       {Array.from(user.username)[0]?.toUpperCase()}
     </span>
