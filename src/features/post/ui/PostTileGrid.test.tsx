@@ -195,7 +195,7 @@ describe('PostTileGrid', () => {
       /<span role="img" aria-label="3 枚の写真" class="[^"]*top-2 right-2[^"]*text-white/,
     );
     expect(html).toContain('data-filled="true"');
-    expect(html).not.toMatch(/aria-hidden="true">3</);
+    expect(html).not.toContain('>3<');
   });
 
   it('PostTileItem は単独で使え、scroll を渡せる', () => {

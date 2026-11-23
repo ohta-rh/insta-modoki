@@ -177,6 +177,26 @@ test('375px の数の行は 3 等分で、単位が途中で折り返さない',
   }
 });
 
+test('768px 以上の右の区画は、画面の右端から 16px 空く', async ({ page, me }) => {
+  void me;
+  const other = otherProfile({ posts: 1, bio: 'とても長い自己紹介です。'.repeat(12) });
+  await open(page, other.username, { width: 900, height: 800 });
+  const head = await rect(header(page));
+  const right = head.x + head.width;
+  const rows = [
+    header(page).locator('> div').nth(1),
+    header(page).locator('> ul'),
+    header(page).locator('> div').nth(2),
+  ];
+  for (const [i, row] of rows.entries()) {
+    const box = await rect(row);
+    expect(
+      box.x + box.width <= right - 16 + 0.5,
+      `${i + 1} 番目の行の右端は ${box.x + box.width}px（ヘッダーの右端 ${right}px − 16px 以下）`,
+    ).toBe(true);
+  }
+});
+
 test('表示名は自己紹介の先頭に 600 で出る', async ({ page, me }) => {
   void me; // signed in as a viewer
   const other = otherProfile({ posts: 1 });
