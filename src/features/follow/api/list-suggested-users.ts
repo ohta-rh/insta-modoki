@@ -60,7 +60,7 @@ export async function listSuggestedUsers(
   if (!viewer) throw new AppError('UNAUTHENTICATED');
   if (!listSuggestedUsersInput.safeParse(input).success) throw new AppError('VALIDATION');
 
-  const { results } = await env.DB.prepare(QUERY).bind(viewer.id).all<Row>();
+  const { results } = (await env.DB.prepare(QUERY).bind(viewer.id).all()) as { results: Row[] };
   return {
     items: results.map((r) => ({
       username: r.username,
