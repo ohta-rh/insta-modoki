@@ -18,3 +18,15 @@ export type FollowResult = { following: boolean; followerCount: number };
 export const FOLLOW_PAGE_SIZE = 20;
 
 export const SELF_FOLLOW_MESSAGE = '自分自身はフォローできません';
+
+export const listSuggestedUsersInput = z.strictObject({});
+
+/** How many people the home's right column suggests. */
+export const SUGGEST_LIMIT = 5;
+
+export type SuggestedUser = {
+  username: string;
+  displayName: string;
+  avatarUrl: string | null;
+  reason: string;
+};

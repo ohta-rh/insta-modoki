@@ -78,6 +78,7 @@ status: stable
 | `deleteComment` | comment | commentId | `{ deleted: true }`（親を消すと返信も消え、`comment_count` は消えた行の数だけ減る） | UNAUTHENTICATED、FORBIDDEN（本人でも投稿者でもない）、NOT_FOUND |
 | `follow` / `unfollow` | follow | username | `{ following, followerCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、VALIDATION（自分自身）、NOT_FOUND |
 | `listFollowers` / `listFollowing` | follow | username, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
+| `listSuggestedUsers` | follow | –（余計な項目は VALIDATION） | { items: (UserSummary & { reason })[] }（5 人まで。閲覧者のフォロー中の人がフォローしていて閲覧者がフォローしていない人を、その数の多い順、同じなら新しいアカウントが先。足りなければフォロワーの多い順（同じなら新しいアカウント）で埋める。自分は入れない。1 回の問い合わせ、束縛 1 個。HTTP の入口と Server Action は無く、ホームのサーバーコンポーネントだけが呼ぶ） | UNAUTHENTICATED、VALIDATION |
 | `listNotifications` | notification | cursor? | `Page<NotificationView>`（20 件、`created_at` の新しい順、同じ時刻は `id` の降順）。宛先はセッションの利用者だけで、入力に利用者の項目は無い（余計な項目は VALIDATION）。コメントは先頭 100 字と切ったかどうか | UNAUTHENTICATED、VALIDATION（壊れたカーソル・余計な項目） |
 | `getUnreadNotificationCount` | notification | – | `{ count }`（`read_at IS NULL` の数。100 で頭打ち） | UNAUTHENTICATED |
 | `streamNotifications` | notification | –（セッション） | `GET /api/notifications/stream`。`text/event-stream`。最初に `retry: 1000` と `event: unread` / `data: {"unreadCount":N}`、その後は変わったときだけ同じイベント、15 秒ごとに `: ping`、60 秒で終わる（[ADR-0050](../adr/0050-notifications-via-sse-with-d1-checks.md)） | UNAUTHENTICATED（401、JSON。イベントは流さない） |
