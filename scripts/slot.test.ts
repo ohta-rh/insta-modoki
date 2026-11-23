@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'vitest';
 import {
   corsXml,
+  emptyBucket,
   killTree,
   listPortPids,
   renderEnv,
@@ -397,4 +398,100 @@ test('killTree は PID 1 には何も送らない', () => {
     return true as const;
   });
   assert.equal(sent.length, 0);
+});
+
+// --- emptyBucket: 32 parallel DELETEs with progress (#108) ---
+
+const keysOf = (n: number) => Array.from({ length: n }, (_, i) => `k${i}`);
+
+test('emptyBucket は 32 本まで並べて全ての key を 1 回ずつ消す', async () => {
+  const seen = new Map<string, number>();
+  let running = 0;
+  let peak = 0;
+  await emptyBucket(
+    { bucket: 'insta-s2' },
+    {
+      list: async () => keysOf(10_000),
+      del: async (_cfg: unknown, key: string) => {
+        seen.set(key, (seen.get(key) ?? 0) + 1);
+        peak = Math.max(peak, ++running);
+        await new Promise((r) => setImmediate(r));
+        running--;
+      },
+      out: () => {},
+    },
+  );
+  assert.equal(seen.size, 10_000);
+  assert.ok([...seen.values()].every((c) => c === 1));
+  assert.equal(peak, 32);
+});
+
+test('emptyBucket は 1 万個ごとと最後に消した数を出す', async () => {
+  const out: string[] = [];
+  await emptyBucket(
+    { bucket: 'insta-s2' },
+    { list: async () => keysOf(25_000), del: async () => {}, out: (s: string) => out.push(s) },
+  );
+  assert.deepEqual(out, [
+    'バケット insta-s2 のオブジェクトを 10000 / 25000 個消しました',
+    'バケット insta-s2 のオブジェクトを 20000 / 25000 個消しました',
+    'バケット insta-s2 のオブジェクトを 25000 / 25000 個消しました',
+  ]);
+});
+
+test('emptyBucket は 空のときは空と出す', async () => {
+  const out: string[] = [];
+  await emptyBucket(
+    { bucket: 'insta-s2' },
+    { list: async () => [], del: async () => {}, out: (s: string) => out.push(s) },
+  );
+  assert.deepEqual(out, ['バケット insta-s2 は空です']);
+});
+
+test('emptyBucket は 失敗したら新しい delete を始めず、動いている分を待って最初のエラーで終わる', async () => {
+  let started = 0;
+  let running = 0;
+  await assert.rejects(
+    emptyBucket(
+      { bucket: 'insta-s2' },
+      {
+        list: async () => keysOf(1000),
+        del: async (_c: unknown, key: string) => {
+          started++;
+          running++;
+          await new Promise((r) => setImmediate(r));
+          running--;
+          if (key === 'k2') throw new Error('S3 DELETE /insta-s2/k2 -> 500');
+        },
+        out: () => {},
+        concurrency: 4,
+      },
+    ),
+    /k2 -> 500/,
+  );
+  assert.equal(running, 0);
+  assert.ok(started < 20, `started ${started}`);
+});
+
+test('バケットを空にする途中の失敗で reset は 1 を返し .dev.vars を書かない', async () => {
+  let calls = 0;
+  const t = stackDeps({
+    emptyBucket: (cfg: unknown) =>
+      emptyBucket(cfg as { bucket: string }, {
+        list: async () => ['k1', 'k2', 'k3', 'k4'],
+        del: async (_c: unknown, key: string) => {
+          calls++;
+          if (key === 'k3') throw new Error('S3 DELETE /insta-s2/k3 -> 500');
+        },
+        out: () => {},
+      }),
+    listPortPids: async () => [],
+  });
+  const code = await run(['reset', '2'], t.deps);
+  const wrote = existsSync(join(t.deps.cwd, '.dev.vars'));
+  t.done();
+  assert.equal(code, 1);
+  assert.ok(calls >= 3);
+  assert.ok(t.err.some((s) => s.includes('slot 2 の reset に失敗しました: S3 DELETE /insta-s2/k3 -> 500')));
+  assert.equal(wrote, false);
 });

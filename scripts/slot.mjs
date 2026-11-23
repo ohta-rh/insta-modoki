@@ -160,8 +160,52 @@ export async function listObjects(cfg) {
   return keys;
 }
 
-async function emptyBucket(cfg) {
-  for (const key of await listObjects(cfg)) await deleteObject(cfg, key);
+export const DELETE_CONCURRENCY = 32;
+const PROGRESS_EVERY = 10_000;
+
+/**
+ * Deletes every object in the bucket, `concurrency` DELETEs at a time (one at a time took 20 ms
+ * each: 450,000 objects = 2.5 h; 32 at a time ~1-4 ms each, ADR-0060). Prints progress every
+ * 10,000 objects and at the end. After the first failure no new DELETE starts; the ones running
+ * finish, then the first error is thrown. Deleting a missing key succeeds, so a rerun is safe.
+ */
+export async function emptyBucket(
+  cfg,
+  {
+    list = listObjects,
+    del = deleteObject,
+    out = (s) => process.stdout.write(`${s}\n`),
+    concurrency = DELETE_CONCURRENCY,
+  } = {},
+) {
+  const keys = await list(cfg);
+  const total = keys.length;
+  if (total === 0) {
+    out(`バケット ${cfg.bucket} は空です`);
+    return;
+  }
+  let next = 0;
+  let done = 0;
+  let failed = false;
+  let firstError;
+  const worker = async () => {
+    while (!failed && next < total) {
+      const key = keys[next++];
+      try {
+        await del(cfg, key);
+      } catch (e) {
+        if (!failed) firstError = e;
+        failed = true;
+        return;
+      }
+      done++;
+      if (done % PROGRESS_EVERY === 0 && done !== total)
+        out(`バケット ${cfg.bucket} のオブジェクトを ${done} / ${total} 個消しました`);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(concurrency, total) }, worker));
+  if (failed) throw firstError;
+  out(`バケット ${cfg.bucket} のオブジェクトを ${done} / ${total} 個消しました`);
 }
 
 // --- Stopping the slot's app server (#83) ---
