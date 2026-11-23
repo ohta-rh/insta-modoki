@@ -2,7 +2,7 @@
 
 ## 2026-11-23
 * **Creation**: [Web 版の画面の参照値と今のアプリとの差](research/web-ui-reference.md)（ログインしていない公開ページの実測と参照自身の CSS 変数から、骨格・ホーム・プロフィール・投稿・ログインの寸法と色を今のアプリと比べた調査）を追加し、[research/index.md](research/index.md) に載せた。
-* **Creation**: [ADR-0055](adr/0055-e2e-invite-required-by-request-header.md)（E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする。番号は仮）を追加した（#38）。
+* **Creation**: [ADR-0055](adr/0055-e2e-invite-required-by-request-header.md)（E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする）を追加した（#38）。
 * **Update**: [routes.md](architecture/routes.md) に `createInvite`・`listInvites`・`revokeInvite` と画面 `/admin/invites` を足し、`signUp` の `inviteCode`（`INVITE_REQUIRED` が `true` のとき必須）を書いた（#38）。
 
 ## 2026-11-22
