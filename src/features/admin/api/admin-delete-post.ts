@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { removePost } from '../../post';
 import type { AuthEnv } from '../../auth/api/auth-env';
 import { getDb } from '../../../shared/db/client';
@@ -28,13 +28,20 @@ export async function adminDeletePost(input: unknown, deps: AdminDeps): Promise<
   const now = deps.now ?? Date.now();
   await removePost(env, postId, {
     extra: [
-      db.insert(adminActions).values({
-        id: newId(),
-        adminId: admin.id,
-        action: 'delete_post',
-        targetId: postId,
-        createdAt: new Date(now),
-      }),
+      // Recorded from the post's own row, before the delete in the same batch: a delete that
+      // lost a race (the row is already gone) writes no second record.
+      db.insert(adminActions).select(
+        db
+          .select({
+            id: sql<string>`${newId()}`.as('id'),
+            adminId: sql<string>`${admin.id}`.as('adminId'),
+            action: sql<string>`'delete_post'`.as('action'),
+            targetId: posts.id,
+            createdAt: sql<number>`${now}`.as('createdAt'),
+          })
+          .from(posts)
+          .where(eq(posts.id, postId)),
+      ),
     ],
     removeObjects: deps.removeObjects,
     now,

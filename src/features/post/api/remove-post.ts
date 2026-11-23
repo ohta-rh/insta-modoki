@@ -15,7 +15,7 @@ export const photoFileKeys = (storageKey: string): string[] =>
   VARIANTS.map((v) => `${storageKey}/${v}.webp`);
 
 export type RemovePostOptions = {
-  /** Statements run in the same batch as the delete (the admin's `admin_actions` row). */
+  /** Statements run in the same batch, just before the delete (so they can read the post's row). */
   extra?: BatchItem<'sqlite'>[];
   /** Replaced by tests to make the storage fail. */
   removeObjects?: typeof removeStoredObjects;
@@ -36,8 +36,8 @@ export async function removePost(
   const db = getDb(env);
   const batch: [BatchItem<'sqlite'>, ...BatchItem<'sqlite'>[]] = [
     db.select({ storageKey: media.storageKey }).from(media).where(eq(media.postId, postId)),
-    db.delete(posts).where(eq(posts.id, postId)),
     ...(options.extra ?? []),
+    db.delete(posts).where(eq(posts.id, postId)),
   ];
   const [mediaRows] = (await db.batch(batch)) as [{ storageKey: string }[], ...unknown[]];
 
