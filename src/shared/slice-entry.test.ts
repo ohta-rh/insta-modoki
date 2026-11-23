@@ -6,11 +6,18 @@ import { describe, expect, it } from 'vitest';
 // No DOM, no database: files are only read.
 const FEATURES = resolve(__dirname, '../features');
 
-const sliceNames = readdirSync(FEATURES).filter((name) => statSync(join(FEATURES, name)).isDirectory());
+const sliceNames = readdirSync(FEATURES).filter((name) =>
+  statSync(join(FEATURES, name)).isDirectory(),
+);
 
 function resolveModule(from: string, spec: string): string | null {
   const base = resolve(dirname(from), spec);
-  for (const candidate of [`${base}.ts`, `${base}.tsx`, join(base, 'index.ts'), join(base, 'index.tsx')]) {
+  for (const candidate of [
+    `${base}.ts`,
+    `${base}.tsx`,
+    join(base, 'index.ts'),
+    join(base, 'index.tsx'),
+  ]) {
     if (existsSync(candidate)) return candidate;
   }
   return null;
@@ -65,7 +72,10 @@ describe('slice の入口', () => {
       if (!existsSync(entry)) continue;
       for (const file of exportedFiles(entry)) {
         const source = readFileSync(file, 'utf8');
-        if (hasDirective(source, 'use server') || /^\s*import\s+['"]server-only['"]/m.test(source)) {
+        if (
+          hasDirective(source, 'use server') ||
+          /^\s*import\s+['"]server-only['"]/m.test(source)
+        ) {
           violations.push(
             `${slice}/ui/index.ts が ${relative(join(FEATURES, slice), file)} を公開しています。サーバー専用の処理は ${slice}/index.ts から公開します`,
           );

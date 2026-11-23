@@ -1,5 +1,3 @@
-export { StoryTraySection } from './ui/StoryTraySection';
-export { StoryTrayFallback } from './ui/StoryTrayFallback';
 export { findActiveStories, findSeenStoryIds, type AuthorFilter } from './db/queries';
 export { buildTray, type TrayEntry, type TrayStory } from './model/tray';
 export { nextFromQueue, saveStoryQueue } from './model/story-queue';

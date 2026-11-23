@@ -14,12 +14,13 @@ status: stable
 
 ```
 src/features/<slice>/
-  index.ts            # 外に見せる入口（他の slice はここだけを import する）
+  index.ts            # 外に見せる入口: 処理・型・定数だけ（部品は公開しない）
   api/<name>.ts       # サーバーの処理 1 つ（routes.md の処理名）
   model/schema.ts     # 入力の Zod スキーマと型
   model/*.ts          # 純粋なロジック
   db/                 # その slice のテーブルの定義と問い合わせ（スキーマの入口には 1 行で登録する）
   ui/<Component>.tsx  # React の部品
+  ui/index.ts         # 部品の入口（部品は `<slice>/ui` から import する）
 src/shared/
   db/                 # 接続、スキーマの入口、トランザクション
   storage/            # S3 互換のストレージ（ローカル）と R2（本番）
@@ -27,6 +28,8 @@ src/shared/
   security/           # ヘッダー・CSP・レート制限
   errors.ts           # AppError と変換
 ```
+
+* slice の入口 `index.ts` は、直接にも再び公開するファイルを辿っても、`'use client'` で始まるモジュールを公開しない。部品（`'use client'` の部品とその props の型・フック、それらを import するサーバーの部品）は `ui/index.ts` から公開し、他の slice もルートも `@/features/<slice>/ui` から import する。処理と型は `@/features/<slice>` から。深い経路（`<slice>/ui/Foo`）からは import しない。`ui/index.ts` は `'use server'` のファイルと `server-only` を import するファイルを公開しない。理由: 入口が部品を公開していると、サーバーが処理を 1 つ import するだけで全部品がそのルートの初期 JS に入る（[ADR-0057](../adr/0057-slice-index-exports-no-client-components.md)、ADR-0053 を置き換え）。`package.json` の `sideEffects`（CSS だけ）で、使わない再公開は JS に入らない。import だけで効くモジュールを足すときは `sideEffects` に足す。`src/shared/slice-entry.test.ts` が検査する。
 
 ## テスト
 

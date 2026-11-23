@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-23
+* **Creation**: [ADR-0057](adr/0057-slice-index-exports-no-client-components.md)（slice の入口 `index.ts` は `'use client'` の部品を公開せず、画面の部品は `ui/index.ts` から公開する。[ADR-0053](adr/0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) を置き換える）を追加し、[conventions.md](architecture/conventions.md) の slice の節を合わせた（#106）。
 * **Creation**: [管理者の手順](guides/admin.md)（管理者を作るコマンド、`/admin` の削除、削除は取り消せないこと）を追加し、[guides/index.md](guides/index.md) に載せた（#39）。
 * **Update**: [routes.md](architecture/routes.md) に `adminDeletePost`・`adminDeleteUser`・`listAdminPosts`・`listAdminUsers` と画面 `/admin` を、[data-model.md](architecture/data-model.md) に `admin_actions` の制約と索引を書いた（#39）。
 * **Update**: [ADR-0056](adr/0056-ui-follows-measured-web-reference-under-own-brand.md)（UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする）を追加し、[design-system.md](architecture/design-system.md) のトークン・色の使い方の決まり・アイコンの線の太さを参照の値に更新した（#88）。

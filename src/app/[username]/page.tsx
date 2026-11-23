@@ -5,13 +5,8 @@ import { cache } from 'react';
 import { getSessionUser } from '@/features/auth';
 import { listSavedPosts } from '@/features/bookmark';
 import { FollowButton, FollowerCount, FollowScope } from '@/features/follow/ui';
-import {
-  getProfile,
-  listProfilePosts,
-  ProfileEmptyState,
-  ProfileHeader,
-  profileTab,
-} from '@/features/profile';
+import { getProfile, listProfilePosts, profileTab } from '@/features/profile';
+import { ProfileEmptyState, ProfileHeader } from '@/features/profile/ui';
 import { PostGrid, ProfileTabs, SavedGrid } from '@/features/profile/ui';
 import { AppError } from '@/shared/errors';
 

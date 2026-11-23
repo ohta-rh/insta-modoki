@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SearchPage, searchUsers } from '@/features/search';
+import { searchUsers } from '@/features/search';
+import { SearchPage } from '@/features/search/ui';
 import { AppError } from '@/shared/errors';
 
 type Props = { searchParams: Promise<{ q?: string | string[] }> };

@@ -6,7 +6,8 @@ import {
   FeedCommentField,
 } from '../../comment/ui';
 import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like/ui';
-import { PostCard, type PostView } from '../../post';
+import { type PostView } from '../../post';
+import { PostCard } from '../../post/ui';
 
 /**
  * One post of the feed: the shared card with the like controls (#34) and the comment count link

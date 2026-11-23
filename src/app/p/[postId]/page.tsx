@@ -5,7 +5,8 @@ import { cache } from 'react';
 import { getSessionUser } from '@/features/auth';
 import { getRequestEnv } from '@/shared/db/request';
 import { listComments } from '@/features/comment';
-import { appOrigin, buildOgMeta, getPost, PostDetail } from '@/features/post';
+import { appOrigin, buildOgMeta, getPost } from '@/features/post';
+import { PostDetail } from '@/features/post/ui';
 import type { AuthEnv } from '@/features/auth/api/auth-env';
 import { AppError } from '@/shared/errors';
 

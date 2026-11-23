@@ -13,10 +13,6 @@ export {
   type PostView,
   type UserSummary,
 } from './model/schema';
-export { MediaImage } from './ui/MediaImage';
-export { PostActionBar } from './ui/PostActionBar';
-export { PostCard } from './ui/PostCard';
-export { PostDetail } from './ui/PostDetail';
 export { thumbhashDataUrl } from './model/thumbhash';
 export { removePost, photoFileKeys } from './api/remove-post';
 export { removeFilesRecordingFailures } from './api/remove-post';

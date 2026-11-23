@@ -1,9 +1,10 @@
 import { headers } from 'next/headers';
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
-import { getFeed, renderFeedCards } from '@/features/feed';
+import { getFeed } from '@/features/feed';
+import { renderFeedCards } from '@/features/feed/ui';
 import { Feed } from '@/features/feed/ui';
-import { StoryTrayFallback, StoryTraySection } from '@/features/story';
+import { StoryTrayFallback, StoryTraySection } from '@/features/story/ui';
 import { AppError } from '@/shared/errors';
 
 // The home feed: the first page is read here, the rest by the Feed's Server Action. The (app)
