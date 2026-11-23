@@ -209,3 +209,18 @@ test('別のページへ移って戻っても、パネルは閉じたまま', as
   await expect(panel(page)).toBeHidden();
   await expect(searchItem(page)).toHaveAttribute('aria-expanded', 'false');
 });
+
+test('今いるプロフィールの人を候補から選ぶとパネルが閉じる', async ({ page }) => {
+  const p = prefix();
+  const username = `${p}_same`;
+  seedUser(username, `${username}@example.com`, { displayName: 'Same' });
+  await open(page, VIEWPORTS.wide, `/${username}`);
+  await searchItem(page).click();
+  await expect(panel(page)).toBeVisible();
+  await input(page).fill(`${p}_sa`);
+  await panel(page).getByRole('option').click();
+  // The path does not change, so only a press inside the panel can close it.
+  await expect(page).toHaveURL(new RegExp(`/${username}$`));
+  await expect(panel(page)).toBeHidden();
+  await expect(searchItem(page)).toHaveAttribute('aria-expanded', 'false');
+});

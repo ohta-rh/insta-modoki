@@ -73,11 +73,19 @@ export function AppShellClient({
       if (target?.closest(`#${SIDE_PANEL_ID}, nav[data-nav="side"]`)) return;
       close();
     };
+    // Pressing a link or a candidate inside the panel closes it, also when it leads to the path
+    // already shown (a path change alone would leave the panel open).
+    const onClick = (e: Event) => {
+      const target = e.target as Element | null;
+      if (target?.closest(`#${SIDE_PANEL_ID} :is(a[href], [role="option"])`)) close();
+    };
     document.addEventListener('keydown', onKey);
     document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('click', onClick);
     return () => {
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('click', onClick);
     };
   }, [open, close]);
 

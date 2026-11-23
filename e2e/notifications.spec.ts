@@ -43,9 +43,10 @@ freshUser(
     });
 
     await nav.getByRole('link', { name: '通知（未読 1 件）', exact: true }).click();
-    await expect(page).toHaveURL(/\/notifications$/);
-    await expect(page.getByRole('heading', { level: 1, name: '通知' })).toBeVisible();
-    const row = page.getByRole('link', { name: /さんがあなたの投稿にいいねしました/ });
+    // At this width the navigation opens the notifications in a panel beside it (#99).
+    const panel = page.getByRole('dialog', { name: '通知' });
+    await expect(panel).toBeVisible();
+    const row = panel.getByRole('link', { name: /さんがあなたの投稿にいいねしました/ });
     await expect(row).toHaveCount(1);
     await expect(row).toContainText('新着');
     await expect(row).toHaveAttribute('href', `/p/${post.id}`);
@@ -54,8 +55,8 @@ freshUser(
     await expect(row).toContainText('新着');
     await expect.poll(() => unreadNotificationCount(me.username)).toBe(0);
 
-    await page.reload();
-    await waitForHydration(page);
+    await page.goto('/notifications');
+    await expect(page.getByRole('heading', { level: 1, name: '通知' })).toBeVisible();
     await expect(
       page.getByRole('link', { name: /さんがあなたの投稿にいいねしました/ }),
     ).not.toContainText('新着');

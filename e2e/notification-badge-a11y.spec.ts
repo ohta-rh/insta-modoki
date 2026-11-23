@@ -62,7 +62,7 @@ base('未読の数は通知のリンクの名前だけで読み上げ、バッ�
 
 // Opening the notifications screen marks them read, so each width gets its own user.
 for (const { width, height, nav } of WIDTHS) {
-  base(`バッジの上を押しても通知の画面に移る（${width}px）`, async ({ page }) => {
+  base(`バッジの上を押しても通知が開く（${width}px）`, async ({ page }) => {
     base.setTimeout(90_000);
     await withUnread(page);
     await page.setViewportSize({ width, height });
@@ -70,7 +70,13 @@ for (const { width, height, nav } of WIDTHS) {
     await expect(badge).toBeVisible({ timeout: 15_000 });
     const box = (await badge.boundingBox())!;
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-    await expect(page).toHaveURL(/\/notifications$/);
+    if (nav === 'side') {
+      // The side navigation opens the panel beside it and stays on the page (#99).
+      await expect(page.getByRole('dialog', { name: '通知' })).toBeVisible();
+      await expect(page).not.toHaveURL(/\/notifications$/);
+    } else {
+      await expect(page).toHaveURL(/\/notifications$/);
+    }
   });
 }
 

@@ -2,7 +2,11 @@ import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactNode } from 'react';
 import { getSessionUser, isValidUsernameFormat } from '@/features/auth';
-import { NotificationBadge, NotificationNavLink } from '@/features/notification/ui';
+import {
+  NotificationBadge,
+  NotificationNavLink,
+  NotificationPanel,
+} from '@/features/notification/ui';
 import { CreateNavLink } from '@/features/post-create/ui';
 import { SearchPanel } from '@/features/search/ui';
 import { AppShellClient, HydrationMarker } from '@/shared/ui';
@@ -32,7 +36,14 @@ export default async function RootLayout({
         <HydrationMarker />
         <AppShellClient
           viewer={viewer}
-          panels={viewer ? { search: { title: '検索', content: <SearchPanel /> } } : undefined}
+          panels={
+            viewer
+              ? {
+                  search: { title: '検索', content: <SearchPanel /> },
+                  notifications: { title: '通知', content: <NotificationPanel /> },
+                }
+              : undefined
+          }
           badges={
             viewer && user ? { notifications: <NotificationBadge viewerId={user.id} /> } : undefined
           }
