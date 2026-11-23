@@ -50,6 +50,7 @@ status: stable
 - 補助の文字（`text-text-secondary`）は `bg` と `wash` の上だけ。`surface`（4.34:1）と `highlight`（4.12:1）の上では `text-text` にする。ホバーで面になる要素は `hover:text-text` を足す。`token-usage.test.ts` が全ての `.tsx` を走査して確かめる。
 - 図形（いいねの赤・補助のアイコン・入力の枠）は `bg` の上で 3:1 以上（`NON_TEXT_PAIRS`）。
 - エラー・削除の赤は `text-danger` / `border-danger`、塗ったハートは `text-like`。Tailwind の `red-*` は直書きしない。
+- 行の高さ: `body` は絶対値 18px（`--leading-sm`）。`globals.css` の 5 つの規則 `[class~='text-[length:var(--font-size-X)]']`（X は xs〜xl）が、文字の大きさを自分で決める部品に対の `--leading-*` を付ける。`md:text-[length:…]` のように前置きの付いた大きさのクラスには付かないので、その部品は `leading-*` を自分で足す。
 - `text-danger` は `surface`（4.47:1）・`highlight` の上に置かない。ホバーで面にするなら `hover:bg-wash`。`token-usage.test.ts` が確かめる。
 - ティール・コーラル・インディゴは文字色に使わない。コーラル（2.79:1）とティール（2.49:1）は白の上で 3:1 に届かないので、状態を伝える図形はインディゴか文字色と形（塗りつぶし）で示す。
 - フォーカスの輪郭は 2px のインディゴ（白の上で 6.9:1）、オフセット 2px（`globals.css`）。

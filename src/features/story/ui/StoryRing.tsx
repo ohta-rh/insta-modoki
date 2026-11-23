@@ -1,6 +1,7 @@
 import type { UserSummary } from '../../post';
 
-const UNSEEN = 'conic-gradient(var(--color-indigo), var(--color-link), var(--color-indigo))';
+// The own gradient of --gradient-window (teal, blue, indigo); the state is also in the link's name.
+const UNSEEN = 'conic-gradient(var(--color-teal), #2b6cf6, var(--color-indigo), var(--color-teal))';
 const SEEN = 'var(--color-icon-secondary)';
 
 /**

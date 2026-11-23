@@ -15,7 +15,7 @@ const STATUS_LABEL: Record<InviteStatus, string> = {
 };
 
 const INPUT =
-  'min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-red-600';
+  'min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-danger';
 const BUTTON =
   'min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-4 text-[length:var(--font-size-sm)] font-bold';
 const ERROR = 'mt-1 text-[length:var(--font-size-sm)] text-danger';

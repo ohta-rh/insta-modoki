@@ -85,4 +85,21 @@ describe('色の使い方', () => {
     }
     expect(violations).toEqual([]);
   });
+
+  it('Tailwind の red-* の文字・枠の色を、ログインと登録の 2 つ（#96 で置き換える）の外で使わない', () => {
+    const ALLOWED = ['features/auth/ui/LogInForm.tsx', 'features/auth/ui/SignUpForm.tsx'];
+    const violations: string[] = [];
+    for (const file of tsxFiles(SRC)) {
+      const rel = file.slice(ROOT.length + 1);
+      if (ALLOWED.some((a) => rel.endsWith(a))) continue;
+      for (const { text, line } of literals(readFileSync(file, 'utf8'))) {
+        const m = text.match(/(?:^|[\s:])((?:text|border|bg)-red-\d+)\b/);
+        if (m)
+          violations.push(
+            `${rel}:${line} ${m[1]} は text-danger / border-danger / text-like にします`,
+          );
+      }
+    }
+    expect(violations).toEqual([]);
+  });
 });

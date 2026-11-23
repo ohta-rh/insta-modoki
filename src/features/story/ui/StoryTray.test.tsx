@@ -44,15 +44,25 @@ describe('StoryTray', () => {
     expect(html).not.toContain('href="/stories/bob"');
   });
 
-  it('リングの色のコントラストが 3:1 以上', () => {
-    for (const color of ['--color-indigo', '--color-link', '--color-icon-secondary'] as const) {
-      expect(contrastRatio(TOKENS[color], TOKENS['--color-bg']), color).toBeGreaterThanOrEqual(3);
-    }
+  it('未視聴のリングは 2 色以上の違う色のグラデーションで、視聴済みは補助のアイコンの色', () => {
     const html = render(view());
-    expect(html).toContain(
-      'conic-gradient(var(--color-indigo), var(--color-link), var(--color-indigo))',
-    );
+    const ring = html.match(/background:conic-gradient\((.*?)\)"/)?.[1] ?? '';
+    const colors = ring
+      .split(/,\s*(?![^(]*\))/)
+      .map((c) => c.trim())
+      .map((c) => {
+        const v = c.match(/^var\((--color-[a-z]+)\)$/)?.[1];
+        return v ? TOKENS[v as keyof typeof TOKENS] : c;
+      });
+    expect(colors.length).toBeGreaterThanOrEqual(3);
+    expect(new Set(colors).size, colors.join(' ')).toBeGreaterThanOrEqual(2);
     expect(html).toContain('var(--color-icon-secondary)');
     expect(html).not.toContain('--color-border');
+  });
+
+  it('リングの図形の色（インディゴ・青・補助のアイコン）は白の上で 3:1 以上', () => {
+    for (const color of [TOKENS['--color-indigo'], '#2b6cf6', TOKENS['--color-icon-secondary']]) {
+      expect(contrastRatio(color, TOKENS['--color-bg']), color).toBeGreaterThanOrEqual(3);
+    }
   });
 });
