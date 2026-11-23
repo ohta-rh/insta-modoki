@@ -10,6 +10,23 @@
   .shell-side {
     @apply sticky top-0 hidden h-screen w-[var(--nav-narrow-width)] shrink-0 flex-col gap-1 border-r border-border p-3 pr-[11px] nav:flex nav-wide:w-[var(--nav-wide-width)];
   }
+  .shell-side-folded {
+    @apply nav-wide:w-[var(--nav-narrow-width)];
+  }
+  .shell-badge-folded {
+    @apply top-1.5 left-[26px];
+  }
+  .shell-panel {
+    @apply fixed inset-y-0 left-[var(--nav-narrow-width)] z-30 hidden w-[var(--side-panel-width)] flex-col overflow-y-auto rounded-r-2xl bg-bg text-text transition-transform duration-[var(--motion-panel)] ease-move-in nav:flex;
+    /* Plain: the shadow-* utility adds ring layers to the computed value. */
+    box-shadow: var(--shadow-panel);
+  }
+  .shell-panel-closed {
+    @apply invisible -translate-x-full;
+  }
+  .shell-panel-title {
+    @apply px-6 pt-6 pb-9 text-[length:var(--font-size-xl)] font-bold outline-none;
+  }
   .shell-item {
     @apply flex min-h-12 items-center gap-4 rounded-lg p-3 text-base transition-colors duration-[var(--motion-fast)] hover:bg-surface aria-[current=page]:font-bold;
   }

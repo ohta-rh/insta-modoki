@@ -19,7 +19,14 @@ const EMPTY: SearchSnapshot = { text: '', answered: null, items: [], error: null
  * `?q=` instead. Up / down move through the candidates, Enter opens the chosen one's profile (with
  * none chosen it submits the form), Escape closes the list and keeps the text.
  */
-export function SearchBox({ defaultValue = '' }: { defaultValue?: string }) {
+export function SearchBox({
+  defaultValue = '',
+  variant = 'page',
+}: {
+  defaultValue?: string;
+  /** `panel`: inside the navigation's side panel (a 44px field on the highlight grey). */
+  variant?: 'page' | 'panel';
+}) {
   const router = useRouter();
   const listId = useId();
   const [snap, setSnap] = useState<SearchSnapshot>(EMPTY);
@@ -88,7 +95,9 @@ export function SearchBox({ defaultValue = '' }: { defaultValue?: string }) {
         placeholder="検索"
         onChange={(e) => controller.current?.input(e.target.value)}
         onKeyDown={onKeyDown}
-        className="min-h-[var(--tap-min)] w-full rounded-lg bg-surface px-3 text-[length:var(--font-size-md)]"
+        className={`w-full rounded-lg px-3 text-[length:var(--font-size-md)] ${
+          variant === 'panel' ? 'h-11 bg-highlight' : 'min-h-[var(--tap-min)] bg-surface'
+        }`}
       />
       <div hidden={!shown}>
         <SearchResultList

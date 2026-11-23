@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { getSessionUser, isValidUsernameFormat } from '@/features/auth';
 import { NotificationBadge, NotificationNavLink } from '@/features/notification/ui';
 import { CreateNavLink } from '@/features/post-create/ui';
+import { SearchPanel } from '@/features/search/ui';
 import { AppShellClient, HydrationMarker } from '@/shared/ui';
 import './globals.css';
 
@@ -31,6 +32,7 @@ export default async function RootLayout({
         <HydrationMarker />
         <AppShellClient
           viewer={viewer}
+          panels={viewer ? { search: { title: '検索', content: <SearchPanel /> } } : undefined}
           badges={
             viewer && user ? { notifications: <NotificationBadge viewerId={user.id} /> } : undefined
           }

@@ -114,6 +114,31 @@ describe('AppShell', () => {
     for (const a of html.match(/<a [^>]*>.*?<\/a>/g) ?? []) expect(a).not.toContain('BADGE');
   });
 
+  it('panels が無ければ検索は通常のリンクのまま', () => {
+    const html = render();
+    expect(html).toContain('href="/explore/search"');
+    expect(html).not.toContain('aria-expanded="');
+    expect(html).not.toContain('id="side-panel"');
+    expect(html).not.toContain('data-panel');
+  });
+
+  it('panels を渡すと検索のリンクに aria-expanded と data-panel が付き、パネルがナビの直後に出る', () => {
+    const html = render({
+      panels: { search: { title: '検索', content: <i>CONTENT</i> } },
+    });
+    expect(html).toMatch(/<a [^>]*data-panel="search"[^>]*aria-expanded="false"/);
+    expect(html.indexOf('id="side-panel"')).toBeGreaterThan(html.indexOf('</nav>'));
+    expect(html.indexOf('id="side-panel"')).toBeLessThan(html.indexOf('<main'));
+    expect(html).not.toContain('CONTENT');
+    const opened = render({
+      panels: { search: { title: '検索', content: <i>CONTENT</i> } },
+      openPanel: 'search',
+    });
+    expect(opened).toContain('CONTENT');
+    expect(opened).toMatch(/data-panel="search"[^>]*aria-expanded="true"/);
+    expect(opened).toContain('data-panel-open');
+  });
+
   it('linkAs を渡したときだけその項目の <a> を差し替える', () => {
     const Marked = (props: React.ComponentProps<'a'>) => <a {...props} data-marked="1" />;
     expect(render()).not.toContain('data-marked');

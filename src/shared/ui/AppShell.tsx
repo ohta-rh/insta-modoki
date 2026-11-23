@@ -1,4 +1,4 @@
-import type { ComponentProps, ComponentType, ReactNode } from 'react';
+import type { ComponentProps, ComponentType, MouseEvent, ReactNode } from 'react';
 import { FOOTER_NOTICE } from './brand';
 import {
   BellIcon,
@@ -12,6 +12,7 @@ import {
 } from './icons';
 import { Logo } from './Logo';
 import { MORE_MENU_ID, MoreMenu } from './MoreMenu';
+import { SIDE_PANEL_ID, SidePanel } from './SidePanel';
 import { isCurrent, navItems, type NavIcon, type NavItem, type Viewer } from './nav-items';
 
 const ICONS: Record<NavIcon, ComponentType<IconProps>> = {
@@ -23,6 +24,8 @@ const ICONS: Record<NavIcon, ComponentType<IconProps>> = {
   user: UserIcon,
 };
 
+export type PanelKey = 'search' | 'notifications';
+
 export type AppShellProps = {
   currentPath: string;
   viewer: Viewer;
@@ -33,6 +36,10 @@ export type AppShellProps = {
    * component of a feature, which sets an `aria-label` from client state such as the unread count).
    */
   linkAs?: Partial<Record<NavItem['key'], ComponentType<ComponentProps<'a'>>>>;
+  panels?: Partial<Record<PanelKey, { title: string; content: ReactNode }>>;
+  openPanel?: PanelKey | null;
+  /** Click handler of a navigation item that opens a panel. */
+  onPanelClick?: (key: PanelKey, event: MouseEvent<HTMLAnchorElement>) => void;
   /** Sign-up and log-in screens render without navigation. */
   hideNav?: boolean;
   children: ReactNode;
@@ -52,6 +59,9 @@ type NavProps = {
   viewer: Viewer;
   badges?: AppShellProps['badges'];
   linkAs?: AppShellProps['linkAs'];
+  panels?: AppShellProps['panels'];
+  openPanel?: PanelKey | null;
+  onPanelClick?: AppShellProps['onPanelClick'];
 };
 
 function NavLinks({
@@ -60,6 +70,9 @@ function NavLinks({
   viewer,
   badges,
   linkAs,
+  panels,
+  openPanel,
+  onPanelClick,
   layout,
 }: NavProps & { layout: 'side' | 'bottom' }) {
   return (
@@ -71,15 +84,32 @@ function NavLinks({
           const isHere = isCurrent(item, current, viewer);
           const Link = linkAs?.[item.key] ?? 'a';
           const badge = badges?.[item.key];
+          const panelKey = layout === 'side' && panels?.[item.key as PanelKey] ? item.key : null;
+          const panelProps =
+            panelKey === null
+              ? {}
+              : {
+                  'data-panel': panelKey,
+                  'aria-expanded': openPanel === panelKey,
+                  'aria-controls': SIDE_PANEL_ID,
+                  onClick: (e: MouseEvent<HTMLAnchorElement>) =>
+                    onPanelClick?.(panelKey as PanelKey, e),
+                };
+          const folded = openPanel != null;
           const link = (
             <Link
               key={badge ? undefined : item.key}
               href={item.href}
               aria-current={isHere ? 'page' : undefined}
+              {...panelProps}
               className={layout === 'side' ? 'shell-item' : 'shell-tab'}
             >
               <Icon filled={isHere} />
-              <span className={layout === 'side' ? 'sr-only nav-wide:not-sr-only' : 'sr-only'}>
+              <span
+                className={
+                  layout === 'side' && !folded ? 'sr-only nav-wide:not-sr-only' : 'sr-only'
+                }
+              >
                 {item.label}
               </span>
             </Link>
@@ -91,7 +121,13 @@ function NavLinks({
             <div key={item.key} className={layout === 'side' ? 'relative' : 'relative flex flex-1'}>
               {link}
               <span
-                className={`pointer-events-none absolute ${layout === 'side' ? 'shell-badge-side' : 'shell-badge-tab'}`}
+                className={`pointer-events-none absolute ${
+                  layout === 'bottom'
+                    ? 'shell-badge-tab'
+                    : folded
+                      ? 'shell-badge-folded'
+                      : 'shell-badge-side'
+                }`}
               >
                 {badge}
               </span>
@@ -102,28 +138,38 @@ function NavLinks({
   );
 }
 
-function MoreButton() {
+function MoreButton({ folded }: { folded: boolean }) {
   return (
     <button type="button" popoverTarget={MORE_MENU_ID} className="shell-item w-full text-left">
       <MenuIcon />
-      <span className="sr-only nav-wide:not-sr-only">その他</span>
+      <span className={folded ? 'sr-only' : 'sr-only nav-wide:not-sr-only'}>その他</span>
     </button>
   );
 }
 
-function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
+function SideNav({
+  items,
+  current,
+  viewer,
+  badges,
+  linkAs,
+  panels,
+  openPanel,
+  onPanelClick,
+}: NavProps) {
   return (
     <nav
       aria-label="メイン"
       data-nav="side"
+      data-panel-open={openPanel != null ? '' : undefined}
       // pr-[11px]: 72 - 1 (border) - 12 - 11 = 48px wide items at the narrow width.
-      className="shell-side"
+      className={openPanel != null ? 'shell-side shell-side-folded' : 'shell-side'}
     >
       <div className="mb-4 flex min-h-12 items-center px-3">
-        <span className="nav-wide:hidden">
+        <span className={openPanel != null ? '' : 'nav-wide:hidden'}>
           <Logo size={24} />
         </span>
-        <span className="hidden nav-wide:inline">
+        <span className={openPanel != null ? 'hidden' : 'hidden nav-wide:inline'}>
           <Logo withName />
         </span>
       </div>
@@ -133,11 +179,14 @@ function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
         viewer={viewer}
         badges={badges}
         linkAs={linkAs}
+        panels={panels}
+        openPanel={openPanel}
+        onPanelClick={onPanelClick}
         layout="side"
       />
       {viewer ? (
         <div className="mt-auto">
-          <MoreButton />
+          <MoreButton folded={openPanel != null} />
         </div>
       ) : null}
     </nav>
@@ -191,6 +240,9 @@ export function AppShell({
   viewer,
   badges,
   linkAs,
+  panels,
+  openPanel = null,
+  onPanelClick,
   hideNav = false,
   children,
 }: AppShellProps) {
@@ -207,8 +259,12 @@ export function AppShell({
             viewer={viewer}
             badges={badges}
             linkAs={linkAs}
+            panels={panels}
+            openPanel={openPanel}
+            onPanelClick={onPanelClick}
           />
         )}
+        {viewer && !hideNav && panels ? <SidePanel panels={panels} open={openPanel} /> : null}
         <div className="flex min-w-0 flex-1 flex-col">
           <main
             id="main"

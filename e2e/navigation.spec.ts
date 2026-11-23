@@ -60,13 +60,12 @@ for (const width of [375, 768, 1280]) {
       await page.keyboard.press('Tab');
       await expect(nav.getByRole('button', { name: 'その他' })).toBeFocused();
     }
-    // Back to a screen-changing item and Enter: 発見 on the bottom tabs, 検索 on the side nav.
-    const back = width === 375 ? 3 : 5;
+    // Back to a screen-changing item and Enter: 発見 on both (the side nav's 検索 opens a panel, #95).
+    const back = width === 375 ? 3 : 4;
     for (let i = 0; i < back; i += 1) await page.keyboard.press('Shift+Tab');
-    const target = width === 375 ? '発見' : '検索';
-    await expect(nav.getByRole('link', { name: target })).toBeFocused();
+    await expect(nav.getByRole('link', { name: '発見' })).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(width === 375 ? /\/explore$/ : /\/explore\/search$/);
+    await expect(page).toHaveURL(/\/explore$/);
   });
 }
 
@@ -109,11 +108,10 @@ test('現在のパスの項目だけが aria-current="page"', async ({ page }) =
   await page.goto('/explore/tags/a');
   await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('発見');
 
-  // The side nav at 768px: 検索 opens the search screen, and only 検索 is current there.
+  // The side nav at 768px: on the search screen (opened by its link; the nav's 検索 opens a panel,
+  // #95) only 検索 is current.
   await page.setViewportSize({ width: 768, height: 800 });
-  await page.goto('/');
-  await side(page).getByRole('link', { name: '検索' }).click();
-  await expect(page).toHaveURL(/\/explore\/search$/);
+  await page.goto('/explore/search');
   await expect(side(page).locator('[aria-current="page"]')).toHaveText('検索');
   await expect(side(page).locator('[aria-current="page"]')).toHaveCount(1);
   await side(page).getByRole('link', { name: '発見' }).click();
