@@ -20,13 +20,16 @@ function Avatar({ user }: { user: UserSummary }) {
   );
 }
 
-function RowText({ user }: { user: UserSummary }) {
+/** `onSurface`: the row has the surface background, where the secondary text color is under 4.5:1. */
+function RowText({ user, onSurface = false }: { user: UserSummary; onSurface?: boolean }) {
   return (
     <span className="min-w-0">
       <span className="block truncate text-[length:var(--font-size-sm)] font-bold">
         {user.username}
       </span>
-      <span className="block truncate text-[length:var(--font-size-sm)] text-text-secondary">
+      <span
+        className={`block truncate text-[length:var(--font-size-sm)] ${onSurface ? 'text-text' : 'text-text-secondary'}`}
+      >
         {user.displayName}
       </span>
     </span>
@@ -74,7 +77,7 @@ export function SearchResultList(
             className={`${ROW} cursor-pointer ${i === activeIndex ? 'bg-surface' : ''}`}
           >
             <Avatar user={u} />
-            <RowText user={u} />
+            <RowText user={u} onSurface={i === activeIndex} />
           </li>
         ))}
       </ul>
