@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
-import { getStoryReel, StoryViewer } from '@/features/story';
+import { getStoryReel } from '@/features/story';
+import { StoryViewer } from '@/features/story/ui';
 import { AppError } from '@/shared/errors';
 
 // The viewer as a page of its own: a direct load or a reload of /stories/<username>.

@@ -1,5 +1,3 @@
-// The story slice's public entry: other slices and routes import only from here.
-export { StoryComposer } from './ui/StoryComposer';
 export { StoryTraySection } from './ui/StoryTraySection';
 export { StoryTrayFallback } from './ui/StoryTrayFallback';
 export { findActiveStories, findSeenStoryIds, type AuthorFilter } from './db/queries';
@@ -8,7 +6,5 @@ export { nextFromQueue, saveStoryQueue } from './model/story-queue';
 export { readMp4Info, type Mp4Info } from './model/mp4-info';
 export { PHOTO_MS, STORY_TTL_MS, TRAY_MAX, VIEWERS_PAGE_SIZE } from './model/limits';
 export { listStoryTray, type StoryTrayItem, type StoryTrayView } from './api/list-story-tray';
-export { StoryViewer } from './ui/StoryViewer';
-export { StoryMissing } from './ui/StoryMissing';
 export { getStoryReel, type StoryReel, type StoryItemView } from './api/get-story-reel';
 export { storyFileKeys } from './model/files';

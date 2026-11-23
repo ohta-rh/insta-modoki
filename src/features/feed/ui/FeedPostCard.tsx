@@ -1,11 +1,11 @@
-import { SaveButton } from '../../bookmark';
+import { SaveButton } from '../../bookmark/ui';
 import {
   CommentCountAllLink,
   CommentCountLink,
   CommentCountProvider,
   FeedCommentField,
-} from '../../comment';
-import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like';
+} from '../../comment/ui';
+import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like/ui';
 import { PostCard, type PostView } from '../../post';
 
 /**

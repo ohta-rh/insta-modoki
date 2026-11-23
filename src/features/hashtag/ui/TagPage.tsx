@@ -1,6 +1,7 @@
 'use client';
 
-import { PostTileGrid, type PostTile } from '../../post';
+import { type PostTile } from '../../post';
+import { PostTileGrid } from '../../post/ui';
 import { listTagPostsAction } from '../api/actions';
 
 /** A tag's page: its name, how many posts carry it, and the grid of those posts (newest first). */

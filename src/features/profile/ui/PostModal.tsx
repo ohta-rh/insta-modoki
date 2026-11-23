@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, type ReactNode } from 'react';
-import { PostDeletedProvider } from '../../post';
+import { PostDeletedProvider } from '../../post/ui';
 import { trapTab } from '../../../shared/ui/focus-trap';
 import { useDeletedPosts } from './ProfilePostsProvider';
 

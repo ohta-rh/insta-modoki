@@ -1,6 +1,7 @@
 'use client';
 
-import { PostTileGrid, type PostTile } from '../../post';
+import { type PostTile } from '../../post';
+import { PostTileGrid } from '../../post/ui';
 import { listExplorePostsAction } from '../api/actions';
 import { SearchLink } from './SearchLink';
 

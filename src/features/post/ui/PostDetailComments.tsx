@@ -1,4 +1,5 @@
-import { CommentSection, type CommentView, type Page } from '../../comment';
+import { type CommentView, type Page } from '../../comment';
+import { CommentSection } from '../../comment/ui';
 
 /**
  * The comments under a post's card (#35). The route reads the first page (anyone may read it) and

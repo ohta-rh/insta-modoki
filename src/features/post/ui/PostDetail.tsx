@@ -1,6 +1,7 @@
-import { SaveButton } from '../../bookmark';
-import { CommentCountLink, CommentCountProvider, type CommentView, type Page } from '../../comment';
-import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like';
+import { SaveButton } from '../../bookmark/ui';
+import { type CommentView, type Page } from '../../comment';
+import { CommentCountLink, CommentCountProvider } from '../../comment/ui';
+import { DoubleTapLike, LikeButton, LikeScope, LikersDialog } from '../../like/ui';
 import type { PostView } from '../model/schema';
 import { DeletePostButton } from './DeletePostButton';
 import { PostCard } from './PostCard';
