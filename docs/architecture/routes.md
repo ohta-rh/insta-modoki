@@ -18,7 +18,7 @@ status: stable
 | `/accounts/signup` / `/accounts/login` | サインアップ / ログイン | 不要（ログイン済みは `/` へ） | M1 |
 | `/accounts/logout` | ログアウトの確認 | 要 | M1 |
 | `/accounts/edit` | プロフィールの編集 | 要 | M1 |
-| `/create` | 投稿の作成 | 要 | M1 |
+| `/create` | 投稿の作成。ナビの「投稿」から開くと、見ている画面の上にモーダル（選ぶ → 切り取る → キャプションの 3 段）で重なる（intercepting route。直接開く・再読み込み・スクリプトの前は 1 ページのフォーム。[ADR-0061](../adr/0061-create-modal-intercepts-from-a-root-modal-slot.md)） | 要 | M1 |
 | `/p/[postId]` | 投稿詳細 | 不要 | M1 |
 | `/[username]` | プロフィール。タブは「投稿」と、本人だけの「保存済み」（`?tab=saved`。本人以外・他の値は「投稿」になり、保存は読まない）。グリッドの投稿を押すと `/p/[postId]` がモーダルで開く（intercepting route。直接開く・再読み込みは通常の投稿詳細。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） | 不要 | M1 |
 | `/[username]/followers` / `/[username]/following` | フォロワー / フォロー中の一覧 | 不要 | M1 |
