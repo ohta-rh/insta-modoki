@@ -41,9 +41,9 @@ status: stable
 
 ## 結合テストの時間の予算
 
-`int-budget`（[ADR-0059](../adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)）は、`git merge-base HEAD origin/main` から変わった `*.int.test.ts` を 1 本ずつ（`--no-file-parallelism`）流し、各テストの所要時間が、そのテストの上限（既定 5,000ms、`it(…, 60_000)` ならその値）の 25% 以下かを見る。超えたテストがあるファイルだけをもう 2 回流し、3 回の最小が 25% を超えたものを全て `int-budget: FAIL …` で出して 1 で終わる（ホストの混み具合は時間を延ばす方向にしか働かないため、最小で判定する）。直し方は、往復をまとめる（`t.db.batch`）・並べる（`Promise.all`）か、計測した時間を書いたコメントつきで個別の上限を付けること。vitest の既定の上限は変えない。
+`int-budget`（[ADR-0059](../adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)）は、基準のコミット（`INT_BUDGET_BASE`、なければ `origin/$GITHUB_BASE_REF`・`origin/m*/*`・`origin/main` のうち、HEAD までの commit 数が一番少ない merge-base）から変わった `*.int.test.ts` を 1 本ずつ（`--no-file-parallelism`）流し、各テストの所要時間が、そのテストの上限（既定 5,000ms、`it(…, 60_000)` ならその値）の 25% 以下かを見る。超えたテストがあるファイルだけをもう 2 回流し、3 回の最小が 25% を超えたものを全て `int-budget: FAIL …` で出して 1 で終わる（ホストの混み具合は時間を延ばす方向にしか働かないため、最小で判定する）。直し方は、往復をまとめる（`t.db.batch`）・並べる（`Promise.all`）か、計測した時間を書いたコメントつきで個別の上限を付けること。vitest の既定の上限は変えない。
 
-- 変わったファイルが無ければ `int-budget: 変わった結合テストなし` で 0。基準のコミットが見つからない（CI の浅い checkout など）ときは `int-budget: 基準のコミットが無いので全ての結合テストを測ります` を出して全部を測る。
+- 変わったファイルが無ければ `int-budget: 変わった結合テストなし` で 0。どの基準も見つからない（CI の浅い checkout など）ときは `int-budget: 基準のコミットが無いので全ての結合テストを測ります` を出して全部を測る。
 - `node scripts/int-budget.mjs --all` で全部を測る。`src/shared/db/seed/seed.int.test.ts` と `scripts/slot.int.test.ts` は、どちらも計測した上限を持ち、測ると数分かかりバケットを触るので測らない。
 - 結果は `node_modules/.cache/int-budget/results.json`（reporter `scripts/int-budget-reporter.mjs` が書く）。
 

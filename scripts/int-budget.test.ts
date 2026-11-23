@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest';
-import { BUDGET_RATIO, main } from './int-budget.mjs';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { afterAll, describe, expect, it } from 'vitest';
+import { BUDGET_RATIO, changedIntegrationFiles, main } from './int-budget.mjs';
 
 type Deps = NonNullable<Parameters<typeof main>[1]>;
 type Result = { file: string; name: string; durationMs: number; timeoutMs: number };
@@ -122,6 +126,14 @@ describe('int-budget', () => {
     expect(onlyExcluded.calls).toEqual([]);
   });
 
+  it('- で始まるファイル名は vitest のオプションと取り違えられるので渡さない', () => {
+    const { calls, deps } = harness([{ results: [] }], {
+      changedFiles: () => [A, '--config=evil.int.test.ts'],
+    });
+    expect(main([], deps)).toBe(0);
+    expect(calls).toEqual([[A]]);
+  });
+
   it('vitest が 0 以外で終わったら、そのコードで終わる', () => {
     const { deps } = harness([{ status: 3, results: [r(A, 'x', 10)] }]);
     expect(main([], deps)).toBe(3);
@@ -131,5 +143,73 @@ describe('int-budget', () => {
     const { lines, deps } = harness([{ results: [] }]);
     expect(main(['--foo'], deps)).toBe(2);
     expect(lines).toEqual(['int-budget: 不明な引数: --foo']);
+  });
+});
+
+describe('int-budget の基準', () => {
+  const repo = mkdtempSync(join(tmpdir(), 'int-budget-'));
+  afterAll(() => rmSync(repo, { recursive: true, force: true }));
+  const git = (...args: string[]) =>
+    execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], {
+      cwd: repo,
+      encoding: 'utf8',
+    }).trim();
+  const commit = (file: string, message: string) => {
+    mkdirSync(dirname(join(repo, file)), { recursive: true });
+    writeFileSync(join(repo, file), message);
+    git('add', file);
+    git('commit', '-q', '-m', message);
+    return git('rev-parse', 'HEAD');
+  };
+
+  // main (origin/main) is behind the integration branch m2/x; the PBI branch is cut from m2/x.
+  git('init', '-q', '-b', 'main');
+  const base = commit('src/main.int.test.ts', 'main');
+  git('update-ref', 'refs/remotes/origin/main', base);
+  commit('src/on-m2.int.test.ts', 'on m2');
+  const m2 = commit('src/also-on-m2.int.test.ts', 'on m2 again');
+  git('update-ref', 'refs/remotes/origin/m2/x', m2);
+  git('checkout', '-q', '-b', 'pbi/1');
+  commit('src/mine.int.test.ts', 'mine');
+  commit('src/not-a-test.ts', 'other file');
+
+  it('統合ブランチから切ったブランチでは、そのブランチで変えたファイルだけを選ぶ', () => {
+    expect(changedIntegrationFiles({ cwd: repo, env: {} })).toEqual(['src/mine.int.test.ts']);
+  });
+
+  it('INT_BUDGET_BASE が一番先に使われる', () => {
+    expect(changedIntegrationFiles({ cwd: repo, env: { INT_BUDGET_BASE: 'origin/main' } })).toEqual(
+      ['src/also-on-m2.int.test.ts', 'src/mine.int.test.ts', 'src/on-m2.int.test.ts'],
+    );
+  });
+
+  it('GITHUB_BASE_REF があれば origin/<その名前> を候補にする', () => {
+    expect(changedIntegrationFiles({ cwd: repo, env: { GITHUB_BASE_REF: 'main' } })).toEqual(
+      ['src/mine.int.test.ts'], // origin/m2/x is still the closest candidate
+    );
+  });
+
+  it('どの基準も見つからなければ null（全てを測る）', () => {
+    const empty = mkdtempSync(join(tmpdir(), 'int-budget-empty-'));
+    try {
+      execFileSync('git', ['init', '-q'], { cwd: empty });
+      expect(changedIntegrationFiles({ cwd: empty, env: {} })).toBeNull();
+    } finally {
+      rmSync(empty, { recursive: true, force: true });
+    }
+  });
+
+  it('作業ツリーの未追跡の結合テストも選ぶ', () => {
+    writeFileSync(join(repo, 'src/untracked.int.test.ts'), 'x');
+    expect(changedIntegrationFiles({ cwd: repo, env: {} })).toEqual([
+      'src/mine.int.test.ts',
+      'src/untracked.int.test.ts',
+    ]);
+    rmSync(join(repo, 'src/untracked.int.test.ts'));
+  });
+
+  it('名前に空白や改行を含むファイルも 1 つのファイルとして選ぶ', () => {
+    commit('src/with space.int.test.ts', 'space');
+    expect(changedIntegrationFiles({ cwd: repo, env: {} })).toContain('src/with space.int.test.ts');
   });
 });

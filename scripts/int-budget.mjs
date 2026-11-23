@@ -25,7 +25,54 @@ function walk(dir, out) {
   }
 }
 
-const git = (args) => spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+const git = (args, cwd = root) => spawnSync('git', args, { cwd, encoding: 'utf8' });
+
+/**
+ * The commit to compare against: `INT_BUDGET_BASE` if it resolves; otherwise, among `origin/$GITHUB_BASE_REF`,
+ * every `origin/m*\/*` (integration branches) and `origin/main`, the merge-base with the fewest
+ * commits up to HEAD (the closest branch point). Null when nothing resolves.
+ * @param {{ cwd?: string, env?: Record<string, string | undefined> }} [options]
+ */
+export function resolveBase({ cwd = root, env = process.env } = {}) {
+  const mergeBase = (ref) => {
+    const out = git(['merge-base', 'HEAD', ref], cwd);
+    return out.status === 0 && out.stdout.trim() ? out.stdout.trim() : null;
+  };
+  if (env.INT_BUDGET_BASE) {
+    const base = mergeBase(env.INT_BUDGET_BASE);
+    if (base) return base;
+  }
+  const candidates = [];
+  if (env.GITHUB_BASE_REF) candidates.push(`origin/${env.GITHUB_BASE_REF}`);
+  const refs = git(['for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/m*/*'], cwd);
+  if (refs.status === 0) candidates.push(...refs.stdout.split('\n').filter(Boolean));
+  candidates.push('origin/main');
+  let best = null;
+  for (const ref of candidates) {
+    const base = mergeBase(ref);
+    if (!base) continue;
+    const count = git(['rev-list', '--count', `${base}..HEAD`], cwd);
+    if (count.status !== 0) continue;
+    const n = Number(count.stdout.trim());
+    if (best === null || n < best.n) best = { base, n };
+  }
+  return best?.base ?? null;
+}
+
+/**
+ * Changed integration tests (committed, modified or untracked) since the base, or null without a base.
+ * @param {{ cwd?: string, env?: Record<string, string | undefined> }} [options]
+ */
+export function changedIntegrationFiles({ cwd = root, env = process.env } = {}) {
+  const base = resolveBase({ cwd, env });
+  if (base === null) return null;
+  const diff = git(['diff', '-z', '--name-only', base, '--'], cwd);
+  const untracked = git(['ls-files', '-z', '--others', '--exclude-standard'], cwd);
+  if (diff.status !== 0 || untracked.status !== 0) return null;
+  return [...new Set([...diff.stdout.split('\0'), ...untracked.stdout.split('\0')])]
+    .filter((f) => f.endsWith('.int.test.ts') && existsSync(join(cwd, f)))
+    .sort();
+}
 
 const defaultDeps = {
   log: (line) => console.log(line),
@@ -34,17 +81,7 @@ const defaultDeps = {
     for (const d of DIRS) walk(d, out);
     return out.sort();
   },
-  /** Changed integration tests since the merge-base with origin/main, or null without a base. */
-  changedFiles: () => {
-    const base = git(['merge-base', 'HEAD', 'origin/main']);
-    if (base.status !== 0 || !base.stdout.trim()) return null;
-    const diff = git(['diff', '--name-only', base.stdout.trim()]);
-    const untracked = git(['ls-files', '--others', '--exclude-standard']);
-    if (diff.status !== 0 || untracked.status !== 0) return null;
-    return [...diff.stdout.split('\n'), ...untracked.stdout.split('\n')]
-      .filter((f) => f.endsWith('.int.test.ts') && existsSync(join(root, f)))
-      .sort();
-  },
+  changedFiles: () => changedIntegrationFiles(),
   runVitest: (files) => {
     const resultsPath = join(root, RESULTS_PATH);
     rmSync(resultsPath, { force: true });
@@ -54,10 +91,10 @@ const defaultDeps = {
         'exec',
         'vitest',
         'run',
-        ...files,
         '--no-file-parallelism',
         '--reporter=default',
         '--reporter=./scripts/int-budget-reporter.mjs',
+        ...files,
       ],
       { cwd: root, stdio: 'inherit' },
     );
@@ -92,7 +129,8 @@ export function main(argv, deps = defaultDeps) {
       files = changed;
     }
   }
-  files = files.filter((f) => !EXCLUDED.includes(f));
+  // vitest has no `--` for filters (it ignores what follows), so a name that looks like an option is dropped.
+  files = files.filter((f) => !EXCLUDED.includes(f) && !f.startsWith('-'));
   if (files.length === 0) {
     log('int-budget: 変わった結合テストなし');
     return 0;

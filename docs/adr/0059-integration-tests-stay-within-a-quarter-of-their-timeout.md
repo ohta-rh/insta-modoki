@@ -22,7 +22,9 @@ status: stable
 ## 決定
 
 - 結合テストの各テストは、単独で流して、そのテストの上限（vitest の `testCase.options.timeout`。既定 5,000ms、個別の上限ならその値）の 25% 以下で終わること。25% は 4 倍に延びても上限に収まる値。
-- verify の既定の手順 `int-budget`（`scripts/int-budget.mjs`）が、`git merge-base HEAD origin/main` から変わった `*.int.test.ts` を `--no-file-parallelism` で 1 本ずつ流して測る。基準が見つからないときは全部を測る。`--all` で全部を測る。
+- verify の既定の手順 `int-budget`（`scripts/int-budget.mjs`）が、基準のコミットから変わった `*.int.test.ts`（コミット済み・変更中・未追跡）を `--no-file-parallelism` で 1 本ずつ流して測る。`--all` で全部を測る。
+- 基準のコミット: 環境変数 `INT_BUDGET_BASE` が解決できればそれ。なければ、候補 `origin/$GITHUB_BASE_REF`（設定されているとき。PR の CI）・全ての `origin/m*/*`（統合ブランチ）・`origin/main` のそれぞれについて `git merge-base HEAD <候補>` を求め、`<基準>..HEAD` の commit 数が一番少ないもの（同数なら先の候補）を使う。統合ブランチから切ったブランチで `origin/main` だけを基準にすると、統合ブランチが先へ進んだ分の全ての結合テストを測ってしまうため（2026-11-23、`origin/main` が m2 より 313 commit 遅れて約 70 ファイル）。どの候補も解決できなければ全部を測る。
+- ファイル名は NUL 区切り（`git diff -z`）で読み、`-` で始まる名前は vitest のオプションと取り違えられるので測らない（vitest の絞り込みには `--` が効かず、後ろを無視して全部を流すため。2026-11-23 に確かめた）。
 - 超えたテストのファイルだけをもう 2 回流し、3 回の最小で判定する（ホストの負荷は時間を延ばす方向にしか働かないので、1 回だけの遅れで落ちる確認を作らない）。
 - `seed.int.test.ts` と `scripts/slot.int.test.ts` は測らない（どちらも計測した上限を持ち、測ると数分かかりバケットを触る）。
 - 超えたテストは、往復をまとめる（`t.db.batch`）・並べる（`Promise.all`）か、計測した所要時間を書いたコメントつきで個別の上限を付けて直す。vitest の既定の `testTimeout` と assertion は緩めない。

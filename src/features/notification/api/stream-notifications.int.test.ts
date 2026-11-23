@@ -79,6 +79,9 @@ describe('streamNotifications', () => {
     }
   });
 
+  // The test waits out the 1500ms window by design: 1,562-1,584ms alone (measured 2026-11-23, #107).
+  // The default 5s limit would put the 25% budget (ADR-0059) at 1,250ms, below that wait, so the limit
+  // is 15s (budget 3,750ms: 2x headroom over the measured time).
   it('接続直後に現在の数を送り、変わったときだけ送り、印を送り、時間で閉じる', async () => {
     const env = testAuthEnv(t.d1);
     const a = await createUser(t.db);
@@ -86,13 +89,10 @@ describe('streamNotifications', () => {
     const headers = await sessionHeadersFor(t.db, env, a);
     await seedNotifications(t.db, { recipientId: a.id, actorId: b.id, count: 2 });
 
-    // The test lasts about as long as the window (1,562-1,584ms alone with 1500; 25% of the 5s limit
-    // is 1,250ms, ADR-0059). The steps before the close take ~250ms, so 900 keeps 3x headroom.
-    const windowMs = 900;
     const started = Date.now();
     const response = await streamNotifications(new Request(URL_, { headers }), {
       env,
-      intervals: { tickMs: 20, pingMs: 50, windowMs },
+      intervals: { tickMs: 20, pingMs: 50, windowMs: 1500 },
     });
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toBe('text/event-stream; charset=utf-8');
@@ -126,8 +126,8 @@ describe('streamNotifications', () => {
 
     // The response ends by itself when the window is over.
     await s.until(() => s.state.done, 4000);
-    expect(Date.now() - started).toBeGreaterThanOrEqual(windowMs);
-  });
+    expect(Date.now() - started).toBeGreaterThanOrEqual(1500);
+  }, 15_000);
 
   it('他人宛ての通知ではイベントを送らない', async () => {
     const env = testAuthEnv(t.d1);
