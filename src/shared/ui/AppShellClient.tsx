@@ -36,6 +36,7 @@ export function AppShellClient({
   const path = usePathname();
   // A panel belongs to the page it was opened on: moving to another path closes it.
   const [opened, setOpened] = useState<{ key: PanelKey; path: string } | null>(null);
+  if (opened !== null && opened.path !== path) setOpened(null);
   const open = opened !== null && opened.path === path ? opened.key : null;
 
   const close = useCallback((returnFocusTo?: PanelKey) => {

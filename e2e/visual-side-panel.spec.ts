@@ -185,3 +185,27 @@ for (const viewport of [VIEWPORTS.wide, VIEWPORTS.narrow]) {
     await expect(side(page).locator(':focus')).toHaveCount(1);
   });
 }
+
+test('別のページへ移って戻っても、パネルは閉じたまま', async ({ page }) => {
+  const p = prefix();
+  const username = `${p}_back`;
+  seedUser(username, `${username}@example.com`, { displayName: 'Back' });
+  await openPanel(page, VIEWPORTS.wide);
+  await input(page).fill(`${p}_ba`);
+  await panel(page).getByRole('option').click();
+  await expect(page).toHaveURL(new RegExp(`/${username}$`));
+  await page.goBack();
+  await expect(page).toHaveURL('/');
+  await expect(panel(page)).toBeHidden();
+  await expect(searchItem(page)).toHaveAttribute('aria-expanded', 'false');
+  // Coming back through the ホーム link, after opening the panel on /, does not reopen it either.
+  await searchItem(page).click();
+  await expect(panel(page)).toBeVisible();
+  await panel(page).getByRole('combobox').fill(`${p}_ba`);
+  await panel(page).getByRole('option').click();
+  await expect(page).toHaveURL(new RegExp(`/${username}$`));
+  await side(page).getByRole('link', { name: 'ホーム' }).click();
+  await expect(page).toHaveURL('/');
+  await expect(panel(page)).toBeHidden();
+  await expect(searchItem(page)).toHaveAttribute('aria-expanded', 'false');
+});
