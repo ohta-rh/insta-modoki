@@ -62,7 +62,7 @@ status: stable
 
 ## アイコン
 
-`src/shared/ui/icons/` の SVG の部品。全て自作で、24px の格子・線の太さ 2（[ADR-0056](../adr/0056-ui-follows-measured-web-reference-under-own-brand.md)）・`aria-hidden="true"`（名前は使うボタンやリンクが持つ）。`HomeIcon` `SearchIcon` `CompassIcon` `PlusSquareIcon` `BellIcon` `UserIcon` `HeartIcon` `HeartFilledIcon` `CommentIcon` `SendIcon` `BookmarkIcon` `BookmarkFilledIcon` `CloseIcon` `ChevronLeftIcon` `ChevronRightIcon` `MoreIcon` `MenuIcon`（3 本線）`GridIcon`（3×3 の格子）`CarouselIcon`（重なった 2 枚）。
+`src/shared/ui/icons/` の SVG の部品。全て自作で、24px の格子・線の太さ 2（[ADR-0056](../adr/0056-ui-follows-measured-web-reference-under-own-brand.md)）・`aria-hidden="true"`（名前は使うボタンやリンクが持つ）。`HomeIcon` `SearchIcon` `CompassIcon` `PlusSquareIcon` `BellIcon` `UserIcon` `HeartIcon` `HeartFilledIcon` `CommentIcon` `SendIcon` `BookmarkIcon` `BookmarkFilledIcon` `CloseIcon` `ChevronLeftIcon` `ChevronRightIcon` `MoreIcon` `MenuIcon`（3 本線）。`GridIcon`（3×3 の格子）と `CarouselIcon`（重なった 2 枚）は #93 が足す。
 
 ナビの 6 つ（ホーム・検索・発見・投稿・通知・プロフィール）には塗りつぶしの版（`HomeFilledIcon` `SearchFilledIcon` `CompassFilledIcon` `PlusSquareFilledIcon` `BellFilledIcon` `UserFilledIcon`）があり、`svg[data-filled="true"]` が付く。今の項目はこちらで描く（`SearchFilledIcon` は svg の線は 2 のまま、レンズと柄だけ 3 で太く描く）。くり抜き（プラス・針）は背景色（`stroke-bg`）の線で描く。他社のアイコンの形を写さない。
 
@@ -78,6 +78,7 @@ status: stable
 - 項目の並びは `src/shared/ui/nav-items.ts`: ホーム・検索（`/explore/search`、`placement: 'side'`）・発見（`/explore`）・投稿・通知・プロフィール。下部タブは `placement: 'all'` の 5 項目。ログインしていない（`viewer` が `null`）と、投稿・通知・プロフィールは `/accounts/login` へ向かう。
 - サイドナビの項目は高さ 48px 以上・角丸 8px・文字 16px の黒。現在の項目は塗りつぶしのアイコンと太字（`aria-current="page"`）で示し、線は引かない。判定（`isCurrent`）は、`/` はちょうど `/` のとき、他は先頭が一致するとき。ただしより長い `href` の別の項目も一致するときは偽（`/explore/search` で発見は現在にならない）。
 - 「その他」（`MoreMenu`）は `popover="auto"` の部品で、`popovertarget` を持つボタン（サイドナビの一番下、モバイルは上部バーの右）が開く。JavaScript 無しで開き、Esc と外を押すと閉じる。中身は `MORE_LINKS`（プロフィールを編集 `/accounts/edit`、ログアウト `/accounts/logout`）。`aria-expanded` は `toggle` イベントで押し手へ写し、閉じたらフォーカスを押し手へ戻す。
+- `AppShell` と `MoreMenu` の長いクラスの並びは `src/shared/ui/shell.css` の `shell-*` クラス（`@layer components`）に置く。クラスの文字列は JavaScript として配られ、ADR-0046 の初回 JS の予算に数えられるため。上書きはユーティリティクラスで行う。
 - 未読のバッジは通知のリンクの囲みの中に置く（244px は行の右端、72px とモバイルはアイコンの右上）。
 - `<main>` は既定で最大 630px。中に `data-page-width="wide"` の要素がある画面は、利用できる幅いっぱいになる（`has-[[data-page-width=wide]]:max-w-none`）。
 - ルートのレイアウトは `AppShellClient`（`usePathname()` で現在のパスを取る）で包む。登録・ログインの画面は `hideNav` を使う。
