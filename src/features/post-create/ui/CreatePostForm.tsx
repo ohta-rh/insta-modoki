@@ -55,6 +55,8 @@ export type CreatePostFormProps = {
   viewer?: { username: string } | null;
   /** Tells the modal how many photos are picked (it asks before discarding them). */
   onPhotoCount?: (count: number) => void;
+  /** Tells the modal a share is running (it ignores close requests until it settles). */
+  onBusyChange?: (busy: boolean) => void;
   /** The modal's close (the narrow screen's × in the header). */
   onClose?: () => void;
 };
@@ -65,6 +67,7 @@ export function CreatePostForm({
   variant = 'page',
   viewer = null,
   onPhotoCount,
+  onBusyChange,
   onClose,
 }: CreatePostFormProps = {}) {
   const router = useRouter();
@@ -162,8 +165,14 @@ export function CreatePostForm({
     } else input.current?.focus();
   }
 
+  /** Sets `busy` and tells the modal at once, so a close request in the same tick is already ignored. */
+  function markBusy(value: boolean) {
+    setBusy(value);
+    onBusyChange?.(value);
+  }
+
   async function post() {
-    setBusy(true);
+    markBusy(true);
     setFailure(null);
     try {
       // Photos stored by an earlier try, with the same crop, are not sent again.
@@ -192,14 +201,14 @@ export function CreatePostForm({
       const result = await createPostAction({ caption, media, clientRequestId });
       if (!result.ok) {
         setFailure(result.error.message);
-        setBusy(false);
+        markBusy(false);
         return;
       }
       // Stay locked while the next screen loads.
       router.push(`/p/${result.postId}`);
     } catch (error) {
       setFailure(error instanceof UploadError ? error.message : UPLOAD_FAILED);
-      setBusy(false);
+      markBusy(false);
     }
   }
 

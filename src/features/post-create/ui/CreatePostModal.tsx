@@ -25,9 +25,17 @@ export function CreatePostModal({ viewer }: { viewer: { username: string } | nul
   const [photoCount, setPhotoCount] = useState(0);
   const count = useRef(0);
   count.current = photoCount;
+  // While a share runs, closing would let it finish and navigate to the new post afterwards.
+  const [busy, setBusy] = useState(false);
+  const busyNow = useRef(false);
+  const markBusy = useCallback((value: boolean) => {
+    busyNow.current = value; // read by the close handlers before the next render
+    setBusy(value);
+  }, []);
 
   const leave = useCallback(() => router.back(), [router]);
   const requestClose = useCallback(() => {
+    if (busyNow.current) return;
     if (needsDiscardCheck(count.current)) alert.current?.showModal();
     else leave();
   }, [leave]);
@@ -91,6 +99,7 @@ export function CreatePostModal({ viewer }: { viewer: { username: string } | nul
         <button
           type="button"
           onClick={requestClose}
+          disabled={busy}
           className="fixed right-3 top-3 hidden h-[var(--tap-min)] w-[var(--tap-min)] items-center justify-center text-white nav:flex"
         >
           <CloseIcon />
@@ -104,6 +113,7 @@ export function CreatePostModal({ viewer }: { viewer: { username: string } | nul
             variant="modal"
             viewer={viewer}
             onPhotoCount={setPhotoCount}
+            onBusyChange={markBusy}
             onClose={requestClose}
           />
         </div>

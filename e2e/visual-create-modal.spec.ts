@@ -371,3 +371,39 @@ test('作成のモーダルの各段に axe の重大な違反が無い', async 
     await page.goto('/');
   }
 });
+
+test('シェアの最中に閉じる操作をしても何も起きず、終わると投稿の画面に移る', async ({ page }) => {
+  await page.setViewportSize(VIEWPORTS.wide);
+  await openHome(page);
+  await openModal(page);
+  const jpeg = await makeJpeg(page, 400, 400);
+  await pickPhotos(page, 1, jpeg);
+  await toCaption(page);
+
+  // Hold every server action (the upload request, then createPost) until released.
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  await page.route('**/create', async (route) => {
+    if (route.request().method() === 'POST' && route.request().headers()['next-action']) {
+      await gate;
+    }
+    await route.continue();
+  });
+  await share(page).click();
+  await expect(modal(page).getByRole('status')).toHaveText('シェアしています');
+
+  await page.keyboard.press('Escape');
+  await page.mouse.click(8, 8);
+  await expect(discard(page)).toHaveCount(0);
+  await expect(modal(page)).toBeVisible();
+  await expect(page).toHaveURL(/\/create$/);
+
+  release();
+  await expect(page).toHaveURL(POST_URL, { timeout: 15_000 });
+});
+
+test('存在しない深い URL は 404 の画面になる', async ({ page }) => {
+  const response = await page.goto('/a/b/c');
+  expect(response!.status()).toBe(404);
+  await expect(modal(page)).toHaveCount(0);
+});
