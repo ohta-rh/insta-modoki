@@ -1,7 +1,8 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { isUnauthenticated, requireUser } from '@/features/auth';
-import { EditProfileForm, getProfile } from '@/features/profile';
+import { getProfile } from '@/features/profile';
+import { EditProfileForm } from '@/features/profile/ui';
 
 export const metadata = { title: 'プロフィールを編集 | Mado（仮称）' };
 

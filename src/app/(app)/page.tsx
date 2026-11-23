@@ -1,7 +1,8 @@
 import { headers } from 'next/headers';
 import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
-import { Feed, getFeed, renderFeedCards } from '@/features/feed';
+import { getFeed, renderFeedCards } from '@/features/feed';
+import { Feed } from '@/features/feed/ui';
 import { StoryTrayFallback, StoryTraySection } from '@/features/story';
 import { AppError } from '@/shared/errors';
 

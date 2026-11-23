@@ -4,17 +4,15 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { getSessionUser } from '@/features/auth';
 import { listSavedPosts } from '@/features/bookmark';
-import { FollowButton, FollowerCount, FollowScope } from '@/features/follow';
+import { FollowButton, FollowerCount, FollowScope } from '@/features/follow/ui';
 import {
   getProfile,
   listProfilePosts,
-  PostGrid,
   ProfileEmptyState,
   ProfileHeader,
   profileTab,
-  ProfileTabs,
-  SavedGrid,
 } from '@/features/profile';
+import { PostGrid, ProfileTabs, SavedGrid } from '@/features/profile/ui';
 import { AppError } from '@/shared/errors';
 
 // Anyone may open a profile, so this route is outside the (app) group (ADR-0031). The reserved

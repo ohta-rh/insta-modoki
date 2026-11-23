@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ExplorePage, listExplorePosts } from '@/features/explore';
+import { listExplorePosts } from '@/features/explore';
+import { ExplorePage } from '@/features/explore/ui';
 import { AppError } from '@/shared/errors';
 
 export const metadata: Metadata = { title: '発見 | Mado（仮称）' };
