@@ -213,7 +213,11 @@ test('モーダルから自分の投稿を削除すると グリッドから消�
   await tile(page, target).click();
   await expect(dialog(page)).toBeVisible();
 
-  await dialog(page).getByRole('button', { name: '削除', exact: true }).click();
+  await dialog(page).getByRole('button', { name: 'その他の操作' }).click();
+  await page
+    .getByRole('dialog', { name: 'その他の操作' })
+    .getByRole('button', { name: '削除', exact: true })
+    .click();
   const confirm = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
   await expect(confirm).toBeVisible();
   await confirm.getByRole('button', { name: '削除', exact: true }).click();
@@ -233,7 +237,9 @@ test('モーダルから自分の投稿を削除すると グリッドから消�
   await tile(page, other.ids[0]!).click();
   await expect(dialog(page)).toBeVisible();
   await expect(dialog(page).getByText(/モーダル試験の投稿 \d+/)).toBeVisible();
-  await expect(dialog(page).getByRole('button', { name: '削除', exact: true })).toHaveCount(0);
+  await dialog(page).getByRole('button', { name: 'その他の操作' }).click();
+  await expect(page.getByRole('dialog', { name: 'その他の操作' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '削除', exact: true })).toHaveCount(0);
 });
 
 test('開こうとした投稿が無いとき モーダルの中に見つからないと表示される', async ({ page }) => {
@@ -274,9 +280,11 @@ test('3 つの幅でモーダルが崩れず axe の重大な違反が無い', a
       expect(box.width, '375px は画面いっぱい').toBeCloseTo(375, 0);
       expect(box.height).toBeCloseTo(800, 0);
     } else {
-      expect(box.width).toBeLessThanOrEqual(900);
+      // Below 1024px the modal is a full-screen column; from 1024px it is the two-column box,
+      // sized from the screen (#94) instead of the old 900px box.
+      if (width < 1024) expect(box.width).toBeLessThanOrEqual(900);
+      else expect(box.width).toBeLessThanOrEqual(width);
       expect(Math.abs(box.x + box.width / 2 - width / 2), '中央').toBeLessThan(1);
-      if (width === 1280) expect(box.width).toBeCloseTo(900, 0);
     }
     const overflow = await page.evaluate(() => ({
       page: document.documentElement.scrollWidth - document.documentElement.clientWidth,

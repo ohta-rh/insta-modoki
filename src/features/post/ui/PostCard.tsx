@@ -1,11 +1,10 @@
 import type { ReactNode } from 'react';
 import { CaptionText } from '../../../shared/ui/CaptionText';
-import { formatRelativeTime } from '../../../shared/time/relative-time';
 import type { PostView } from '../model/schema';
 import { Carousel } from './Carousel';
 import { CaptionClamp } from './CaptionClamp';
 import { PostActionBar } from './PostActionBar';
-import { PostMenu } from './PostMenu';
+import { PostHeader } from './PostHeader';
 
 /**
  * One post: the author with the time and the "…" menu, the photos, the action row, the likes line,
@@ -42,48 +41,9 @@ export function PostCard({
   footer?: ReactNode;
 }) {
   const { author } = post;
-  const createdAt = new Date(post.createdAt);
   return (
     <article className="w-full border-b border-border bg-bg pb-4">
-      <header className="flex h-14 items-center gap-3 px-3">
-        {author.avatarUrl ? (
-          <img
-            src={author.avatarUrl}
-            alt=""
-            width={32}
-            height={32}
-            className="h-8 w-8 rounded-full bg-surface object-cover"
-          />
-        ) : (
-          <span
-            aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-[length:var(--font-size-sm)] font-semibold text-text"
-          >
-            {Array.from(author.username)[0]?.toUpperCase()}
-          </span>
-        )}
-        <a
-          href={`/${author.username}`}
-          className="min-w-0 truncate text-[length:var(--font-size-sm)] font-semibold"
-        >
-          {author.username}
-        </a>
-        <span aria-hidden="true" className="text-text-secondary">
-          •
-        </span>
-        <a
-          href={`/p/${post.id}`}
-          className="shrink-0 text-[length:var(--font-size-sm)] text-text-secondary"
-        >
-          <time dateTime={createdAt.toISOString()} suppressHydrationWarning>
-            {formatRelativeTime(createdAt, now ?? Date.now())}
-          </time>
-        </a>
-        <div className="ml-auto flex shrink-0 items-center">
-          {menu}
-          <PostMenu postId={post.id} />
-        </div>
-      </header>
+      <PostHeader post={post} now={now} ownerItems={menu} height={56} />
       {wrapMedia ? (
         wrapMedia(<Carousel media={post.media} username={author.username} priority={priority} />)
       ) : (

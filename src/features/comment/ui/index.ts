@@ -3,3 +3,4 @@
 export { CommentCountAllLink, CommentCountLink, CommentCountProvider } from './CommentCount';
 export { FeedCommentField } from './FeedCommentField';
 export { CommentSection } from './CommentSection';
+export { CaptionRow } from './CommentItem';

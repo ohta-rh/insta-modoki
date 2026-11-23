@@ -194,25 +194,23 @@ signedIn('自分の投稿を確認ダイアログのあとで削除できる', a
   const files = await putPostFiles(page, post);
   await page.goto(`/p/${post.id}`);
   await waitForHydration(page);
-
-  const open = page.getByRole('button', { name: '削除', exact: true });
   const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
 
   // Cancel and Escape leave everything in place and hand the focus back to the button.
-  await open.click();
+  await pressDelete(page);
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'キャンセル' }).click();
   await expect(dialog).toBeHidden();
-  await expect(open).toBeFocused();
-  await open.click();
+  await expect(moreButton(page)).toBeFocused();
+  await pressDelete(page);
   await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
-  await expect(open).toBeFocused();
+  await expect(moreButton(page)).toBeFocused();
   expect(postRowCount(post.id)).toBe(1);
   expect(await getObject(files[0]!)).not.toBeNull();
 
-  await open.click();
+  await pressDelete(page);
   await dialog.getByRole('button', { name: '削除', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/${username}$`));
   expect(postRowCount(post.id)).toBe(0);
@@ -221,6 +219,17 @@ signedIn('自分の投稿を確認ダイアログのあとで削除できる', a
   const gone = await page.goto(`/p/${post.id}`);
   expect(gone!.status()).toBe(404);
 });
+
+const moreButton = (page: Page) => page.getByRole('button', { name: 'その他の操作' });
+const deleteRow = (page: Page) =>
+  page
+    .getByRole('dialog', { name: 'その他の操作' })
+    .getByRole('button', { name: '削除', exact: true });
+/** Opens the post's "…" menu and presses its "削除" row (the author's delete lives there, #94). */
+async function pressDelete(page: Page) {
+  await moreButton(page).click();
+  await deleteRow(page).click();
+}
 
 const FAILED = 'エラーが発生しました。しばらくしてからもう一度お試しください';
 
@@ -258,10 +267,11 @@ signedIn(
     await page.goto(`/p/${post.id}`);
     await waitForHydration(page);
     const { state, release } = await holdPosts(page, post.id);
-
-    const open = page.getByRole('button', { name: '削除', exact: true });
     const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
-    await tabTo(page, open);
+    await tabTo(page, moreButton(page));
+    await page.keyboard.press('Enter');
+    // The menu opens with the focus on its first row, "削除"; Enter presses it.
+    await expect(deleteRow(page)).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(dialog).toBeVisible();
     const confirm = dialog.getByRole('button', { name: '削除', exact: true });
@@ -324,15 +334,14 @@ signedIn(
     await page.goto(`/p/${post.id}`);
     await waitForHydration(page);
     const { release } = await holdPosts(page, post.id);
-    const open = page.getByRole('button', { name: '削除', exact: true });
     const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
-    await open.click();
+    await pressDelete(page);
     await dialog.getByRole('button', { name: '削除', exact: true }).click();
     release();
     await expect(dialog.getByRole('alert')).toHaveText(FAILED);
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
-    await expect(open).toBeFocused();
+    await expect(moreButton(page)).toBeFocused();
     expect(postRowCount(post.id)).toBe(1);
   },
 );
@@ -344,7 +353,7 @@ signedIn('削除の通信の最中は キャンセルと Esc でダイアログ�
   await waitForHydration(page);
   const { release } = await holdPosts(page, post.id);
   const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
-  await page.getByRole('button', { name: '削除', exact: true }).click();
+  await pressDelete(page);
   await dialog.getByRole('button', { name: '削除', exact: true }).click();
   await expect(dialog.getByRole('button', { name: '削除中…' })).toBeVisible();
 
@@ -372,7 +381,7 @@ signedIn(
     await page.goto(`/p/${post.id}`);
     await waitForHydration(page);
 
-    await page.getByRole('button', { name: '削除', exact: true }).click();
+    await pressDelete(page);
     await expect(page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' })).toBeVisible();
     expect(logs).toEqual([]);
   },
@@ -385,17 +394,21 @@ signedIn(
     await putPostFiles(page, post);
     const release = await holdScripts(page);
     await page.goto(`/p/${post.id}`, { waitUntil: 'commit' });
-
-    const open = page.getByRole('button', { name: '削除', exact: true });
-    await open.waitFor();
-    await open.focus();
-    await expect(open).toBeFocused();
+    await moreButton(page).waitFor();
+    await moreButton(page).focus();
+    await expect(moreButton(page)).toBeFocused();
+    // Before the scripts load the menu still opens (popovertarget) and its row opens the dialog.
+    await page.keyboard.press('Enter');
+    await expect(deleteRow(page)).toBeVisible();
+    await deleteRow(page).focus();
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
     await expect(dialog).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
-    await expect(open).toBeFocused();
+    // Before hydration the menu stays open and the browser hands the focus back to the row that
+    // opened the dialog.
+    await expect(deleteRow(page)).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(dialog).toBeVisible();
     // The dialog puts the focus on its first control, "キャンセル".
@@ -411,6 +424,10 @@ signedIn('他人の投稿には削除が出ない', async ({ page }) => {
   await putPostFiles(page, post);
   await page.goto(`/p/${post.id}`);
   await expect(page.locator('main img').first()).toBeVisible();
+  // Open the menu too: the row must not be there either.
+  await waitForHydration(page);
+  await moreButton(page).click();
+  await expect(page.getByRole('dialog', { name: 'その他の操作' })).toBeVisible();
   await expect(page.getByRole('button', { name: '削除' })).toHaveCount(0);
 });
 
@@ -465,9 +482,9 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
   });
   expect(after.left).toBeCloseTo(after.width * 2, 0);
   await expect(badge(page, '3/3')).toBeVisible();
-
-  const open = page.getByRole('button', { name: '削除', exact: true });
-  await tabTo(page, open);
+  await tabTo(page, moreButton(page));
+  await page.keyboard.press('Enter');
+  await expect(deleteRow(page)).toBeFocused();
   await page.keyboard.press('Enter');
   const dialog = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
   await expect(dialog).toBeVisible();
@@ -479,5 +496,5 @@ signedIn('キーボードだけで操作でき axe の重大な違反が無い',
   }
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
-  await expect(open).toBeFocused();
+  await expect(moreButton(page)).toBeFocused();
 });

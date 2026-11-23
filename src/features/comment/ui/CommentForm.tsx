@@ -45,7 +45,7 @@ export function CommentForm({
       action={addCommentFormAction}
       onSubmit={onSubmit}
       data-testid="comment-form"
-      className="sticky bottom-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] z-30 border-t border-border bg-bg px-3 py-2 nav:bottom-0"
+      className="sticky bottom-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] z-30 border-t border-border bg-bg px-3 py-0 nav:bottom-0 lg:static lg:[grid-area:4/2]"
     >
       <input type="hidden" name="postId" value={postId} />
       <input type="hidden" name="clientRequestId" value={requestId} />
@@ -81,12 +81,12 @@ export function CommentForm({
           placeholder="コメントを追加…"
           value={draft}
           onChange={(e) => onDraftChange(e.target.value)}
-          className="min-h-[var(--tap-min)] min-w-0 flex-1 rounded-lg border border-border bg-bg px-3 text-[length:var(--font-size-md)] text-text"
+          className="h-11 min-w-0 flex-1 border-0 bg-transparent px-0 text-[length:var(--font-size-md)] text-text lg:text-[length:var(--font-size-sm)]"
         />
         <button
           type="submit"
           disabled={ready && empty}
-          className="min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-3 text-[length:var(--font-size-sm)] font-bold text-indigo disabled:opacity-40"
+          className="min-h-[var(--tap-min)] min-w-[var(--tap-min)] rounded-lg px-3 text-[length:var(--font-size-sm)] font-semibold text-indigo disabled:opacity-40"
         >
           投稿
         </button>

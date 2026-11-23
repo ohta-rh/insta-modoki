@@ -33,7 +33,13 @@ export function PostMenu({ postId, ownerItems }: { postId: string; ownerItems?: 
   };
 
   const onToggle = (event: SyntheticEvent<HTMLDivElement>) => {
-    if ((event.nativeEvent as Event & { newState?: string }).newState !== 'closed') return;
+    const newState = (event.nativeEvent as Event & { newState?: string }).newState;
+    if (newState === 'open') {
+      // The focus moves in, onto the first row (a popover does not do it by itself).
+      sheet.current?.querySelector<HTMLElement>('a[href], button')?.focus();
+      return;
+    }
+    if (newState !== 'closed') return;
     setFailed('');
     // Give the focus back to the button, unless the sheet was dismissed by moving to another control.
     const active = document.activeElement;
@@ -60,6 +66,13 @@ export function PostMenu({ postId, ownerItems }: { postId: string; ownerItems?: 
         role="dialog"
         aria-label="その他の操作"
         onToggle={onToggle}
+        // Tab out of the menu closes it (the focus does not stay behind in a menu that is left).
+        onBlur={(event) => {
+          const next = event.relatedTarget;
+          if (next instanceof Node && !event.currentTarget.contains(next)) {
+            event.currentTarget.hidePopover();
+          }
+        }}
         className="fixed inset-0 m-auto h-fit w-[min(400px,90vw)] overflow-hidden rounded-xl border-0 bg-bg p-0 text-text shadow-panel backdrop:bg-black/65"
       >
         {ownerItems}

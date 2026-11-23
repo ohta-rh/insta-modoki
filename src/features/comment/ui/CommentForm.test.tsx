@@ -90,4 +90,12 @@ describe('CommentForm', () => {
     expect(render({ draft: 'あ'.repeat(2000) })).toContain('2000 / 2,200');
     expect(render({ draft: '😀'.repeat(2201) })).toContain('2201 / 2,200');
   });
+
+  it('入力は枠なしで高さ 44px、送信は 600 のインディゴの文字、広い画面では固定しない', () => {
+    const html = render();
+    const input = /<input[^>]*id="comment-input"[^>]*class="([^"]*)"/.exec(html)?.[1] ?? '';
+    expect(input.split(' ')).toEqual(expect.arrayContaining(['border-0', 'h-11']));
+    expect(html).toMatch(/<button[^>]*class="[^"]*font-semibold[^"]*text-indigo/);
+    expect(html).toMatch(/<form[^>]*class="[^"]*\blg:static\b/);
+  });
 });
