@@ -28,6 +28,8 @@ export type PhotoListProps = {
   onFocusChange: (id: string, focus: Focus) => void;
   /** Which button to give focus after a re-render (the list reorders the DOM, which drops focus). */
   focusRequest: { id: string; action: PhotoAction } | null;
+  /** In a narrow column: a small thumbnail instead of the crop frame (the crop is done elsewhere). */
+  compact?: boolean;
 };
 
 const SECONDARY =
@@ -43,6 +45,7 @@ export function PhotoList({
   onAltText,
   onFocusChange,
   focusRequest,
+  compact = false,
 }: PhotoListProps) {
   const list = useRef<HTMLUListElement>(null);
   useEffect(() => {
@@ -63,22 +66,27 @@ export function PhotoList({
             key={photo.id}
             aria-label={`写真 ${n}`}
             data-photo-id={photo.id}
-            className="flex flex-col gap-3 sm:flex-row"
+            className={compact ? 'flex flex-col gap-2' : 'flex flex-col gap-3 sm:flex-row'}
           >
-            <div className="sm:w-56 sm:shrink-0">
-              <CropFrame
-                number={n}
-                src={photo.url}
-                size={photo.size}
-                ratio={ratio}
-                focus={photo.focus}
-                disabled={disabled}
-                onFocusChange={(focus) => onFocusChange(photo.id, focus)}
-              />
-            </div>
+            {compact ? null : (
+              <div className="sm:w-56 sm:shrink-0">
+                <CropFrame
+                  number={n}
+                  src={photo.url}
+                  size={photo.size}
+                  ratio={ratio}
+                  focus={photo.focus}
+                  disabled={disabled}
+                  onFocusChange={(focus) => onFocusChange(photo.id, focus)}
+                />
+              </div>
+            )}
             <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <p className="truncate text-[length:var(--font-size-sm)] text-text-secondary">
-                {photo.name}
+              <p className="flex items-center gap-2 text-[length:var(--font-size-sm)] text-text-secondary">
+                {compact && (
+                  <img src={photo.url} alt="" className="h-10 w-10 shrink-0 rounded object-cover" />
+                )}
+                <span className="truncate">{photo.name}</span>
               </p>
               <label
                 htmlFor={`alt-${photo.id}`}

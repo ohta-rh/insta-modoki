@@ -29,6 +29,8 @@ export type CropFrameProps = {
   focus: Focus;
   onFocusChange: (focus: Focus) => void;
   disabled?: boolean;
+  /** Inside a work surface that sets the size: square corners, and the hint is read, not shown. */
+  bare?: boolean;
 };
 
 /**
@@ -44,6 +46,7 @@ export function CropFrame({
   focus,
   onFocusChange,
   disabled = false,
+  bare = false,
 }: CropFrameProps) {
   const box = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number; focus: Focus } | null>(null);
@@ -64,7 +67,7 @@ export function CropFrame({
         aria-describedby={hintId}
         data-crop={`${rect.x},${rect.y},${rect.width},${rect.height}`}
         tabIndex={disabled ? -1 : 0}
-        className="relative w-full touch-none overflow-hidden rounded-lg bg-surface outline-offset-2 focus-visible:outline-2 focus-visible:outline-indigo"
+        className={`relative w-full touch-none overflow-hidden bg-surface outline-offset-2 focus-visible:outline-2 focus-visible:outline-indigo ${bare ? '' : 'rounded-lg'}`}
         style={{ aspectRatio: ASPECT[ratio], cursor: disabled ? 'default' : 'grab' }}
         onKeyDown={(e) => {
           const step = ARROWS[e.key];
@@ -103,7 +106,10 @@ export function CropFrame({
           style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
         />
       </div>
-      <p id={hintId} className="mt-1 text-[length:var(--font-size-sm)] text-text-secondary">
+      <p
+        id={hintId}
+        className={bare ? 'sr-only' : 'mt-1 text-[length:var(--font-size-sm)] text-text-secondary'}
+      >
         矢印キーかドラッグで切り抜きの位置を動かせます
       </p>
     </div>

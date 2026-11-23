@@ -26,15 +26,28 @@ test('サインアップから投稿・いいね・コメントまでを、キ�
   await tabTo(page, page.getByRole('link', { name: '投稿', exact: true }));
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/create$/);
+  const modal = page.getByRole('dialog', { name: '新規投稿を作成' });
+  await expect(modal).toBeVisible();
+  // While the modal is open the focus never leaves it.
+  for (let i = 0; i < 12; i++) {
+    await page.keyboard.press('Tab');
+    expect(
+      await page.evaluate(() => document.activeElement?.closest('[role="dialog"]') != null),
+      `Tab ${i + 1} 回目`,
+    ).toBe(true);
+  }
 
   const jpeg = await makeJpeg(page, 800, 600);
-  await tabTo(page, page.getByRole('button', { name: '写真を選ぶ' }));
+  await tabTo(page, modal.getByRole('button', { name: 'コンピューターから選択' }));
   await page.keyboard.press('Enter');
   await (await fileChooser).setFiles([{ name: 'k.jpg', mimeType: 'image/jpeg', buffer: jpeg }]);
-  await expect(page.getByRole('listitem', { name: /^写真 \d+$/ })).toHaveCount(1);
-  await tabTo(page, page.getByLabel('キャプション'));
+  await expect(modal.getByRole('heading', { name: '切り取る' })).toBeVisible();
+  await tabTo(page, modal.getByRole('button', { name: '次へ', exact: true }));
+  await page.keyboard.press('Enter');
+  await expect(modal.getByRole('listitem', { name: /^写真 \d+$/ })).toHaveCount(1);
+  await tabTo(page, modal.getByLabel('キャプション'));
   await page.keyboard.type('キーボードだけの投稿');
-  await tabTo(page, page.getByRole('button', { name: '投稿', exact: true }));
+  await tabTo(page, modal.getByRole('button', { name: 'シェア', exact: true }));
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(POST_URL);
 
