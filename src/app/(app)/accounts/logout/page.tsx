@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LogOutConfirm, isUnauthenticated, requireUser } from '@/features/auth';
+import { isUnauthenticated, requireUser } from '@/features/auth';
+import { LogOutConfirm } from '@/features/auth/ui';
 
 export const metadata = { title: 'ログアウト | Mado（仮称）' };
 

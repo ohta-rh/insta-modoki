@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SignUpForm, getSessionUser, isInviteRequired, type AuthEnv } from '@/features/auth';
+import { getSessionUser, isInviteRequired, type AuthEnv } from '@/features/auth';
+import { SignUpForm } from '@/features/auth/ui';
 import { getRequestEnv } from '@/shared/db/request';
 
 export const metadata = { title: 'サインアップ | Mado（仮称）' };

@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { LogInForm, getSessionUser } from '@/features/auth';
+import { getSessionUser } from '@/features/auth';
+import { LogInForm } from '@/features/auth/ui';
 
 export const metadata = { title: 'ログイン | Mado（仮称）' };
 
