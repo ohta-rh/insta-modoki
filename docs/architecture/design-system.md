@@ -62,7 +62,9 @@ status: stable
 
 ## アイコン
 
-`src/shared/ui/icons/` の SVG の部品。全て自作で、24px の格子・線の太さ 2（[ADR-0056](../adr/0056-ui-follows-measured-web-reference-under-own-brand.md)。今の部品の描き直しは #89）・`aria-hidden="true"`（名前は使うボタンやリンクが持つ）。`HomeIcon` `SearchIcon` `PlusSquareIcon` `BellIcon` `UserIcon` `HeartIcon` `HeartFilledIcon` `CommentIcon` `SendIcon` `BookmarkIcon` `BookmarkFilledIcon` `CloseIcon` `ChevronLeftIcon` `ChevronRightIcon` `MoreIcon`。他社のアイコンの形を写さない。
+`src/shared/ui/icons/` の SVG の部品。全て自作で、24px の格子・線の太さ 2（[ADR-0056](../adr/0056-ui-follows-measured-web-reference-under-own-brand.md)）・`aria-hidden="true"`（名前は使うボタンやリンクが持つ）。`HomeIcon` `SearchIcon` `CompassIcon` `PlusSquareIcon` `BellIcon` `UserIcon` `HeartIcon` `HeartFilledIcon` `CommentIcon` `SendIcon` `BookmarkIcon` `BookmarkFilledIcon` `CloseIcon` `ChevronLeftIcon` `ChevronRightIcon` `MoreIcon` `MenuIcon`（3 本線）`GridIcon`（3×3 の格子）`CarouselIcon`（重なった 2 枚）。
+
+ナビの 6 つ（ホーム・検索・発見・投稿・通知・プロフィール）には塗りつぶしの版（`HomeFilledIcon` `SearchFilledIcon` `CompassFilledIcon` `PlusSquareFilledIcon` `BellFilledIcon` `UserFilledIcon`）があり、`svg[data-filled="true"]` が付く。今の項目はこちらで描く（`SearchFilledIcon` は svg の線は 2 のまま、レンズと柄だけ 3 で太く描く）。くり抜き（プラス・針）は背景色（`stroke-bg`）の線で描く。他社のアイコンの形を写さない。
 
 ## 使わない他社の資産と禁止語
 
@@ -70,11 +72,14 @@ status: stable
 
 ## 画面の骨格
 
-`AppShell`（`currentPath`・`viewer`・`hideNav?`・`children`）が、スキップリンク（「本文へ移動」、`#main`）→ サイドナビ → `<main id="main">`（最大幅 630px、中央）→ フッター → 下部ナビの順に描く。
+`AppShell`（`currentPath`・`viewer`・`badges?`・`linkAs?`・`hideNav?`・`children`）が、スキップリンク（「本文へ移動」、`#main`）→ 上部バー（モバイルのみ）→ サイドナビ → `<main id="main">`（最大幅 630px、中央）→ フッター（`data-shell-footer`）→ 下部タブの順に描く。
 
-- 768px 以上: 左のサイドナビ（アイコンと名前）。768px 未満: 画面の下に固定の下部ナビ（高さ 56px と下の安全領域）。切り替えは CSS だけ（`nav:`）。
-- 項目は ホーム・検索・投稿・通知・プロフィール の順。ログインしていない（`viewer` が `null`）と、投稿・通知・プロフィールは `/accounts/login` へ向かう。
-- 現在の項目に `aria-current="page"`（`/` はちょうど `/` のとき、他は先頭が一致するとき）。項目は幅も高さも 44px 以上。
+- 3 段（CSS だけ。`nav:` = 768px、`nav-wide:` = 1264px）: 768px 未満は下部タブ（高さ 50px と下の安全領域、アイコンだけ）と上部バー（高さ 45px・下線 1px、左にロゴ（印と名前）、右に「その他」）。768〜1263px は幅 72px のサイドナビ（アイコンだけ、名前は `sr-only`、ロゴは印だけ）。1264px 以上は幅 244px（アイコンと名前、ロゴは印と名前）。上部バーとサイドナビの「その他」は `viewer` がいて `hideNav` でないときだけ。
+- 項目の並びは `src/shared/ui/nav-items.ts`: ホーム・検索（`/explore/search`、`placement: 'side'`）・発見（`/explore`）・投稿・通知・プロフィール。下部タブは `placement: 'all'` の 5 項目。ログインしていない（`viewer` が `null`）と、投稿・通知・プロフィールは `/accounts/login` へ向かう。
+- サイドナビの項目は高さ 48px 以上・角丸 8px・文字 16px の黒。現在の項目は塗りつぶしのアイコンと太字（`aria-current="page"`）で示し、線は引かない。判定（`isCurrent`）は、`/` はちょうど `/` のとき、他は先頭が一致するとき。ただしより長い `href` の別の項目も一致するときは偽（`/explore/search` で発見は現在にならない）。
+- 「その他」（`MoreMenu`）は `popover="auto"` の部品で、`popovertarget` を持つボタン（サイドナビの一番下、モバイルは上部バーの右）が開く。JavaScript 無しで開き、Esc と外を押すと閉じる。中身は `MORE_LINKS`（プロフィールを編集 `/accounts/edit`、ログアウト `/accounts/logout`）。`aria-expanded` は `toggle` イベントで押し手へ写し、閉じたらフォーカスを押し手へ戻す。
+- 未読のバッジは通知のリンクの囲みの中に置く（244px は行の右端、72px とモバイルはアイコンの右上）。
+- `<main>` は既定で最大 630px。中に `data-page-width="wide"` の要素がある画面は、利用できる幅いっぱいになる（`has-[[data-page-width=wide]]:max-w-none`）。
 - ルートのレイアウトは `AppShellClient`（`usePathname()` で現在のパスを取る）で包む。登録・ログインの画面は `hideNav` を使う。
 - 項目は `next/link` ではなく通常の `<a>`。まだ無い画面を先読みして 404 を出さないため。画面が揃ったら、先読みの要否を #46 の検査と合わせて見直せる。
 

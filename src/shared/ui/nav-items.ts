@@ -18,7 +18,14 @@ export const LOGIN_PATH = '/accounts/login';
 export function navItems(viewer: Viewer): NavItem[] {
   const gated = (path: string) => (viewer ? path : LOGIN_PATH);
   return [
-    { key: 'home', label: 'ホーム', href: '/', icon: 'home', requiresLogin: false, placement: 'all' },
+    {
+      key: 'home',
+      label: 'ホーム',
+      href: '/',
+      icon: 'home',
+      requiresLogin: false,
+      placement: 'all',
+    },
     {
       key: 'search',
       label: '検索',

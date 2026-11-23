@@ -1,7 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from './support/auth';
 
-const LABELS = ['ホーム', '検索', '投稿', '通知', 'プロフィール'];
+const SIDE_LABELS = ['ホーム', '検索', '発見', '投稿', '通知', 'プロフィール'];
+const TAB_LABELS = ['ホーム', '発見', '投稿', '通知', 'プロフィール'];
 const side = (page: Page) => page.locator('nav[data-nav="side"]');
 const bottom = (page: Page) => page.locator('nav[data-nav="bottom"]');
 
@@ -11,7 +12,7 @@ test('375px では下部ナビの 5 項目が見えて、サイドナビは見�
   const nav = page.getByRole('navigation', { name: 'メイン' });
   await expect(nav).toHaveCount(1);
   await expect(bottom(page)).toBeVisible();
-  for (const label of LABELS)
+  for (const label of TAB_LABELS)
     await expect(bottom(page).getByRole('link', { name: label })).toBeVisible();
   await expect(side(page)).toBeHidden();
 });
@@ -20,7 +21,7 @@ test('768px では左サイドナビが見えて、下部ナビは見えない',
   await page.setViewportSize({ width: 768, height: 800 });
   await page.goto('/');
   await expect(side(page)).toBeVisible();
-  for (const label of LABELS)
+  for (const label of SIDE_LABELS)
     await expect(side(page).getByRole('link', { name: label })).toBeVisible();
   await expect(side(page).locator('svg').first()).toBeVisible();
   await expect(bottom(page)).toBeHidden();
@@ -33,38 +34,51 @@ test('767px では下部ナビが見える', async ({ page }) => {
   await expect(side(page)).toBeHidden();
 });
 
-for (const width of [375, 768]) {
-  test(`Tab で本文へ移動と 5 項目に順に移り、Enter で移動できる (${width}px)`, async ({ page }) => {
+for (const width of [375, 768, 1280]) {
+  test(`Tab で本文へ移動とナビの項目に順に移り、Enter で移動できる (${width}px)`, async ({
+    page,
+  }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
+    const nav = page.getByRole('navigation', { name: 'メイン' });
+    if (width === 375) await page.getByRole('link', { name: 'ストーリーを追加' }).waitFor();
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: '本文へ移動' })).toBeFocused();
     if (width === 375) {
-      // The bottom nav follows the main region, whose first stop on the home is the story tray's add button.
+      // The top bar's その他 comes first; the bottom nav follows the main region, whose first stop
+      // on the home is the story tray's add button.
+      await page.keyboard.press('Tab');
+      await expect(page.getByRole('button', { name: 'その他' })).toBeFocused();
       await page.keyboard.press('Tab');
       await expect(page.getByRole('link', { name: 'ストーリーを追加' })).toBeFocused();
     }
-    for (const label of LABELS) {
+    for (const label of width === 375 ? TAB_LABELS : SIDE_LABELS) {
       await page.keyboard.press('Tab');
-      await expect(
-        page.getByRole('navigation', { name: 'メイン' }).getByRole('link', { name: label }),
-      ).toBeFocused();
+      await expect(nav.getByRole('link', { name: label })).toBeFocused();
     }
-    await page.keyboard.press('Shift+Tab');
-    await page.keyboard.press('Shift+Tab');
-    await page.keyboard.press('Shift+Tab');
-    await expect(
-      page.getByRole('navigation', { name: 'メイン' }).getByRole('link', { name: '検索' }),
-    ).toBeFocused();
+    if (width !== 375) {
+      await page.keyboard.press('Tab');
+      await expect(nav.getByRole('button', { name: 'その他' })).toBeFocused();
+    }
+    // Back to a screen-changing item and Enter: 発見 on the bottom tabs, 検索 on the side nav.
+    const back = width === 375 ? 3 : 5;
+    for (let i = 0; i < back; i += 1) await page.keyboard.press('Shift+Tab');
+    const target = width === 375 ? '発見' : '検索';
+    await expect(nav.getByRole('link', { name: target })).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/\/explore$/);
+    await expect(page).toHaveURL(width === 375 ? /\/explore$/ : /\/explore\/search$/);
   });
 }
 
 test('フォーカスの輪郭が 2px 以上', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await page.goto('/');
+  // The tray renders after the page; Tab only reaches its add button once it is there.
+  await page.getByRole('link', { name: 'ストーリーを追加' }).waitFor();
   await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: '本文へ移動' })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'その他' })).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.getByRole('link', { name: 'ストーリーを追加' })).toBeFocused();
   await page.keyboard.press('Tab');
@@ -72,6 +86,7 @@ test('フォーカスの輪郭が 2px 以上', async ({ page }) => {
   await expect(link).toBeFocused();
   const width = await link.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
   expect(width).toBeGreaterThanOrEqual(2);
+  await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Shift+Tab');
   const skip = page.getByRole('link', { name: '本文へ移動' });
@@ -86,27 +101,31 @@ test('現在のパスの項目だけが aria-current="page"', async ({ page }) =
   await page.goto('/');
   await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('ホーム');
   await expect(bottom(page).locator('[aria-current="page"]')).toHaveCount(1);
-  await bottom(page).getByRole('link', { name: '検索' }).click();
+  await bottom(page).getByRole('link', { name: '発見' }).click();
   await expect(page).toHaveURL(/\/explore$/);
-  await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('検索');
+  await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('発見');
   await expect(bottom(page).locator('[aria-current="page"]')).toHaveCount(1);
-  // The search screen below /explore keeps 検索 as the current item.
-  await page.goto('/explore/search');
-  await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('検索');
+  // Below /explore the 発見 tab stays current; the search screen has no tab (検索 is a side item).
+  await page.goto('/explore/tags/a');
+  await expect(bottom(page).locator('[aria-current="page"]')).toHaveText('発見');
 
-  // The side nav at 768px opens the same screen.
+  // The side nav at 768px: 検索 opens the search screen, and only 検索 is current there.
   await page.setViewportSize({ width: 768, height: 800 });
   await page.goto('/');
   await side(page).getByRole('link', { name: '検索' }).click();
-  await expect(page).toHaveURL(/\/explore$/);
+  await expect(page).toHaveURL(/\/explore\/search$/);
   await expect(side(page).locator('[aria-current="page"]')).toHaveText('検索');
+  await expect(side(page).locator('[aria-current="page"]')).toHaveCount(1);
+  await side(page).getByRole('link', { name: '発見' }).click();
+  await expect(page).toHaveURL(/\/explore$/);
+  await expect(side(page).locator('[aria-current="page"]')).toHaveText('発見');
 });
 
-for (const width of [375, 768]) {
+for (const width of [375, 768, 1280]) {
   test(`ナビの全ての項目が 44×44px 以上 (${width}px)`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
-    const links = (width === 375 ? bottom(page) : side(page)).getByRole('link');
+    const links = (width === 375 ? bottom(page) : side(page)).locator('a, button');
     const count = await links.count();
     expect(count).toBeGreaterThanOrEqual(5);
     for (let i = 0; i < count; i += 1) {

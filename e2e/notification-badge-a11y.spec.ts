@@ -8,6 +8,7 @@ import { waitForHydration } from './support/hydration';
 const LINK = '通知（未読 1 件）';
 const WIDTHS = [
   { width: 1280, height: 800, nav: 'side' },
+  { width: 1024, height: 800, nav: 'side' },
   { width: 375, height: 800, nav: 'bottom' },
 ] as const;
 
@@ -85,5 +86,16 @@ base('バッジは通知のリンクの上の今と同じ場所に出る', async
     expect(badge.y).toBeGreaterThanOrEqual(link.y);
     expect(badge.x + badge.width).toBeLessThanOrEqual(link.x + link.width);
     expect(badge.y + badge.height).toBeLessThanOrEqual(link.y + link.height);
+    if (width === 1280) {
+      // The row's right end, vertically centered.
+      expect(link.x + link.width - (badge.x + badge.width), '1280px 右端').toBeLessThanOrEqual(16);
+      expect(Math.abs(badge.y + badge.height / 2 - (link.y + link.height / 2))).toBeLessThanOrEqual(
+        2,
+      );
+    } else {
+      // The icon's upper right: right of the link's center, in its upper half.
+      expect(badge.x, `${width}px`).toBeGreaterThan(link.x + link.width / 2);
+      expect(badge.y + badge.height / 2, `${width}px`).toBeLessThan(link.y + link.height / 2);
+    }
   }
 });
