@@ -137,3 +137,40 @@ test('上部バーに axe の重大な違反が無く、操作できる要素は
     }
   }
 });
+
+test('375px でもバーの 3 つの項目はそれぞれ 1 行に収まり、横にはみ出さない', async ({ page }) => {
+  const { username } = publicProfile();
+  // 360px is the narrowest width the E2E suite's phones use; 320px appears nowhere in the specs.
+  for (const width of [375, 360]) {
+    await open(page, { width, height: 800 }, `/${username}`);
+    const box = await rect(inner(page));
+    const items = bar(page).locator('a');
+    expect(await items.count()).toBe(3);
+    for (let i = 0; i < 3; i += 1) {
+      const item = items.nth(i);
+      const r = await rect(item);
+      expect(r.x, `${width}px 要素 ${i} の左`).toBeGreaterThanOrEqual(box.x - 1);
+      expect(r.x + r.width, `${width}px 要素 ${i} の右`).toBeLessThanOrEqual(box.x + box.width + 1);
+      // One line: every text node of the item has one client rect line (the box is one line high).
+      const lines = await item.evaluate((el) => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        return new Set([...range.getClientRects()].map((q) => Math.round(q.top))).size;
+      });
+      expect(lines, `${width}px 要素 ${i} の行数`).toBeLessThanOrEqual(2);
+      const wrapped = await item.evaluate((el) => {
+        const text = [...el.querySelectorAll('*'), el].filter(
+          (n) => n.childNodes.length && [...n.childNodes].some((c) => c.nodeType === 3),
+        );
+        return text.some((n) => {
+          const range = document.createRange();
+          range.selectNodeContents(n);
+          return range.getClientRects().length > 1;
+        });
+      });
+      expect(wrapped, `${width}px 要素 ${i} の文字が折り返す`).toBe(false);
+    }
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(scrollWidth, `${width}px 横スクロール`).toBeLessThanOrEqual(width);
+  }
+});

@@ -52,10 +52,15 @@
     @apply mx-auto flex h-full w-full max-w-[calc(var(--site-width-wide)+32px)] items-center justify-between px-4;
   }
   .shell-public-logo {
-    @apply flex min-h-[var(--tap-min)] items-center;
+    @apply flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] shrink-0 items-center;
+  }
+  /* Narrow phones: the mark alone (the name stays in the link's accessible name), so the two
+     buttons fit on one line each. */
+  .shell-public-logo span[aria-hidden='true'] {
+    @apply hidden min-[480px]:inline;
   }
   .shell-public-actions {
-    @apply flex items-center gap-2;
+    @apply flex shrink-0 items-center gap-2 whitespace-nowrap;
   }
   .shell-public-login {
     @apply flex h-[var(--tap-min)] items-center rounded-lg bg-indigo px-4 text-[length:var(--font-size-sm)] font-semibold text-white;
