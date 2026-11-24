@@ -91,7 +91,9 @@ describe('harness-drift', () => {
   it('delivery.md §4 は統合ブランチへの切り替えと harness-drift の確認を書いている', () => {
     const flat = readFileSync(join(ROOT, '.claude/rules/delivery.md'), 'utf8').replace(/\s+/g, ' ');
     expect(flat).toContain('switch the main checkout to that branch');
-    expect(flat).toContain('Integrate in the main checkout; do not create a worktree for the integration branch');
+    expect(flat).toContain(
+      'Integrate in the main checkout; do not create a worktree for the integration branch',
+    );
     expect(flat).toContain('`node scripts/harness-drift.mjs <integration branch>` exits 0');
   });
 });

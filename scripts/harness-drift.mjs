@@ -21,7 +21,9 @@ export async function main(argv, deps = defaultDeps) {
   const { git, log } = deps;
   const branch = argv[0];
   if (!branch) {
-    log('harness-drift: ブランチ名を 1 つ渡してください（例: node scripts/harness-drift.mjs main）');
+    log(
+      'harness-drift: ブランチ名を 1 つ渡してください（例: node scripts/harness-drift.mjs main）',
+    );
     return 2;
   }
   const remote = `origin/${branch}`;
