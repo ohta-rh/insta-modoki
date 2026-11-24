@@ -49,6 +49,8 @@ status: stable
 
 `e2e` は `build` の成果物を使うので、単独で流す前に `pnpm build` が要る。Chromium は初回に `pnpm exec playwright install chromium` で入れる。
 
+手元でも CI でも、E2E が落ちたテストだけ trace（操作・DOM・ネットワークの時刻つきの記録）が残る（通ったテストには残らない。[ADR-0070](../adr/0070-local-e2e-keeps-traces-of-failures.md)）。手元では `test-results/<テスト名>/trace.zip` にある。`pnpm exec playwright show-trace <その trace.zip のパス>` で開き、Network の欄で、送信の要求（server action の `POST` と、S3 への `PUT`）が出た時刻と、返るまでの時間を確かめる。送信の後の `toHaveURL` が時間切れになる落ち方は、どの要求が遅れたかをここで見分ける。
+
 E2E の用意の関数（`e2e/support/auth.ts` の `test`・`signedIn`・`freshUser` の fixture と `signInViaHarness`、`e2e/support/screens.ts` の `createWorld`）は、画面のサインアップを通らず、窓口 `/e2e-harness/db` の `seedSession` でユーザーとセッションの行を作り、返った cookie を `context.addCookies` で入れる（[ADR-0069](../adr/0069-e2e-signs-in-through-the-harness.md)）。画面のサインアップを使う（`signUpViaUi`）のは、サインアップ・ログイン・招待の画面を確かめる spec（`signup.spec.ts`・`login-logout.spec.ts`・`invite.spec.ts`）だけ。
 
 ## 結合テストの時間の予算

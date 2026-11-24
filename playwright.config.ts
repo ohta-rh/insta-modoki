@@ -9,8 +9,9 @@ export default defineConfig({
   fullyParallel: true,
   // CI keeps an HTML report so a failed run can upload it (ADR-0027).
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
-  // CI keeps the trace of a failed test; the HTML report embeds it (open it from the report).
-  use: { baseURL: `http://localhost:${port}`, trace: process.env.CI ? 'retain-on-failure' : 'off' },
+  // A failed test keeps its trace, locally under test-results/<test>/trace.zip and in CI inside the
+  // HTML report; a passing test leaves none (ADR-0027, ADR-0070).
+  use: { baseURL: `http://localhost:${port}`, trace: 'retain-on-failure' },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: '**/seed.spec.ts' },
     // Seeding holds the slot's database busy for about 20 seconds, so it runs after everything else.
