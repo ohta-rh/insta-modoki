@@ -29,7 +29,6 @@
 
 * [ADR-0056: UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする](0056-ui-follows-measured-web-reference-under-own-brand.md) - 採用
 * [ADR-0071: 灰色の面の上の誤りの文字は、対比のための派生色 --color-danger-on-surface を使う](0071-danger-on-surface-for-contrast.md) - 採用
-* [ADR-0068: CI の E2E は 4 つの job に分けて verify と同時に流す（ADR-0027 を一部置き換える）](0068-ci-shards-e2e-four-ways.md) - 採用
 * [ADR-0070: 手元の E2E も、落ちたテストの trace を残す](0070-local-e2e-keeps-traces-of-failures.md) - 採用
 * [ADR-0061: 作成のモーダルは、ルートのレイアウトの modal スロットの intercepting route で開く](0061-create-modal-intercepts-from-a-root-modal-slot.md) - 採用
 * [ADR-0062: verify は同じマシンで一度に 1 つだけ走り、確かめた HEAD を出力に残す](0062-verify-runs-one-at-a-time-and-records-head.md) - 採用
@@ -46,7 +45,7 @@
 * [ADR-0028: 最初のマイグレーションは制約名と空白の扱いを固定し、DB の結合テストは D1 のメモリで流して `_test` の名前の DB にしか繋がない](0028-first-migration-conventions-and-test-db.md) - 採用
 * [ADR-0024: verify は scripts/verify.mjs が 7 つの手順を固定の順に流し、単体テストの行カバレッジ 80% を基準にする](0024-verify-command-and-coverage-gate.md) - 採用
 * [ADR-0026: CSP は src/proxy.ts が要求ごとの nonce で付け、静的ファイルは public/_headers で付ける](0026-csp-with-nonce-from-proxy-and-headers-file.md) - 採用
-* [ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする](0027-ci-runs-verify-and-docs-check.md) - 採用
+* [ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする](0027-ci-runs-verify-and-docs-check.md) - 置き換え: ADR-0068
 * [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、Better Auth の signUpEmail とその HTTP ハンドラーは使わない](0029-signup-writes-rows-in-one-db-batch.md) - 採用
 * [ADR-0030: 認証は Better Auth と PBKDF2-SHA256 + pepper のまま、セッションは 30 日・延長なしにし、users に email_verified を足す](0030-better-auth-session-and-rate-limit-rules.md) - 採用（ADR-0020 を置き換える）
 * [ADR-0031: ログインが必要な画面はルートグループ (app) に置き、そのレイアウトが未ログインを /accounts/login へ redirect する](0031-login-only-screens-in-app-route-group.md) - 採用
@@ -71,6 +70,7 @@
 * [ADR-0055: E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする](0055-e2e-invite-required-by-request-header.md) - 採用
 * [ADR-0065: サブエージェントの報告は、確認ごとに rc の行と結果の行を写し、道具が起動しなければ止まる](0065-agent-reports-carry-rc-and-result-lines.md) - 採用
 * [ADR-0067: 統合ブランチの CI が赤いときは、ほかの作業より先に直す。ci-gate で機械的に確かめる](0067-red-integration-ci-comes-first.md) - 採用
+* [ADR-0068: CI の E2E は 4 つの job に分けて verify と同時に流す（ADR-0027 を一部置き換える）](0068-ci-shards-e2e-four-ways.md) - 採用
 * [ADR-0069: E2E は、サインアップを確かめない場面では E2E 用の窓口の seedSession でログイン済みのユーザーを用意する](0069-e2e-signs-in-through-the-harness.md) - 採用
 
 # ひな形
