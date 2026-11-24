@@ -490,3 +490,27 @@ test('使えないファイルの誤りは role=alert で、すぐに読み上�
   await expect(alert).toHaveAttribute('role', 'alert');
   await expect(alerts(page)).toHaveCount(1);
 });
+
+test('長いファイル名のエラーも折り返してモーダルに収まる', async ({ page }) => {
+  await page.setViewportSize(VIEWPORTS.mobile);
+  await openHome(page);
+  await openModal(page);
+  // 200 chars without a space: nothing for the browser to break at but the letters themselves.
+  await chooser(page).setInputFiles({ ...PDF, name: `${'a'.repeat(196)}.txt` });
+  const alert = alerts(page).filter({ has: page.getByRole('listitem') });
+  await expect(alert).toHaveCount(1);
+  await expect(alert).toBeVisible();
+  const box = await rect(modal(page));
+  const item = await rect(alert.getByRole('listitem'));
+  expect(item.x + item.width, '各行の右端はモーダルの右端以下').toBeLessThanOrEqual(
+    box.x + box.width + 0.5,
+  );
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+    'scrollWidth',
+  ).toBeLessThanOrEqual(375);
+  expect(
+    await modal(page).evaluate((el) => el.scrollWidth <= el.clientWidth),
+    'モーダルの中身が横に溢れない',
+  ).toBe(true);
+});

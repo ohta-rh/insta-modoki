@@ -15,8 +15,10 @@ const LONG_CAPTION = 'とても長いキャプション。'.repeat(30);
 type Shape = { caption: string; width: number; height: number; alt: string };
 
 /** A user `me` follows, with the given posts (the last of the list is the newest). */
-function followedPosts(me: NewUser, shapes: Shape[]) {
-  const username = `e2e_v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+function followedPosts(me: NewUser, shapes: Shape[], longName = false) {
+  const tag = `e2e_v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  // The longest name users.username allows (30 chars, data-model.md).
+  const username = longName ? tag.padEnd(30, 'a') : tag;
   seedUser(username, `${username}@example.com`);
   seedFollow(userRow(me.username)!.id as string, userRow(username)!.id as string);
   const start = Date.now() - 3 * 3_600_000;
@@ -542,4 +544,42 @@ test('フィードのカードに axe の重大な違反が無く、キーボー
     'コメントを追加',
     '投稿',
   ]);
+});
+
+test('30 字のユーザー名でも名前のリンクがカードからはみ出さない', async ({ page, me }) => {
+  const { username } = followedPosts(
+    me,
+    [{ caption: '長い名前の人の投稿', width: 1080, height: 1350, alt: '写真' }],
+    true,
+  );
+  expect(username).toHaveLength(30);
+  await home(page, VIEWPORTS.mobile);
+  const c = card(page, '長い名前の人の投稿');
+  const name = c.locator('p').getByRole('link', { name: username });
+  await name.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  const box = await rect(name);
+  const cardBox = await rect(c);
+  expect(box.x + box.width, '名前の右端はカードの右端以下').toBeLessThanOrEqual(
+    cardBox.x + cardBox.width + 0.5,
+  );
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+    'scrollWidth',
+  ).toBeLessThanOrEqual(375);
+  // The caption's first character does not overlap the name.
+  const gap = await name.evaluate((el) => {
+    const nameBox = el.getBoundingClientRect();
+    const text = el.parentElement!.lastChild as Text;
+    const range = document.createRange();
+    range.setStart(text, text.data.length - text.data.trimStart().length);
+    range.setEnd(text, text.data.length - text.data.trimStart().length + 1);
+    const first = range.getBoundingClientRect();
+    const sameLine = first.top < nameBox.bottom && first.bottom > nameBox.top;
+    return sameLine ? first.left - nameBox.right : Number.POSITIVE_INFINITY;
+  });
+  expect(gap, '本文の最初の文字は名前と重ならない').toBeGreaterThanOrEqual(-0.5);
+  expect(box.width).toBeGreaterThanOrEqual(43.5);
+  expect(box.height).toBeGreaterThanOrEqual(43.5);
+  await page.mouse.click(box.x + 5, box.y + 3);
+  await expect(page).toHaveURL(new RegExp(`/${username}$`));
 });

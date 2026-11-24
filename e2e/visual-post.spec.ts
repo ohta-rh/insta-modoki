@@ -595,3 +595,47 @@ test('投稿の画面とモーダルに axe の重大な違反が無く、キー
     await expect(modal).toBeHidden();
   }
 });
+
+test('30 字のユーザー名でもコメントの名前がはみ出さない', async ({ page, me }) => {
+  // The longest name users.username allows (30 chars, data-model.md).
+  const long = unique('e2e_l').padEnd(30, 'a');
+  expect(long).toHaveLength(30);
+  seedUser(long, `${long}@example.com`);
+  const post = insertPost({ authorUsername: long, caption: '長い名前のキャプション', ...PORTRAIT });
+  await putPostFiles(page, post);
+  insertComments([{ postId: post.id, authorUsername: long, body: '長い名前のコメントの本文' }]);
+  await openPost(page, post.id, VIEWPORTS.mobile);
+  const links = [
+    comments(page).locator('[data-caption]').getByRole('link', { name: long }),
+    comments(page)
+      .locator('li')
+      .filter({ hasText: '長い名前のコメントの本文' })
+      .getByRole('link', { name: long }),
+  ];
+  const column = await rect(comments(page));
+  for (const [i, link] of links.entries()) {
+    const at = i === 0 ? 'キャプション' : 'コメント';
+    await expect(link).toBeVisible();
+    const box = await rect(link);
+    expect(box.x + box.width, `${at} 名前の右端は列の右端以下`).toBeLessThanOrEqual(
+      column.x + column.width + 0.5,
+    );
+    expect(box.width, `${at} 名前の幅`).toBeGreaterThanOrEqual(43.5);
+    expect(box.height, `${at} 名前の高さ`).toBeGreaterThanOrEqual(43.5);
+  }
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+    'scrollWidth',
+  ).toBeLessThanOrEqual(375);
+  const body = comments(page).locator('li').filter({ hasText: '長い名前のコメントの本文' });
+  const nameBox = await rect(links[1]!);
+  const bodyBox = await rect(body.getByText('長い名前のコメントの本文', { exact: true }));
+  // The name's text line is the middle of its 44px press area; the body starts on the next line.
+  expect(bodyBox.y, '本文は名前の文字の下の行').toBeGreaterThanOrEqual(
+    nameBox.y + nameBox.height / 2 + 8,
+  );
+  await links[1]!.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  const box = await rect(links[1]!);
+  await page.mouse.click(box.x + 5, box.y + 3);
+  await expect(page).toHaveURL(new RegExp(`/${long}$`));
+});

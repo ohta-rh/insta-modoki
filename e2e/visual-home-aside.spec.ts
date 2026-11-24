@@ -14,10 +14,11 @@ const aside = (page: Page) => page.locator('aside[aria-label="おすすめ"]');
 const shellFooter = (page: Page) => page.locator('footer[data-shell-footer]');
 
 /** `me` follows `friend`, who follows `cand`: `cand` is the first suggestion ("<friend> さんがフォロー中"). */
-function suggestion(me: NewUser) {
+function suggestion(me: NewUser, longName = false) {
   const tag = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const friend = `e2e_fr${tag}`;
-  const cand = `e2e_cd${tag}`;
+  // The longest name users.username allows (30 chars, data-model.md).
+  const cand = longName ? `e2e_cd${tag}`.padEnd(30, 'a') : `e2e_cd${tag}`;
   seedUser(friend, `${friend}@example.com`);
   seedUser(cand, `${cand}@example.com`);
   const id = (u: string) => userRow(u)!.id as string;
@@ -223,4 +224,38 @@ test('おすすめの名前は 44×44px 以上で押せる', async ({ page, me }
   const reason = await rect(item.getByText('さんがフォロー中'));
   expectPx(r.height, 52, '行の高さ（フォローのボタンの 44px と上下の余白）');
   expectPx(reason.y - r.y, 27, '理由の位置');
+});
+
+test('30 字のユーザー名でもおすすめの行は崩れない', async ({ page, me }) => {
+  const short = suggestion(me);
+  await home(page, 1280);
+  const shortItem = row(page, short.cand);
+  const shortButton = await rect(
+    shortItem.getByRole('button', { name: `${short.cand} をフォロー`, exact: true }),
+  );
+  const shortRow = await rect(shortItem);
+
+  const long = suggestion(me, true);
+  expect(long.cand).toHaveLength(30);
+  await home(page, 1280);
+  const item = row(page, long.cand);
+  const link = item.getByRole('link', { name: long.cand });
+  await expect(link).toBeVisible();
+  const column = await rect(aside(page));
+  const linkBox = await rect(link);
+  expect(linkBox.x + linkBox.width, '名前の右端は右の列の右端以下').toBeLessThanOrEqual(
+    column.x + column.width + 0.5,
+  );
+  const button = await rect(
+    item.getByRole('button', { name: `${long.cand} をフォロー`, exact: true }),
+  );
+  const itemBox = await rect(item);
+  expectPx(button.x + button.width, itemBox.x + itemBox.width, 'ボタンの右端は行の右端');
+  expectPx(button.x, shortButton.x, 'フォローのボタンの位置は短い名前のときと同じ');
+  expectPx(button.width, shortButton.width, 'フォローのボタンの幅');
+  expectPx(itemBox.height, shortRow.height, '行の高さ');
+  expect(linkBox.width).toBeGreaterThanOrEqual(43.5);
+  expect(linkBox.height).toBeGreaterThanOrEqual(43.5);
+  await link.click();
+  await expect(page).toHaveURL(new RegExp(`/${long.cand}$`));
 });
