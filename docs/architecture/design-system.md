@@ -79,6 +79,7 @@ status: stable
 - サイドナビの項目は高さ 48px 以上・角丸 8px・文字 16px の黒。現在の項目は塗りつぶしのアイコンと太字（`aria-current="page"`）で示し、線は引かない。判定（`isCurrent`）は、`/` はちょうど `/` のとき、他は先頭が一致するとき。ただしより長い `href` の別の項目も一致するときは偽（`/explore/search` で発見は現在にならない）。
 - 「その他」（`MoreMenu`）は `popover="auto"` の部品で、`popovertarget` を持つボタン（サイドナビの一番下、モバイルは上部バーの右）が開く。JavaScript 無しで開き、Esc と外を押すと閉じる。中身は `MORE_LINKS`（プロフィールを編集 `/accounts/edit`、ログアウト `/accounts/logout`）。`aria-expanded` は `toggle` イベントで押し手へ写し、閉じたらフォーカスを押し手へ戻す。
 - `AppShell` と `MoreMenu` の長いクラスの並びは `src/shared/ui/shell.css` の `shell-*` クラス（`@layer components`）に置く。クラスの文字列は JavaScript として配られ、ADR-0046 の初回 JS の予算に数えられるため。上書きはユーティリティクラスで行う。
+- ログインしていない（`viewer` が `null`）かつ `hideNav` でないときは、`SideNav`・`BottomNav`・モバイルの上部バーの代わりに公開の上部バー（`<header data-public-bar>`、`PublicTopBar`）だけを描く（#97）。高さ 60px（`--public-top-bar-height`）・下線 1px・`position: fixed` で、内側は最大 935px の中央（左右の余白 16px、375px で 343px）。左にロゴ（ホームへのリンク）、右に「ログイン」（主のボタン、`/accounts/login`）と「新しいアカウントを作成」（文字のボタン、`/accounts/signup`）。本文は外側の `pt` でバーの下から始まり、フッターは下部ナビ分の余白を取らない。ログイン・登録の画面（`hideNav`）はバーも描かない。
 - 未読のバッジは通知のリンクの囲みの中に置く（244px は行の右端、72px とモバイルはアイコンの右上）。
 - `<main>` は既定で最大 630px。中に `data-page-width="wide"` の要素がある画面は、利用できる幅いっぱいになる（`has-[[data-page-width=wide]]:max-w-none`）。
 - ルートのレイアウトは `AppShellClient`（`usePathname()` で現在のパスを取る）で包む。登録・ログインの画面は `hideNav` を使う。
