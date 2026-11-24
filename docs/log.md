@@ -1,5 +1,8 @@
 # ドキュメントの更新履歴
 
+## 2026-11-24
+* **Update**: [verify.md](guides/verify.md) の「結合テストの時間の予算」に、CI の verify の job が `fetch-depth: 0` で取るので `int-budget` が PR で変わった結合テストだけを測ることを足した。job の上限は 20 分から 30 分にした（#109）。
+
 ## 2026-11-23
 * **Creation**: [ADR-0058](adr/0058-seed-integration-test-runs-in-its-own-verify-step.md)（結合テストの seed は他の結合テストと重ねず、verify の別の手順 `integration-seed` で後から流す）と [ADR-0059](adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)（結合テストは単独で上限の 25% 以内。verify の `int-budget` で変わったファイルを測る）を追加し、[verify.md](guides/verify.md) の表と「結合テストの時間の予算」を合わせた（#107）。
 * **Creation**: [ADR-0061](adr/0061-create-modal-intercepts-from-a-root-modal-slot.md)（作成のモーダルは、ルートのレイアウトの `modal` スロットの intercepting route で開く。`[username]` の下では `/create` が username として解決され後ろのプロフィールが消えるため）を追加し、[routes.md](architecture/routes.md) の `/create` を合わせた（#92）。

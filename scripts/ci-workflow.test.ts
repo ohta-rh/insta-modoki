@@ -21,8 +21,12 @@ describe('.github/workflows/ci.yml', () => {
     ]);
   });
 
-  it('timeout-minutes が 20 で、同じ ref の古い実行を取り消す', () => {
-    expect(has(/^ {4}timeout-minutes: 20\s*$/)).toBe(true);
+  it('timeout-minutes が 30 で、同じ ref の古い実行を取り消す', () => {
+    const verifyJob = ci.split(/^ {2}perf:/m)[0] ?? '';
+    expect(verifyJob).toMatch(/^ {4}timeout-minutes: 30\s*$/m);
+    expect(verifyJob).toMatch(
+      /actions\/checkout@[^\n]*\n {8}with:\n(?: {10}[^\n]*\n)*? {10}fetch-depth: 0\s*$/m,
+    );
     expect(ci).toMatch(
       /^concurrency:\s*\n {2}group: .*github\.ref.*\n {2}cancel-in-progress: true/m,
     );
