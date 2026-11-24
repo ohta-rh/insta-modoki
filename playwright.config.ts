@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const port = Number(process.env.PORT ?? 3100);
+const EXCLUSIVE = '**/*.exclusive.spec.ts';
 
 export default defineConfig({
   testDir: 'e2e',
@@ -13,13 +14,25 @@ export default defineConfig({
   // HTML report; a passing test leaves none (ADR-0027, ADR-0070).
   use: { baseURL: `http://localhost:${port}`, trace: 'retain-on-failure' },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: '**/seed.spec.ts' },
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+      testIgnore: ['**/seed.spec.ts', EXCLUSIVE],
+    },
     // Seeding holds the slot's database busy for about 20 seconds, so it runs after everything else.
     {
       name: 'seed',
       use: { ...devices['Desktop Chrome'] },
       testMatch: '**/seed.spec.ts',
+      testIgnore: EXCLUSIVE,
       dependencies: ['chromium'],
+    },
+    // A test that writes the whole database (rows other workers just made) runs last, alone (ADR-0073).
+    {
+      name: 'exclusive',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: EXCLUSIVE,
+      dependencies: ['chromium', 'seed'],
     },
   ],
   webServer: {

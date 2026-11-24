@@ -157,25 +157,6 @@ test('おすすめの行からフォローできる', async ({ page, me }) => {
   expect(followRows(me.username, candId)).toBe(0);
 });
 
-test('候補がいなければおすすめの見出しを出さない', async ({ page, me }) => {
-  // Follow everyone who exists, then look; a user another worker adds in between is followed on the retry.
-  await expect(async () => {
-    withDb((db) =>
-      db
-        .prepare(
-          'INSERT OR IGNORE INTO follows (follower_id, followee_id, created_at) SELECT (SELECT id FROM users WHERE username = ?1), id, 1 FROM users WHERE username <> ?1',
-        )
-        .run(me.username),
-    );
-    await home(page, 1280);
-    await expect(aside(page)).toBeVisible();
-    await expect(aside(page).getByRole('heading', { name: 'おすすめ' })).toHaveCount(0);
-  }).toPass();
-  await expect(aside(page).getByRole('listitem')).toHaveCount(0);
-  await expect(aside(page).getByRole('link', { name: new RegExp(me.username) })).toBeVisible();
-  await expect(aside(page).locator('footer')).toBeVisible();
-});
-
 test('広い画面ではフッターが右の列の下に移る', async ({ page, me }) => {
   void me;
   const year = new Date().getUTCFullYear();

@@ -108,6 +108,16 @@ describe('.github/workflows/ci.yml', () => {
     expect(i).toBeGreaterThan(stepIndex(e2e, /--project chromium --shard/));
   });
 
+  it('the exclusive project runs once, in the last shard, right after seed', () => {
+    const e2e = job('e2e');
+    const ex = e2e.filter((l) => /--project exclusive/.test(l));
+    expect(ex).toHaveLength(1);
+    expect(ex[0]).toMatch(/run: pnpm e2e --project exclusive --no-deps\s*$/);
+    const i = stepIndex(e2e, /--project exclusive/);
+    expect(e2e[i - 1]).toMatch(/if: matrix\.shard == 4\s*$/);
+    expect(i).toBeGreaterThan(stepIndex(e2e, /--project seed/));
+  });
+
   it('the verify job runs every step but e2e', () => {
     const verify = job('verify');
     expect(verify.some((l) => /run: node scripts\/verify\.mjs --skip e2e\s*$/.test(l))).toBe(true);

@@ -103,7 +103,11 @@ E2E の用意の関数（`e2e/support/auth.ts` の `test`・`signedIn`・`freshU
 
 ## CI の分け方
 
-[ADR-0068](../adr/0068-ci-shards-e2e-four-ways.md): CI の `verify` の job は `node scripts/verify.mjs --skip e2e` を流し、E2E は `e2e (1/4)`〜`e2e (4/4)` の 4 つの job が同時に流す（それぞれ `pnpm build` の後に `pnpm e2e --project chromium --shard <i>/4`。`e2e (4/4)` だけが続けて `pnpm e2e --project seed --no-deps`）。失敗した shard は `playwright-report-<i>` を残す。手元の `node scripts/verify.mjs` は e2e を含めて全部流す。
+[ADR-0068](../adr/0068-ci-shards-e2e-four-ways.md): CI の `verify` の job は `node scripts/verify.mjs --skip e2e` を流し、E2E は `e2e (1/4)`〜`e2e (4/4)` の 4 つの job が同時に流す（それぞれ `pnpm build` の後に `pnpm e2e --project chromium --shard <i>/4`。`e2e (4/4)` だけが続けて `pnpm e2e --project seed --no-deps` と `pnpm e2e --project exclusive --no-deps`）。失敗した shard は `playwright-report-<i>` を残す。手元の `node scripts/verify.mjs` は e2e を含めて全部流す。
+
+## DB の全体に書く E2E（exclusive）
+
+[ADR-0073](../adr/0073-e2e-that-write-the-whole-db-run-alone-last.md): DB の全体（ほかの worker が作った行）に書き込む E2E は、`*.exclusive.spec.ts` にする。`playwright.config.ts` の project `exclusive` だけがそれを読み、`chromium` と `seed` が終わった後に 1 人で走る（`pnpm e2e` の順は `chromium`、`seed`、`exclusive`）。CI では `e2e (4/4)` が `seed` の後に `pnpm e2e --project exclusive --no-deps` を流す。
 
 ## ハーネスの差（harness-drift）
 
