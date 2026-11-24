@@ -9,6 +9,7 @@
         "hooks": [
           {
             "type": "command",
+            "timeout": 30,
             "command": "node scripts/ci-gate.mjs \"$(git config insta.integrationBranch || echo main)\" || true"
           }
         ]

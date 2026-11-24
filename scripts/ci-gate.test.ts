@@ -103,11 +103,16 @@ describe('ci-gate', () => {
 
   it('settings.json runs ci-gate on SessionStart', () => {
     const settings = JSON.parse(readFileSync(join(ROOT, '.claude/settings.json'), 'utf8'));
-    const hooks = settings.hooks?.SessionStart as Array<{ hooks: Array<{ command: string }> }>;
+    const hooks = settings.hooks?.SessionStart as Array<{
+      hooks: Array<{ command: string; timeout?: number }>;
+    }>;
     const commands = hooks.flatMap((h) => h.hooks.map((x) => x.command));
     const command = commands.find((c) => c.includes('scripts/ci-gate.mjs')) ?? '';
     expect(command).toContain('git config insta.integrationBranch');
     expect(command).toContain('main');
+    // A hung gh call must not delay the session start for long.
+    const entry = hooks.flatMap((h) => h.hooks).find((x) => x.command === command);
+    expect(entry?.timeout).toBe(30);
     // The session must never be stopped by the script's exit code.
     expect(command).toMatch(/\|\| true$/);
   });
