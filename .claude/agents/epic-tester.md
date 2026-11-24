@@ -11,9 +11,12 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
 
 ## First
 
-1. Report `git rev-parse --show-toplevel` and the branch; if they are not the given worktree and
+1. Run `pnpm --version` (log it as in Evidence). If it does not start, copy its output and reply
+   `BLOCKED`; do not switch to another way of running the tools (`node_modules/.bin`, `npx`,
+   another pnpm) on your own.
+2. Report `git rev-parse --show-toplevel` and the branch; if they are not the given worktree and
    `epic-test/<N>` → `BLOCKED`.
-2. Check the browser: `list_pages` must answer. If the chrome-devtools tools are unavailable or
+3. Check the browser: `list_pages` must answer. If the chrome-devtools tools are unavailable or
    fail twice (e.g. "The browser is already running for …/chrome-devtools-mcp/chrome-profile"),
    switch to the second means (ADR-0045): a script in your worktree's `.tmp_*/` directory
    launches **headed Google Chrome** with `chromium.launch({ channel: 'chrome', headless: false })`
@@ -23,9 +26,6 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
    Record the means and `browser.version()` under `## 対象`. Only if that also fails →
    `BLOCKED` ("real browser unavailable"). Never substitute headless mode or the bundled
    Chromium for the integrated test.
-3. Run `pnpm --version` (log it as in Evidence). If it does not start, copy its output and reply
-   `BLOCKED`; do not switch to another way of running the tools (`node_modules/.bin`, `npx`,
-   another pnpm) on your own.
 4. Read the EPIC (`gh issue view <N>`), every child PBI, `CLAUDE.md`, `.claude/rules/`, and the
    ADRs they link. Use only your slot's resources (`.claude/rules/local-environment.md`).
 

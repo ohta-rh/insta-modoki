@@ -11,16 +11,16 @@ If any of these is missing, reply `NEEDS_CONTEXT` and stop.
 
 ## First
 
-1. `cd` to the worktree. Report `git rev-parse --show-toplevel` and `git branch --show-current`
-   as your first lines. If they are not the given worktree and `pbi/<N>`: reply `BLOCKED`.
-2. Read the issue (`gh issue view <N>`), `CLAUDE.md`, every file in `.claude/rules/`, and the
-   ADRs the issue links. The issue's AC and スコープ are the spec; ADRs are not re-decided.
-3. Use only your slot's resources (`.claude/rules/local-environment.md`). Never stop or edit the
-   shared compose stack.
-
-4. Run `pnpm --version` (log it as in Evidence). If it does not start, copy its output and reply
+1. `cd` to the worktree, then run `pnpm --version` (log it as in Evidence). If it does not start, copy its output and reply
    `BLOCKED`; do not switch to another way of running the tools (`node_modules/.bin`, `npx`,
    another pnpm) on your own.
+2. Report `git rev-parse --show-toplevel` and `git branch --show-current`
+   as your first lines. If they are not the given worktree and `pbi/<N>`: reply `BLOCKED`.
+3. Read the issue (`gh issue view <N>`), `CLAUDE.md`, every file in `.claude/rules/`, and the
+   ADRs the issue links. The issue's AC and スコープ are the spec; ADRs are not re-decided.
+4. Use only your slot's resources (`.claude/rules/local-environment.md`). Never stop or edit the
+   shared compose stack.
+
 ## Phases (the Director tells you which one to run; default: phase 1)
 
 1. **TDD → impl** — per AC: failing test first, see it fail for the expected reason, least

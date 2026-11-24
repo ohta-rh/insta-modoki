@@ -34,6 +34,10 @@ describe('delivery agent definitions', () => {
       const first = section(agent(name), 'First');
       expect(first, `${name}.md has no "## First" section`).not.toBe('');
       expect(first).toContain('pnpm --version');
+      const items = first.split(/\n(?=\d+\. )/).filter((i) => /^\d+\. /.test(i));
+      expect(items[0], `${name}.md: pnpm --version is not the first item of First`).toContain(
+        'pnpm --version',
+      );
       expect(first).toContain('copy its output');
       expect(first).toContain('another way');
       const reviewer = name === 'code-reviewer' || name === 'security-reviewer';
@@ -43,6 +47,19 @@ describe('delivery agent definitions', () => {
       } else {
         expect(first).toContain('BLOCKED');
       }
+    }
+  });
+});
+
+describe('reviewer definitions', () => {
+  it('reviewers write logs only to the scratchpad, and their read-only rule names that exception', () => {
+    for (const name of ['code-reviewer', 'security-reviewer']) {
+      const text = agent(name);
+      const evidence = section(text, 'Evidence');
+      expect(evidence, `${name}.md Evidence mentions .tmp_*/`).not.toContain('.tmp_*/');
+      expect(evidence).toContain('scratchpad');
+      const readOnly = (text.match(/^- Read-only:(?:.|\n(?!- |\n))*/m) ?? [''])[0];
+      expect(readOnly, `${name}.md Read-only line`).toContain('scratchpad');
     }
   });
 });
