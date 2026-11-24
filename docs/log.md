@@ -3,6 +3,7 @@
 ## 2026-11-24
 * **Creation**: [ADR-0068](adr/0068-ci-shards-e2e-four-ways.md)（CI の E2E を 4 つの shard の job に分けて verify と同時に流す。`verify.mjs` に `--skip` を足す）を追加し、[verify.md](guides/verify.md) に書いた（#119）。
 * **Creation**: [ADR-0070](adr/0070-local-e2e-keeps-traces-of-failures.md)（手元の E2E も、落ちたテストの trace を `retain-on-failure` で残す）を追加し、[verify.md](guides/verify.md) に trace の見方を足した（#123）。
+* **Creation**: [EPIC #87 見た目の総合試験（3 回目）](test-reports/epic-0087-visual-r3.md)（PASS。5066666 で #125・#126・#127 により 2 回目の AC-10 の 3 原因が消え、11 の AC が全て PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [ADR-0066](adr/0066-visual-pbis-test-long-text-at-narrow-width.md)（見た目の PBI は、狭い画面で長い利用者の文字の配置を AC にする）を追加し、[issue-authoring.md](../.claude/rules/issue-authoring.md) に「見た目の PBI」の節を足した（#118）。
 * **Creation**: [ADR-0063](adr/0063-slot-reset-waits-for-garage-to-drain.md)（スロットの `reset` と `drop` は、Garage の削除の後始末（MklTodo）が 500 未満になるまで待って戻る。`status` で MklTodo と GcTodo を見る）を追加し、[local-development.md](guides/local-development.md) に「Garage が重い」を足した（#117）。
 * **Creation**: [EPIC #87 見た目の総合試験（2 回目）](test-reports/epic-0087-visual-r2.md)（FAIL。916efbc で 1 回目の「続きを読む」は直り、AC-10 は別の 3 原因で FAIL。他の 10 の AC は PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた（#87）。
