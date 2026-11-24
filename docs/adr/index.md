@@ -30,6 +30,7 @@
 * [ADR-0056: UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする](0056-ui-follows-measured-web-reference-under-own-brand.md) - 採用
 * [ADR-0061: 作成のモーダルは、ルートのレイアウトの modal スロットの intercepting route で開く](0061-create-modal-intercepts-from-a-root-modal-slot.md) - 採用
 * [ADR-0062: verify は同じマシンで一度に 1 つだけ走り、確かめた HEAD を出力に残す](0062-verify-runs-one-at-a-time-and-records-head.md) - 採用
+* [ADR-0063: スロットの reset と drop は、Garage の削除の後始末が捌けてから戻る](0063-slot-reset-waits-for-garage-to-drain.md) - 採用
 * [ADR-0014: コードは機能ごとの slice（src/features/<name>/）と共有の部分（src/shared/）に分ける](0014-code-in-feature-slices.md) - 採用
 * [ADR-0050: 通知は SSE で画面へ押し出し、サーバーは 3 秒ごとに D1 を確認する（Durable Objects は使わない）](0050-notifications-via-sse-with-d1-checks.md) - 採用
 * [ADR-0054: ハイドレーション前に選ばれたファイルはマウント時に取り込み、選択は無効にしない](0054-pick-up-files-chosen-before-hydration-on-mount.md) - 採用

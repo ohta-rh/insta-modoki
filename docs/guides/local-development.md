@@ -28,8 +28,9 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 | コマンド | することと結果 |
 |---|---|
 | `node scripts/slot.mjs prepare <N>` | バケット `insta-s<N>` と鍵 `insta-local` を無ければ作り、バケットをウェブ公開にし、`.dev.vars` を書く。`migrations/` があれば D1 に流す。何回流しても、データと秘密の値は残る |
-| `node scripts/slot.mjs reset <N>` | 先に `drop` と同じにスロットのポートのプロセスを止め、`.wrangler/state` を消し、バケットを 32 本並べて消し（1 万個ごとに消した数を出す）、`prepare` と同じに整える |
-| `node scripts/slot.mjs drop <N>` | 先にポート `3100 + N` で待ち受けるプロセスを子ごと止め（TERM、5 秒待って KILL。止まらなければ PID を出して 1 で終わり、消さない）、`slot N のポート 310N のプロセスを M 個止めました` と出す。そのあとバケットの中身を 32 本並べて消し（1 万個ごとに消した数を出す）、バケットを削除し、`.wrangler/state` を消す。`.dev.vars` は残す |
+| `node scripts/slot.mjs reset <N>` | 先に `drop` と同じにスロットのポートのプロセスを止め、`.wrangler/state` を消し、バケットを 32 本並べて消し（1 万個ごとに消した数を出す）、Garage の後始末が捌けるのを待ってから（ADR-0063）、`prepare` と同じに整える |
+| `node scripts/slot.mjs drop <N>` | 先にポート `3100 + N` で待ち受けるプロセスを子ごと止め（TERM、5 秒待って KILL。止まらなければ PID を出して 1 で終わり、消さない）、`slot N のポート 310N のプロセスを M 個止めました` と出す。そのあとバケットの中身を 32 本並べて消し（1 万個ごとに消した数を出す）、バケットを削除し、Garage の後始末が捌けるのを待ち（ADR-0063）、`.wrangler/state` を消す。`.dev.vars` は残す |
+| `node scripts/slot.mjs status` | `Garage: MklTodo=<n> GcTodo=<n>` を出す（`garage stats` の `object` の行）。GcTodo が 1,000,000 を超えていれば、作り直しの案内を 1 行足す |
 
 結合テストは、スロットのバケットに作ったファイルを最後に消して終わる（ADR-0060）。
 
@@ -82,3 +83,4 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 * 「共有のスタックが起動していません」 - Director に `docker compose up -d --wait` を頼む
 * ホストの 3912 番が使われている - `compose.yaml` の `ports` と `SLOT_MEDIA_PORT`（スクリプト）を合わせて変える（Director の仕事）
 * ホストの 3910 番が使われている - `compose.yaml` の `ports` と `SLOT_S3_ENDPOINT`（スクリプト）、`S3_ENDPOINT` を合わせて変える（Director の仕事）
+* 「Garage が重い」（`reset` / `drop` が `Garage の後始末を待っています（MklTodo=<n>）` を出し続ける、verify の結合テストが時間切れで落ちる）- Garage は消したオブジェクトの後始末（Merkle の更新）を後で行い、その間 CPU を使う。`reset` と `drop` は MklTodo が 500 未満になるまで 30 秒ごとに待ち、30 分で諦めて 1 で終わる（ADR-0063）。`node scripts/slot.mjs status` で今の MklTodo と GcTodo を見る。他のスロットが大量に消している間も上がるので、下がるまで verify は流さない。GcTodo が 1,000,000 を超えて下がらないときは、Garage のボリュームの作り直し（`docker compose down -v`、全スロットのデータが消える）が要る。これは利用者だけが行う

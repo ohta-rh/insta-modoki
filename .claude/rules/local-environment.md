@@ -34,9 +34,15 @@ The Director assigns each in-flight PBI a slot `N` in `1..4` (`0` = the main che
     `.dev.vars`, apply `migrations/` with `wrangler d1 migrations apply DB --local` when it exists.
     Idempotent; keeps data and secrets.
   - `node scripts/slot.mjs reset <N>` - first stop the slot's app server (below), then delete
-    `.wrangler/state`, empty the bucket, then prepare.
+    `.wrangler/state`, empty the bucket, wait for Garage's merkle queue to drain, then prepare.
   - `node scripts/slot.mjs drop <N>` - first stop the slot's app server (below), then delete the
-    bucket and `.wrangler/state`; keeps `.dev.vars`.
+    bucket (then wait for Garage's merkle queue to drain) and `.wrangler/state`; keeps `.dev.vars`.
+  - Waiting for Garage (ADR-0063): after emptying, `reset` / `drop` read `garage stats` (`object`
+    row, MklTodo) every 30 s and print `slot N: Garage の後始末を待っています（MklTodo=<n>）` until it
+    is below 500 (500 itself waits); after 30 min they exit 1 pointing to the guide's 「Garage が重い」.
+    `prepare` does not wait. An unreadable `garage stats` prints the stack-down message and exits 1.
+  - `node scripts/slot.mjs status` prints `Garage: MklTodo=<n> GcTodo=<n>`; above 1,000,000 tombstones
+    it adds a line: recreating the volume (`docker compose down -v`, every slot's data) is the user's.
   - Stopping the app server (`drop` and `reset` only; `prepare` never touches processes): the
     listeners on port `3100 + N` and their parents whose command line names that port
     (`--port <port>`) are sent TERM with their children, KILL after 5 s. It prints

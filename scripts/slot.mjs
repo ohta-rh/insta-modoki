@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Prepare, reset or drop a worktree's slot on the shared compose stack (ADR-0008, ADR-0023).
 //   node scripts/slot.mjs <prepare|reset|drop> <N>        N is 0..4 (0 = main checkout; app port 3100 + N)
+//   node scripts/slot.mjs status                          Garage's MklTodo / GcTodo of the object table
 // Exit codes: 0 success, 1 stack down or a command failed, 2 bad arguments.
 // The DB is D1 (files in .wrangler/state of the current directory); the bucket lives in Garage.
 import { createHash, createHmac, randomBytes } from 'node:crypto';
@@ -216,6 +217,59 @@ export async function emptyBucket(
   out(`バケット ${cfg.bucket} のオブジェクトを ${done} / ${total} 個消しました`);
 }
 
+// --- Garage's merkle queue (#117, ADR-0063) ---
+
+const DRAIN_THRESHOLD = 500;
+const DRAIN_INTERVAL_MS = 30_000;
+const DRAIN_TIMEOUT_MS = 1_800_000;
+const GC_TODO_WARN = 1_000_000;
+
+/**
+ * Reads MklTodo and GcTodo of the `object` table from the text of `garage stats`
+ * (the row of `Table stats` whose first column is `object`; MklTodo is column 4, GcTodo column 6).
+ * @returns {{ mklTodo: number, gcTodo: number } | null} null when it cannot be read
+ */
+export function parseObjectQueues(text) {
+  for (const line of text.split('\n')) {
+    const cols = line.trim().split(/\s+/);
+    if (cols[0] === 'object' && cols.length >= 6) {
+      const mklTodo = Number(cols[3]);
+      const gcTodo = Number(cols[5]);
+      if (Number.isInteger(mklTodo) && Number.isInteger(gcTodo)) return { mklTodo, gcTodo };
+    }
+  }
+  return null;
+}
+
+/**
+ * Waits until the object table's MklTodo is below `threshold` (500 itself still waits), reading it
+ * with `read` (null = unreadable). Prints a line every `intervalMs`; gives up after `timeoutMs`.
+ * @returns {Promise<'drained' | 'timeout' | 'unreadable'>}
+ */
+export async function waitForGarageDrain(
+  { n, read, out, sleep, now },
+  {
+    threshold = DRAIN_THRESHOLD,
+    intervalMs = DRAIN_INTERVAL_MS,
+    timeoutMs = DRAIN_TIMEOUT_MS,
+  } = {},
+) {
+  const start = now();
+  for (;;) {
+    const q = read();
+    if (!q) return 'unreadable';
+    if (q.mklTodo < threshold) return 'drained';
+    if (now() - start >= timeoutMs) {
+      out.fail(
+        `slot ${n}: 30 分待っても Garage の後始末が終わりません（MklTodo=${q.mklTodo}）。docs/guides/local-development.md の「Garage が重い」を見てください`,
+      );
+      return 'timeout';
+    }
+    out.info(`slot ${n}: Garage の後始末を待っています（MklTodo=${q.mklTodo}）`);
+    await sleep(intervalMs);
+  }
+}
+
 // --- Stopping the slot's app server (#83) ---
 
 const TERM_WAIT_MS = 5000;
@@ -314,11 +368,15 @@ export async function run(argv, deps = {}) {
   const randomHex = deps.randomHex ?? (() => randomBytes(32).toString('hex'));
 
   const [command, slotArg] = argv;
+  const usage = '使い方: node scripts/slot.mjs <prepare|reset|drop> <N> | status';
   let names;
   try {
-    if (!['prepare', 'reset', 'drop'].includes(command))
-      throw new Error('使い方: node scripts/slot.mjs <prepare|reset|drop> <N>');
-    names = slotNames(slotArg);
+    if (command === 'status') {
+      if (argv.length !== 1) throw new Error(usage);
+    } else {
+      if (!['prepare', 'reset', 'drop'].includes(command)) throw new Error(usage);
+      names = slotNames(slotArg);
+    }
   } catch (e) {
     err(e.message);
     return 2;
@@ -372,6 +430,39 @@ export async function run(argv, deps = {}) {
   }
 
   const garage = (...args) => exec('docker', ['exec', container, '/garage', ...args]);
+  const readQueues = () => {
+    const r = garage('stats');
+    return r.status === 0 ? parseObjectQueues(r.stdout) : null;
+  };
+  /** Returns 0 when drained, else the exit code (1) after printing why. */
+  const drain = async () => {
+    const result = await waitForGarageDrain(
+      {
+        n,
+        read: readQueues,
+        out: { info: out, fail: err },
+        sleep: deps.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms))),
+        now: deps.now ?? Date.now,
+      },
+      deps.drain,
+    );
+    if (result === 'unreadable') err(STACK_DOWN);
+    return result === 'drained' ? 0 : 1;
+  };
+
+  if (command === 'status') {
+    const q = readQueues();
+    if (!q) {
+      err(STACK_DOWN);
+      return 1;
+    }
+    out(`Garage: MklTodo=${q.mklTodo} GcTodo=${q.gcTodo}`);
+    if (q.gcTodo > GC_TODO_WARN)
+      out(
+        `GcTodo が ${GC_TODO_WARN} を超えています。ボリュームの作り直しは利用者が docker compose down -v で行ってください（全スロットのデータが消える）`,
+      );
+    return 0;
+  }
   const field = (text, label) => new RegExp(`^${label}:\\s+(\\S+)`, 'm').exec(text)?.[1];
   const fail = (what, r) => {
     err(`${what} に失敗しました: ${(r.stderr || r.stdout).trim().split('\n').pop()}`);
@@ -427,6 +518,7 @@ export async function run(argv, deps = {}) {
         await (deps.emptyBucket ?? emptyBucket)(cfg);
         const d = garage('bucket', 'delete', '--yes', names.bucket);
         if (d.status !== 0) return fail('バケットの削除', d);
+        if ((await drain()) !== 0) return 1;
       }
       rmSync(state, { recursive: true, force: true });
       out(`slot ${n} を削除しました（${names.bucket}、.wrangler/state）。.dev.vars は残しています`);
@@ -437,7 +529,10 @@ export async function run(argv, deps = {}) {
     const b = ensureBucket();
     if (b.status !== 0) return fail('バケットの準備', b);
     await (deps.putCors ?? putBucketCors)(cfg, n);
-    if (command === 'reset') await (deps.emptyBucket ?? emptyBucket)(cfg);
+    if (command === 'reset') {
+      await (deps.emptyBucket ?? emptyBucket)(cfg);
+      if ((await drain()) !== 0) return 1;
+    }
 
     const prev = existsSync(envFile) ? parseEnv(readFileSync(envFile, 'utf8')) : {};
     rmSync(envFile, { force: true }); // never rewrite secrets into a file with an older, looser mode
