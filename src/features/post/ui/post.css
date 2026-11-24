@@ -2,12 +2,9 @@
    ship as JavaScript, and the first load's JS is under a budget (ADR-0046). */
 @layer components {
   /* A link inside a line of text (an author's name, 「ログイン」): the press area grows to 44px, the
-     negative margin takes the growth back, so the line does not move. It aligns to the line top,
-     not the baseline: a baseline-aligned box lets the font's ascent and descent (they differ per
-     platform's CJK fallback font) raise the line box, which moved the text after it down 2px on
-     Linux. */
+     negative margin takes the growth back, so the line does not move. */
   .inline-tap-link {
-    @apply -my-[calc((var(--tap-min)-1lh)/2)] inline-block min-w-[var(--tap-min)] align-top py-[calc((var(--tap-min)-1lh)/2)];
+    @apply -my-[calc((var(--tap-min)-1lh)/2)] inline-block min-w-[var(--tap-min)] py-[calc((var(--tap-min)-1lh)/2)];
   }
   /* The clamped caption clips what overflows it, which would cut the name link's 44px press area
      to the text's lines: the paragraph carries the same padding and takes it back with a negative
