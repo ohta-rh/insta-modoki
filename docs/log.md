@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-24
+* **Creation**: [EPIC #110 ハーネスの改善の総合試験](test-reports/epic-0110-harness.md)（FAIL。AC-5・AC-6 が FAIL、AC-2 は判定できず）と記録（`test-reports/evidence/epic-0110/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [ADR-0068](adr/0068-ci-shards-e2e-four-ways.md)（CI の E2E を 4 つの shard の job に分けて verify と同時に流す。`verify.mjs` に `--skip` を足す）を追加し、[verify.md](guides/verify.md) に書いた（#119）。
 * **Creation**: [ADR-0070](adr/0070-local-e2e-keeps-traces-of-failures.md)（手元の E2E も、落ちたテストの trace を `retain-on-failure` で残す）を追加し、[verify.md](guides/verify.md) に trace の見方を足した（#123）。
 * **Creation**: [EPIC #87 見た目の総合試験（3 回目）](test-reports/epic-0087-visual-r3.md)（PASS。5066666 で #125・#126・#127 により 2 回目の AC-10 の 3 原因が消え、11 の AC が全て PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

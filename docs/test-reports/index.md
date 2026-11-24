@@ -34,6 +34,7 @@ EPIC の総合試験（実ブラウザ）のレポート。書き方は [ADR-001
 * [EPIC #87 見た目の総合試験（1 回目、FAIL）](epic-0087-visual.md) - f5d10e8。11 の AC のうち AC-10 だけ FAIL（ホームの「続きを読む」が 446×18px で axe の `target-size` 24px に足りない）。他の 10 は PASS。#96 の自動入力とラベルの重なりは重ならない。回帰 140 件緑
 * [EPIC #87 見た目の総合試験（2 回目、FAIL）](epic-0087-visual-r2.md) - 916efbc。#122・#124 で 1 回目の「続きを読む」と名前のリンクは直った。AC-10 だけ別の 3 原因で FAIL（1280px のおすすめの列の名前のリンク 199×18px、公開の投稿の「ログイン」55×16.5px、不正なファイルのエラーの axe `listitem`・`color-contrast`）。他の 10 の AC は PASS。検索の 0 件の画面も撮った
 * [EPIC #87 見た目の総合試験（3 回目、PASS）](epic-0087-visual-r3.md) - 5066666。#125・#126・#127 で 2 回目の AC-10 の 3 原因（おすすめの名前のリンク、公開の投稿の「ログイン」、不正なファイルのエラーの axe）が消え、11 の AC が全て PASS。axe の重大・深刻な違反 0、`main a, main button, aside a` を含む操作できる要素は 81 回の測定で全て 44×44px 以上
+* [EPIC #110 ハーネスの改善の総合試験（FAIL）](epic-0110-harness.md) - cc7eef4 で 9 の AC をコマンドで確かめた。7 つ PASS、AC-5（報告の `rc=` の行）と AC-6（見た目の PBI の長い文字の AC）が FAIL、AC-2 は Garage の状態で判定できず。統合ブランチのハーネスの決まりが main checkout の Director と subagent に届かないのが原因
 
 # 計測
 

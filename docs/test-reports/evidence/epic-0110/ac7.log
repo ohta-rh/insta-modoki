@@ -1,0 +1,6 @@
+$ node scripts/ci-gate.mjs ci-red-check
+ci-gate: ci-red-check の最新の CI（d092e5db0b5e05f17a243e47664cbfdcfe84ae25）は failure です。ほかの作業より先に直してください: https://github.com/ohta-rh/insta-modoki/actions/runs/44853230180
+rc=1
+$ node scripts/ci-gate.mjs m2/cloudflare-demo
+ci-gate: m2/cloudflare-demo は緑です（cc7eef403cea66c2fd9ef323eba3119278455ed9）
+rc=0

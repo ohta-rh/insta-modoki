@@ -1,0 +1,12 @@
+## case 1: duplicate number (docs/adr/0071-duplicate-number-probe.md)
+docs/adr: ADR の番号 0071 が 2 つあります: 0071-danger-on-surface-for-contrast.md, 0071-duplicate-number-probe.md
+docs/adr/index.md: 0071-duplicate-number-probe.md が索引にありません
+check-docs: 2 件のエラー
+rc=1
+## case 2: ADR not in the index (docs/adr/0072-missing-from-index-probe.md)
+docs/adr/index.md: 0072-missing-from-index-probe.md が索引にありません
+check-docs: 1 件のエラー
+rc=1
+## after removing the probes
+check-docs: OK (111 件の文書)
+rc=0
