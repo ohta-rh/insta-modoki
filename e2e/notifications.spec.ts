@@ -11,7 +11,7 @@ const NAV = 'メイン';
 freshUser(
   'いいねの通知がバッジに 10 秒以内に出て、一覧を開くと既読になる',
   async ({ page, browser, me }) => {
-    // The badge waits for one 10 s poll, on top of two sign-ups and a like.
+    // The badge waits for one 10 s poll, on top of two harness sign-ins and a like.
     freshUser.setTimeout(90_000);
     const post = insertPost({ authorUsername: me.username, caption: '通知の対象' });
     await putPostFiles(page, post);

@@ -13,7 +13,7 @@ const chooser = (page: Page) => page.locator('input[type="file"]');
 const alt = (page: Page) => page.getByLabel('代替テキスト');
 const TOO_LONG = '動画は 15 秒までです';
 
-/** Signs a new user up through the real screen and opens /stories/create. */
+/** Signs a new user in through the harness and opens /stories/create. */
 async function start(page: Page): Promise<{ username: string }> {
   const user = await signInViaHarness(page);
   await page.goto('/stories/create');

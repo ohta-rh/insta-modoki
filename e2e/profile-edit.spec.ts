@@ -23,7 +23,7 @@ const save = (page: Page) => page.getByRole('button', { name: '保存', exact: t
 const preview = (page: Page) => page.getByTestId('avatar-preview');
 const jpeg = (name: string, buffer: Buffer) => ({ name, mimeType: 'image/jpeg', buffer });
 
-/** Signs a new user up and opens /accounts/edit with the page hydrated. */
+/** Signs a new user in through the harness and opens /accounts/edit with the page hydrated. */
 async function start(page: Page): Promise<{ userId: string; username: string }> {
   const user = await signInViaHarness(page);
   await page.goto('/accounts/edit');

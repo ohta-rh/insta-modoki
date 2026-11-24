@@ -12,7 +12,7 @@ const PAGE_PATH = '/e2e-harness/upload';
 const FAILED = 'アップロードに失敗しました。もう一度お試しください';
 type Result = { key: string; width: number; height: number; thumbhash: string };
 
-/** Signs up through the real screen and opens the harness page; returns the new user's username. */
+/** Signs a new user in through the harness and opens the harness page; returns the new user's username. */
 async function start(page: Page): Promise<string> {
   const user = await signInViaHarness(page);
   await page.goto(PAGE_PATH);

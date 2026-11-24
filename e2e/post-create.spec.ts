@@ -19,7 +19,7 @@ const caption = (page: Page) => page.getByLabel('キャプション');
 const alt = (page: Page, n: number) => page.getByLabel(`写真 ${n} の代替テキスト`);
 const frame = (page: Page, n: number) => page.getByRole('group', { name: `写真 ${n} の切り抜き` });
 
-/** Signs a new user up through the real screen and opens /create; returns the user's id. */
+/** Signs a new user in through the harness and opens /create; returns the user's id. */
 async function start(page: Page): Promise<{ userId: string; username: string }> {
   const user = await signInViaHarness(page);
   await page.goto('/create');
