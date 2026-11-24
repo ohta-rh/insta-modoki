@@ -54,7 +54,7 @@ export function PostCard({
       {post.caption !== '' && (
         <div className="flex flex-col px-3">
           <CaptionClamp postId={post.id}>
-            <a href={`/${author.username}`} tabIndex={-1} className="post-author-link">
+            <a href={`/${author.username}`} tabIndex={-1} className="inline-tap-link font-semibold">
               {author.username}
             </a>{' '}
             <CaptionText caption={post.caption} />

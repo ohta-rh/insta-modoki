@@ -248,7 +248,7 @@ export function CommentSection({
         />
       ) : (
         <p className="border-t border-border py-4 text-center text-[length:var(--font-size-sm)] lg:[grid-area:4/2]">
-          <a href="/accounts/login" className="font-bold text-link">
+          <a href="/accounts/login" className="inline-tap-link font-bold text-link">
             ログイン
           </a>
           してコメントする

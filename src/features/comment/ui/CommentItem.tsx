@@ -30,7 +30,7 @@ function Avatar({ author }: { author: Person }) {
 function NameAndTime({ author, createdAt, now }: { author: Person; createdAt: Date; now: number }) {
   return (
     <p className="text-[length:var(--font-size-sm)]">
-      <a href={`/${author.username}`} className="post-author-link">
+      <a href={`/${author.username}`} className="inline-tap-link font-semibold">
         {author.username}
       </a>{' '}
       <time
