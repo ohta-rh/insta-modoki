@@ -186,6 +186,58 @@ describe('verify', () => {
     expect(lines.at(-1)).toBe('verify: OK aaaaaaa');
   });
 
+  it('--skip removes exactly the named step', async () => {
+    const { executed, deps } = harness();
+    expect(await main(['--skip', 'e2e'], deps)).toBe(0);
+    const all = STEPS.map((s: { command: string }) => s.command);
+    expect(executed).toEqual(all.filter((c: string) => c !== 'pnpm e2e'));
+    expect(executed).toHaveLength(all.length - 1);
+  });
+
+  it('--skip can be repeated', async () => {
+    const { executed, deps } = harness();
+    expect(await main(['--skip', 'e2e', '--skip', 'build'], deps)).toBe(0);
+    expect(executed).not.toContain('pnpm e2e');
+    expect(executed).not.toContain('pnpm build');
+    expect(executed).toHaveLength(STEPS.length - 2);
+  });
+
+  it('--skip with an unknown step exits 2', async () => {
+    const { lines, executed, deps, machine } = harness();
+    expect(await main(['--skip', 'nope'], deps)).toBe(2);
+    expect(lines).toEqual(['verify: 不明な手順: nope']);
+    expect(executed).toEqual([]);
+    expect(machine.lockFile).toBeNull();
+  });
+
+  it('--skip together with --only exits 2', async () => {
+    const { lines, executed, deps } = harness();
+    expect(await main(['--skip', 'e2e', '--only', 'unit'], deps)).toBe(2);
+    expect(await main(['--only', 'unit', '--skip', 'e2e'], deps)).toBe(2);
+    expect(lines).toHaveLength(2);
+    expect(executed).toEqual([]);
+  });
+
+  it('a skipped run still holds the lock and records HEAD', async () => {
+    const { lines, deps, machine } = harness();
+    let held: LockInfo | null = null;
+    const exec = () => {
+      held = machine.lockFile;
+      return 0;
+    };
+    expect(await main(['--skip', 'e2e'], { ...deps, exec })).toBe(0);
+    expect(held).not.toBeNull();
+    expect(lines).toContain('verify: HEAD aaaaaaa pbi/111');
+    expect(lines.at(-1)).toBe('verify: OK aaaaaaa');
+  });
+
+  it('without --skip every step still runs', async () => {
+    const { executed, deps } = harness();
+    expect(await main([], deps)).toBe(0);
+    expect(executed).toEqual(STEPS.map((s: { command: string }) => s.command));
+    expect(executed).toContain('pnpm e2e');
+  });
+
   it('--only に存在しない名前を渡すと、不明な手順と出して 2 を返す', async () => {
     const { lines, executed, deps } = harness();
     expect(await main(['--only', 'foo'], deps)).toBe(2);

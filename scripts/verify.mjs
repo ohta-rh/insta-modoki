@@ -255,12 +255,14 @@ export async function main(argv, deps = defaultDeps) {
   const d = { ...defaultDeps, ...deps };
   const { exec, log, hasIntegrationTests, env } = d;
   let only = null;
+  const skip = [];
   let list = false;
   let withPerf = false;
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--list') list = true;
     else if (argv[i] === '--with-perf') withPerf = true;
     else if (argv[i] === '--only' && argv[i + 1] !== undefined) only = argv[++i];
+    else if (argv[i] === '--skip' && argv[i + 1] !== undefined) skip.push(argv[++i]);
     else {
       log(`verify: 不明な引数: ${argv[i]}`);
       return 2;
@@ -271,7 +273,17 @@ export async function main(argv, deps = defaultDeps) {
     for (const step of all) log(step.name);
     return 0;
   }
-  const steps = only === null ? all : all.filter((s) => s.name === only);
+  if (only !== null && skip.length > 0) {
+    log('verify: --only と --skip は同時に指定できません');
+    return 2;
+  }
+  const unknown = skip.find((name) => !all.some((s) => s.name === name));
+  if (unknown !== undefined) {
+    log(`verify: 不明な手順: ${unknown}`);
+    return 2;
+  }
+  const steps =
+    only === null ? all.filter((s) => !skip.includes(s.name)) : all.filter((s) => s.name === only);
   if (only !== null && steps.length === 0) {
     log(`verify: 不明な手順: ${only}`);
     return 2;

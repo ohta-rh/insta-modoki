@@ -29,6 +29,7 @@
 
 * [ADR-0056: UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする](0056-ui-follows-measured-web-reference-under-own-brand.md) - 採用
 * [ADR-0071: 灰色の面の上の誤りの文字は、対比のための派生色 --color-danger-on-surface を使う](0071-danger-on-surface-for-contrast.md) - 採用
+* [ADR-0068: CI の E2E は 4 つの job に分けて verify と同時に流す（ADR-0027 を一部置き換える）](0068-ci-shards-e2e-four-ways.md) - 採用
 * [ADR-0070: 手元の E2E も、落ちたテストの trace を残す](0070-local-e2e-keeps-traces-of-failures.md) - 採用
 * [ADR-0061: 作成のモーダルは、ルートのレイアウトの modal スロットの intercepting route で開く](0061-create-modal-intercepts-from-a-root-modal-slot.md) - 採用
 * [ADR-0062: verify は同じマシンで一度に 1 つだけ走り、確かめた HEAD を出力に残す](0062-verify-runs-one-at-a-time-and-records-head.md) - 採用

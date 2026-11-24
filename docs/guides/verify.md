@@ -33,6 +33,7 @@ status: stable
 - 全部流す: `node scripts/verify.mjs`
 - 手順の一覧: `node scripts/verify.mjs --list`
 - 1 手順だけ流す: `node scripts/verify.mjs --only unit`
+- 手順を除いて流す: `node scripts/verify.mjs --skip e2e`（何度でも指定できる。`--only` とは同時に使えず 2 で終わる。存在しない名前は `verify: 不明な手順: <名前>` で 2。除いても、ロックと HEAD の記録は同じ）
 - スロットのポートを渡す: `PORT=3101 node scripts/verify.mjs`（E2E の `webServer` と `start` がこのポートを使う。未設定は 3100。スロット N は `3100 + N`）
 
 ## 同時に流したとき・確かめた commit
@@ -42,7 +43,7 @@ status: stable
 - 別の verify が生きていれば `verify: 別の verify（pid <N>、<worktree>）が終わるまで待ちます` を出し、10 秒ごとに見直して待つ（1 分ごとに待っている旨を出す）。60 分を超えたら `verify: 60 分待っても別の verify が終わりません` で 1 で終わる。
 - pid が生きていないロックは `verify: 終わっていない verify（pid <N>）のロックを引き継ぎます` を出して引き継ぐ。
 - 始めに `verify: HEAD <短い SHA> <ブランチ>` と `verify: load average <1 分値> / CPU <論理コア数>`（表示だけ）を出す。実行中に HEAD が動くと `verify: FAIL HEAD が実行中に <a> から <b> に変わりました` で 1 で終わる。通ると最後の行は `verify: OK <短い SHA>`（この SHA が確かめた commit）。
-- 成功・失敗・SIGINT・SIGTERM でロックを外す。`--list` と不正な引数はロックを取らない。`--only` は取る。
+- 成功・失敗・SIGINT・SIGTERM でロックを外す。`--list` と不正な引数はロックを取らない。`--only` と `--skip` は取る。
 - 死んだ verify のロックが残って止まって見えるときは、`$(git rev-parse --git-common-dir)/insta-verify.lock` を消してよい（pid が生きていないことを確かめてから）。
 
 `perf-budget` も `build` の成果物を使う（アプリが `PORT` で動いていなければ自分で `pnpm start` を起動して止める）。
@@ -99,3 +100,7 @@ E2E の用意の関数（`e2e/support/auth.ts` の `test`・`signedIn`・`freshU
 ## 手順を足す
 
 後の PBI は `STEPS` に 1 行足し、この表にも同じ行を足す。
+
+## CI の分け方
+
+[ADR-0068](../adr/0068-ci-shards-e2e-four-ways.md): CI の `verify` の job は `node scripts/verify.mjs --skip e2e` を流し、E2E は `e2e (1/4)`〜`e2e (4/4)` の 4 つの job が同時に流す（それぞれ `pnpm build` の後に `pnpm e2e --project chromium --shard <i>/4`。`e2e (4/4)` だけが続けて `pnpm e2e --project seed --no-deps`）。失敗した shard は `playwright-report-<i>` を残す。手元の `node scripts/verify.mjs` は e2e を含めて全部流す。
