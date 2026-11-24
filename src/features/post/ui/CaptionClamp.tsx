@@ -39,7 +39,7 @@ export function CaptionClamp({ postId, children }: { postId: string; children: R
             setState('open');
             paragraph.current?.focus();
           }}
-          className="block text-[length:var(--font-size-sm)] text-text-secondary"
+          className="-my-[calc((var(--tap-min)-1lh)/2)] block py-[calc((var(--tap-min)-1lh)/2)] text-[length:var(--font-size-sm)] text-text-secondary"
         >
           続きを読む
         </a>
