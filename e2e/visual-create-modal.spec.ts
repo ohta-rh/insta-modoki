@@ -88,7 +88,7 @@ test('プロフィールの上でも作成のモーダルが開く', async ({ pa
   await waitForHydration(page);
   await openModal(page);
   await expect(page.getByRole('heading', { name: '投稿を作成', exact: true })).toHaveCount(0);
-  await expect(page.getByText(`@${me}`)).toBeAttached();
+  await expect(page.getByRole('heading', { level: 1, name: me, exact: true })).toBeAttached();
 });
 
 test('写真を選ぶと切り取りの段に進む', async ({ page }) => {
