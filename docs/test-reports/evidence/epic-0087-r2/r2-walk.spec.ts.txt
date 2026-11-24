@@ -1,0 +1,578 @@
+import { writeFileSync, mkdirSync } from 'node:fs';
+import { test, expect, type Page, type BrowserContext } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import { newUser, signInViaHarness, baseURL } from '../e2e/support/auth';
+import { seedUser, seedFollow, userRow } from '../e2e/support/db';
+import { harness } from '../e2e/support/harness';
+import { insertPost, putPostFiles } from '../e2e/support/posts';
+import { insertStory, insertStoryView, putStoryFiles } from '../e2e/support/stories';
+import { insertComments } from '../e2e/support/comments';
+import { makeJpeg } from '../e2e/support/fixtures';
+import { waitForHydration } from '../e2e/support/hydration';
+
+const ROOT = '/Users/tetsuyaohta/projects/other/insta-modoki/.worktrees/epic-87';
+const EV = `${ROOT}/docs/test-reports/evidence/epic-0087-r2`;
+mkdirSync(EV, { recursive: true });
+const WIDTHS = [
+  { width: 1280, height: 800 },
+  { width: 1024, height: 768 },
+  { width: 375, height: 812 },
+];
+type Row = { ac: string; w: number; what: string; actual: unknown; expected: unknown; ok: boolean };
+const rows: Row[] = [];
+const health: Record<string, { console: string[]; pageerror: string[]; failed: string[]; http: string[]; pages: number }> = {};
+const a11yLog: any[] = [];
+
+function m(ac: string, w: number, what: string, actual: unknown, expected: unknown, tol = 1) {
+  const ok = typeof actual === 'number' && typeof expected === 'number' ? Math.abs(actual - expected) <= tol : JSON.stringify(actual) === JSON.stringify(expected);
+  rows.push({ ac, w, what, actual: typeof actual === 'number' ? Math.round(actual * 100) / 100 : actual, expected, ok });
+}
+const rowOk = (ac: string, w: number, what: string, actual: unknown, expected: unknown, ok: boolean) => rows.push({ ac, w, what, actual, expected, ok });
+const stamp = Date.now().toString(36);
+const id = (u: string) => userRow(u)!.id as string;
+
+async function ctx(browser: any, w: { width: number; height: number }, state: any, extra: any = {}) {
+  const c: BrowserContext = await browser.newContext({ baseURL: baseURL(), viewport: w, storageState: state, ...extra });
+  const p = await c.newPage();
+  const key = `${extra.tag ?? 'main'}-${w.width}`;
+  const h = (health[key] ??= { console: [], pageerror: [], failed: [], http: [], pages: 0 });
+  p.on('framenavigated', (f) => { if (f === p.mainFrame()) h.pages++; });
+  p.on('console', (msg) => { if (['error', 'warning'].includes(msg.type())) h.console.push(`${msg.type()}: ${msg.text().slice(0, 160)} @${new URL(p.url()).pathname}`); });
+  p.on('pageerror', (e) => h.pageerror.push(String(e).slice(0, 160)));
+  p.on('requestfailed', (r) => h.failed.push(`${r.url().replace(/^http:\/\/localhost:\d+/, '')} ${r.failure()?.errorText}`));
+  p.on('response', (r) => { if (r.status() >= 400) h.http.push(`${r.status()} ${r.url().replace(/^http:\/\/localhost:\d+/, '')}`); });
+  return { c, p };
+}
+const shot = (p: Page, ac: string, step: string, w: number) => p.screenshot({ path: `${EV}/${ac}-${step}-${w}.png` });
+const R = (p: Page, sel: string, nth = 0) => p.locator(sel).nth(nth).evaluate((el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, b: r.bottom, r: r.right }; });
+const S = (p: Page, sel: string, props: string[], nth = 0) => p.locator(sel).nth(nth).evaluate((el, ps) => { const c = getComputedStyle(el); return Object.fromEntries(ps.map((k: string) => [k, c.getPropertyValue(k)])); }, props);
+async function open(p: Page, path: string) { await p.goto(path); await p.getByRole('main').waitFor(); await waitForHydration(p); }
+const settle = (p: Page) => p.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => null)))).then(() => p.waitForTimeout(150));
+const sec = async (ac: string, w: number, fn: () => Promise<void>) => { try { await fn(); } catch (e) { rowOk(ac, w, 'probe error', String(e).split('\n')[0]!.slice(0, 220), 'no error', false); } };
+
+/** AC-10: axe (wcag2a/aa/21/22aa, critical+serious) and the 44x44 measurement of every `main a, main button` and the other controls, for the whole document (background + overlay). */
+async function check(p: Page, label: string, w: number) {
+  const { violations } = await new AxeBuilder({ page: p }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+  const bad = violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
+  const small = await p.evaluate(() => {
+    const selector = 'main a, main button, button, [role=button], input, select, textarea, [role=tab], nav a';
+    const all = Array.from(document.querySelectorAll(selector));
+    let measured = 0, mainLinksButtons = document.querySelectorAll('main a, main button').length;
+    const smallList = all.flatMap((el) => {
+      if (el instanceof HTMLInputElement && el.type === 'hidden') return [];
+      const b = el.getBoundingClientRect();
+      if (b.width <= 1 || b.height <= 1) return [];
+      measured++;
+      if (b.width >= 44 && b.height >= 44) return [];
+      const name = el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 24) ?? '';
+      return [`<${el.tagName.toLowerCase()}> "${name}" ${Math.round(b.width * 10) / 10}x${Math.round(b.height * 10) / 10}`];
+    });
+    return { smallList, measured, mainLinksButtons };
+  });
+  a11yLog.push({ label, w, axe: bad.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.map((n) => n.target.join(' ')).slice(0, 4) })), small: small.smallList, measured: small.measured, mainLinksButtons: small.mainLinksButtons });
+  rowOk('AC-10', w, `axe ${label}`, bad.map((v) => `${v.id}:${v.nodes.length}`).join(',') || 0, 0, bad.length === 0);
+  rowOk('AC-10', w, `44x44 ${label} (測った要素 ${small.measured}、main の a/button ${small.mainLinksButtons})`, small.smallList.slice(0, 6).join(' | ') || 0, 0, small.smallList.length === 0);
+}
+
+let viewer: ReturnType<typeof newUser>;
+let state: any;
+let authors: string[] = [];
+let post1 = '';
+let postPortrait = '';
+let ownPostIds: string[] = [];
+let other = '';
+let jpeg: Buffer;
+test.describe.configure({ mode: 'serial' });
+test.setTimeout(900_000);
+
+import { existsSync, readFileSync } from 'node:fs';
+const WORLD = `${ROOT}/.tmp_epic87r2/world.json`;
+test('seed', async ({ browser }) => {
+  if (existsSync(WORLD)) { const wd = JSON.parse(readFileSync(WORLD, 'utf8')); ({ viewer, state, authors, post1, postPortrait, ownPostIds, other } = wd); jpeg = Buffer.from(wd.jpeg, 'base64'); return; }
+  const c = await browser.newContext({ baseURL: baseURL() });
+  const p = await c.newPage();
+  viewer = await signInViaHarness(c);
+  state = await c.storageState();
+  jpeg = await makeJpeg(p, 1000, 1250);
+  authors = Array.from({ length: 9 }, (_, i) => `e2e_r${stamp}${i}`);
+  for (const [i, a] of authors.entries()) {
+    seedUser(a, `${a}@example.com`, { displayName: `見本${i}`, bio: '自己紹介の文です。' });
+    if (i < 8) seedFollow(id(viewer.username), id(a));
+  }
+  other = authors[0]!;
+  const long = '長いキャプションの文です。写真を撮った日のことを少し長めに書いておきます。'.repeat(6);
+  for (const [i, a] of authors.entries()) {
+    for (let k = 0; k < 4; k++) {
+      const ps = insertPost({ authorUsername: a, caption: k === 0 || k === 3 ? long : `写真 ${k}`, mediaCount: k === 1 ? 3 : 1, width: 1080, height: k === 2 ? 1350 : 1080, createdAt: Date.now() - (i * 4 + k + 1) * 600_000 });
+      await putPostFiles(p, ps);
+      if (i === 0 && k === 0) post1 = ps.id;
+      if (i === 0 && k === 2) postPortrait = ps.id;
+    }
+    if (i < 7) {
+      const s = insertStory({ authorUsername: a, createdAt: Date.now() - (i + 1) * 3_600_000 });
+      await putStoryFiles(p, s);
+      if (i === 6) insertStoryView({ storyId: s.id, viewerUsername: viewer.username });
+    }
+  }
+  for (let k = 0; k < 14; k++) {
+    const ps = insertPost({ authorUsername: viewer.username, caption: k === 0 ? long : `自分の投稿 ${k}`, width: 1080, height: 1350, createdAt: Date.now() - (k + 1) * 3_600_000 });
+    await putPostFiles(p, ps);
+    ownPostIds.push(ps.id);
+  }
+  // long comments (more than 2 lines) and replies, on the posts the walk opens
+  const longComment = 'これは長いコメントです。写真の色がとてもきれいで、見ていて気持ちが落ち着きました。また撮ったら見せてください。'.repeat(3);
+  for (const target of [post1, postPortrait, ownPostIds[0]!]) {
+    const ids = insertComments(authors.slice(1, 6).map((a, i) => ({ postId: target, authorUsername: a, body: i % 2 === 0 ? longComment : `コメント ${i}` })));
+    insertComments([{ postId: target, authorUsername: authors[6]!, parentId: ids[0], body: longComment }]);
+  }
+  const me = id(viewer.username);
+  for (const [i, t] of [60_000, 3 * 86_400_000, 40 * 86_400_000].entries()) {
+    harness({ op: 'seedNotification', recipientId: me, actorId: id(authors[i]!), type: i === 0 ? 'like' : 'follow', ...(i === 0 ? { postId: ownPostIds[0] } : {}), createdAt: Date.now() - t });
+  }
+  writeFileSync(WORLD, JSON.stringify({ viewer, state, authors, post1, postPortrait, ownPostIds, other, jpeg: jpeg.toString('base64') }));
+  await c.close();
+});
+
+for (const W of WIDTHS) {
+  test(`signed-in walk ${W.width}`, async ({ browser }) => {
+    const { c, p } = await ctx(browser, W, state);
+    const neg = await ctx(browser, W, state, { tag: 'neg' });
+    const w = W.width;
+    const wide = w >= 1280;
+
+    await sec('AC-1', w, async () => {
+      await open(p, '/');
+      await expect(p.getByTestId('story-tray')).toBeVisible();
+      if (w >= 768) {
+        m('AC-1', w, 'ナビの幅', (await R(p, 'nav[data-nav="side"]')).w, wide ? 244 : 72);
+        m('AC-1', w, '下部タブ非表示', await p.locator('nav[data-nav="bottom"]').isVisible(), false);
+        m('AC-1', w, '塗りつぶしのアイコン数（今の項目だけ）', await p.locator('nav[data-nav="side"] svg[data-filled="true"]').count(), 1);
+        const cb = await S(p, 'nav[data-nav="side"] [aria-current="page"]', ['border-left-width', 'border-bottom-width']);
+        m('AC-1', w, '今の項目に線が無い', `${cb['border-left-width']}/${cb['border-bottom-width']}`, '0px/0px');
+      } else {
+        m('AC-1', w, '下部タブの高さ', (await R(p, 'nav[data-nav="bottom"]')).h, 50);
+        m('AC-1', w, '上部バーの高さ', (await R(p, 'header[data-shell-top-bar]')).h, 45);
+        m('AC-1', w, '側のナビ非表示', await p.locator('nav[data-nav="side"]').isVisible(), false);
+      }
+      await shot(p, 'AC-1', 'home-nav', w);
+      const more = p.getByRole('button', { name: 'その他' }).first();
+      await more.click();
+      const menu = p.locator('#more-menu');
+      await expect(menu).toBeVisible();
+      await settle(p);
+      const names = (await menu.getByRole('link').allInnerTexts()).map((s) => s.trim());
+      const btnNames = (await menu.getByRole('button').allInnerTexts()).map((s) => s.trim());
+      const all = [...names, ...btnNames];
+      rowOk('AC-1', w, '「その他」の項目', all.join(','), '設定（プロフィールを編集）とログアウト', all.some((s) => /ログアウト/.test(s)) && all.some((s) => /編集|設定/.test(s)));
+      await shot(p, 'AC-1', 'more-menu', w);
+      await check(p, 'ホーム＋その他のメニュー', w);
+      await p.keyboard.press('Escape');
+      await open(neg.p, '/this-user-does-not-exist-' + stamp);
+      await shot(neg.p, 'AC-1', 'not-found', w);
+      await check(neg.p, '404 の画面', w);
+    });
+
+    await sec('AC-2', w, async () => {
+      await open(p, '/');
+      await expect(p.getByTestId('story-tray')).toBeVisible();
+      const longArt = p.locator('article', { has: p.getByRole('link', { name: '続きを読む' }) }).first();
+      const cap = await longArt.evaluate((el) => { const e = el.querySelector('p') as HTMLElement; const c = getComputedStyle(e); return { linkH: Math.round((e.querySelector('a') as HTMLElement).getBoundingClientRect().height), fs: c.fontSize, lh: c.lineHeight, color: c.color, pH: Math.round(e.getBoundingClientRect().height), clamp: c.webkitLineClamp }; });
+      rowOk('AC-2', w, '本文 14px/18px 黒・2 行', JSON.stringify(cap), '14px / 18px / 黒 / p の高さ = 先頭行の名前のリンクの高さ + 18px（2 行）', cap.fs === '14px' && cap.lh === '18px' && /^rgb\((0|38|39), ?(0|38|39), ?(0|38|39)\)$/.test(cap.color) && cap.pH === cap.linkH + 18);
+      const art = await R(p, 'article');
+      const art2 = await R(p, 'article', 1);
+      m('AC-2', w, 'カードの幅', art.w, w === 375 ? 375 : 470);
+      m('AC-2', w, 'カードの間', art2.y - art.b, 20, 1.5);
+      const bb = await S(p, 'article', ['border-bottom-color']);
+      rowOk('AC-2', w, '罫線の色 #DBDBDB', bb['border-bottom-color'], 'rgb(219, 219, 219)', bb['border-bottom-color'] === 'rgb(219, 219, 219)');
+      m('AC-2', w, 'フィードの列（カードの親）', await p.locator('article').first().evaluate((el) => el.parentElement!.getBoundingClientRect().width), w === 375 ? 375 : 470);
+      const hdr = await p.locator('article').first().evaluate((el) => { const name = el.querySelector('header a'); return { nameW: name ? getComputedStyle(name).fontWeight : null, time: !!el.querySelector('time'), more: el.querySelector('header button')?.getAttribute('aria-label') }; });
+      rowOk('AC-2', w, 'ヘッダー 名前 600・時刻・その他の操作', JSON.stringify(hdr), '600・time・その他の操作', hdr.nameW === '600' && hdr.time && /その他の操作/.test(hdr.more ?? ''));
+      const order = await p.locator('article').first().evaluate((el) => {
+        const act = el.querySelector('[data-slot="post-actions"]')!.getBoundingClientRect();
+        const lk = [...el.querySelectorAll('*')].find((e) => /件のいいね|いいねしました|^いいね/.test((e.textContent || '').trim()) && e.children.length <= 1 && !e.closest('[data-slot="post-actions"]'));
+        const input = el.querySelector('textarea, input:not([type=hidden])')!.getBoundingClientRect();
+        const cp = el.querySelector('p')!.getBoundingClientRect();
+        return { actBottom: act.bottom, likesY: lk ? lk.getBoundingClientRect().y : null, likesText: lk?.textContent?.trim().slice(0, 14) ?? null, captionY: cp.y, inputY: input.y };
+      });
+      rowOk('AC-2', w, 'いいね数は操作の列の下、その下にキャプション、最下にコメントの入力', JSON.stringify(order), 'likesY ≥ actBottom−1、captionY > likesY、inputY > captionY', order.likesY !== null && order.likesY >= order.actBottom - 1 && order.captionY > order.likesY && order.inputY > order.captionY);
+      const more = longArt.getByRole('link', { name: '続きを読む' }).first();
+      const mb = await more.evaluate((e) => { const r = e.getBoundingClientRect(); return { w: r.width, h: r.height }; });
+      rowOk('AC-2', w, '「続きを読む」が出る（押す範囲の高さ ≥ 44）', JSON.stringify(mb), 'h ≥ 44', mb.h >= 43.5);
+      const aside = p.locator('aside[aria-label="おすすめ"]');
+      const av = await aside.isVisible().catch(() => false);
+      m('AC-2', w, wide ? '右の列が出る' : '右の列が出ない', av, wide);
+      if (wide && av) {
+        const a = await R(p, 'aside[aria-label="おすすめ"]');
+        const st = await p.getByRole('navigation', { name: 'ストーリー' }).evaluate((e) => { const r = e.getBoundingClientRect(); return r.right; });
+        m('AC-2', w, '右の列の幅', a.w, 319);
+        m('AC-2', w, '中央（ストーリーの列の右端）との間', a.x - st, 64, 1.5);
+      }
+      await shot(p, 'AC-2', 'home', w);
+      const sendDisabled = await p.locator('article').first().getByRole('button', { name: /投稿|送信/ }).last().isDisabled().catch(() => null);
+      rowOk('AC-2', w, '失敗の経路: 空のコメントは送れない', sendDisabled, true, sendDisabled === true);
+      await check(p, 'ホーム', w);
+    });
+
+    await sec('AC-3', w, async () => {
+      m('AC-3', w, '輪の外径', (await R(p, '[data-story-ring]', 1)).w, 66);
+      m('AC-3', w, 'アバター', (await R(p, '[data-story-avatar]', 1)).w, 56);
+      const nm = await S(p, '[data-story-name]', ['font-size'], 1);
+      m('AC-3', w, '名前の文字', nm['font-size'], '12px');
+      const tray = await R(p, '[data-testid="story-tray"]');
+      const first = await R(p, 'article');
+      m('AC-3', w, '列の下の余白', first.y - tray.b, 24, 4);
+      const grad = await p.locator('[data-story-ring]').nth(1).evaluate((el) => [el, ...el.querySelectorAll('*')].map((e) => getComputedStyle(e).backgroundImage).find((b) => b.includes('gradient'))?.slice(0, 110) ?? null);
+      rowOk('AC-3', w, '未読の輪は自前のグラデーション', grad, 'linear-gradient', !!grad);
+      await shot(p, 'AC-3', 'tray', w);
+      if (wide) {
+        const nextBtn = p.getByRole('navigation', { name: 'ストーリー' }).getByRole('button', { name: '次へ' });
+        const before = await p.getByTestId('story-tray').evaluate((e) => e.scrollLeft);
+        await nextBtn.click(); await p.waitForTimeout(700);
+        const after = await p.getByTestId('story-tray').evaluate((e) => e.scrollLeft);
+        rowOk('AC-3', w, '矢印で送れる（scrollLeft）', `${before}→${after}`, '増える', after > before);
+        await shot(p, 'AC-3', 'tray-next', w);
+      }
+      await open(neg.p, `/stories/no_such_${stamp}`);
+      await shot(neg.p, 'AC-3', 'story-missing', w);
+      // the story viewer (a screen of its own)
+      await open(p, `/stories/${authors[1]}`);
+      await p.waitForTimeout(600);
+      await shot(p, 'AC-3', 'viewer', w);
+      await check(p, 'ストーリーの画面', w);
+    });
+
+    await sec('AC-4', w, async () => {
+      for (const [who, label] of [[viewer.username, 'own'], [other, 'other']] as const) {
+        await open(p, `/${who}`);
+        m('AC-4', w, `${label} 中身の幅`, (await R(p, '[data-page-width="wide"]')).w, w === 375 ? 375 : 935);
+        const h1 = await S(p, '[data-page-width="wide"] > header h1', ['font-size', 'font-weight']);
+        rowOk('AC-4', w, `${label} ユーザー名 20px/400`, `${h1['font-size']}/${h1['font-weight']}`, '20px/400', h1['font-size'] === '20px' && h1['font-weight'] === '400');
+        const counts = await p.locator('[data-page-width="wide"] > header ul > li').evaluateAll((lis) => lis.map((li) => { const sp = li.querySelectorAll('span'); const n = sp[0] as HTMLElement, u = sp[sp.length - 1] as HTMLElement; const r = li.getBoundingClientRect(); const rg = document.createRange(); rg.selectNodeContents(u); return { fs: getComputedStyle(n).fontSize, unit: getComputedStyle(u).color, rects: rg.getClientRects().length, li: Math.round(r.width), x: r.x, rr: r.right }; }));
+        rowOk('AC-4', w, `${label} 数の行 16px・単位 #737373`, JSON.stringify(counts.map((x) => [x.fs, x.unit])), '16px / rgb(115,115,115)', counts.length >= 3 && counts.every((x) => x.fs === '16px' && x.unit === 'rgb(115, 115, 115)'));
+        if (w === 375) rowOk('AC-4', w, `${label} 3 等分・単位が折り返さない`, JSON.stringify(counts.map((x) => [x.li, x.rects])), '幅が等しい・単位の行 1', counts.length === 3 && Math.max(...counts.map((x) => x.li)) - Math.min(...counts.map((x) => x.li)) <= 1 && counts.every((x) => x.rects === 1));
+        else m('AC-4', w, `${label} 数の間`, counts[1]!.x - counts[0]!.rr, 40, 2);
+        const tabs = await p.locator('[data-page-width="wide"] [role="tablist"] a, [data-page-width="wide"] nav a').first().evaluate((el) => !!el.querySelector('svg')).catch(() => null);
+        rowOk('AC-4', w, `${label} タブはアイコン`, tabs, true, tabs === true);
+        const t0 = await R(p, '[data-testid="post-grid"] a', 0);
+        const t1 = await R(p, '[data-testid="post-grid"] a', 1);
+        m('AC-4', w, `${label} タイル幅`, t0.w, w === 375 ? (w - 2) / 3 : 311, 1.5);
+        m('AC-4', w, `${label} タイル高さ（3:4）`, t0.h, t0.w * 4 / 3, 1.5);
+        m('AC-4', w, `${label} タイルの隙間`, t1.x - t0.r, 1, 0.6);
+        await shot(p, 'AC-4', label, w);
+        await check(p, `プロフィール(${label})`, w);
+      }
+      await open(neg.p, `/nobody_${stamp}_x`);
+      await shot(neg.p, 'AC-4', 'not-found', w);
+    });
+
+    await sec('AC-5', w, async () => {
+      await open(p, `/p/${postPortrait}`);
+      await p.waitForTimeout(400);
+      await shot(p, 'AC-5', 'post-page', w);
+      const media = await R(p, '[data-post-media]');
+      const art = await R(p, 'article[data-post-detail]');
+      if (w >= 1024) {
+        m('AC-5', w, '投稿の画面 写真の幅', media.w, 480, 1.5);
+        m('AC-5', w, '投稿の画面 写真の高さ', media.h, 600, 1.5);
+        m('AC-5', w, '投稿の画面 右の列の幅', await p.locator('article[data-post-detail] *').evaluateAll((els) => Math.max(0, ...els.map((e) => e.getBoundingClientRect().width).filter((x) => Math.abs(x - 335) <= 1.5))), 335, 1.5);
+      } else {
+        const st = await p.locator('main').evaluate((mn) => { const im = mn.querySelector('[data-post-media]')!.getBoundingClientRect(); const ta = mn.querySelector('textarea,input[type=text],input:not([type])')?.getBoundingClientRect(); return { imgBottom: im.bottom, inputY: ta?.y ?? null }; });
+        rowOk('AC-5', w, '375px は 1 列（入力が写真の下）', JSON.stringify(st), 'inputY > imgBottom', st.inputY !== null && st.inputY > st.imgBottom);
+      }
+      void art;
+      const names = await p.locator('article[data-post-detail] a').evaluateAll((as) => as.map((a) => { const r = a.getBoundingClientRect(); return `${(a.textContent || '').trim().slice(0, 10)} ${Math.round(r.width)}x${Math.round(r.height)}`; }));
+      rowOk('AC-5', w, '投稿の画面のコメントの名前のリンクが画面にある', names.length, '1 以上', names.length >= 1);
+      await check(p, '投稿の画面', w);
+      await open(p, `/${other}`);
+      await p.locator('[data-testid="post-grid"] a').nth(2).click();
+      const dlg = p.getByRole('dialog', { name: '投稿', exact: true });
+      await expect(dlg).toBeVisible();
+      await settle(p);
+      await shot(p, 'AC-5', 'modal', w);
+      if (w >= 1024) {
+        const mm = await dlg.locator('[data-post-media]').evaluate((e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; });
+        rowOk('AC-5', w, 'モーダル 写真の比（4:5）と大きさ', JSON.stringify(mm.map((x) => Math.round(x * 10) / 10)), '4:5', Math.abs(mm[0]! / mm[1]! - 0.8) < 0.01);
+        m('AC-5', w, 'モーダル 右の列の幅', await dlg.locator('article[data-post-detail] *').evaluateAll((els) => Math.max(0, ...els.map((e) => e.getBoundingClientRect().width).filter((x) => Math.abs(x - 335) <= 1.5))), 335, 1.5);
+      }
+      const bd = await dlg.evaluate((e) => getComputedStyle(e.parentElement!).backgroundColor);
+      rowOk('AC-5', w, 'モーダルの背景', bd, w >= 1024 ? '暗い' : '375px は白の全画面', w >= 1024 ? /^(rgba|oklab|color)/.test(bd) && !/255, 255, 255\)$/.test(bd) : true);
+      await check(p, '投稿のモーダル', w);
+      const close = dlg.getByRole('button', { name: '閉じる' });
+      const cb = await close.evaluate((e) => { const r = e.getBoundingClientRect(); return [r.width, r.height]; });
+      rowOk('AC-5', w, '× の大きさ（≥ 44）', JSON.stringify(cb), '≥ 44×44', cb[0]! >= 43.5 && cb[1]! >= 43.5);
+      await close.click();
+      await expect(dlg).toBeHidden();
+      m('AC-5', w, '閉じたあと元のプロフィールに戻る', new URL(p.url()).pathname, `/${other}`);
+    });
+
+    await sec('AC-6', w, async () => {
+      await open(p, '/');
+      if (w >= 1024) {
+        for (const [label, name] of [['search', '検索'], ['notif', '通知']] as const) {
+          const link = p.locator('nav[data-nav="side"]').getByRole('link', { name: new RegExp('^' + name) }).first();
+          await link.click();
+          const panel = p.getByRole('dialog', { name });
+          await expect(panel).toBeVisible();
+          await expect(panel).toHaveCSS('translate', 'none');
+          await settle(p);
+          m('AC-6', w, `${label} URL は動かない`, new URL(p.url()).pathname, '/');
+          m('AC-6', w, `${label} ナビが 72px`, (await R(p, 'nav[data-nav="side"]')).w, 72);
+          const pr = await panel.evaluate((e) => { const r = e.getBoundingClientRect(); return { w: r.width, x: r.x }; });
+          m('AC-6', w, `${label} パネルの幅`, pr.w, 397);
+          m('AC-6', w, `${label} パネルの左端`, pr.x, 72);
+          await shot(p, 'AC-6', label, w);
+          if (label === 'notif') {
+            const heads = await panel.getByRole('heading').allInnerTexts();
+            rowOk('AC-6', w, '通知は期間の見出しで区切られる', heads.join(','), '見出し 2 つ以上', heads.length >= 2);
+          }
+          await check(p, `${label}のパネル（ホームの上）`, w);
+          await p.keyboard.press('Escape');
+          await expect(panel).toBeHidden();
+          m('AC-6', w, `${label} Esc で閉じる→ナビ`, (await R(p, 'nav[data-nav="side"]')).w, wide ? 244 : 72);
+          await link.click(); await expect(panel).toBeVisible(); await link.click(); await expect(panel).toBeHidden();
+          rowOk('AC-6', w, `${label} 同じ項目で閉じる`, 'hidden', 'hidden', true);
+          await link.click(); await expect(panel).toBeVisible(); await p.mouse.click(w - 20, 300); await expect(panel).toBeHidden();
+          rowOk('AC-6', w, `${label} 外を押して閉じる`, 'hidden', 'hidden', true);
+        }
+        // failure/empty path: search with no result, in the panel
+        await p.locator('nav[data-nav="side"]').getByRole('link', { name: /^検索/ }).first().click();
+        const sp = p.getByRole('dialog', { name: '検索' });
+        await expect(sp).toBeVisible();
+        await sp.locator('input').first().fill('zzzqqqxxx' + stamp);
+        await expect(sp).toContainText(/一致する|見つかりません|ありません|該当/, { timeout: 8000 });
+        await settle(p);
+        await shot(p, 'AC-6', 'search-empty-panel', w);
+        rowOk('AC-6', w, '検索の 0 件（パネル）', (await sp.innerText()).replace(/\s+/g, ' ').slice(0, 60), '該当なしの文言', true);
+        await check(p, '検索の 0 件（パネル）', w);
+        await p.keyboard.press('Escape');
+      }
+      // direct links: the page opens, not the panel
+      await open(p, '/notifications');
+      m('AC-6', w, '/notifications 直接で今のページ', new URL(p.url()).pathname, '/notifications');
+      await shot(p, 'AC-6', 'notifications-page', w);
+      await check(p, '/notifications', w);
+      await open(p, '/explore/search');
+      m('AC-6', w, '/explore/search 直接で今のページ', new URL(p.url()).pathname, '/explore/search');
+      await shot(p, 'AC-6', 'search-page', w);
+      await check(p, '/explore/search', w);
+      // search page: empty result (the screenshot run 1 missed)
+      const inp = p.getByRole('main').locator('input').first();
+      await inp.fill('zzzqqqxxx' + stamp);
+      await expect(p.getByRole('main')).toContainText(/一致する|見つかりません|ありません|該当/, { timeout: 8000 });
+      await p.waitForTimeout(300);
+      await shot(p, 'AC-6', 'search-empty', w);
+      rowOk('AC-6', w, '/explore/search の 0 件', (await p.getByRole('main').innerText()).replace(/\s+/g, ' ').slice(0, 80), '該当なしの文言', true);
+      await check(p, '/explore/search の 0 件', w);
+      // and one with a result
+      await inp.fill(other.slice(0, 8));
+      await p.waitForTimeout(1200);
+      await shot(p, 'AC-6', 'search-result', w);
+      await check(p, '/explore/search の結果', w);
+      if (w === 375) {
+        await open(p, '/');
+        await p.locator('nav[data-nav="bottom"]').getByRole('link', { name: /通知/ }).first().click();
+        await p.waitForURL('**/notifications');
+        m('AC-6', w, '375px は通知のページへ移る', new URL(p.url()).pathname, '/notifications');
+      }
+    });
+
+    await sec('AC-7', w, async () => {
+      await open(p, '/');
+      const createLink = p.getByRole('link', { name: '投稿', exact: true }).first();
+      await createLink.click();
+      const cm = p.getByRole('dialog', { name: '新規投稿を作成' });
+      await expect(cm).toBeVisible();
+      await expect(cm.getByTestId('create-box')).toHaveCSS('opacity', '1');
+      await settle(p);
+      m('AC-7', w, '見ていた画面の上のモーダル（URL=/create）', new URL(p.url()).pathname, '/create');
+      m('AC-7', w, '背後のホームが残る', (await p.getByRole('main').count()) > 0, true);
+      await shot(p, 'AC-7', 'step0-select', w);
+      await check(p, '作成のモーダル 1 段目（ホームの上）', w);
+      await cm.locator('input[type="file"]').setInputFiles({ name: 'a.jpg', mimeType: 'image/jpeg', buffer: jpeg });
+      await expect(cm.getByRole('heading', { name: '切り取る' })).toBeVisible();
+      await settle(p);
+      await shot(p, 'AC-7', 'step1-crop', w);
+      await check(p, '作成のモーダル 2 段目 切り取り', w);
+      await cm.getByRole('button', { name: '次へ', exact: true }).click();
+      await expect(cm.getByRole('heading', { name: '新規投稿を作成' })).toBeVisible();
+      await cm.getByRole('textbox').first().fill(`総合試験 r2 のキャプション ${w}`);
+      await shot(p, 'AC-7', 'step2-caption', w);
+      await check(p, '作成のモーダル 3 段目 キャプション', w);
+      await cm.getByRole('button', { name: 'シェア', exact: true }).click();
+      await expect(p).toHaveURL(/\/p\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+      await p.getByRole('main').waitFor(); await p.waitForTimeout(800);
+      await shot(p, 'AC-7', 'shared', w);
+      rowOk('AC-7', w, '3 段を進めて投稿できた', new URL(p.url()).pathname.slice(0, 3), '/p/', true);
+      await open(neg.p, '/');
+      await neg.p.getByRole('link', { name: '投稿', exact: true }).first().click();
+      const cm2 = neg.p.getByRole('dialog', { name: '新規投稿を作成' });
+      await expect(cm2).toBeVisible();
+      await expect(cm2.getByTestId('create-box')).toHaveCSS('opacity', '1');
+      await cm2.locator('input[type="file"]').setInputFiles({ name: 'x.txt', mimeType: 'text/plain', buffer: Buffer.from('hello') });
+      await neg.p.waitForTimeout(800);
+      const err = await cm2.innerText();
+      await shot(neg.p, 'AC-7', 'bad-file', w);
+      rowOk('AC-7', w, '失敗の経路: 画像でないファイルは先へ進めず理由が出る', err.replace(/\s+/g, ' ').slice(0, 80), '理由の表示', !(await cm2.getByRole('heading', { name: '切り取る' }).isVisible()) && /画像|形式|ファイル|使えません|対応/.test(err));
+      await check(neg.p, '作成のモーダル（不正なファイル）', w);
+      await open(p, '/create');
+      const direct = await p.getByRole('dialog', { name: '新規投稿を作成' }).count();
+      await shot(p, 'AC-7', 'direct-create', w);
+      rowOk('AC-7', w, '/create 直接は 1 ページのフォーム', `dialog=${direct}`, 'dialog=0', direct === 0);
+      await check(p, '/create 直接', w);
+    });
+
+    await sec('AC-9', w, async () => {
+      await open(p, '/explore');
+      m('AC-9', w, '発見のグリッド幅', (await R(p, '[data-testid="post-grid"]')).w, w === 375 ? 375 : 935);
+      const e = [await R(p, '[data-testid="post-grid"] a', 0), await R(p, '[data-testid="post-grid"] a', 1), await R(p, '[data-testid="post-grid"] a', 2), await R(p, '[data-testid="post-grid"] a', 3)];
+      rowOk('AC-9', w, '3 列', `y: ${e.map((x) => Math.round(x.y)).join(',')}`, '先頭 3 つが同じ行、4 つ目は次の行', Math.abs(e[0]!.y - e[2]!.y) < 1 && e[3]!.y > e[0]!.y + 10);
+      m('AC-9', w, 'タイル 3:4', e[0]!.h, e[0]!.w * 4 / 3, 1.5);
+      m('AC-9', w, '検索の入口は 375px だけ', await p.locator('main').getByRole('link', { name: '検索', exact: true }).isVisible().catch(() => false), w === 375);
+      await shot(p, 'AC-9', 'explore', w);
+      await check(p, '発見', w);
+      await open(neg.p, `/explore/tags/${'e2etag' + stamp}`);
+      await shot(neg.p, 'AC-9', 'tag-empty', w);
+      await check(neg.p, 'タグ（空）', w);
+    });
+
+    await c.close();
+    await neg.c.close();
+  });
+}
+
+test('keyboard, focus ring and reduced motion (AC-10)', async ({ browser }) => {
+  for (const W of WIDTHS) {
+    const w = W.width;
+    const { c, p } = await ctx(browser, W, state, { reducedMotion: 'reduce', tag: 'rm' });
+    await open(p, '/');
+    const moving = async () => p.evaluate(() => [...document.querySelectorAll('*')].filter((e) => { const c = getComputedStyle(e); return c.transitionDuration.split(',').some((x) => parseFloat(x) > 0) || c.animationDuration.split(',').some((x) => parseFloat(x) > 0); }).map((e) => e.tagName).slice(0, 5));
+    let d = await moving();
+    rowOk('AC-10', w, '視差効果を減らす: ホームで動き 0 秒', d.join('|') || 0, 0, d.length === 0);
+    await p.getByRole('button', { name: 'その他' }).first().click();
+    await p.waitForTimeout(400);
+    d = await moving();
+    rowOk('AC-10', w, '視差効果を減らす: 「その他」のメニューを開いても 0 秒', d.join('|') || 0, 0, d.length === 0);
+    await p.keyboard.press('Escape');
+    if (w >= 1024) {
+      for (const name of ['検索', '通知']) {
+        await p.locator('nav[data-nav="side"]').getByRole('link', { name: new RegExp('^' + name) }).first().click();
+        await expect(p.getByRole('dialog', { name })).toBeVisible();
+        await p.waitForTimeout(300);
+        d = await moving();
+        rowOk('AC-10', w, `視差効果を減らす: ${name}のパネルで 0 秒`, d.join('|') || 0, 0, d.length === 0);
+        await p.keyboard.press('Escape');
+      }
+    }
+    await p.getByRole('link', { name: '投稿', exact: true }).first().click();
+    await expect(p.getByRole('dialog', { name: '新規投稿を作成' })).toBeVisible();
+    await p.waitForTimeout(300);
+    d = await moving();
+    rowOk('AC-10', w, '視差効果を減らす: 作成のモーダルで 0 秒', d.join('|') || 0, 0, d.length === 0);
+    await open(p, `/${other}`);
+    await p.locator('[data-testid="post-grid"] a').nth(2).click();
+    await expect(p.getByRole('dialog', { name: '投稿', exact: true })).toBeVisible();
+    await p.waitForTimeout(300);
+    d = await moving();
+    rowOk('AC-10', w, '視差効果を減らす: 投稿のモーダルで 0 秒', d.join('|') || 0, 0, d.length === 0);
+    await c.close();
+  }
+  for (const W of WIDTHS) {
+    const w = W.width;
+    const { c, p } = await ctx(browser, W, state, { tag: 'kb' });
+    await open(p, '/');
+    const seen: string[] = [];
+    const ringBad: string[] = [];
+    const probe = () => p.evaluate(() => {
+      const e = document.activeElement as HTMLElement;
+      if (!e || e === document.body) return null;
+      const c = getComputedStyle(e);
+      return { label: `${e.closest('nav')?.getAttribute('data-nav') ?? '-'}:${(e.getAttribute('aria-label') || e.textContent || e.tagName).trim().slice(0, 14)}`, ow: parseFloat(c.outlineWidth) || 0, st: c.outlineStyle, sh: c.boxShadow !== 'none' };
+    });
+    for (let i = 0; i < 60; i++) { await p.keyboard.press('Tab'); const info = await probe(); if (!info) continue; seen.push(info.label); if (!(info.ow >= 2 && info.st !== 'none') && !info.sh) ringBad.push(`${info.label} ${info.ow}px`); }
+    await open(p, '/');
+    for (let i = 0; i < 14; i++) { await p.keyboard.press('Shift+Tab'); const info = await probe(); if (!info) continue; seen.push(info.label); if (!(info.ow >= 2 && info.st !== 'none') && !info.sh) ringBad.push(`${info.label} ${info.ow}px`); }
+    rowOk('AC-10', w, 'フォーカスの輪郭 2px 以上（Tab 60 回＋Shift+Tab 14 回）', ringBad.slice(0, 5).join(' | ') || 0, 0, ringBad.length === 0);
+    const navKind = w >= 768 ? 'side:' : 'bottom:';
+    const want = w >= 768 ? ['ホーム', '検索', '発見', '投稿', '通知', 'プロフィール'] : ['ホーム', '発見', '投稿', '通知', 'プロフィール'];
+    const reach = want.filter((n) => !seen.some((s) => s.startsWith(navKind) && s.includes(n)));
+    rowOk('AC-10', w, 'キーボードだけでナビの全項目に届く', reach.length ? `届かない: ${reach.join(',')}` : `すべて届く（${[...new Set(seen.filter((s) => s.startsWith(navKind)))].join(' / ')}）`, 'すべて届く', reach.length === 0);
+    await open(p, '/');
+    await p.keyboard.press(w >= 768 ? 'Tab' : 'Shift+Tab');
+    await p.keyboard.press(w >= 768 ? 'Tab' : 'Shift+Tab');
+    // fresh page, Shift+Tab only: the bottom tabs sit last in the document
+    await shot(p, 'AC-10', 'focus-ring', w);
+    await c.close();
+  }
+});
+
+test('anonymous: login, signup, public pages (AC-8, AC-11)', async ({ browser }) => {
+  for (const W of WIDTHS) {
+    const w = W.width;
+    const { c, p } = await ctx(browser, W, undefined, { tag: 'anon' });
+    const neg = await ctx(browser, W, undefined, { tag: 'anonneg' });
+    await open(p, '/accounts/login');
+    await shot(p, 'AC-8', 'login', w);
+    if (w >= 1024) m('AC-8', w, 'ログイン 左右 2 分（hero と pane）', (await p.locator('[data-auth="hero"]').isVisible()) && (await p.locator('[data-auth="pane"]').isVisible()), true);
+    const formR = await R(p, 'main form');
+    const input = await R(p, '#email');
+    const inCs = await S(p, '#email', ['border-top-left-radius']);
+    const btn = await S(p, 'main form button[type="submit"]', ['border-top-left-radius', 'background-color']);
+    if (w === 1280) { m('AC-8', w, 'フォームの幅', formR.w, 536); m('AC-8', w, '入力の高さ', input.h, 60); }
+    rowOk('AC-8', w, '入力の角丸 16px・ボタンは丸い端', `${inCs['border-top-left-radius']} / btn ${btn['border-top-left-radius']}`, '16px / ≥ 20px', inCs['border-top-left-radius'] === '16px' && parseFloat(btn['border-top-left-radius']) >= 20);
+    m('AC-8', w, 'ナビが出ない（ログイン）', await p.locator('nav[data-nav]').count(), 0);
+    await check(p, 'ログイン', w);
+    await open(neg.p, '/accounts/login');
+    await neg.p.getByLabel('メールアドレス').fill('nobody@example.com');
+    await neg.p.getByLabel('パスワード').fill('wrong-password-123');
+    await neg.p.getByRole('button', { name: 'ログイン', exact: true }).click();
+    await expect(neg.p.getByRole('alert').filter({ hasText: /./ }).first()).toBeVisible();
+    await shot(neg.p, 'AC-8', 'login-error', w);
+    await check(neg.p, 'ログインの誤り', w);
+    await open(p, '/accounts/signup');
+    m('AC-8', w, '登録 1 列のフォームの幅', (await R(p, 'main form')).w, w >= 600 ? 560 : (await R(p, 'main form')).w, 1.5);
+    m('AC-8', w, '登録は 1 列（hero が無い）', await p.locator('[data-auth="hero"]').isVisible().catch(() => false), false);
+    await shot(p, 'AC-8', 'signup', w);
+    await check(p, '登録', w);
+    await p.getByRole('button', { name: 'サインアップ', exact: true }).click();
+    await shot(p, 'AC-8', 'signup-empty-submit', w);
+    await check(p, '登録の空の送信', w);
+    for (const [path, label] of [[`/${other}`, 'public-profile'], [`/p/${post1}`, 'public-post']] as const) {
+      await open(p, path);
+      await p.waitForTimeout(300);
+      const bar = await R(p, 'header[data-public-bar]');
+      m('AC-8', w, `${label} 上部バー 60px`, bar.h, 60);
+      m('AC-8', w, `${label} ナビ無し`, await p.locator('nav[data-nav]').count(), 0);
+      const t = (await p.locator('header[data-public-bar]').innerText()).replace(/\s+/g, ' ');
+      rowOk('AC-8', w, `${label} 上部バーの中身`, t, 'ログイン / 新しいアカウントを作成', /ログイン/.test(t) && /新しいアカウントを作成/.test(t));
+      await shot(p, 'AC-8', label, w);
+      await check(p, label === 'public-profile' ? '公開のプロフィール' : '公開の投稿', w);
+      if (label === 'public-post') {
+        const txt = (await p.locator('body').innerText()).replace(/Meta 社とは関係ありません/g, '') + ' ' + (await p.title());
+        rowOk('AC-11', w, '参照の名前・ロゴが出ない（注記を除く）', /instagram|インスタグラム|meta\b/i.test(txt) ? 'あり' : 'なし', 'なし', !/instagram|インスタグラム|meta\b/i.test(txt));
+        const foot = (await p.locator('footer').innerText().catch(() => '')).replace(/\s+/g, ' ');
+        rowOk('AC-11', w, 'フッターの非公式の注記', foot.slice(0, 70), '非公式の注記', /非公式/.test(foot));
+        await open(neg.p, '/accounts/login'); const lt = await neg.p.title(); const lg = (await neg.p.locator('main, header').first().innerText()).slice(0, 80); rowOk('AC-11', w, 'ブランド名（ログインの title と画面）', JSON.stringify([lt, lg.replace(/\s+/g, ' ')]), 'Mado を含む', /Mado/.test(lt) || /Mado/.test(lg));
+        await shot(p, 'AC-11', 'brand-footer', w);
+      }
+    }
+    rowOk('AC-11', w, 'ログインの主のボタンの色 #4F46C8', btn['background-color'], 'rgb(79, 70, 200)', btn['background-color'] === 'rgb(79, 70, 200)');
+    await c.close();
+    await neg.c.close();
+  }
+  for (const W of WIDTHS) {
+    const { c, p } = await ctx(browser, W, state, { tag: 'brand' });
+    await open(p, '/');
+    const txt = await p.locator('body').innerText();
+    const bodyNoFoot = txt.replace(/Meta 社とは関係ありません/g, '');
+    rowOk('AC-11', W.width, 'ログイン後の画面にも参照の名前が出ない', /instagram|インスタグラム|meta\b/i.test(bodyNoFoot) ? 'あり' : 'なし', 'なし', !/instagram|インスタグラム|meta\b/i.test(bodyNoFoot));
+    const ring = await p.locator('[data-story-ring]').nth(1).evaluate((el) => [el, ...el.querySelectorAll('*')].map((e) => getComputedStyle(e).backgroundImage).find((b) => b.includes('gradient')) ?? null);
+    rowOk('AC-11', W.width, 'ストーリーの輪は自前のグラデーション（#0BB8A9・#2B6CF6・#4F46C8）', ring, 'rgb(11,184,169) / rgb(43,108,246) / rgb(79,70,200)', !!ring && /11, 184, 169/.test(ring) && /43, 108, 246/.test(ring) && /79, 70, 200/.test(ring));
+    await shot(p, 'AC-11', 'brand-home', W.width);
+    await c.close();
+  }
+});
+
+test.afterAll(() => {
+  writeFileSync(`${EV}/r2-results.json`, JSON.stringify({ rows, health }, null, 1));
+  writeFileSync(`${EV}/r2-a11y.json`, JSON.stringify(a11yLog, null, 1));
+});
