@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { signUpViaUi, type NewUser } from './support/auth';
+import { signInViaHarness, type NewUser } from './support/auth';
 import { seedFollow, seedUser, userRow, withDb } from './support/db';
 import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
@@ -11,7 +11,7 @@ const signedIn = test.extend<{ me: NewUser }>({
   // auto: every test starts signed in, even one that never names `me`.
   me: [
     async ({ page }, use) => {
-      await use(await signUpViaUi(page));
+      await use(await signInViaHarness(page));
     },
     { auto: true },
   ],

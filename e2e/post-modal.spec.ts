@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { seedUser, userRow } from './support/db';
 import { harness } from './support/harness';
 import { holdScripts, waitForHydration } from './support/hydration';
@@ -204,7 +204,7 @@ test('フォーカスがモーダルの外に出ない', async ({ page }) => {
 });
 
 test('モーダルから自分の投稿を削除すると グリッドから消える', async ({ page }) => {
-  const me = await signUpViaUi(page);
+  const me = await signInViaHarness(page);
   const { ids } = await postsFor(page, me.username, 3);
   await page.goto(`/${me.username}`);
   await waitForHydration(page);
@@ -341,7 +341,7 @@ test('JS が読み込まれる前にグリッドの投稿を押すと 通常の�
 });
 
 test('モーダルの中でコメントを送ると 一覧にすぐ出て 件数のリンクが増える', async ({ page }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const { username, ids } = await strangerWithPosts(page, 3);
   await page.goto(`/${username}`);
   await waitForHydration(page);

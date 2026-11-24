@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-24
+* **Creation**: [ADR-0069](adr/0069-e2e-signs-in-through-the-harness.md)（E2E は、サインアップを確かめない場面では E2E 用の窓口の `seedSession` でログイン済みのユーザーを用意する）を追加した（#116）。
 * **Update**: [verify.md](guides/verify.md) の「結合テストの時間の予算」に、CI の verify の job が `fetch-depth: 0` で取るので `int-budget` が PR で変わった結合テストだけを測ることを足した。job の上限は 20 分から 30 分にした（#109）。
 
 ## 2026-11-23

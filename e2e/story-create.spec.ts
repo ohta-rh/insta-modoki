@@ -1,5 +1,5 @@
 import { expect, test, type Page, type Request } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
 import { makeJpeg } from './support/fixtures';
 import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
@@ -15,7 +15,7 @@ const TOO_LONG = '動画は 15 秒までです';
 
 /** Signs a new user up through the real screen and opens /stories/create. */
 async function start(page: Page): Promise<{ username: string }> {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   await page.goto('/stories/create');
   await page.waitForLoadState('networkidle');
   await expect(page.getByRole('heading', { name: 'ストーリーを作成' })).toBeVisible();
@@ -156,7 +156,7 @@ const preview = (page: Page) => page.getByRole('img', { name: '選んだ写真�
 test('JS の読み込み前に選んだ写真が ハイドレーションの後にプレビューに入り 投稿できる', async ({
   page,
 }) => {
-  const { username } = await signUpViaUi(page);
+  const { username } = await signInViaHarness(page);
   const jpeg = await makeJpeg(page, 600, 800);
   await pickBeforeHydration(page, { name: 'early.jpg', mimeType: 'image/jpeg', buffer: jpeg });
 
@@ -170,7 +170,7 @@ test('JS の読み込み前に選んだ写真が ハイドレーションの後�
 test('JS の読み込み前に選んだ 16 秒の動画は ハイドレーションの後に理由が出て送られない', async ({
   page,
 }) => {
-  const { username } = await signUpViaUi(page);
+  const { username } = await signInViaHarness(page);
   const sent: Request[] = [];
   page.on('request', (r) => {
     // Not the unread-badge poll (a Server Action POST with no arguments, body `[]`).
@@ -186,7 +186,7 @@ test('JS の読み込み前に選んだ 16 秒の動画は ハイドレーショ
 });
 
 test('JS の読み込み前に選んだ写真の後 同じ写真を選び直しても 1 つのまま', async ({ page }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const jpeg = await makeJpeg(page, 600, 800);
   const same = { name: 'same.jpg', mimeType: 'image/jpeg', buffer: jpeg };
   await pickBeforeHydration(page, same);

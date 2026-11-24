@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { makeAdmin } from './support/admin';
-import { signUpViaUi, type NewUser } from './support/auth';
+import { signInViaHarness, type NewUser } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
 import { clearRateLimits, postRows, seedUser, userRow } from './support/db';
 import { waitForHydration } from './support/hydration';
@@ -22,7 +22,7 @@ function seedVictim(): { username: string; postId: string } {
 }
 
 async function signUpAdmin(page: Page): Promise<NewUser> {
-  const admin = await signUpViaUi(page);
+  const admin = await signInViaHarness(page);
   makeAdmin(admin.username);
   return admin;
 }
@@ -89,7 +89,7 @@ test('一般の利用者は /admin で「ページが見つかりません」、
   page,
   browser,
 }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const response = await page.goto('/admin');
   expect(response?.status()).toBe(404);
   await expect(page.getByRole('heading', { name: NOT_FOUND })).toBeVisible();

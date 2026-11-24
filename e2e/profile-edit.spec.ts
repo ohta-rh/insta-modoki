@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { seedUser, setUploadCount, userRow } from './support/db';
 import { makeJpeg, padTo, webpSize } from './support/fixtures';
 import { holdScripts, waitForHydration } from './support/hydration';
@@ -25,7 +25,7 @@ const jpeg = (name: string, buffer: Buffer) => ({ name, mimeType: 'image/jpeg', 
 
 /** Signs a new user up and opens /accounts/edit with the page hydrated. */
 async function start(page: Page): Promise<{ userId: string; username: string }> {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   await page.goto('/accounts/edit');
   await waitForHydration(page);
   return { userId: userRow(user.username)!.id as string, username: user.username };
@@ -42,7 +42,7 @@ test('表示名と自己紹介とアイコンを変えて保存すると 自分�
   page,
   browser,
 }) => {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   await page.goto(`/${user.username}`);
   await page.getByRole('link', { name: 'プロフィールを編集' }).click();
   await expect(page).toHaveURL(/\/accounts\/edit$/);
@@ -201,7 +201,7 @@ test('他人のプロフィールには編集ボタンが出ない', async ({ pa
   await page.goto('/accounts/edit');
   await expect(page).toHaveURL(/\/accounts\/login$/);
 
-  const me = await signUpViaUi(page);
+  const me = await signInViaHarness(page);
   await page.goto(`/${other}`);
   await expect(page.getByRole('heading', { level: 1, name: other })).toBeVisible();
   await expect(page.getByText('他人', { exact: true })).toBeVisible();
@@ -291,7 +291,7 @@ async function pressSave(page: Page) {
 }
 
 test('JS が読み込まれる前でも 保存を押すと 保存されてプロフィールに移る', async ({ page }) => {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   const release = await openWithoutJs(page);
   try {
     await nameField(page).fill('JS なしの名前');
@@ -311,7 +311,7 @@ test('JS が読み込まれる前でも 保存を押すと 保存されてプロ
 });
 
 test('JS が読み込まれる前でも 不正な値は欄の下に理由が出て 入力が残る', async ({ page }) => {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   const release = await openWithoutJs(page);
   try {
     await nameField(page).fill('   ');
@@ -356,7 +356,7 @@ async function pickIconBeforeHydration(page: Page, file: ReturnType<typeof jpeg>
 test('JS の読み込み前に選んだアイコンが ハイドレーションの後にプレビューに出て 保存できる', async ({
   page,
 }) => {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   const image = await makeJpeg(page, 800, 600);
   await pickIconBeforeHydration(page, jpeg('early.jpg', image));
 
@@ -370,7 +370,7 @@ test('JS の読み込み前に選んだアイコンが ハイドレーション�
 test('JS の読み込み前に選んだ 10MB を超えるアイコンは ハイドレーションの後に理由が出る', async ({
   page,
 }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const big = padTo(await makeJpeg(page, 200, 200), 10_485_761);
   await pickIconBeforeHydration(page, jpeg('big.jpg', big));
 

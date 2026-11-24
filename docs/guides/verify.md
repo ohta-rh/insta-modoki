@@ -39,6 +39,8 @@ status: stable
 
 `e2e` は `build` の成果物を使うので、単独で流す前に `pnpm build` が要る。Chromium は初回に `pnpm exec playwright install chromium` で入れる。
 
+E2E の用意の関数（`e2e/support/auth.ts` の `test`・`signedIn`・`freshUser` の fixture と `signInViaHarness`、`e2e/support/screens.ts` の `createWorld`）は、画面のサインアップを通らず、窓口 `/e2e-harness/db` の `seedSession` でユーザーとセッションの行を作り、返った cookie を `context.addCookies` で入れる（[ADR-0069](../adr/0069-e2e-signs-in-through-the-harness.md)）。画面のサインアップを使う（`signUpViaUi`）のは、サインアップ・ログイン・招待の画面を確かめる spec（`signup.spec.ts`・`login-logout.spec.ts`・`invite.spec.ts`）だけ。
+
 ## 結合テストの時間の予算
 
 `int-budget`（[ADR-0059](../adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)）は、基準のコミット（`INT_BUDGET_BASE`、なければ `origin/$GITHUB_BASE_REF`・`origin/m*/*`・`origin/main` のうち、HEAD までの commit 数が一番少ない merge-base）から変わった `*.int.test.ts` を 1 本ずつ（`--no-file-parallelism`）流し、各テストの所要時間が、そのテストの上限（既定 5,000ms、`it(…, 60_000)` ならその値）の 25% 以下かを見る。超えたテストがあるファイルだけをもう 2 回流し、3 回の最小が 25% を超えたものを全て `int-budget: FAIL …` で出して 1 で終わる（ホストの混み具合は時間を延ばす方向にしか働かないため、最小で判定する）。直し方は、往復をまとめる（`t.db.batch`）・並べる（`Promise.all`）か、計測した時間を書いたコメントつきで個別の上限を付けること。vitest の既定の上限は変えない。

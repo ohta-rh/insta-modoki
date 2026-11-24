@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { getObject } from './support/storage';
 import { insertStory, putStoryFiles, storyRows } from './support/stories';
 
 const HOUR = 3_600_000;
 
 test('日次の定期実行で期限切れのストーリーの行とファイルが消える', async ({ page, request }) => {
-  const { username } = await signUpViaUi(page);
+  const { username } = await signInViaHarness(page);
   // Made 25 hours ago, so it expired an hour ago.
   const story = insertStory({ authorUsername: username, createdAt: Date.now() - 25 * HOUR });
   const keys = await putStoryFiles(page, story);

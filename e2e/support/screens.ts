@@ -1,5 +1,5 @@
 import { test as base, type Browser, type BrowserContext, type Page } from '@playwright/test';
-import { baseURL, signUpViaUi, type NewUser } from './auth';
+import { baseURL, signInViaHarness, type NewUser } from './auth';
 import { seedFollow, seedUser, userRow } from './db';
 import { waitForHydration } from './hydration';
 import { insertPost, putPostFiles } from './posts';
@@ -37,11 +37,11 @@ export const SCREENS: Screen[] = [
   { name: 'フォロワーの一覧', path: (w) => `/${w.author}/followers`, loggedIn: true },
 ];
 
-/** Signs a viewer up and gives an author they follow three posts with real photo files. */
+/** Signs a viewer in (through the harness) and gives an author they follow three posts with real photo files. */
 async function createWorld(browser: Browser): Promise<World> {
   const context = await browser.newContext({ baseURL: baseURL() });
   const page = await context.newPage();
-  const viewer = await signUpViaUi(page);
+  const viewer = await signInViaHarness(context);
   const state = await context.storageState();
 
   const author = `e2e_x${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;

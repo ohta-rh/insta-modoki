@@ -1,5 +1,5 @@
 import { expect, test as base } from '@playwright/test';
-import { baseURL, freshUser, signedIn, signUpViaUi } from './support/auth';
+import { baseURL, freshUser, signedIn, signInViaHarness } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
 import { seedUser, unreadNotificationCount, userRow } from './support/db';
 import { harness } from './support/harness';
@@ -28,7 +28,7 @@ freshUser(
     });
     try {
       const other = await context.newPage();
-      await signUpViaUi(other);
+      await signInViaHarness(other);
       await other.goto(`/p/${post.id}`);
       await waitForHydration(other);
       await other.getByRole('button', { name: 'いいね', exact: true }).click();
@@ -134,11 +134,11 @@ base('同じタブで別の人がログインしても、前の人の未読の�
   });
   let bob;
   try {
-    bob = await signUpViaUi(await context.newPage());
+    bob = await signInViaHarness(await context.newPage());
   } finally {
     await context.close();
   }
-  const alice = await signUpViaUi(page);
+  const alice = await signInViaHarness(page);
   const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const actor = `e2e_n${stamp}`;
   seedUser(actor, `${actor}@example.com`);

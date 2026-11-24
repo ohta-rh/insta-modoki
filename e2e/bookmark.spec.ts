@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { baseURL, signUpViaUi, type NewUser } from './support/auth';
+import { baseURL, signInViaHarness, type NewUser } from './support/auth';
 import { seedFollow, seedUser, userRow, withDb } from './support/db';
 import { expectNoSeriousViolations } from './support/axe';
 import { harness } from './support/harness';
@@ -12,7 +12,7 @@ import { tabTo } from './support/keys';
 const signedIn = test.extend<{ me: NewUser }>({
   me: [
     async ({ page }, use) => {
-      await use(await signUpViaUi(page));
+      await use(await signInViaHarness(page));
     },
     { auto: true },
   ],
@@ -178,7 +178,7 @@ test('未ログインはログインへ移り、JS が読み込まれる前で�
   // A signed-in person before hydration saves with the form alone.
   const context = await browser.newContext({ baseURL: baseURL() });
   const signed = await context.newPage();
-  await signUpViaUi(signed);
+  await signInViaHarness(signed);
   const release2 = await holdScripts(signed);
   await signed.goto(`/p/${post.id}`, { waitUntil: 'commit' });
   await saveButton(signed).waitFor();
@@ -287,7 +287,7 @@ signedIn(
     const ownerContext = await browser.newContext({ baseURL: baseURL() });
     const ownerPage = await ownerContext.newPage();
     // (the owner has no password here, so a fresh account stands in for "own profile")
-    const mine = await signUpViaUi(ownerPage);
+    const mine = await signInViaHarness(ownerPage);
     await ownerPage.goto(`/${mine.username}?tab=foo`);
     await expect(ownerPage.getByRole('tab', { name: '投稿' })).toHaveAttribute(
       'aria-selected',

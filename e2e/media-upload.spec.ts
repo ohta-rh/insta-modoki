@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { userRow } from './support/db';
 import { hasExif, makeJpeg, padTo, webpSize, withGps } from './support/fixtures';
 import { getObject, mediaUrl } from './support/storage';
@@ -14,7 +14,7 @@ type Result = { key: string; width: number; height: number; thumbhash: string };
 
 /** Signs up through the real screen and opens the harness page; returns the new user's username. */
 async function start(page: Page): Promise<string> {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   await page.goto(PAGE_PATH);
   await page.waitForLoadState('networkidle');
   return user.username;
@@ -188,7 +188,7 @@ test('写真の選択部品をキーボードだけで操作でき axe の重大
 test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと 選択ダイアログが開く', async ({
   page,
 }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   // Armed before the key press (see the post-hydration test): interception is enabled asynchronously.
   const chooser = page.waitForEvent('filechooser');
   // Hold every script chunk back so the page stays un-hydrated while the key is pressed.
@@ -235,7 +235,7 @@ test('保存した写真が 公開の配信元（別 origin）から 実際の�
 test('JS の読み込み前に選んだ写真が ハイドレーションの後に一覧に入り アップロードできる', async ({
   page,
 }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const jpeg = await makeJpeg(page, 320, 240);
   const chooser = page.waitForEvent('filechooser');
   chooser.catch(() => {});

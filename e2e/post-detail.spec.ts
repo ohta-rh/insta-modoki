@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import { holdScripts, nextFrames, waitForHydration } from './support/hydration';
-import { signUpViaUi, type NewUser } from './support/auth';
+import { signInViaHarness, type NewUser } from './support/auth';
 import { seedUser } from './support/db';
 import { getObject } from './support/storage';
 import { delayMedia, insertPost, postRowCount, putPostFiles } from './support/posts';
@@ -11,7 +11,7 @@ import { tabTo } from './support/keys';
 /** `page` signed in as a new user, who is `me`. */
 const signedIn = test.extend<{ me: NewUser }>({
   me: async ({ page }, use) => {
-    await use(await signUpViaUi(page));
+    await use(await signInViaHarness(page));
   },
 });
 

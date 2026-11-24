@@ -62,6 +62,7 @@
 * [ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる](0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) - 置き換え: ADR-0057
 * [ADR-0057: slice の入口 index.ts は 'use client' の部品を公開せず、画面の部品は ui/index.ts から公開する](0057-slice-index-exports-no-client-components.md) - 採用
 * [ADR-0055: E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする](0055-e2e-invite-required-by-request-header.md) - 採用
+* [ADR-0069: E2E は、サインアップを確かめない場面では E2E 用の窓口の seedSession でログイン済みのユーザーを用意する](0069-e2e-signs-in-through-the-harness.md) - 採用
 
 # ひな形
 

@@ -1,7 +1,7 @@
 import { randomInt } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
 import { inviteOnlyHeaders } from './support/admin';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { waitForHydration } from './support/hydration';
 import { expectPx, rect, styles, VIEWPORTS } from './support/measure';
 
@@ -154,7 +154,7 @@ test('ログインと新しいアカウントを作成は丸い端の 44px の�
 });
 
 test('ログインの失敗は赤い文と枠で出て、入力が残る', async ({ page }) => {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   await page.context().clearCookies();
   await page.context().setExtraHTTPHeaders({
     'cf-connecting-ip': `10.${randomInt(256)}.${randomInt(256)}.${1 + randomInt(254)}`,

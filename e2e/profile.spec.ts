@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { seedFollow, seedUser, userRow } from './support/db';
 import { waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles, type InsertedPost } from './support/posts';
@@ -172,7 +172,7 @@ test('投稿が無いときは空の状態が表示される', async ({ page }) 
   await expect(page.getByRole('link', { name: '写真を投稿する' })).toHaveCount(0);
   await expect(grid(page)).toHaveCount(0);
 
-  const me = await signUpViaUi(page);
+  const me = await signInViaHarness(page);
   await page.goto(`/${me.username}`);
   await expect(page.getByText('まだ投稿がありません')).toBeVisible();
   await expect(page.getByRole('link', { name: '写真を投稿する' })).toHaveAttribute(

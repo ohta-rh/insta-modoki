@@ -1,5 +1,5 @@
 import { expect, test as base, type Page } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
 import { seedUser, userRow } from './support/db';
 import { harness } from './support/harness';
@@ -14,7 +14,7 @@ const WIDTHS = [
 
 /** A new user with one unread notification, on `/` with the badge shown. */
 async function withUnread(page: Page): Promise<void> {
-  const me = await signUpViaUi(page);
+  const me = await signInViaHarness(page);
   const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const actor = `e2e_b${stamp}`;
   seedUser(actor, `${actor}@example.com`);
