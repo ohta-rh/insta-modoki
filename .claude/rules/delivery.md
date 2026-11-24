@@ -20,7 +20,8 @@ workers, resumed with SendMessage by agent id). Append the paste block of
 ## 2. Dispatch (parallel by default)
 
 1. **Ground truth.** `git fetch origin`; `main` is not behind `origin/main`; the verify gate on
-   `origin/main` is green (red `main` is fixed first, as its own PBI).
+   `origin/main` is green (red `main` is fixed first, as its own PBI). Before dispatching,
+   `node scripts/ci-gate.mjs <integration branch>` exits 0.
 2. **Ready set.** Open PBIs of the current milestone whose DoR is fully ticked, whose
    `blocked by` issues are all closed, and whose touch sets do not overlap any in-flight PBI.
    A PBI failing DoR is fixed (issue edited), not taken.
@@ -65,6 +66,9 @@ TDD → impl → code-review ∥ security-review → E2E → verify
    step 1. **Tick each AC's checkbox on the issue as soon as it holds on evidence (ADR-0048)** —
    an unticked AC means "not verified". If the test an AC names was renamed, fix the 確認方法
    in the issue first (dated note at the top of the body), then tick.
+   **Check the evidence (ADR-0065):** of the `rc=` line and the result line in a report, the ones
+   that decide an AC are not taken on trust: the Director re-runs it or opens the log and
+   compares. A check the report marks `未実行` is not evidence.
 
 Bugs found anywhere in the loop are fixed inside the PBI, test-first. Adjacent improvements
 are filed as new PBIs, not folded in.
@@ -83,6 +87,7 @@ and EPIC test. The user merges.
    `git push origin main`; confirm `git status -sb` shows no `ahead`. Do not push the next
    integration until the CI run of this push has **completed**: a newer push cancels the running
    one, and on 2026-11-21 six consecutive pushes left the gate with no completed run at all.
+   After the push, `node scripts/ci-gate.mjs <integration branch>` exits 0 before the next one.
 3. On the issue: confirm every AC box is ticked (§3 step 4), tick DoD, comment with the commit SHA, the verify result and the review
    verdicts; close; tick it in the EPIC.
 4. Clean up by exact name. **First** `node scripts/slot.mjs drop <N>` in the worktree: it stops
