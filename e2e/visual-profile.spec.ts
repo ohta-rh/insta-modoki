@@ -215,6 +215,33 @@ test('768px 以上の右の区画は、画面の右端から 16px 空く', async
   ).toBe(true);
 });
 
+test('375px で長い自己紹介があっても、名前の行はアバターの右に残り、自己紹介は幅いっぱいに出る', async ({
+  page,
+  me,
+}) => {
+  void me; // signed in as a viewer
+  const other = otherProfile({ posts: 1, bio: `長い${'a'.repeat(120)}` });
+  await open(page, other.username, VIEWPORTS.mobile);
+  const avatar = await rect(header(page).locator('[data-testid="avatar-initial"], img').first());
+  const avatarRight = avatar.x + avatar.width;
+  const title = await rect(header(page).getByRole('heading', { level: 1 }));
+  const button = await rect(header(page).locator('> div').nth(1).locator('button, a').first());
+  expect(
+    title.x,
+    `名前の左端 ${title.x}px はアバターの右端 ${avatarRight}px 以降`,
+  ).toBeGreaterThanOrEqual(avatarRight - 0.5);
+  expect(
+    button.x,
+    `ボタンの左端 ${button.x}px はアバターの右端 ${avatarRight}px 以降`,
+  ).toBeGreaterThanOrEqual(avatarRight - 0.5);
+  const bio = await rect(header(page).locator('> div').nth(2));
+  expectPx(bio.x, 0, '自己紹介の枠の左端');
+  expectPx(bio.width, 375, '自己紹介の枠の幅');
+  const bioText = await rect(header(page).locator('> div').nth(2).locator('p').first());
+  expectPx(bioText.x, 16, '自己紹介の文字の左端');
+  expectPx(bioText.width, 375 - 32, '自己紹介の文字の幅');
+});
+
 test('表示名は自己紹介の先頭に 600 で出る', async ({ page, me }) => {
   void me; // signed in as a viewer
   const other = otherProfile({ posts: 1 });

@@ -81,7 +81,7 @@ export function ProfileHeader({
           );
         })}
       </ul>
-      <div className="text-[length:var(--font-size-sm)] break-words max-nav:mt-3 max-nav:px-4 nav:col-start-2 nav:mt-5 nav:pr-4">
+      <div className="text-[length:var(--font-size-sm)] break-words max-nav:col-span-2 max-nav:mt-3 max-nav:px-4 nav:col-start-2 nav:mt-5 nav:pr-4">
         <p className="font-semibold">{profile.displayName}</p>
         {profile.bio !== '' && <p className="whitespace-pre-wrap">{profile.bio}</p>}
       </div>
