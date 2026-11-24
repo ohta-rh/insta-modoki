@@ -288,7 +288,9 @@ export function CreatePostForm({
             <div role="alert">
               <ul className={`${ERROR} list-none`}>
                 {pickErrors.map((message, i) => (
-                  <li key={i}>{message}</li>
+                  <li key={i} className="wrap-anywhere">
+                    {message}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -467,7 +469,9 @@ function ModalFlow(p: ModalFlowProps) {
                 <div role="alert">
                   <ul className={`${ERROR_ON_SURFACE} list-none`}>
                     {p.pickErrors.map((message, i) => (
-                      <li key={i}>{message}</li>
+                      <li key={i} className="wrap-anywhere">
+                        {message}
+                      </li>
                     ))}
                   </ul>
                 </div>
