@@ -44,7 +44,7 @@ const tile = (page: Page, id: string) =>
 const dialog = (page: Page) => page.getByRole('dialog', { name: '投稿', exact: true });
 const scrollY = (page: Page) => page.evaluate(() => window.scrollY);
 
-/** Opens the profile, waits for hydration, scrolls 800px down and returns the scroll position. */
+/** Opens the profile, waits for hydration, scrolls a middle tile to the centre and returns the scroll position. */
 async function openProfileScrolled(page: Page, username: string): Promise<number> {
   await page.goto(`/${username}`);
   await waitForHydration(page);
@@ -54,8 +54,18 @@ async function openProfileScrolled(page: Page, username: string): Promise<number
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     expect(await links.count()).toBeGreaterThanOrEqual(24);
   }).toPass();
-  await page.evaluate(() => window.scrollTo(0, 800));
-  await expect.poll(() => scrollY(page)).toBe(800);
+  // A tile from the middle of the grid goes to the vertical centre, so one tile is fully inside the
+  // viewport below the bar whatever the tile height (a fixed offset left none fully visible).
+  await links.nth(9).evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  let last = -1;
+  await expect
+    .poll(async () => {
+      const y = await scrollY(page);
+      const stable = y > 0 && y === last;
+      last = y;
+      return stable;
+    })
+    .toBe(true);
   return scrollY(page);
 }
 
@@ -181,6 +191,10 @@ test('フォーカスがモーダルの外に出ない', async ({ page }) => {
   const { username } = await strangerWithPosts(page, 6);
   await page.goto(`/${username}`);
   await waitForHydration(page);
+  await page
+    .locator('[data-testid="post-grid"] a')
+    .nth(1)
+    .evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
   const id = (await visibleTileId(page)) ?? '';
   await tile(page, id).click();
   await expect(dialog(page)).toBeVisible();
