@@ -37,6 +37,7 @@ EPIC の総合試験（実ブラウザ）のレポート。書き方は [ADR-001
 * [EPIC #87 見た目の総合試験（4 回目、PASS）](epic-0087-visual-r4.md) - 340dff7。#130（不正なファイルのエラーの一覧の折り返し）と #124〜#127 の続きの後のやり直し。11 の AC が全て PASS。30 字の利用者名（375px のフィード・投稿の画面、1280px のおすすめの行）と 200 字のファイル名（375px の作成のモーダル）も収まり、axe の重大・深刻な違反 0、操作できる要素は 85 回の測定で全て 44×44px 以上
 * [EPIC #110 ハーネスの改善の総合試験（FAIL）](epic-0110-harness.md) - cc7eef4 で 9 の AC をコマンドで確かめた。7 つ PASS、AC-5（報告の `rc=` の行）と AC-6（見た目の PBI の長い文字の AC）が FAIL、AC-2 は Garage の状態で判定できず。統合ブランチのハーネスの決まりが main checkout の Director と subagent に届かないのが原因
 * [EPIC #110 ハーネスの改善の総合試験（2 回目、AC-2 を除き PASS）](epic-0110-harness-r2.md) - b522b94（#129・#130 を含む）でやり直した。1 回目に FAIL の AC-5・AC-6 を含む 8 つが PASS。AC-2 は Garage のボリュームの作り直しを待つ
+* [EPIC #110 ハーネスの改善の総合試験（3 回目、AC-2、PASS）](epic-0110-harness-r3.md) - 340dff7。MklTodo が捌けた後、seed 済みの slot 4 の reset は MklTodo=1791 を待って 34 秒で戻り、続く verify の結合テストは全て緑。E2E の干渉を #131 に起票
 
 # 計測
 

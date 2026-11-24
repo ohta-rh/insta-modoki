@@ -2,6 +2,7 @@
 
 ## 2026-11-24
 * **Creation**: [EPIC #87 見た目の総合試験（4 回目）](test-reports/epic-0087-visual-r4.md)（PASS。340dff7 で #130 の後の 11 の AC と、30 字の利用者名・200 字のファイル名の長い文字の確認が全て PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r4/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+* **Creation**: [EPIC #110 ハーネスの改善の総合試験（3 回目）](test-reports/epic-0110-harness-r3.md)（AC-2 が PASS。E2E の干渉を #131 に起票）と記録（`test-reports/evidence/epic-0110-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #110 ハーネスの改善の総合試験（2 回目）](test-reports/epic-0110-harness-r2.md)（AC-2 を除き PASS）と記録（`test-reports/evidence/epic-0110-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [ADR-0072](adr/0072-main-checkout-tracks-the-integration-branch.md)（main checkout は統合ブランチの上にいて、`scripts/harness-drift.mjs` が SessionStart でハーネスの差を知らせる）を追加し、[verify.md](guides/verify.md) に書いた（#129）。
 * **Creation**: [EPIC #110 ハーネスの改善の総合試験](test-reports/epic-0110-harness.md)（FAIL。AC-5・AC-6 が FAIL、AC-2 は判定できず）と記録（`test-reports/evidence/epic-0110/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
