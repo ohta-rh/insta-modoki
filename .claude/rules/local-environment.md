@@ -50,6 +50,12 @@ The Director assigns each in-flight PBI a slot `N` in `1..4` (`0` = the main che
   `SLOT_INT=1 PORT=3100 node scripts/verify.mjs` in the main checkout / CI only. It resets and
   drops two slots (default 0 and 4; `SLOT_INT_A`, `SLOT_INT_B`): run it only on slots no other
   worktree is using.
+- **verify runs one at a time per machine (ADR-0062).** `scripts/verify.mjs` takes
+  `$(git rev-parse --git-common-dir)/insta-verify.lock` (same file for every worktree); a second
+  verify prints `verify: 別の verify（pid <N>、<worktree>）が終わるまで待ちます` and waits up to 60
+  minutes (exit 1 after that); a lock whose pid is dead is taken over. Its output starts with
+  `verify: HEAD <sha> <branch>` and ends with `verify: OK <sha>`: read that sha before trusting a
+  green, and it fails if HEAD moved during the run. `--list` takes no lock.
 - Steps and troubleshooting: `docs/guides/local-development.md`.
 
 ## Changing the shared stack

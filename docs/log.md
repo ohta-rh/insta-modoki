@@ -2,6 +2,7 @@
 
 ## 2026-11-24
 * **Creation**: [ADR-0069](adr/0069-e2e-signs-in-through-the-harness.md)（E2E は、サインアップを確かめない場面では E2E 用の窓口の `seedSession` でログイン済みのユーザーを用意する）を追加した（#116）。
+* **Creation**: [ADR-0062](adr/0062-verify-runs-one-at-a-time-and-records-head.md)（verify は同じマシンで一度に 1 つだけ走り、確かめた HEAD を出力に残す）を追加し、[verify.md](guides/verify.md) に「同時に流したとき・確かめた commit」を足した（#111）。
 * **Update**: [verify.md](guides/verify.md) の「結合テストの時間の予算」に、CI の verify の job が `fetch-depth: 0` で取るので `int-budget` が PR で変わった結合テストだけを測ることを足した。job の上限は 20 分から 30 分にした（#109）。
 
 ## 2026-11-23

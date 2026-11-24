@@ -35,6 +35,16 @@ status: stable
 - 1 手順だけ流す: `node scripts/verify.mjs --only unit`
 - スロットのポートを渡す: `PORT=3101 node scripts/verify.mjs`（E2E の `webServer` と `start` がこのポートを使う。未設定は 3100。スロット N は `3100 + N`）
 
+## 同時に流したとき・確かめた commit
+
+[ADR-0062](../adr/0062-verify-runs-one-at-a-time-and-records-head.md): verify は同じマシンで一度に 1 つだけ走る。ロックは `$(git rev-parse --git-common-dir)/insta-verify.lock`（全ての worktree で同じファイル。中身は `{pid, head, worktree, startedAt}`）。
+
+- 別の verify が生きていれば `verify: 別の verify（pid <N>、<worktree>）が終わるまで待ちます` を出し、10 秒ごとに見直して待つ（1 分ごとに待っている旨を出す）。60 分を超えたら `verify: 60 分待っても別の verify が終わりません` で 1 で終わる。
+- pid が生きていないロックは `verify: 終わっていない verify（pid <N>）のロックを引き継ぎます` を出して引き継ぐ。
+- 始めに `verify: HEAD <短い SHA> <ブランチ>` と `verify: load average <1 分値> / CPU <論理コア数>`（表示だけ）を出す。実行中に HEAD が動くと `verify: FAIL HEAD が実行中に <a> から <b> に変わりました` で 1 で終わる。通ると最後の行は `verify: OK <短い SHA>`（この SHA が確かめた commit）。
+- 成功・失敗・SIGINT・SIGTERM でロックを外す。`--list` と不正な引数はロックを取らない。`--only` は取る。
+- 死んだ verify のロックが残って止まって見えるときは、`$(git rev-parse --git-common-dir)/insta-verify.lock` を消してよい（pid が生きていないことを確かめてから）。
+
 `perf-budget` も `build` の成果物を使う（アプリが `PORT` で動いていなければ自分で `pnpm start` を起動して止める）。
 
 `e2e` は `build` の成果物を使うので、単独で流す前に `pnpm build` が要る。Chromium は初回に `pnpm exec playwright install chromium` で入れる。
