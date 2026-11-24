@@ -8,6 +8,7 @@
 * **Creation**: [ADR-0064](adr/0064-docs-log-merges-as-union.md)（`docs/log.md` は `.gitattributes` の `merge=union` で統合し、日付の見出しの直下への別々の追記を rebase で衝突させない）を追加し、[issue-authoring.md](../.claude/rules/issue-authoring.md) の追記だけの共有ファイルの段落を合わせた（#113）。
 * **Creation**: [ADR-0067](adr/0067-red-integration-ci-comes-first.md)（統合ブランチの CI が赤いときは、ほかの作業より先に直す。`scripts/ci-gate.mjs` で機械的に確かめる）を追加した（#115）。
 * **Creation**: [ADR-0065](adr/0065-agent-reports-carry-rc-and-result-lines.md)（サブエージェントの報告は、確認ごとに rc の行と結果の行を写し、道具が起動しなければ止まる）を追加した（#114）。
+* **Creation**: [EPIC #87 見た目の総合試験](test-reports/epic-0087-visual.md)（1 回目、FAIL。AC-10 のホームの「続きを読む」の target-size）と画面の写真を追加し、[test-reports/index.md](test-reports/index.md) に載せた（#87）。
 * **Creation**: [ADR-0069](adr/0069-e2e-signs-in-through-the-harness.md)（E2E は、サインアップを確かめない場面では E2E 用の窓口の `seedSession` でログイン済みのユーザーを用意する）を追加した（#116）。
 * **Creation**: [ADR-0062](adr/0062-verify-runs-one-at-a-time-and-records-head.md)（verify は同じマシンで一度に 1 つだけ走り、確かめた HEAD を出力に残す）を追加し、[verify.md](guides/verify.md) に「同時に流したとき・確かめた commit」を足した（#111）。
 * **Update**: [verify.md](guides/verify.md) の「結合テストの時間の予算」に、CI の verify の job が `fetch-depth: 0` で取るので `int-budget` が PR で変わった結合テストだけを測ることを足した。job の上限は 20 分から 30 分にした（#109）。
