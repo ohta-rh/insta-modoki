@@ -25,7 +25,17 @@ export async function POST(request: Request): Promise<Response> {
   }
   const parsed = operationSchema.safeParse(body);
   if (!parsed.success) return Response.json({ error: 'invalid operation' }, { status: 422 });
-  const result = await runOperation(await getRequestEnv(), parsed.data);
-  // Only seedSession answers with data (the session cookie); the others answer { ok: true }.
-  return Response.json(parsed.data.op === 'seedSession' ? result : { ok: true });
+  const { op } = parsed.data;
+  try {
+    const result = await runOperation(await getRequestEnv(), parsed.data);
+    // Only seedSession answers with data (the session cookie); the others answer { ok: true }.
+    return Response.json(op === 'seedSession' ? result : { ok: true });
+  } catch (error) {
+    // The harness opens only for E2E (the two conditions above), so naming the cause in the
+    // body is safe, and it is what makes a failed setup readable in the test's failure (#121).
+    const name = error instanceof Error ? error.name : 'unknown';
+    const message = (error instanceof Error ? error.message : String(error)).slice(0, 500);
+    console.error(`[e2e-harness] ${op} failed: ${name}: ${message}`);
+    return Response.json({ error: 'operation failed', op, name, message }, { status: 500 });
+  }
 }
