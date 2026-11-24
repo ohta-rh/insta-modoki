@@ -7,7 +7,10 @@ const SERVER = `
 const http = require('node:http');
 const body = process.argv[1];
 const s = http.createServer((q, r) => { r.writeHead(500, { 'content-type': 'application/json' }); r.end(body); });
-s.listen(0, '127.0.0.1', () => console.log(s.address().port));
+// No host: binds :: (dual-stack) so both http://localhost resolving to ::1 and to 127.0.0.1 reach it;
+// where IPv6 is unavailable, fall back to localhost itself.
+s.on('error', () => s.listen(0, 'localhost'));
+s.listen(0, () => console.log(s.address().port));
 `;
 
 describe('harness()', () => {
