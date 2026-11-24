@@ -210,3 +210,17 @@ test('右の列に axe の重大な違反が無く、キーボードで辿れる
   await page.keyboard.press('Tab');
   await expect(item.getByRole('button', { name: new RegExp(`^${cand} をフォロー`) })).toBeFocused();
 });
+
+test('おすすめの名前は 44×44px 以上で押せる', async ({ page, me }) => {
+  const { cand } = suggestion(me);
+  await home(page, 1280);
+  const item = row(page, cand);
+  const box = await rect(item.getByRole('link', { name: cand }));
+  expect(box.width).toBeGreaterThanOrEqual(44);
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  // The press area grows without moving the row: its height and the reason's place are unchanged.
+  const r = await rect(item);
+  const reason = await rect(item.getByText('さんがフォロー中'));
+  expectPx(r.height, 52, '行の高さ（フォローのボタンの 44px と上下の余白）');
+  expectPx(reason.y - r.y, 27, '理由の位置');
+});

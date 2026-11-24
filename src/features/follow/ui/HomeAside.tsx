@@ -56,7 +56,10 @@ export function HomeAside({ me, suggestions }: { me: UserSummary; suggestions: S
               <li key={s.username} className="flex min-h-[var(--tap-min)] items-center gap-3 py-1">
                 <Avatar user={s} size={32} />
                 <span className="min-w-0 flex-1">
-                  <a href={`/${s.username}`} className="block truncate font-semibold text-text">
+                  <a
+                    href={`/${s.username}`}
+                    className="inline-tap-link block truncate font-semibold text-text"
+                  >
                     {s.username}
                   </a>
                   <span className="block truncate text-[length:var(--font-size-xs)] text-text-secondary">
