@@ -596,7 +596,7 @@ test('投稿の画面とモーダルに axe の重大な違反が無く、キー
   }
 });
 
-test('30 字のユーザー名でもコメントの名前がはみ出さない', async ({ page, me }) => {
+test('30 字のユーザー名でもコメントの名前がはみ出さない', async ({ page }) => {
   // The longest name users.username allows (30 chars, data-model.md).
   const long = unique('e2e_l').padEnd(30, 'a');
   expect(long).toHaveLength(30);
