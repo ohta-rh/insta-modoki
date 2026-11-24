@@ -283,6 +283,50 @@ test('コメントとキャプションの頭の名前は 44×44px 以上で押�
   }
 });
 
+/** A public post opened by a visitor who is not signed in. */
+async function openAsVisitor(page: Page, id: string, viewport: { width: number; height: number }) {
+  await page.context().clearCookies();
+  await openPost(page, id, viewport);
+  const row = comments(page).locator('xpath=following-sibling::p[.//a[@href="/accounts/login"]]');
+  return { row, link: row.getByRole('link', { name: 'ログイン' }) };
+}
+
+test('ログインしていない人のログインのリンクは 44×44px 以上で押せる', async ({ page, me }) => {
+  const { post } = await seedPost(page, me, { own: false });
+  for (const viewport of Object.values(VIEWPORTS)) {
+    const { link } = await openAsVisitor(page, post.id, viewport);
+    await expect(link).toBeVisible();
+    const box = await rect(link);
+    const at = `${viewport.width}px`;
+    expect(box.height, `${at} ログインの高さ`).toBeGreaterThanOrEqual(43.5);
+    expect(box.width, `${at} ログインの幅`).toBeGreaterThanOrEqual(43.5);
+  }
+});
+
+test('ログインのリンクの押せる範囲を広げても行は動かない', async ({ page, me }) => {
+  const { post } = await seedPost(page, me, { own: false });
+  for (const viewport of Object.values(VIEWPORTS)) {
+    const { row, link } = await openAsVisitor(page, post.id, viewport);
+    await expect(link).toBeVisible();
+    const at = `${viewport.width}px`;
+    // The row is its line plus the 16px padding above and below; the link adds nothing to it.
+    const own = await row.evaluate((el) => {
+      const c = getComputedStyle(el);
+      return parseFloat(c.lineHeight) + parseFloat(c.paddingTop) + parseFloat(c.paddingBottom);
+    });
+    expectPx((await rect(row)).height, own, `${at} 行の高さ`);
+    // The text after the link sits on the row's own line, as it did with a plain link.
+    const after = await row.evaluate((el) => {
+      const range = document.createRange();
+      range.selectNodeContents(el.lastChild as Node);
+      const { top, height } = range.getBoundingClientRect();
+      const c = getComputedStyle(el);
+      return { top: top - el.getBoundingClientRect().top - parseFloat(c.paddingTop), height };
+    });
+    expectPx(after.top, 0, `${at} 文の上の位置`);
+  }
+});
+
 test('コメントの入力は枠なしで、送信は文字のボタン', async ({ page, me }) => {
   const { post } = await seedPost(page, me, { own: false });
   for (const viewport of [VIEWPORTS.wide, VIEWPORTS.mobile]) {
