@@ -32,7 +32,15 @@ describe('ExplorePage', () => {
     const html = renderToStaticMarkup(<ExplorePage initialItems={[]} initialCursor={null} />);
     expect(html).toContain('まだ人気の投稿がありません');
     expect(html).toContain('href="/explore/search"');
-    expect(html).toContain('ユーザーを検索');
+    expect(html).toContain('>検索<');
+  });
+
+  it('935px の囲みで、検索の入口は広い画面では隠す', () => {
+    const html = renderToStaticMarkup(<ExplorePage initialItems={[]} initialCursor={null} />);
+    expect(html).toContain('data-page-width="wide"');
+    expect(html).toContain('max-w-[var(--site-width-wide)]');
+    expect(html).not.toContain('max-w-[var(--content-max)]');
+    expect(html).toMatch(/<div class="nav:hidden"><div class="[^"]*"><a href="\/explore\/search"/);
   });
 
   it('見出しと検索のリンクの下にグリッドを出す', () => {
@@ -41,7 +49,7 @@ describe('ExplorePage', () => {
     );
     expect(html).toContain('<h1 class="sr-only">発見</h1>');
     expect(html).not.toContain('まだ人気の投稿がありません');
-    expect(html.indexOf('ユーザーを検索')).toBeLessThan(html.indexOf('data-testid="post-grid"'));
+    expect(html.indexOf('>検索<')).toBeLessThan(html.indexOf('data-testid="post-grid"'));
     expect(html).toContain('href="/p/p1"');
     expect(html).toContain('href="/p/p2"');
     expect(html).toContain('さらに表示');

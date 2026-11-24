@@ -125,7 +125,7 @@ test('狭い画面ではパネルを出さずに検索のページへ移る', as
     .getByRole('link', { name: '発見', exact: true })
     .click();
   await expect(page).toHaveURL(/\/explore$/);
-  await page.getByRole('link', { name: 'ユーザーを検索' }).click();
+  await page.locator('main').getByRole('link', { name: '検索', exact: true }).click();
   await expect(page).toHaveURL(/\/explore\/search$/);
   await expect(panel(page)).toHaveCount(0);
 });

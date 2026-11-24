@@ -65,49 +65,62 @@ anonymous('未ログインで発見タブを開くとログインへ移る', asy
   await expect(page).toHaveURL(/\/accounts\/login/);
 });
 
-signedIn('発見タブにいいねの多い順のグリッドが出て、検索のリンクがある', async ({ page }) => {
-  const author = newPerson();
-  const at = Date.now() - 3 * HOUR;
-  const low = insertPost({ authorUsername: author.username, createdAt: at });
-  const mid = insertPost({ authorUsername: author.username, createdAt: at + 60_000 });
-  const top = insertPost({
-    authorUsername: author.username,
-    createdAt: at + 120_000,
-    mediaCount: 2,
-  });
-  seedLikers(low.id, 1);
-  seedLikers(mid.id, 2);
-  seedLikers(top.id, 3);
-  // The slot holds other specs' posts too, so only these three are compared, among themselves.
-  await page.goto('/explore');
-  await waitForHydration(page);
-  await readAll(page);
+signedIn(
+  '発見タブにいいねの多い順のグリッドが出て、狭い画面には検索のリンクがある',
+  async ({ page }) => {
+    const author = newPerson();
+    const at = Date.now() - 3 * HOUR;
+    const low = insertPost({ authorUsername: author.username, createdAt: at });
+    const mid = insertPost({ authorUsername: author.username, createdAt: at + 60_000 });
+    const top = insertPost({
+      authorUsername: author.username,
+      createdAt: at + 120_000,
+      mediaCount: 2,
+    });
+    seedLikers(low.id, 1);
+    seedLikers(mid.id, 2);
+    seedLikers(top.id, 3);
+    // The slot holds other specs' posts too, so only these three are compared, among themselves.
+    await page.goto('/explore');
+    await waitForHydration(page);
+    await readAll(page);
 
-  await expect(page.getByRole('heading', { level: 1, name: '発見' })).toBeAttached();
-  const search = page.getByRole('link', { name: 'ユーザーを検索' });
-  await expect(search).toHaveAttribute('href', '/explore/search');
-  const searchBox = (await search.boundingBox())!;
-  expect(searchBox.y + searchBox.height).toBeLessThanOrEqual((await grid(page).boundingBox())!.y);
+    await expect(page.getByRole('heading', { level: 1, name: '発見' })).toBeAttached();
+    // From 768px the nav's panel opens the search; the page itself has no entrance.
+    await expect(
+      page.locator('main').getByRole('link', { name: '検索', exact: true }),
+    ).toBeHidden();
+    await page.setViewportSize({ width: 375, height: 800 });
+    const search = page.locator('main').getByRole('link', { name: '検索', exact: true });
+    await expect(search).toHaveAttribute('href', '/explore/search');
+    const searchBox = (await search.boundingBox())!;
+    expect(searchBox.y + searchBox.height).toBeLessThanOrEqual((await grid(page).boundingBox())!.y);
+    await page.setViewportSize({ width: 1280, height: 800 });
 
-  const style = await grid(page).evaluate((el) => {
-    const s = getComputedStyle(el);
-    return { columns: s.gridTemplateColumns.split(' ').length, gap: s.columnGap, rowGap: s.rowGap };
-  });
-  expect(style).toEqual({ columns: 3, gap: '1px', rowGap: '1px' });
-  const first = (await tiles(page).first().boundingBox())!;
-  expect(Math.abs(first.width * (4 / 3) - first.height)).toBeLessThan(1);
+    const style = await grid(page).evaluate((el) => {
+      const s = getComputedStyle(el);
+      return {
+        columns: s.gridTemplateColumns.split(' ').length,
+        gap: s.columnGap,
+        rowGap: s.rowGap,
+      };
+    });
+    expect(style).toEqual({ columns: 3, gap: '1px', rowGap: '1px' });
+    const first = (await tiles(page).first().boundingBox())!;
+    expect(Math.abs(first.width * (4 / 3) - first.height)).toBeLessThan(1);
 
-  const mine = new Set([top.id, mid.id, low.id].map((id) => `/p/${id}`));
-  const order = (await hrefsOf(tiles(page))).filter((h) => mine.has(h));
-  expect(order).toEqual([`/p/${top.id}`, `/p/${mid.id}`, `/p/${low.id}`]);
+    const mine = new Set([top.id, mid.id, low.id].map((id) => `/p/${id}`));
+    const order = (await hrefsOf(tiles(page))).filter((h) => mine.has(h));
+    expect(order).toEqual([`/p/${top.id}`, `/p/${mid.id}`, `/p/${low.id}`]);
 
-  const topTile = tiles(page).and(page.locator(`a[href="/p/${top.id}"]`));
-  await expect(topTile.getByRole('img', { name: '2 枚の写真' })).toBeVisible();
-  const lowTile = page.locator(`a[href="/p/${low.id}"]`);
-  await expect(lowTile.getByRole('img', { name: /枚の写真/ })).toHaveCount(0);
-  await topTile.click();
-  await expect(page).toHaveURL(new RegExp(`/p/${top.id}$`));
-});
+    const topTile = tiles(page).and(page.locator(`a[href="/p/${top.id}"]`));
+    await expect(topTile.getByRole('img', { name: '2 枚の写真' })).toBeVisible();
+    const lowTile = page.locator(`a[href="/p/${low.id}"]`);
+    await expect(lowTile.getByRole('img', { name: /枚の写真/ })).toHaveCount(0);
+    await topTile.click();
+    await expect(page).toHaveURL(new RegExp(`/p/${top.id}$`));
+  },
+);
 
 signedIn('自分とフォロー中の人の投稿は出ない', async ({ page, account }) => {
   const followed = newPerson();
@@ -233,7 +246,7 @@ signedIn('キーボードだけで操作でき、axe の重大な違反が 0 件
   await waitForHydration(page);
   await expect(tiles(page)).toHaveCount(24);
 
-  const search = page.getByRole('link', { name: 'ユーザーを検索' });
+  const search = page.locator('main').getByRole('link', { name: '検索', exact: true });
   await tabTo(page, search);
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/explore\/search$/);
@@ -261,7 +274,7 @@ signedIn('キーボードだけで操作でき、axe の重大な違反が 0 件
   const cls = await page.evaluate(() => (window as unknown as { __cls: number }).__cls);
   expect(cls).toBeLessThanOrEqual(0.1);
 
-  for (const width of [375, 768, 1280]) {
+  for (const width of [375, 768, 1024, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await expect(tiles(page).first()).toBeVisible();
     for (const box of await tiles(page).evaluateAll((els) =>
