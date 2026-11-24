@@ -65,6 +65,7 @@
 * [ADR-0057: slice の入口 index.ts は 'use client' の部品を公開せず、画面の部品は ui/index.ts から公開する](0057-slice-index-exports-no-client-components.md) - 採用
 * [ADR-0055: E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする](0055-e2e-invite-required-by-request-header.md) - 採用
 * [ADR-0065: サブエージェントの報告は、確認ごとに rc の行と結果の行を写し、道具が起動しなければ止まる](0065-agent-reports-carry-rc-and-result-lines.md) - 採用
+* [ADR-0067: 統合ブランチの CI が赤いときは、ほかの作業より先に直す。ci-gate で機械的に確かめる](0067-red-integration-ci-comes-first.md) - 採用
 * [ADR-0069: E2E は、サインアップを確かめない場面では E2E 用の窓口の seedSession でログイン済みのユーザーを用意する](0069-e2e-signs-in-through-the-harness.md) - 採用
 
 # ひな形
