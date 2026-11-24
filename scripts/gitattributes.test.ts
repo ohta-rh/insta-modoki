@@ -8,11 +8,10 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const git = (cwd: string, ...args: string[]): string =>
-  execFileSync(
-    'git',
-    ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', ...args],
-    { cwd, encoding: 'utf8' },
-  );
+  execFileSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.com', ...args], {
+    cwd,
+    encoding: 'utf8',
+  });
 
 const mergeAttr = (cwd: string, path: string): string =>
   git(cwd, 'check-attr', 'merge', '--', path).trim();
@@ -34,10 +33,7 @@ describe('.gitattributes', () => {
 
       const append = (branch: string, line: string): void => {
         git(dir, 'checkout', '-q', '-b', branch, 'main');
-        writeFileSync(
-          join(dir, 'docs/log.md'),
-          `# log\n\n## 2026-11-23\n${line}\n* base line\n`,
-        );
+        writeFileSync(join(dir, 'docs/log.md'), `# log\n\n## 2026-11-23\n${line}\n* base line\n`);
         git(dir, 'add', 'docs/log.md');
         git(dir, 'commit', '-q', '-m', branch);
       };
@@ -56,7 +52,12 @@ describe('.gitattributes', () => {
   });
 
   it('no other file merges as union', () => {
-    for (const path of ['docs/adr/index.md', 'docs/index.md', 'src/shared/db/schema.ts', 'package.json']) {
+    for (const path of [
+      'docs/adr/index.md',
+      'docs/index.md',
+      'src/shared/db/schema.ts',
+      'package.json',
+    ]) {
       expect(mergeAttr(root, path)).toBe(`${path}: merge: unspecified`);
     }
   });

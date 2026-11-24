@@ -19,8 +19,10 @@ its template.** This file adds only what is specific to insta-modoki.
   (table, operation name, error code, limit) instead of re-deciding them. A PBI that needs a
   change to them changes the document in the same PBI and says so in 実装方針.
 - Touch sets are concrete paths under the slice layout (ADR-0014, `conventions.md`). Append-only
-  shared files (`docs/log.md`, `docs/**/index.md`) are not counted; the Director resolves their
-  rebase conflicts by keeping both entries. The same holds for one-line registrations in the
+  shared files (`docs/log.md`, `docs/**/index.md`) are not counted. `docs/log.md` merges as
+  union (`.gitattributes`, ADR-0064), so separate appends rebase without conflict;
+  `docs/**/index.md` does not (order matters), so the Director resolves their rebase conflicts by
+  keeping both entries. The same holds for one-line registrations in the
   DB schema entry point, row appends to the tables in `docs/architecture/*.md`, and one-line
   exports added to a slice's `index.ts`.
 - Hot spots (serialize to one PBI per wave): `compose.yaml`, `src/shared/db/` schema entry point,
