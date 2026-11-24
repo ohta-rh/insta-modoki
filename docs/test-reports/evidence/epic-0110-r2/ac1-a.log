@@ -1,0 +1,8 @@
+verify: HEAD b522b94 m2/cloudflare-demo
+verify: load average 7.72705078125 / CPU 16
+verify: typecheck ...
+$ tsc --noEmit
+verify: typecheck OK
+verify: OK b522b94
+rc=0
+21:46:51

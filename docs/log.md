@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-24
+* **Creation**: [EPIC #110 ハーネスの改善の総合試験（2 回目）](test-reports/epic-0110-harness-r2.md)（AC-2 を除き PASS）と記録（`test-reports/evidence/epic-0110-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [ADR-0072](adr/0072-main-checkout-tracks-the-integration-branch.md)（main checkout は統合ブランチの上にいて、`scripts/harness-drift.mjs` が SessionStart でハーネスの差を知らせる）を追加し、[verify.md](guides/verify.md) に書いた（#129）。
 * **Creation**: [EPIC #110 ハーネスの改善の総合試験](test-reports/epic-0110-harness.md)（FAIL。AC-5・AC-6 が FAIL、AC-2 は判定できず）と記録（`test-reports/evidence/epic-0110/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [ADR-0068](adr/0068-ci-shards-e2e-four-ways.md)（CI の E2E を 4 つの shard の job に分けて verify と同時に流す。`verify.mjs` に `--skip` を足す）を追加し、[verify.md](guides/verify.md) に書いた（#119）。

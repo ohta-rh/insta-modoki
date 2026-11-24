@@ -1,0 +1,13 @@
+$ cat .gitattributes
+docs/log.md merge=union
+$ git rebase a   (on branch b)
+Rebasing (1/1)Successfully rebased and updated refs/heads/b.
+rc=0
+$ cat docs/log.md
+# Log
+
+## 2026-11-24
+
+- base entry
+- entry from branch a
+- entry from branch b
