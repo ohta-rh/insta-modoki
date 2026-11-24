@@ -315,15 +315,27 @@ test('ログインのリンクの押せる範囲を広げても行は動かな�
       return parseFloat(c.lineHeight) + parseFloat(c.paddingTop) + parseFloat(c.paddingBottom);
     });
     expectPx((await rect(row)).height, own, `${at} 行の高さ`);
-    // The text after the link sits on the row's own line, as it did with a plain link.
-    const after = await row.evaluate((el) => {
-      const range = document.createRange();
-      range.selectNodeContents(el.lastChild as Node);
-      const { top, height } = range.getBoundingClientRect();
-      const c = getComputedStyle(el);
-      return { top: top - el.getBoundingClientRect().top - parseFloat(c.paddingTop), height };
+    // The text after the link sits where it does with a plain link. A text range's top depends on
+    // the font's ascent, so compare with a clone whose link is plain, not with an absolute number.
+    const tops = await row.evaluate((el) => {
+      const textTop = (r: Element) => {
+        const range = document.createRange();
+        range.selectNodeContents(r.lastChild as Node);
+        const c = getComputedStyle(r);
+        return (
+          range.getBoundingClientRect().top -
+          r.getBoundingClientRect().top -
+          parseFloat(c.paddingTop)
+        );
+      };
+      const clone = el.cloneNode(true) as HTMLElement;
+      clone.querySelector('a')?.classList.remove('inline-tap-link');
+      el.after(clone);
+      const result = { original: textTop(el), plain: textTop(clone) };
+      clone.remove();
+      return result;
     });
-    expectPx(after.top, 0, `${at} 文の上の位置`);
+    expectPx(tops.original, tops.plain, `${at} 文の上の位置（押せる範囲を広げる前と同じ）`);
   }
 });
 
