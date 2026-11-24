@@ -1,0 +1,12 @@
+
+Running 7 tests using 1 worker
+
+  ✓  1 .tmp_epic87r4/r4.spec.ts:90:1 › seed (9.1s)
+  ✓  2 .tmp_epic87r4/r4.spec.ts:137:3 › signed-in walk 1280 (20.8s)
+  ✓  3 .tmp_epic87r4/r4.spec.ts:137:3 › signed-in walk 1024 (20.2s)
+  ✓  4 .tmp_epic87r4/r4.spec.ts:137:3 › signed-in walk 375 (16.1s)
+  ✓  5 .tmp_epic87r4/r4.spec.ts:443:1 › keyboard, focus ring and reduced motion (AC-10) (9.1s)
+  ✓  6 .tmp_epic87r4/r4.spec.ts:508:1 › anonymous: login, signup, public pages (AC-8, AC-11) (9.7s)
+  ✓  7 .tmp_epic87r4/r4.spec.ts:576:1 › long text (30-char username, 200-char file name) AC-LT (4.1s)
+
+  7 passed (1.5m)
