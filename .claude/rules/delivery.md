@@ -81,7 +81,12 @@ it, it is pushed after every merge). Issues get their DoD ticked and the comment
 closed: the single draft PR to `main` lists `Closes #N` for each and is updated after every PBI
 and EPIC test. The user merges. When the integration branch is created, the Director runs
 `git config insta.integrationBranch m<N>/<slug>` in the main checkout so the SessionStart
-`ci-gate` hook (ADR-0067) checks that branch.
+`ci-gate` hook (ADR-0067) checks that branch. Then switch the main checkout to that branch
+(`git switch m<N>/<slug>`): the Director's session and the subagent definitions read `CLAUDE.md`
+and `.claude/` from the main checkout's working tree, so a rule merged into the integration
+branch binds nobody until the main checkout is on it (ADR-0072). Integrate in the main checkout;
+do not create a worktree for the integration branch. After integrating new harness files
+(`CLAUDE.md`, `.claude/`), `node scripts/harness-drift.mjs <integration branch>` exits 0.
 
 1. `git -C .worktrees/pbi-<N> rebase origin/main` (after `git fetch`). If the rebase changed
    anything, re-run verify in the worktree; green from before the rebase does not carry over.

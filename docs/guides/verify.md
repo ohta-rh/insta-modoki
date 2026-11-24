@@ -104,3 +104,7 @@ E2E の用意の関数（`e2e/support/auth.ts` の `test`・`signedIn`・`freshU
 ## CI の分け方
 
 [ADR-0068](../adr/0068-ci-shards-e2e-four-ways.md): CI の `verify` の job は `node scripts/verify.mjs --skip e2e` を流し、E2E は `e2e (1/4)`〜`e2e (4/4)` の 4 つの job が同時に流す（それぞれ `pnpm build` の後に `pnpm e2e --project chromium --shard <i>/4`。`e2e (4/4)` だけが続けて `pnpm e2e --project seed --no-deps`）。失敗した shard は `playwright-report-<i>` を残す。手元の `node scripts/verify.mjs` は e2e を含めて全部流す。
+
+## ハーネスの差（harness-drift）
+
+[ADR-0072](../adr/0072-main-checkout-tracks-the-integration-branch.md): `node scripts/harness-drift.mjs <統合ブランチ>` は、main checkout の `HEAD` の `CLAUDE.md` と `.claude/` を `origin/<統合ブランチ>` と比べる（作業ツリーの未 commit の差は数えない）。同じなら 0、違えば `harness-drift: main checkout のハーネスが origin/<branch> と違います。main checkout で git switch <branch> してください` と違うファイルを（最大 20 行、残りは `ほか <n> 件`）出して 1、引数なし・`origin/<branch>` なし・git の失敗は 2。SessionStart の hook が `ci-gate` に続けて流す。verify の手順ではない。
