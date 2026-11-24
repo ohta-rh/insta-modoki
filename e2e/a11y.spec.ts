@@ -40,12 +40,10 @@ test('操作できる要素が全て 44×44px 以上', async ({ browser, world }
     const page = await newScreenPage(browser, { world, loggedIn: screen.loggedIn, width: MOBILE });
     await openSettled(page, screen.path(world));
     const small = await page.evaluate(() => {
-      const selector = 'button, [role=button], input, select, textarea, [role=tab], nav a, a';
-      const targets = Array.from(document.querySelectorAll(selector)).filter(
-        // Plain links are not all held to 44px; the feed's "続きを読む" is (EPIC #87 AC-10).
-        (el) =>
-          el.tagName !== 'A' || el.matches('nav a') || el.textContent?.trim() === '続きを読む',
-      );
+      // Every link and button inside main (EPIC #87 AC-10), and the other controls of the page.
+      const selector =
+        'main a, main button, button, [role=button], input, select, textarea, [role=tab], nav a';
+      const targets = Array.from(document.querySelectorAll(selector));
       return targets.flatMap((el) => {
         if (el instanceof HTMLInputElement && el.type === 'hidden') return [];
         const box = el.getBoundingClientRect();

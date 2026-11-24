@@ -24,11 +24,7 @@ export function CaptionClamp({ postId, children }: { postId: string; children: R
 
   return (
     <>
-      <p
-        ref={paragraph}
-        tabIndex={-1}
-        className={`text-[length:var(--font-size-sm)] break-words whitespace-pre-wrap ${open ? '' : 'line-clamp-2'}`}
-      >
+      <p ref={paragraph} tabIndex={-1} className={`post-caption ${open ? '' : 'line-clamp-2'}`}>
         {children}
       </p>
       {state === 'clamped' && (

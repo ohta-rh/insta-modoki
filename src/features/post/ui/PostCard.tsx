@@ -52,9 +52,9 @@ export function PostCard({
       <PostActionBar like={like} comment={comment} save={save} />
       {likes && <div className="px-3">{likes}</div>}
       {post.caption !== '' && (
-        <div className="px-3">
+        <div className="flex flex-col px-3">
           <CaptionClamp postId={post.id}>
-            <a href={`/${author.username}`} tabIndex={-1} className="font-semibold">
+            <a href={`/${author.username}`} tabIndex={-1} className="post-author-link">
               {author.username}
             </a>{' '}
             <CaptionText caption={post.caption} />

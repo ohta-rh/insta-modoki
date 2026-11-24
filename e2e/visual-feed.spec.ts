@@ -33,6 +33,16 @@ function followedPosts(me: NewUser, shapes: Shape[]) {
   return { username, posts };
 }
 
+/** The paragraph's box without its padding: the clamped caption pads its box to hold the name's press area. */
+const contentRect = (locator: Locator) =>
+  locator.evaluate((el) => {
+    const box = el.getBoundingClientRect();
+    const css = getComputedStyle(el);
+    const top = Number.parseFloat(css.paddingTop);
+    const bottom = Number.parseFloat(css.paddingBottom);
+    return { y: box.y + top, height: box.height - top - bottom };
+  });
+
 const card = (page: Page, caption: string) =>
   page.getByRole('article').filter({ hasText: caption });
 const home = async (page: Page, viewport: { width: number; height: number }) => {
@@ -205,7 +215,7 @@ test('長いキャプションは 2 行で切れ、続きを読むで全部出�
     const paragraph = long.locator('p', { hasText: 'とても長いキャプション' });
     const more = long.getByRole('link', { name: '続きを読む' });
     await expect(more).toBeVisible();
-    expectPx((await rect(paragraph)).height, 36, `${at} 切れた段落の高さ`);
+    expectPx((await contentRect(paragraph)).height, 36, `${at} 切れた段落の高さ`);
     const moreStyle = await styles(more, ['font-size', 'color']);
     expect(moreStyle['font-size'], `${at} 続きを読むの大きさ`).toBe('14px');
     expect(moreStyle['color'], `${at} 続きを読むの色`).toBe(GRAY);
@@ -225,7 +235,7 @@ test('長いキャプションは 2 行で切れ、続きを読むで全部出�
     }
     await expect(more).toHaveCount(0);
     await expect(paragraph).toBeFocused();
-    expect((await rect(paragraph)).height, `${at} 開いた段落の高さ`).toBeGreaterThan(37);
+    expect((await contentRect(paragraph)).height, `${at} 開いた段落の高さ`).toBeGreaterThan(37);
 
     const short = card(page, 'みじかい');
     await expect(short.getByRole('link', { name: '続きを読む' })).toHaveCount(0);
@@ -258,13 +268,80 @@ test('続きを読むの押せる範囲を広げてもカードの縦の並び�
     await home(page, viewport);
     const at = `${viewport.width}px`;
     const c = card(page, 'とても長いキャプション');
-    const paragraph = await rect(c.locator('p', { hasText: 'とても長いキャプション' }));
+    const paragraph = await contentRect(c.locator('p', { hasText: 'とても長いキャプション' }));
     const text = await textBox(c.getByRole('link', { name: '続きを読む' }));
     const field = await rect(input(c));
     // Before the change: the text starts where the clamped caption ends, and the input follows the text's line.
     expectPx(text.y - (paragraph.y + paragraph.height), 0, `${at} 最後の行と続きを読むの文字の間`);
     expectPx(field.y - (text.y + text.height), 0, `${at} 続きを読むの文字とコメントの入力の間`);
   }
+});
+
+/**
+ * Where a press lands at the top edge, the middle and the bottom edge of the link's box. The
+ * bottom strip lies over the caption's next line or the next row, which are not moved (AC-2) and
+ * are later in the page, so only the top and the middle are held.
+ */
+const hitsLink = (link: Locator) =>
+  link.evaluate((el) => {
+    const box = el.getBoundingClientRect();
+    const x = box.x + Math.min(box.width / 2, 20);
+    return [box.y + 1, box.y + box.height / 2, box.y + box.height - 1].map((y) => {
+      const hit = document.elementFromPoint(x, y);
+      return hit === el || el.contains(hit);
+    });
+  });
+
+test('キャプションの頭の名前は 44×44px 以上で押せる', async ({ page, me }) => {
+  const { username } = followedPosts(me, [
+    { caption: 'ちいさな投稿', width: 1080, height: 1350, alt: '短い' },
+    { caption: LONG_CAPTION, width: 1080, height: 1350, alt: '長い写真' },
+  ]);
+  for (const viewport of VIEWPORT_LIST) {
+    await home(page, viewport);
+    for (const caption of ['ちいさな投稿', 'とても長いキャプション']) {
+      const name = card(page, caption).locator('p').getByRole('link', { name: username });
+      await expect(name).toBeVisible();
+      await name.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+      const box = await rect(name);
+      const at = `${viewport.width}px ${caption}`;
+      expect(box.height, `${at} 名前の高さ`).toBeGreaterThanOrEqual(43.5);
+      expect(box.width, `${at} 名前の幅`).toBeGreaterThanOrEqual(43.5);
+      const hits = await hitsLink(name);
+      expect(hits.slice(0, 2), `${at} 押せる範囲`).not.toContain(false);
+    }
+  }
+});
+
+test('名前の押せる範囲を広げてもキャプションの行は動かない', async ({ page, me }) => {
+  const { username } = followedPosts(me, [
+    { caption: LONG_CAPTION, width: 1080, height: 1350, alt: '長い写真' },
+  ]);
+  for (const viewport of [VIEWPORTS.mobile, VIEWPORTS.wide]) {
+    await home(page, viewport);
+    const at = `${viewport.width}px`;
+    const c = card(page, 'とても長いキャプション');
+    const paragraph = c.locator('p', { hasText: 'とても長いキャプション' });
+    const box = await contentRect(paragraph);
+    const text = await textBox(c.locator('p').getByRole('link', { name: username }));
+    const lineHeight = Number.parseFloat((await styles(paragraph, ['line-height']))['line-height']);
+    // Before the change: the name's text sits on the first line, and the clamped caption is two lines.
+    expectPx(text.y, box.y, `${at} 名前の文字は 1 行目の上端`);
+    expectPx(box.height, lineHeight * 2, `${at} キャプションは 2 行分の高さ`);
+  }
+});
+
+test('キャプションの頭の名前を押すとプロフィールに移る', async ({ page, me }) => {
+  const { username } = followedPosts(me, [
+    { caption: 'ちいさな投稿', width: 1080, height: 1350, alt: '短い' },
+  ]);
+  await home(page, VIEWPORTS.mobile);
+  const name = card(page, 'ちいさな投稿').locator('p').getByRole('link', { name: username });
+  await name.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  const box = await rect(name);
+  // Press the padding above the text, not the text itself.
+  await page.mouse.click(box.x + 5, box.y + 3);
+  await expect(page).toHaveURL(new RegExp(`/${username}$`));
 });
 
 test('長いキャプションのカードに axe の重大な違反が無い', async ({ page, me }) => {

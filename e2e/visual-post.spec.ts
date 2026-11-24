@@ -256,6 +256,33 @@ test('コメントは名前の横に時刻、下に返信の文字', async ({ pa
   }
 });
 
+test('コメントとキャプションの頭の名前は 44×44px 以上で押せる', async ({ page, me }) => {
+  const { post } = await seedPost(page, me, {
+    own: false,
+    caption: '名前の押せる範囲のキャプション',
+  });
+  insertComments([
+    { postId: post.id, authorUsername: me.username, body: '名前の押せる範囲の本文' },
+  ]);
+  for (const viewport of Object.values(VIEWPORTS)) {
+    await openPost(page, post.id, viewport);
+    const links = [
+      comments(page).locator('[data-caption]').getByRole('link', { name: /./ }).first(),
+      comments(page)
+        .locator('li')
+        .filter({ hasText: '名前の押せる範囲の本文' })
+        .getByRole('link', { name: me.username }),
+    ];
+    for (const [i, link] of links.entries()) {
+      await expect(link).toBeVisible();
+      const box = await rect(link);
+      const at = `${viewport.width}px ${i === 0 ? 'キャプション' : 'コメント'}`;
+      expect(box.height, `${at} 名前の高さ`).toBeGreaterThanOrEqual(43.5);
+      expect(box.width, `${at} 名前の幅`).toBeGreaterThanOrEqual(43.5);
+    }
+  }
+});
+
 test('コメントの入力は枠なしで、送信は文字のボタン', async ({ page, me }) => {
   const { post } = await seedPost(page, me, { own: false });
   for (const viewport of [VIEWPORTS.wide, VIEWPORTS.mobile]) {
