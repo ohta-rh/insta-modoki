@@ -29,13 +29,14 @@ const run = (operation: unknown) =>
 describe('E2E ハーネスの操作', () => {
   it('seedSession creates a user and a session the app accepts', async () => {
     const env = testAuthEnv(t.d1);
+    const password = crypto.randomUUID();
     const result = (await runOperation(
       env,
       operationSchema.parse({
         op: 'seedSession',
         username: 'harness_s',
         email: 'harness_s@example.com',
-        password: 'correct-horse-battery',
+        password,
       }) as Operation,
     )) as { userId: string; username: string; cookie: { name: string; value: string } };
 
@@ -45,9 +46,7 @@ describe('E2E ハーネスの操作', () => {
     expect(result.cookie.name).toBe('__Secure-better-auth.session_token');
     const [account] = await t.db.select().from(accounts).where(eq(accounts.userId, user!.id));
     expect(account!.providerId).toBe('credential');
-    expect(await verifyPassword('correct-horse-battery', account!.password!, env.AUTH_PEPPER)).toBe(
-      true,
-    );
+    expect(await verifyPassword(password, account!.password!, env.AUTH_PEPPER)).toBe(true);
     const headers = new Headers({ cookie: `${result.cookie.name}=${result.cookie.value}` });
     expect(await getSessionUser(headers, { env })).toEqual({
       id: user!.id,
