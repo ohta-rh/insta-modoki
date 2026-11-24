@@ -18,6 +18,7 @@
 * [ADR-0059: 結合テストは単独で上限の 25% 以内に収め、verify の int-budget で変わったファイルを測る](0059-integration-tests-stay-within-a-quarter-of-their-timeout.md) - 採用
 * [ADR-0060: 結合テストはスロットのバケットに作ったファイルを消して終わり、slot.mjs はバケットを 32 本並べた DELETE で空にする](0060-tests-clean-their-objects-and-slot-empties-buckets-in-parallel.md) - 採用
 * [ADR-0064: docs/log.md は union merge で統合する](0064-docs-log-merges-as-union.md) - 採用
+* [ADR-0066: 見た目の PBI は、狭い画面で長い利用者の文字の配置を AC にする](0066-visual-pbis-test-long-text-at-narrow-width.md) - 採用
 
 # 製品と計画
 

@@ -1,6 +1,7 @@
 # ドキュメントの更新履歴
 
 ## 2026-11-24
+* **Creation**: [ADR-0066](adr/0066-visual-pbis-test-long-text-at-narrow-width.md)（見た目の PBI は、狭い画面で長い利用者の文字の配置を AC にする）を追加し、[issue-authoring.md](../.claude/rules/issue-authoring.md) に「見た目の PBI」の節を足した（#118）。
 * **Creation**: [ADR-0064](adr/0064-docs-log-merges-as-union.md)（`docs/log.md` は `.gitattributes` の `merge=union` で統合し、日付の見出しの直下への別々の追記を rebase で衝突させない）を追加し、[issue-authoring.md](../.claude/rules/issue-authoring.md) の追記だけの共有ファイルの段落を合わせた（#113）。
 * **Creation**: [ADR-0067](adr/0067-red-integration-ci-comes-first.md)（統合ブランチの CI が赤いときは、ほかの作業より先に直す。`scripts/ci-gate.mjs` で機械的に確かめる）を追加した（#115）。
 * **Creation**: [ADR-0065](adr/0065-agent-reports-carry-rc-and-result-lines.md)（サブエージェントの報告は、確認ごとに rc の行と結果の行を写し、道具が起動しなければ止まる）を追加した（#114）。
