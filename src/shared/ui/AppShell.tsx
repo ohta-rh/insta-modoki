@@ -205,6 +205,26 @@ function TopBar() {
   );
 }
 
+function PublicTopBar() {
+  return (
+    <header data-public-bar className="shell-public">
+      <div className="shell-public-inner">
+        <a href="/" aria-label="Mado（仮称） ホーム" className="shell-public-logo">
+          <Logo size={29} withName />
+        </a>
+        <div className="shell-public-actions">
+          <a href="/accounts/login" className="shell-public-login">
+            ログイン
+          </a>
+          <a href="/accounts/signup" className="shell-public-signup">
+            新しいアカウントを作成
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
+
 function BottomNav({ items, current, viewer, badges, linkAs }: NavProps) {
   return (
     <nav aria-label="メイン" data-nav="bottom" className="shell-bottom">
@@ -247,6 +267,27 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const items = navItems(viewer);
+  // Someone not logged in sees the public bar instead of every navigation (the sign-up and log-in
+  // screens, `hideNav`, show nothing).
+  if (!viewer && !hideNav) {
+    return (
+      <div className="min-h-screen bg-bg pt-[var(--public-top-bar-height)] text-text">
+        <SkipLink />
+        <PublicTopBar />
+        <div className="mx-auto flex min-h-[calc(100vh-var(--public-top-bar-height))] w-full justify-center">
+          <div className="flex min-w-0 flex-1 flex-col">
+            <main
+              id="main"
+              className="mx-auto w-full max-w-[var(--content-max)] flex-1 has-[[data-page-width=wide]]:max-w-none"
+            >
+              {children}
+            </main>
+            <Footer hideNav />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-bg text-text">
       <SkipLink />

@@ -74,6 +74,24 @@ describe('AppShell', () => {
     expect(hidden).not.toContain('more-menu');
   });
 
+  it('ログインしていないときは公開の上部バーだけを描く', () => {
+    const html = render({ viewer: null });
+    expect(html).toContain('<header data-public-bar');
+    expect(html).toContain('href="/accounts/login"');
+    expect(html).toContain('href="/accounts/signup"');
+    expect(html).toContain('href="/"');
+    expect(html).not.toContain('data-nav="side"');
+    expect(html).not.toContain('data-nav="bottom"');
+    expect(html).not.toContain('data-shell-top-bar');
+    expect(html).toContain('<main id="main"');
+    // A logged-in viewer gets the nav and none of the public bar.
+    expect(render()).not.toContain('data-public-bar');
+    // The sign-up and log-in screens draw no bar either.
+    const hidden = render({ viewer: null, hideNav: true });
+    expect(hidden).not.toContain('data-public-bar');
+    expect(hidden).not.toContain('data-nav=');
+  });
+
   it('main は画面が広げられる（data-page-width="wide"）、フッターに印がある', () => {
     const html = render();
     expect(html).toMatch(/<main id="main" class="[^"]*has-\[\[data-page-width=wide\]\]:max-w-none/);

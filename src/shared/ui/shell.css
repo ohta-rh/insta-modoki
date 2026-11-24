@@ -45,6 +45,24 @@
   .shell-top-more {
     @apply -mr-3 flex size-11 items-center justify-center rounded-lg;
   }
+  .shell-public {
+    @apply fixed inset-x-0 top-0 z-40 h-[var(--public-top-bar-height)] border-b border-border bg-bg;
+  }
+  .shell-public-inner {
+    @apply mx-auto flex h-full w-full max-w-[calc(var(--site-width-wide)+32px)] items-center justify-between px-4;
+  }
+  .shell-public-logo {
+    @apply flex min-h-[var(--tap-min)] items-center;
+  }
+  .shell-public-actions {
+    @apply flex items-center gap-2;
+  }
+  .shell-public-login {
+    @apply flex h-[var(--tap-min)] items-center rounded-lg bg-indigo px-4 text-[length:var(--font-size-sm)] font-semibold text-white;
+  }
+  .shell-public-signup {
+    @apply flex h-[var(--tap-min)] items-center px-2 text-[length:var(--font-size-sm)] font-semibold text-indigo;
+  }
   .shell-bottom {
     @apply fixed inset-x-0 bottom-0 z-40 flex h-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] border-t border-border bg-bg pb-[env(safe-area-inset-bottom)] nav:hidden;
   }
