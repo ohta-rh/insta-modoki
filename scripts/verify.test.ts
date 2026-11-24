@@ -4,6 +4,7 @@ import config from '../vitest.config.ts';
 import { join } from 'node:path';
 import {
   COVERAGE_LINES,
+  createFileLock,
   findIntegrationTests,
   INTEGRATION_DIRS,
   main,
@@ -392,5 +393,89 @@ describe('verify', () => {
     expect(await main(['--only', 'foo'], deps)).toBe(2);
     expect(await main(['--bogus'], deps)).toBe(2);
     expect(machine.sleeps).toEqual([]);
+  });
+
+  it('HEAD is read after the lock is acquired, so a move during the wait is not a failure', async () => {
+    const { lines, deps, machine } = harness();
+    machine.lockFile = other;
+    machine.alive.add(2000);
+    machine.onSleep = () => {
+      machine.head = 'ddddddd3333333333333333333333333333333333';
+      machine.lockFile = null;
+    };
+    expect(await main(['--only', 'unit'], deps)).toBe(0);
+    expect(lines).toContain('verify: HEAD ddddddd pbi/111');
+    expect(lines.at(-1)).toBe('verify: OK ddddddd');
+  });
+
+  it('an unparsable lock younger than 5 s is treated as live', async () => {
+    const { lines, executed, deps, machine } = harness();
+    machine.lockFile = { pid: Number.NaN, young: true } as unknown as LockInfo;
+    machine.onSleep = () => {
+      machine.lockFile = null;
+    };
+    expect(await main(['--only', 'unit'], deps)).toBe(0);
+    expect(lines.some((l: string) => l.includes('引き継ぎます'))).toBe(false);
+    expect(lines.some((l: string) => l.includes('終わるまで待ちます'))).toBe(true);
+    expect(executed).toHaveLength(1);
+  });
+
+  describe('createFileLock', () => {
+    function fakeFs(files: Record<string, { text: string; mtimeMs: number }> = {}) {
+      const calls: string[] = [];
+      const fsOps = {
+        writeFileSync: (path: string, text: string) => {
+          calls.push(`write ${path}`);
+          files[path] = { text, mtimeMs: 10_000 };
+        },
+        linkSync: (from: string, to: string) => {
+          calls.push(`link ${from} ${to}`);
+          if (files[to]) throw Object.assign(new Error('exists'), { code: 'EEXIST' });
+          files[to] = files[from];
+        },
+        unlinkSync: (path: string) => {
+          calls.push(`unlink ${path}`);
+          delete files[path];
+        },
+        readFileSync: (path: string) => {
+          if (!files[path]) throw Object.assign(new Error('none'), { code: 'ENOENT' });
+          return files[path].text;
+        },
+        statSync: (path: string) => ({ mtimeMs: files[path].mtimeMs }),
+      };
+      return { calls, files, fsOps };
+    }
+
+    it('the lock appears with its full content (no empty window)', () => {
+      const { calls, files, fsOps } = fakeFs();
+      const lock = createFileLock('/g/insta-verify.lock', fsOps, () => 12_000);
+      expect(lock.create({ ...other, pid: 1000 })).toBe(true);
+      expect(calls).toEqual([
+        'write /g/insta-verify.lock.1000.tmp',
+        'link /g/insta-verify.lock.1000.tmp /g/insta-verify.lock',
+        'unlink /g/insta-verify.lock.1000.tmp',
+      ]);
+      expect(JSON.parse(files['/g/insta-verify.lock'].text).pid).toBe(1000);
+      expect(Object.keys(files)).toEqual(['/g/insta-verify.lock']);
+    });
+
+    it('create returns false and leaves no temp file when the lock exists', () => {
+      const { files, fsOps } = fakeFs({
+        '/g/insta-verify.lock': { text: JSON.stringify(other), mtimeMs: 0 },
+      });
+      const lock = createFileLock('/g/insta-verify.lock', fsOps, () => 12_000);
+      expect(lock.create({ ...other, pid: 1000 })).toBe(false);
+      expect(Object.keys(files)).toEqual(['/g/insta-verify.lock']);
+    });
+
+    it('reads an unparsable lock as young under 5 s old and as dead after that', () => {
+      const { fsOps } = fakeFs({ '/g/insta-verify.lock': { text: '', mtimeMs: 10_000 } });
+      const young = createFileLock('/g/insta-verify.lock', fsOps, () => 14_999).read();
+      expect(young).toMatchObject({ young: true });
+      expect(Number.isNaN(young?.pid)).toBe(true);
+      const old = createFileLock('/g/insta-verify.lock', fsOps, () => 15_000).read();
+      expect(old?.young).toBeUndefined();
+      expect(Number.isNaN(old?.pid)).toBe(true);
+    });
   });
 });

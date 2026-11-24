@@ -21,8 +21,8 @@ status: stable
 
 ## 決定
 
-- verify は、`$(git rev-parse --git-common-dir)/insta-verify.lock`（全ての worktree で同じ場所）を `openSync(path, 'wx')` で作って取る。中身は 1 行の JSON `{pid, head, worktree, startedAt}`。`--list` と不正な引数はロックを取らない。`--only` は取る。
-- すでにあるとき、その pid が `process.kill(pid, 0)` で生きていれば（`EPERM` も生きている）10 秒ごとに見直して待つ。1 分ごとに待っている旨を 1 行出し、60 分を超えたら `verify: 60 分待っても別の verify が終わりません` を出して 1 で終わる。生きていなければ（`ESRCH`、読めない中身も）`引き継ぎます` と出して消し、取り直す。
+- verify は、`$(git rev-parse --git-common-dir)/insta-verify.lock`（全ての worktree で同じ場所）を、全ての中身を書いた一時ファイル（`insta-verify.lock.<pid>.tmp`）からの `linkSync`（あれば `EEXIST`）で作って取る。ロックが空の状態を他の verify に見せないため。中身は 1 行の JSON `{pid, head, worktree, startedAt}`。HEAD はロックを取る試みのたびに読み、取れたときのものを記録して `verify: HEAD` に出す（待つ間に動いた HEAD を失敗にしない）。`--list` と不正な引数はロックを取らない。`--only` は取る。
+- すでにあるとき、その pid が `process.kill(pid, 0)` で生きていれば（`EPERM` も生きている）10 秒ごとに見直して待つ。1 分ごとに待っている旨を 1 行出し、60 分を超えたら `verify: 60 分待っても別の verify が終わりません` を出して 1 で終わる。生きていなければ（`ESRCH`、更新から 5 秒以上たった読めない中身も。5 秒未満の読めない中身は書き込み中とみなして生きている扱い）`引き継ぎます` と出して消し、取り直す。
 - ロックは成功・失敗・exit・SIGINT・SIGTERM で外す。外すのは自分の pid のロックだけ。シグナルでは実行中の手順にも同じシグナルを送る（手順は非同期の `spawn` で流し、待つ間もシグナルを受けられるようにした）。
 - 始めに `verify: HEAD <短い SHA> <ブランチ>` と `verify: load average <1 分値> / CPU <論理コア数>` を出す（負荷は表示だけで判定に使わない）。最後の手順の後に HEAD を読み直し、動いていれば `verify: FAIL HEAD が実行中に <a> から <b> に変わりました` で 1 で終わる。通れば最後の行は `verify: OK <短い SHA>`。
 - `main` は非同期になった（戻り値は終了コードの Promise）。
