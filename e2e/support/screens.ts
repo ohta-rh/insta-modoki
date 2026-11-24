@@ -53,7 +53,11 @@ async function createWorld(browser: Browser): Promise<World> {
     mediaCount: 3,
     altTexts: ['猫', '', ''],
   });
-  const like = insertPost({ authorUsername: author, caption: 'いいねの試験' });
+  // Longer than two lines, so the feed shows "続きを読む" and the 44px check covers it.
+  const like = insertPost({
+    authorUsername: author,
+    caption: `いいねの試験。${'長いキャプション。'.repeat(30)}`,
+  });
   const likers = insertPost({ authorUsername: author, caption: 'いいねした人の試験' });
   for (const post of [detail, like, likers]) await putPostFiles(page, post);
   await context.close();

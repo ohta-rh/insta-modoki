@@ -212,13 +212,69 @@ test('長いキャプションは 2 行で切れ、続きを読むで全部出�
     const nameInCaption = paragraph.getByRole('link', { name: username, exact: true });
     expect((await styles(nameInCaption, ['font-weight']))['font-weight']).toBe('600');
 
-    await more.click();
+    if (viewport === VIEWPORTS.wide) {
+      // Keyboard: Tab lands on the link, the outline surrounds the whole press area, Enter opens.
+      await more.focus();
+      await expect(more).toBeFocused();
+      const outline = await styles(more, ['outline-style']);
+      expect(outline['outline-style'], `${at} フォーカスの輪郭`).not.toBe('none');
+      expect((await rect(more)).height, `${at} 輪郭が囲む範囲の高さ`).toBeGreaterThanOrEqual(44);
+      await page.keyboard.press('Enter');
+    } else {
+      await more.click();
+    }
     await expect(more).toHaveCount(0);
     await expect(paragraph).toBeFocused();
     expect((await rect(paragraph)).height, `${at} 開いた段落の高さ`).toBeGreaterThan(37);
 
     const short = card(page, 'みじかい');
     await expect(short.getByRole('link', { name: '続きを読む' })).toHaveCount(0);
+  }
+});
+
+/** The box of the link's own text (the line), apart from the area that can be pressed. */
+const textBox = (locator: Locator) =>
+  locator.evaluate((el) => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const { y, height } = range.getBoundingClientRect();
+    return { y, height };
+  });
+
+test('続きを読むは高さ 44px 以上で押せる', async ({ page, me }) => {
+  followedPosts(me, [{ caption: LONG_CAPTION, width: 1080, height: 1350, alt: '長い写真' }]);
+  for (const viewport of VIEWPORT_LIST) {
+    await home(page, viewport);
+    const more = card(page, 'とても長いキャプション').getByRole('link', { name: '続きを読む' });
+    await expect(more).toBeVisible();
+    const box = await rect(more);
+    expect(box.height, `${viewport.width}px 続きを読むの高さ`).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test('続きを読むの押せる範囲を広げてもカードの縦の並びは変わらない', async ({ page, me }) => {
+  followedPosts(me, [{ caption: LONG_CAPTION, width: 1080, height: 1350, alt: '長い写真' }]);
+  for (const viewport of [VIEWPORTS.mobile, VIEWPORTS.wide]) {
+    await home(page, viewport);
+    const at = `${viewport.width}px`;
+    const c = card(page, 'とても長いキャプション');
+    const paragraph = await rect(c.locator('p', { hasText: 'とても長いキャプション' }));
+    const text = await textBox(c.getByRole('link', { name: '続きを読む' }));
+    const field = await rect(input(c));
+    // Before the change: the text starts where the clamped caption ends, and the input follows the text's line.
+    expectPx(text.y - (paragraph.y + paragraph.height), 0, `${at} 最後の行と続きを読むの文字の間`);
+    expectPx(field.y - (text.y + text.height), 0, `${at} 続きを読むの文字とコメントの入力の間`);
+  }
+});
+
+test('長いキャプションのカードに axe の重大な違反が無い', async ({ page, me }) => {
+  followedPosts(me, [{ caption: LONG_CAPTION, width: 1080, height: 1350, alt: '長い写真' }]);
+  for (const viewport of VIEWPORT_LIST) {
+    await home(page, viewport);
+    await expect(
+      card(page, 'とても長いキャプション').getByRole('link', { name: '続きを読む' }),
+    ).toBeVisible();
+    await expectNoSeriousViolations(page, `${viewport.width}px / （長いキャプション）`);
   }
 });
 

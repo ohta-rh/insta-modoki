@@ -40,8 +40,12 @@ test('操作できる要素が全て 44×44px 以上', async ({ browser, world }
     const page = await newScreenPage(browser, { world, loggedIn: screen.loggedIn, width: MOBILE });
     await openSettled(page, screen.path(world));
     const small = await page.evaluate(() => {
-      const selector = 'button, [role=button], input, select, textarea, [role=tab], nav a';
-      return Array.from(document.querySelectorAll(selector)).flatMap((el) => {
+      const selector = 'button, [role=button], input, select, textarea, [role=tab], nav a, a';
+      const targets = Array.from(document.querySelectorAll(selector)).filter(
+        // Plain links are not all held to 44px; the feed's "続きを読む" is (EPIC #87 AC-10).
+        (el) => el.tagName !== 'A' || el.matches('nav a') || el.textContent?.trim() === '続きを読む',
+      );
+      return targets.flatMap((el) => {
         if (el instanceof HTMLInputElement && el.type === 'hidden') return [];
         const box = el.getBoundingClientRect();
         // Not on screen (display: none) or only for a screen reader (sr-only, 1px).
@@ -51,6 +55,10 @@ test('操作できる要素が全て 44×44px 以上', async ({ browser, world }
         return [`<${el.tagName.toLowerCase()}> "${name}" ${box.width}x${box.height}`];
       });
     });
+    if (screen.path(world) === '/') {
+      // The scene must put "続きを読む" under the check, or it checks nothing about it.
+      await expect(page.getByRole('link', { name: '続きを読む' }).first()).toBeVisible();
+    }
     expect(small, `${screen.name} の小さい要素`).toEqual([]);
     await page.context().close();
   }
