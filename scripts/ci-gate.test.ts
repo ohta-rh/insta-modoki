@@ -122,4 +122,12 @@ describe('ci-gate', () => {
       /After the push, `node scripts\/ci-gate\.mjs <integration branch>` exits 0 before the next one/,
     );
   });
+
+  it('the delivery rule tells the Director to set insta.integrationBranch', () => {
+    const text = readFileSync(join(ROOT, '.claude/rules/delivery.md'), 'utf8');
+    const flat = text.replace(/\s+/g, ' ');
+    expect(flat).toContain(
+      'When the integration branch is created, the Director runs `git config insta.integrationBranch m<N>/<slug>` in the main checkout so the SessionStart `ci-gate` hook (ADR-0067) checks that branch.',
+    );
+  });
 });
