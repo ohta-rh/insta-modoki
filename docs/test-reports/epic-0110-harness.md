@@ -119,7 +119,8 @@ scratchpad の一時的なリポジトリに、このリポジトリの `.gitatt
    - Director のセッションと subagent の定義は、main checkout（`m1/local-mvp` のまま）の `CLAUDE.md`・`.claude/` を読む
    - ADR-0017 で作業を統合ブランチに積むようになってから、ハーネスの変更は利用者が PR を merge するまで効かない
    - #114 の報告で注意として書いたが、仕組みの穴として起票していなかった
-2. **ADR-0066 の後の見た目の PBI（#124〜#127）に、長い文字の AC が無い**（AC-6 の結果）。#124 の名前のリンクは、長い username の 375px で確かめていない。
+   - 起票: [#129](https://github.com/ohta-rh/insta-modoki/issues/129)
+2. **ADR-0066 の後の見た目の PBI（#124〜#127）に、長い文字の AC が無い**（AC-6 の結果）。#124 の名前のリンクは、長い username の 375px で確かめていない。起票: [#130](https://github.com/ohta-rh/insta-modoki/issues/130)
 
 ## 片付け
 
