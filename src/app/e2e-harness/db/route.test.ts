@@ -27,6 +27,19 @@ describe('/e2e-harness/db', () => {
     expect((await post({ op: 'clearRateLimits' })).status).toBe(404);
   });
 
+  it('seedSession is unreachable without E2E_HARNESS', async () => {
+    vi.stubEnv('E2E_HARNESS', '');
+    vi.stubEnv('APP_ENV', 'local');
+    const res = await post({ op: 'seedSession', username: 'abc', email: 'a@example.com' });
+    expect(res.status).toBe(404);
+    expect(await res.text()).toBe('');
+    vi.stubEnv('E2E_HARNESS', '1');
+    vi.stubEnv('APP_ENV', 'production');
+    expect(
+      (await post({ op: 'seedSession', username: 'abc', email: 'a@example.com' })).status,
+    ).toBe(404);
+  });
+
   it('E2E_HARNESS が 1 でも APP_ENV が local か test でないとき 404 にする', async () => {
     for (const appEnv of ['production', 'prod', 'Local', undefined]) {
       vi.stubEnv('E2E_HARNESS', '1');

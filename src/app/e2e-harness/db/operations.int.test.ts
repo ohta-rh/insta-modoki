@@ -2,8 +2,12 @@ import { eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 import { useTestDb } from '../../../../tests/helpers/db';
 import { createPost, createLike } from '../../../../tests/helpers/posts';
+import { testAuthEnv } from '../../../../tests/helpers/session';
 import { createUser } from '../../../../tests/helpers/users';
+import { getSessionUser } from '../../../features/auth';
+import { verifyPassword } from '../../../features/auth/model/password';
 import {
+  accounts,
   bookmarks,
   comments,
   follows,
@@ -23,6 +27,56 @@ const run = (operation: unknown) =>
   runOperation({ DB: t.d1 as never }, operationSchema.parse(operation) as Operation);
 
 describe('E2E ハーネスの操作', () => {
+  it('seedSession creates a user and a session the app accepts', async () => {
+    const env = testAuthEnv(t.d1);
+    const result = (await runOperation(
+      env,
+      operationSchema.parse({
+        op: 'seedSession',
+        username: 'harness_s',
+        email: 'harness_s@example.com',
+        password: 'correct-horse-battery',
+      }) as Operation,
+    )) as { userId: string; username: string; cookie: { name: string; value: string } };
+
+    const [user] = await t.db.select().from(users).where(eq(users.username, 'harness_s'));
+    expect(result).toMatchObject({ userId: user!.id, username: 'harness_s' });
+    expect(user!.displayName).toBe('harness_s');
+    expect(result.cookie.name).toBe('__Secure-better-auth.session_token');
+    const [account] = await t.db.select().from(accounts).where(eq(accounts.userId, user!.id));
+    expect(account!.providerId).toBe('credential');
+    expect(await verifyPassword('correct-horse-battery', account!.password!, env.AUTH_PEPPER)).toBe(
+      true,
+    );
+    const headers = new Headers({ cookie: `${result.cookie.name}=${result.cookie.value}` });
+    expect(await getSessionUser(headers, { env })).toEqual({
+      id: user!.id,
+      username: 'harness_s',
+    });
+  });
+
+  it('seedSession makes a random password when none is given and rejects a bad username', async () => {
+    const env = testAuthEnv(t.d1);
+    await runOperation(
+      env,
+      operationSchema.parse({
+        op: 'seedSession',
+        username: 'harness_r',
+        email: 'harness_r@example.com',
+      }) as Operation,
+    );
+    expect((await t.db.select().from(accounts)).length).toBe(1);
+    for (const username of ['ab', 'x'.repeat(31)]) {
+      expect(
+        operationSchema.safeParse({ op: 'seedSession', username, email: 'a@example.com' }).success,
+      ).toBe(false);
+    }
+    expect(
+      operationSchema.safeParse({ op: 'seedSession', username: 'abc', email: 'not-an-email' })
+        .success,
+    ).toBe(false);
+  });
+
   it('seedUser が既定の表示名と空の自己紹介で利用者の行を書く', async () => {
     await run({ op: 'seedUser', username: 'harness_a', email: 'harness_a@example.com' });
     await run({

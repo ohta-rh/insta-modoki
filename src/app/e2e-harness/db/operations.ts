@@ -1,8 +1,10 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { hashPassword, newSession, sessionSetCookie, type AuthEnv } from '../../../features/auth';
 import { hashtagStatements } from '../../../features/hashtag';
 import { getDb, type DbEnv } from '../../../shared/db/client';
 import {
+  accounts,
   bookmarks,
   comments,
   follows,
@@ -12,6 +14,7 @@ import {
   notifications,
   posts,
   rateLimits,
+  sessions,
   stories,
   storyViews,
   users,
@@ -41,6 +44,15 @@ export const operationSchema = z.discriminatedUnion('op', [
     email: text(254),
     displayName: text(30).optional(),
     bio: z.string().max(150).optional(),
+  }),
+  // A user with a password account and a live session, as the sign-up screen would leave them
+  // (ADR-0069): the answer carries the session cookie for `context.addCookies`.
+  z.strictObject({
+    op: z.literal('seedSession'),
+    username: z.string().min(3).max(30),
+    email: z.string().email().max(254),
+    displayName: text(30).optional(),
+    password: z.string().min(8).max(128).optional(),
   }),
   z.strictObject({
     op: z.literal('insertPost'),
@@ -162,9 +174,46 @@ export const operationSchema = z.discriminatedUnion('op', [
 
 export type Operation = z.infer<typeof operationSchema>;
 
-export async function runOperation(env: DbEnv, operation: Operation): Promise<void> {
+export async function runOperation(env: DbEnv, operation: Operation): Promise<unknown> {
   const db = getDb(env);
   switch (operation.op) {
+    case 'seedSession': {
+      const authEnv = env as AuthEnv;
+      const now = Date.now();
+      const at = new Date(now);
+      const userId = crypto.randomUUID();
+      const session = newSession(userId, { now });
+      await db.batch([
+        db.insert(users).values({
+          id: userId,
+          username: operation.username,
+          email: operation.email,
+          displayName: operation.displayName ?? operation.username,
+          bio: '',
+          createdAt: at,
+          updatedAt: at,
+        }),
+        db.insert(accounts).values({
+          id: crypto.randomUUID(),
+          accountId: userId,
+          providerId: 'credential',
+          userId,
+          password: await hashPassword(
+            operation.password ?? crypto.randomUUID(),
+            authEnv.AUTH_PEPPER,
+          ),
+          createdAt: at,
+          updatedAt: at,
+        }),
+        db.insert(sessions).values(session.row),
+      ]);
+      const { cookie } = await sessionSetCookie(authEnv, session.token);
+      return {
+        userId,
+        username: operation.username,
+        cookie: { name: cookie.name, value: cookie.value },
+      };
+    }
     case 'seedUser': {
       const now = new Date();
       await db.insert(users).values({

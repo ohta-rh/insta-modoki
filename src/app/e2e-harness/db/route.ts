@@ -25,6 +25,7 @@ export async function POST(request: Request): Promise<Response> {
   }
   const parsed = operationSchema.safeParse(body);
   if (!parsed.success) return Response.json({ error: 'invalid operation' }, { status: 422 });
-  await runOperation(await getRequestEnv(), parsed.data);
-  return Response.json({ ok: true });
+  const result = await runOperation(await getRequestEnv(), parsed.data);
+  // Only seedSession answers with data (the session cookie); the others answer { ok: true }.
+  return Response.json(parsed.data.op === 'seedSession' ? result : { ok: true });
 }
