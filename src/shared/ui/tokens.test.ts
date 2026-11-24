@@ -38,6 +38,7 @@ describe('tokens.css と tokens.ts', () => {
       '--color-link': '#4f46c8',
       '--color-indigo': '#4f46c8',
       '--color-danger': '#d62d3c',
+      '--color-danger-on-surface': '#c92a38',
       '--color-like': '#f2545b',
       '--color-teal': '#0bb8a9',
       '--color-blue': '#2b6cf6',

@@ -39,6 +39,7 @@ describe('本文の組', () => {
       ['--color-text-secondary', '--color-wash'],
       ['--color-link', '--color-bg'],
       ['--color-danger', '--color-bg'],
+      ['--color-danger-on-surface', '--color-surface'],
       ['--color-bg', '--color-indigo'],
     ]);
     for (const [fg, bg] of BODY_PAIRS) {
@@ -50,6 +51,11 @@ describe('本文の組', () => {
         fg === '--color-text-secondary' && (bg === '--color-surface' || bg === '--color-highlight'),
     );
     expect(onSurface).toEqual([]);
+  });
+
+  it('danger-on-surface は surface の上で 4.5:1 以上', () => {
+    const ratio = contrastRatio(TOKENS['--color-danger-on-surface'], TOKENS['--color-surface']);
+    expect(ratio).toBeGreaterThanOrEqual(4.5);
   });
 
   it('4.5 ちょうどは通り 4.49 は落ちる', () => {

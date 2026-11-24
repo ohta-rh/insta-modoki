@@ -36,6 +36,7 @@ export const BODY_PAIRS: ReadonlyArray<readonly [TokenName, TokenName]> = [
   ['--color-text-secondary', '--color-wash'],
   ['--color-link', '--color-bg'],
   ['--color-danger', '--color-bg'],
+  ['--color-danger-on-surface', '--color-surface'],
   ['--color-bg', '--color-indigo'],
 ];
 

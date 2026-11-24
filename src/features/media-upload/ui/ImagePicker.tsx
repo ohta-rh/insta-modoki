@@ -102,11 +102,13 @@ export function ImagePicker({ onUploaded }: ImagePickerProps) {
         </button>
       </div>
       {rejections.length > 0 && (
-        <ul role="alert" className={`${ERROR} list-disc pl-5`}>
-          {rejections.map((r, i) => (
-            <li key={i}>{`${r.name}: ${r.message}`}</li>
-          ))}
-        </ul>
+        <div role="alert">
+          <ul className={`${ERROR} list-disc pl-5`}>
+            {rejections.map((r, i) => (
+              <li key={i}>{`${r.name}: ${r.message}`}</li>
+            ))}
+          </ul>
+        </div>
       )}
       {failure !== null && (
         <p role="alert" className={ERROR}>

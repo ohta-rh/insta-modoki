@@ -22,6 +22,8 @@ import { PhotoList, type PhotoAction, type PhotoItem } from './PhotoList';
 const UPLOAD_FAILED = 'アップロードに失敗しました。もう一度お試しください';
 const NOT_READABLE = 'この形式の写真は、このブラウザでは読み込めません';
 const ERROR = 'text-[length:var(--font-size-sm)] text-danger';
+/** For an error placed on the grey `surface` (the modal's picking step): 4.5:1 there. */
+const ERROR_ON_SURFACE = 'text-[length:var(--font-size-sm)] text-danger-on-surface';
 const SECONDARY =
   'min-h-[var(--tap-min)] rounded-lg border border-border px-4 font-bold disabled:opacity-50';
 
@@ -283,11 +285,13 @@ export function CreatePostForm({
             </span>
           </div>
           {pickErrors.length > 0 && (
-            <ul role="alert" className={`${ERROR} list-none`}>
-              {pickErrors.map((message, i) => (
-                <li key={i}>{message}</li>
-              ))}
-            </ul>
+            <div role="alert">
+              <ul className={`${ERROR} list-none`}>
+                {pickErrors.map((message, i) => (
+                  <li key={i}>{message}</li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 
@@ -460,11 +464,13 @@ function ModalFlow(p: ModalFlowProps) {
                 コンピューターから選択
               </label>
               {p.pickErrors.length > 0 && (
-                <ul role="alert" className={`${ERROR} list-none`}>
-                  {p.pickErrors.map((message, i) => (
-                    <li key={i}>{message}</li>
-                  ))}
-                </ul>
+                <div role="alert">
+                  <ul className={`${ERROR_ON_SURFACE} list-none`}>
+                    {p.pickErrors.map((message, i) => (
+                      <li key={i}>{message}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           )}
