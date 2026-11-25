@@ -98,6 +98,19 @@ signedIn(
   },
 );
 
+signedIn('フィードのぼかしの PNG は最初の写真だけに付く', async ({ page, me }) => {
+  followedAuthor(me, 3);
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto('/');
+  await expect(articles(page)).toHaveCount(3);
+  const styles = await page
+    .locator('article img')
+    .evaluateAll((imgs) => imgs.map((img) => img.getAttribute('style') ?? ''));
+  expect(styles).toHaveLength(3);
+  expect(styles[0]).toContain('data:image/png;base64,');
+  for (const style of styles.slice(1)) expect(style).not.toContain('data:');
+});
+
 signedIn('フォローが 0 人のとき空の案内を出す', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByText('フォローすると、その人の投稿がここに表示されます')).toBeVisible();

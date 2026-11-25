@@ -1,5 +1,8 @@
 # ドキュメントの更新履歴
 
+## 2026-11-25
+* **Creation**: [ADR-0074](adr/0074-inline-blur-placeholder-only-for-the-priority-photo.md)（ぼかしの PNG は優先読み込みの写真だけに埋め込み、ほかは ThumbHash の平均の色にする）を追加した（#132）。
+
 ## 2026-11-24
 * **Creation**: [EPIC #87 見た目の総合試験（4 回目）](test-reports/epic-0087-visual-r4.md)（PASS。340dff7 で #130 の後の 11 の AC と、30 字の利用者名・200 字のファイル名の長い文字の確認が全て PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r4/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #110 ハーネスの改善の総合試験（3 回目）](test-reports/epic-0110-harness-r3.md)（AC-2 が PASS。E2E の干渉を #131 に起票）と記録（`test-reports/evidence/epic-0110-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

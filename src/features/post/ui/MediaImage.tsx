@@ -1,12 +1,12 @@
 import type { MediaView } from '../model/schema';
-import { thumbhashDataUrl } from '../model/thumbhash';
+import { thumbhashAverageColor, thumbhashDataUrl } from '../model/thumbhash';
 
 /** The photo's column is at most 600px wide on a wide screen and the whole width on a narrow one. */
 const SIZES = '(min-width: 768px) 600px, 100vw';
 
 /**
  * One photo. The box takes the photo's own shape from `width` and `height` before a single byte
- * arrives (no layout shift) and shows the blurred ThumbHash until the photo is painted. Only the
+ * arrives (no layout shift) and shows the blurred ThumbHash (first photo) or its average colour (the rest) until the photo is painted. Only the
  * first photo of a screen is loaded eagerly and with high priority; the rest are lazy.
  */
 export function MediaImage({
@@ -21,7 +21,10 @@ export function MediaImage({
   /** On a wide screen the photo fills its box (letterboxed), for the two-column post (#94). */
   fill?: boolean;
 }) {
-  const placeholder = thumbhashDataUrl(media.thumbhash);
+  // The blurred PNG is ~5.7KB inline; only the photo painted first carries it (ADR-0074), the rest
+  // show the ThumbHash's average colour so the HTML stays small.
+  const placeholder = priority ? thumbhashDataUrl(media.thumbhash) : null;
+  const averageColor = priority ? null : thumbhashAverageColor(media.thumbhash);
   const { w320, w640, w1080 } = media.srcset;
   return (
     <img
@@ -38,6 +41,7 @@ export function MediaImage({
       style={{
         aspectRatio: `${media.width} / ${media.height}`,
         backgroundImage: placeholder ? `url("${placeholder}")` : undefined,
+        backgroundColor: averageColor ?? undefined,
       }}
     />
   );
