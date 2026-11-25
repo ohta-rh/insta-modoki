@@ -47,7 +47,12 @@ describe('Feed', () => {
     for (const tag of tags) {
       expect(tag).toMatch(/width="1200"/);
       expect(tag).toMatch(/height="800"/);
-      expect(tag).toMatch(/background-image:url\(/);
+    }
+    // The blurred PNG only on the first photo; the rest show an average colour (ADR-0074).
+    expect(tags[0]).toMatch(/background-image:url\(/);
+    for (const tag of tags.slice(1)) {
+      expect(tag).not.toContain('data:');
+      expect(tag).toMatch(/background-color:rgb\(/);
     }
   });
 
