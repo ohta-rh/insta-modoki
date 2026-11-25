@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getStoryReel, StoryMissing, StoryViewer } from '@/features/story';
+import { getStoryReel } from '@/features/story';
+import { StoryMissing, StoryViewer } from '@/features/story/ui';
 import { AppError } from '@/shared/errors';
 
 // `(.)stories` intercepts /stories/<username> when it is reached from a screen of this group

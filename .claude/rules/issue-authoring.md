@@ -19,8 +19,10 @@ its template.** This file adds only what is specific to insta-modoki.
   (table, operation name, error code, limit) instead of re-deciding them. A PBI that needs a
   change to them changes the document in the same PBI and says so in 実装方針.
 - Touch sets are concrete paths under the slice layout (ADR-0014, `conventions.md`). Append-only
-  shared files (`docs/log.md`, `docs/**/index.md`) are not counted; the Director resolves their
-  rebase conflicts by keeping both entries. The same holds for one-line registrations in the
+  shared files (`docs/log.md`, `docs/**/index.md`) are not counted. `docs/log.md` merges as
+  union (`.gitattributes`, ADR-0064), so separate appends rebase without conflict;
+  `docs/**/index.md` does not (order matters), so the Director resolves their rebase conflicts by
+  keeping both entries. The same holds for one-line registrations in the
   DB schema entry point, row appends to the tables in `docs/architecture/*.md`, and one-line
   exports added to a slice's `index.ts`.
 - Hot spots (serialize to one PBI per wave): `compose.yaml`, `src/shared/db/` schema entry point,
@@ -31,6 +33,20 @@ its template.** This file adds only what is specific to insta-modoki.
 
 - Before the verify command exists (#19) and CI exists (#22), the DoD items about verify / CI
   are met by the checks the issue's own AC name (#18, #20 say so in their last AC).
+
+## 見た目の PBI
+
+(ADR-0066) A PBI that changes how a screen looks (layout, spacing, typography, a component's shape) carries at
+least one AC for text the user types, because ACs written only with short seed text pass while a long
+value breaks the layout (#93: a 120-character bio widened its box to 941px below 768px).
+
+- Text the user enters (username, display name, bio, caption, comment, tag) is covered by an AC that
+  sets it to its upper length limit, or to a 空白のない長い 1 行 (one long line with no spaces), at
+  `375px` screen width.
+- The AC measures two things: the position of the neighbouring elements (they do not move or
+  overlap) and the element's own width (it does not exceed its container;
+  `document.documentElement.scrollWidth` is at most the viewport width). Its 確認方法 names an E2E.
+- A PBI whose screen shows no user-entered text states in its body that the AC does not apply, and why.
 
 ## Milestone description (literal headings)
 

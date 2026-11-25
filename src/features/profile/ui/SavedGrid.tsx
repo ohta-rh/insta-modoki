@@ -1,7 +1,8 @@
 'use client';
 
 import { listSavedPostsAction } from '../../bookmark';
-import { PostTileGrid, type PostTile } from '../../post';
+import { type PostTile } from '../../post';
+import { PostTileGrid } from '../../post/ui';
 import { useDeletedPosts } from './ProfilePostsProvider';
 
 /**

@@ -1,0 +1,51 @@
+verify: HEAD cc7eef4 m2/cloudflare-demo
+verify: load average 10.67529296875 / CPU 16
+verify: typecheck ...
+✓ Lockfile passes supply-chain policies (verified 2d ago)
+Lockfile is up to date, resolution step is skipped
+Packages are cloned from the content-addressable store to the virtual store.
+  Content-addressable store is at: /Users/tetsuyaohta/Library/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +566
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 566, reused 566, downloaded 0, added 566, done
+
+dependencies:
++ @opennextjs/cloudflare 1.20.16
++ aws4fetch 1.0.20
++ better-auth 1.7.18
++ drizzle-orm 0.45.4
++ next 16.4.5
++ react 19.3.1
++ react-dom 19.3.1
++ thumbhash 0.1.1
++ zod 4.6.7
+
+devDependencies:
++ @axe-core/playwright 4.14.0
++ @eslint/js 10.0.1
++ @playwright/test 1.65.0
++ @tailwindcss/postcss 4.3.5
++ @types/node 26.6.6
++ @types/react 19.3.0
++ @types/react-dom 19.3.0
++ @vitest/coverage-v8 5.1.0
++ eslint 10.14.0
++ globals 17.0.0
++ lighthouse 13.6.0
++ postcss 8.5.33
++ prettier 3.9.10
++ sharp 0.35.5
++ tailwindcss 4.3.5
++ typescript 5.9.3
++ typescript-eslint 8.73.0
++ vitest 5.1.0
++ web-vitals 6.2.3
++ wrangler 4.158.0
+
+Done in 1.6s using pnpm v12.18.0
+$ tsc --noEmit
+verify: typecheck OK
+verify: OK cc7eef4
+rc=0
+20:47:40

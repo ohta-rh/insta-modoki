@@ -1,0 +1,10 @@
+20:47:33
+verify: 別の verify（pid 92443、/Users/tetsuyaohta/projects/other/insta-modoki/.worktrees/m2/）が終わるまで待ちます
+verify: HEAD cc7eef4 epic-test/110
+verify: load average 10.49755859375 / CPU 16
+verify: typecheck ...
+$ tsc --noEmit
+verify: typecheck OK
+verify: OK cc7eef4
+rc=0
+20:47:50

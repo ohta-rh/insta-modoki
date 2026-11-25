@@ -86,6 +86,46 @@ function checkLinks(root, file, body, errors) {
   }
 }
 
+/**
+ * Checks docs/adr/: one file per 4-digit number, and every ADR listed once in index.md
+ * (bullets `* [ADR-NNNN: ...](file)` only; links inside prose are not counted).
+ */
+function checkAdrs(root) {
+  const dir = join(root, 'adr');
+  if (!existsSync(dir) || !statSync(dir).isDirectory()) return [];
+  const errors = [];
+  const adrFiles = readdirSync(dir)
+    .filter((name) => /^\d{4}-.+\.md$/.test(name))
+    .sort();
+  const byNumber = new Map();
+  for (const name of adrFiles) {
+    const number = name.slice(0, 4);
+    byNumber.set(number, [...(byNumber.get(number) ?? []), name]);
+  }
+  for (const [number, names] of byNumber) {
+    if (names.length > 1) {
+      errors.push(
+        `docs/adr: ADR の番号 ${number} が ${names.length} つあります: ${names.join(', ')}`,
+      );
+    }
+  }
+  const indexPath = join(dir, 'index.md');
+  if (!existsSync(indexPath)) return errors;
+  const counts = new Map();
+  for (const line of readFileSync(indexPath, 'utf8').replace(/\r\n/g, '\n').split('\n')) {
+    const m = line.match(/^\* \[ADR-(\d{4})[^\]]*\]\(([^)]+)\)/);
+    if (m) counts.set(m[2], (counts.get(m[2]) ?? 0) + 1);
+  }
+  for (const [file, n] of counts) {
+    if (!existsSync(join(dir, file))) errors.push(`docs/adr/index.md: ${file} がありません`);
+    else if (n > 1) errors.push(`docs/adr/index.md: ${file} が索引に ${n} 回あります`);
+  }
+  for (const name of adrFiles) {
+    if (!counts.has(name)) errors.push(`docs/adr/index.md: ${name} が索引にありません`);
+  }
+  return errors;
+}
+
 /** Checks the bundle at `root`. Returns `{ errors, count }` (count = number of documents). */
 export function checkDocs(root) {
   const errors = [];
@@ -140,6 +180,7 @@ export function checkDocs(root) {
     checkLinks(root, file, body, errors);
     if (/\[\[[^\]\n]+\]\]/.test(body)) errors.push(`${file}: wikilink`);
   }
+  errors.push(...checkAdrs(root));
   return { errors, count: files.length };
 }
 

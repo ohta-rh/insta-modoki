@@ -1,0 +1,15 @@
+# Reports received after #129 (main checkout switched to m2/cloudflare-demo at da35b3f).
+# Quoted verbatim from the subagent hand-backs of PBI #130 (2026-11-24).
+
+## code-reviewer, #130 (CHECKED section)
+- `pnpm --version` → 12.18.0
+- `pnpm build > $S/build.log 2>&1; echo "rc=$?"` → rc=0; "OpenNext build complete."
+- `PORT=3102 pnpm exec playwright test e2e/visual-feed.spec.ts e2e/visual-post.spec.ts e2e/visual-home-aside.spec.ts e2e/visual-create-modal.spec.ts -g "30 字のユーザー名|長いファイル名" > $S/e2e.log 2>&1; echo "rc=$?"` → rc=0; "4 passed (4.7s)"
+- Full verify, lint, typecheck and unit tests: 未実行 (the Director runs them).
+
+## security-reviewer, #130 (CHECKED section)
+`pnpm --version` printed 12.18.0, rc=0. `git diff` over the range and `gh issue view 130` were read-only. 未実行: tests (CSS-only change with no security-relevant behaviour).
+
+## pbi-implementer, #130 (Evidence section, excerpt)
+- Red run (before the fix): `PORT=3102 pnpm exec playwright test -g "30 字のユーザー名|長いファイル名のエラー"` → rc=1. Result lines: `✘ visual-create-modal.spec.ts:494 …`
+- Final full verify: `PORT=3102 node scripts/verify.mjs` → rc=0, "verify: OK c6a358c".

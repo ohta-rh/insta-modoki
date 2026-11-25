@@ -1,0 +1,2403 @@
+{
+ "rows": [
+  {
+   "ac": "AC-1",
+   "w": 1280,
+   "what": "ナビの幅",
+   "actual": 244,
+   "expected": 244,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1280,
+   "what": "下部タブ非表示",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1280,
+   "what": "塗りつぶしのアイコン数（今の項目だけ）",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1280,
+   "what": "今の項目に線が無い",
+   "actual": "0px/0px",
+   "expected": "0px/0px",
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1280,
+   "what": "「その他」がある",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1280,
+   "what": "「その他」の項目",
+   "actual": "プロフィールを編集,ログアウト",
+   "expected": "設定（プロフィールを編集）とログアウトを含む",
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe その他メニュー",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "本文 14px/18px 黒（キャプション）",
+   "actual": "null",
+   "expected": "14px / 18px / rgb(0,0,0)系",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "カードの幅",
+   "actual": 470,
+   "expected": 470,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "カードの間（次のカードの上端−今の下端）",
+   "actual": 20,
+   "expected": 20,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "罫線の色 #DBDBDB",
+   "actual": "1px rgb(219, 219, 219)",
+   "expected": "rgb(219, 219, 219)",
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "フィードの列（カードの親）",
+   "actual": 470,
+   "expected": 470,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "ヘッダー 名前の太さ・時刻・その他の操作",
+   "actual": "{\"nameW\":\"600\",\"time\":true,\"more\":\"その他の操作\"}",
+   "expected": "600・time あり・その他の操作",
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "いいね数は操作の列の下／コメント入力はその下",
+   "actual": "{\"actBottom\":712,\"likesY\":null,\"inputY\":810}",
+   "expected": "likesY ≥ actBottom−1, inputY > likesY",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "長いキャプションは 2 行＋「続きを読む」",
+   "actual": "{\"more\":null,\"lines\":null}",
+   "expected": "2 行・続きを読む",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "右の列が出る",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "右の列の幅",
+   "actual": 319,
+   "expected": 319,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "中央との間",
+   "actual": 144,
+   "expected": 64,
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1280,
+   "what": "失敗の経路: 空のコメントは送れない（ボタン無効）",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe ホーム",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "44px ホーム",
+   "actual": "a[本文へ移動] 1x1 | a[e2e_wmwuc3bg70] 127x17 | a[続きを読む] 446x18 | a[e2e_wmwuc3bg70] 127x17 | a[e2e_wmwuc3bg70] 127x17 | a[e2e_wmwuc3bg70] 127x17",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 1280,
+   "what": "輪の外径",
+   "actual": 66,
+   "expected": 66,
+   "ok": true
+  },
+  {
+   "ac": "AC-3",
+   "w": 1280,
+   "what": "アバター",
+   "actual": 60,
+   "expected": 56,
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 1280,
+   "what": "名前の文字",
+   "actual": "14px",
+   "expected": "12px",
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 1280,
+   "what": "列の下の余白（トレイの下端→最初のカード）",
+   "actual": 24,
+   "expected": 24,
+   "ok": true
+  },
+  {
+   "ac": "AC-3",
+   "w": 1280,
+   "what": "未読の輪は自前のグラデーション",
+   "actual": "linear-gradient(120deg, rgb(11, 184, 169), rgb(43, 108, 246) 62%, rgb(79, 70, 200))",
+   "expected": "linear/conic-gradient",
+   "ok": true
+  },
+  {
+   "ac": "AC-3",
+   "w": 1280,
+   "what": "矢印で送れる（scrollLeft）",
+   "actual": "0→10",
+   "expected": "増える",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own 中身の幅",
+   "actual": 935,
+   "expected": 935,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own ユーザー名 20px/400",
+   "actual": "20px/400",
+   "expected": "20px/400",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own 数の行 16px・単位 #737373",
+   "actual": "[[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"]]",
+   "expected": "16px / rgb(115,115,115)",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own 数の間",
+   "actual": 40,
+   "expected": 40,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own タブはアイコン",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own タイル幅",
+   "actual": 311,
+   "expected": 311,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own タイル高さ（3:4）",
+   "actual": 414.66,
+   "expected": 414.66666666666663,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "own タイルの隙間",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe プロフィール(own)",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other 中身の幅",
+   "actual": 935,
+   "expected": 935,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other ユーザー名 20px/400",
+   "actual": "20px/400",
+   "expected": "20px/400",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other 数の行 16px・単位 #737373",
+   "actual": "[[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"]]",
+   "expected": "16px / rgb(115,115,115)",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other 数の間",
+   "actual": 40,
+   "expected": 40,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other タブはアイコン",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other タイル幅",
+   "actual": 311,
+   "expected": 311,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other タイル高さ（3:4）",
+   "actual": 414.66,
+   "expected": 414.66666666666663,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1280,
+   "what": "other タイルの隙間",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe プロフィール(other)",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "写真の幅（4:5）",
+   "actual": 479,
+   "expected": 480,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "写真の高さ（4:5）",
+   "actual": 600,
+   "expected": 600,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "右の 335px のコメントの列",
+   "actual": 335,
+   "expected": 335,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe 投稿の画面",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "44px 投稿の画面",
+   "actual": "a[e2e_wmwuc3bg70] 127x17",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "モーダル 写真の幅",
+   "actual": 575,
+   "expected": 480,
+   "ok": false
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "モーダル 写真の高さ",
+   "actual": 720,
+   "expected": 600,
+   "ok": false
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "モーダル 335px のコメントの列",
+   "actual": 335,
+   "expected": 335,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "モーダルの暗い背景",
+   "actual": "rgb(255, 255, 255)",
+   "expected": "暗い rgba",
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe モーダル",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1280,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"]') resolved to 3 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-6",
+   "w": 1280,
+   "what": "search URL は動かない",
+   "actual": "/",
+   "expected": "/",
+   "ok": true
+  },
+  {
+   "ac": "AC-6",
+   "w": 1280,
+   "what": "search ナビが 72px",
+   "actual": 72,
+   "expected": 72,
+   "ok": true
+  },
+  {
+   "ac": "AC-6",
+   "w": 1280,
+   "what": "search パネルの幅",
+   "actual": 48,
+   "expected": 397,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe searchのパネル",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-6",
+   "w": 1280,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"], [data-panel]') resolved to 15 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-7",
+   "w": 1280,
+   "what": "見ていた画面の上のモーダル（URL=/create）",
+   "actual": "/create",
+   "expected": "/create",
+   "ok": true
+  },
+  {
+   "ac": "AC-7",
+   "w": 1280,
+   "what": "背後のホームが残る",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe 作成: 切り取り",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe 作成: キャプション",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-7",
+   "w": 1280,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"]') resolved to 14 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-9",
+   "w": 1280,
+   "what": "発見のグリッド幅",
+   "actual": 935,
+   "expected": 935,
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 1280,
+   "what": "3 列",
+   "actual": "y: 16,16,16,432",
+   "expected": "先頭 3 つが同じ行、4 つ目は次の行",
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 1280,
+   "what": "タイル 3:4",
+   "actual": 414.66,
+   "expected": 414.6666666666667,
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 1280,
+   "what": "検索の入口は 375px だけ",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe 発見",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe タグ（空）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1024,
+   "what": "ナビの幅",
+   "actual": 72,
+   "expected": 72,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1024,
+   "what": "下部タブ非表示",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1024,
+   "what": "塗りつぶしのアイコン数（今の項目だけ）",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1024,
+   "what": "今の項目に線が無い",
+   "actual": "0px/0px",
+   "expected": "0px/0px",
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1024,
+   "what": "「その他」がある",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 1024,
+   "what": "「その他」の項目",
+   "actual": "プロフィールを編集,ログアウト",
+   "expected": "設定（プロフィールを編集）とログアウトを含む",
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe その他メニュー",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "本文 14px/18px 黒（キャプション）",
+   "actual": "null",
+   "expected": "14px / 18px / rgb(0,0,0)系",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "カードの幅",
+   "actual": 470,
+   "expected": 470,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "カードの間（次のカードの上端−今の下端）",
+   "actual": 20,
+   "expected": 20,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "罫線の色 #DBDBDB",
+   "actual": "1px rgb(219, 219, 219)",
+   "expected": "rgb(219, 219, 219)",
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "フィードの列（カードの親）",
+   "actual": 470,
+   "expected": 470,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "ヘッダー 名前の太さ・時刻・その他の操作",
+   "actual": "{\"nameW\":\"600\",\"time\":true,\"more\":\"その他の操作\"}",
+   "expected": "600・time あり・その他の操作",
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "いいね数は操作の列の下／コメント入力はその下",
+   "actual": "{\"actBottom\":712,\"likesY\":null,\"inputY\":810}",
+   "expected": "likesY ≥ actBottom−1, inputY > likesY",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "長いキャプションは 2 行＋「続きを読む」",
+   "actual": "{\"more\":null,\"lines\":null}",
+   "expected": "2 行・続きを読む",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "右の列が出ない",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 1024,
+   "what": "失敗の経路: 空のコメントは送れない（ボタン無効）",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe ホーム",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "44px ホーム",
+   "actual": "a[本文へ移動] 1x1 | a[e2e_wmwuc3bg70] 127x17 | a[続きを読む] 446x18 | a[e2e_wmwuc3bg70] 127x17 | a[e2e_wmwuc3bg70] 127x17 | a[e2e_wmwuc3bg70] 127x17",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 1024,
+   "what": "輪の外径",
+   "actual": 66,
+   "expected": 66,
+   "ok": true
+  },
+  {
+   "ac": "AC-3",
+   "w": 1024,
+   "what": "アバター",
+   "actual": 60,
+   "expected": 56,
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 1024,
+   "what": "名前の文字",
+   "actual": "14px",
+   "expected": "12px",
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 1024,
+   "what": "列の下の余白（トレイの下端→最初のカード）",
+   "actual": 24,
+   "expected": 24,
+   "ok": true
+  },
+  {
+   "ac": "AC-3",
+   "w": 1024,
+   "what": "未読の輪は自前のグラデーション",
+   "actual": "linear-gradient(120deg, rgb(11, 184, 169), rgb(43, 108, 246) 62%, rgb(79, 70, 200))",
+   "expected": "linear/conic-gradient",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own 中身の幅",
+   "actual": 935,
+   "expected": 935,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own ユーザー名 20px/400",
+   "actual": "20px/400",
+   "expected": "20px/400",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own 数の行 16px・単位 #737373",
+   "actual": "[[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"]]",
+   "expected": "16px / rgb(115,115,115)",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own 数の間",
+   "actual": 40,
+   "expected": 40,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own タブはアイコン",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own タイル幅",
+   "actual": 311,
+   "expected": 311,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own タイル高さ（3:4）",
+   "actual": 414.66,
+   "expected": 414.66666666666663,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "own タイルの隙間",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe プロフィール(own)",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other 中身の幅",
+   "actual": 935,
+   "expected": 935,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other ユーザー名 20px/400",
+   "actual": "20px/400",
+   "expected": "20px/400",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other 数の行 16px・単位 #737373",
+   "actual": "[[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"]]",
+   "expected": "16px / rgb(115,115,115)",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other 数の間",
+   "actual": 40,
+   "expected": 40,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other タブはアイコン",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other タイル幅",
+   "actual": 311,
+   "expected": 311,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other タイル高さ（3:4）",
+   "actual": 414.66,
+   "expected": 414.66666666666663,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 1024,
+   "what": "other タイルの隙間",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe プロフィール(other)",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "写真の幅（4:5）",
+   "actual": 479,
+   "expected": 480,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "写真の高さ（4:5）",
+   "actual": 600,
+   "expected": 600,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "右の 335px のコメントの列",
+   "actual": 335,
+   "expected": 335,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe 投稿の画面",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "44px 投稿の画面",
+   "actual": "a[e2e_wmwuc3bg70] 127x17",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "モーダル 写真の幅",
+   "actual": 473.4,
+   "expected": 480,
+   "ok": false
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "モーダル 写真の高さ",
+   "actual": 593,
+   "expected": 600,
+   "ok": false
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "モーダル 335px のコメントの列",
+   "actual": 335,
+   "expected": 335,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "モーダルの暗い背景",
+   "actual": "rgb(255, 255, 255)",
+   "expected": "暗い rgba",
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe モーダル",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 1024,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"]') resolved to 3 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-6",
+   "w": 1024,
+   "what": "search URL は動かない",
+   "actual": "/",
+   "expected": "/",
+   "ok": true
+  },
+  {
+   "ac": "AC-6",
+   "w": 1024,
+   "what": "search ナビが 72px",
+   "actual": 72,
+   "expected": 72,
+   "ok": true
+  },
+  {
+   "ac": "AC-6",
+   "w": 1024,
+   "what": "search パネルの幅",
+   "actual": 48,
+   "expected": 397,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe searchのパネル",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-6",
+   "w": 1024,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"], [data-panel]') resolved to 15 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-7",
+   "w": 1024,
+   "what": "見ていた画面の上のモーダル（URL=/create）",
+   "actual": "/create",
+   "expected": "/create",
+   "ok": true
+  },
+  {
+   "ac": "AC-7",
+   "w": 1024,
+   "what": "背後のホームが残る",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe 作成: 切り取り",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe 作成: キャプション",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-7",
+   "w": 1024,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"]') resolved to 14 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-9",
+   "w": 1024,
+   "what": "発見のグリッド幅",
+   "actual": 935,
+   "expected": 935,
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 1024,
+   "what": "3 列",
+   "actual": "y: 16,16,16,432",
+   "expected": "先頭 3 つが同じ行、4 つ目は次の行",
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 1024,
+   "what": "タイル 3:4",
+   "actual": 414.66,
+   "expected": 414.6666666666667,
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 1024,
+   "what": "検索の入口は 375px だけ",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe 発見",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe タグ（空）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 375,
+   "what": "下部タブの高さ",
+   "actual": 50,
+   "expected": 50,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 375,
+   "what": "上部バーの高さ",
+   "actual": 45,
+   "expected": 45,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 375,
+   "what": "側のナビ非表示",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 375,
+   "what": "「その他」がある",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-1",
+   "w": 375,
+   "what": "「その他」の項目",
+   "actual": "プロフィールを編集,ログアウト",
+   "expected": "設定（プロフィールを編集）とログアウトを含む",
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe その他メニュー",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "本文 14px/18px 黒（キャプション）",
+   "actual": "null",
+   "expected": "14px / 18px / rgb(0,0,0)系",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "カードの幅",
+   "actual": 375,
+   "expected": 375,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "カードの間（次のカードの上端−今の下端）",
+   "actual": 20,
+   "expected": 20,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "罫線の色 #DBDBDB",
+   "actual": "1px rgb(219, 219, 219)",
+   "expected": "rgb(219, 219, 219)",
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "フィードの列（カードの親）",
+   "actual": 375,
+   "expected": 375,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "ヘッダー 名前の太さ・時刻・その他の操作",
+   "actual": "{\"nameW\":\"600\",\"time\":true,\"more\":\"その他の操作\"}",
+   "expected": "600・time あり・その他の操作",
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "いいね数は操作の列の下／コメント入力はその下",
+   "actual": "{\"actBottom\":662,\"likesY\":null,\"inputY\":760}",
+   "expected": "likesY ≥ actBottom−1, inputY > likesY",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "長いキャプションは 2 行＋「続きを読む」",
+   "actual": "{\"more\":null,\"lines\":null}",
+   "expected": "2 行・続きを読む",
+   "ok": false
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "右の列が出ない",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-2",
+   "w": 375,
+   "what": "失敗の経路: 空のコメントは送れない（ボタン無効）",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe ホーム",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "44px ホーム",
+   "actual": "a[本文へ移動] 1x1 | a[e2e_wmwuc3bg70] 127x17 | a[続きを読む] 351x18 | a[e2e_wmwuc3bg70] 127x17 | a[e2e_wmwuc3bg70] 127x17 | a[e2e_wmwuc3bg70] 127x17",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 375,
+   "what": "輪の外径",
+   "actual": 66,
+   "expected": 66,
+   "ok": true
+  },
+  {
+   "ac": "AC-3",
+   "w": 375,
+   "what": "アバター",
+   "actual": 60,
+   "expected": 56,
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 375,
+   "what": "名前の文字",
+   "actual": "14px",
+   "expected": "12px",
+   "ok": false
+  },
+  {
+   "ac": "AC-3",
+   "w": 375,
+   "what": "列の下の余白（トレイの下端→最初のカード）",
+   "actual": 24,
+   "expected": 24,
+   "ok": true
+  },
+  {
+   "ac": "AC-3",
+   "w": 375,
+   "what": "未読の輪は自前のグラデーション",
+   "actual": "linear-gradient(120deg, rgb(11, 184, 169), rgb(43, 108, 246) 62%, rgb(79, 70, 200))",
+   "expected": "linear/conic-gradient",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own 中身の幅",
+   "actual": 375,
+   "expected": 375,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own ユーザー名 20px/400",
+   "actual": "20px/400",
+   "expected": "20px/400",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own 数の行 16px・単位 #737373",
+   "actual": "[[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"]]",
+   "expected": "16px / rgb(115,115,115)",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own 375px 3 等分・単位が折り返さない",
+   "actual": "[[125,24],[125,24],[125,24]]",
+   "expected": "幅が等しい・単位の高さ ≤ 20",
+   "ok": false
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own タブはアイコン",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own タイル幅",
+   "actual": 124.33,
+   "expected": 124.33333333333333,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own タイル高さ（3:4）",
+   "actual": 165.77,
+   "expected": 165.77083333333331,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "own タイルの隙間",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe プロフィール(own)",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other 中身の幅",
+   "actual": 375,
+   "expected": 375,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other ユーザー名 20px/400",
+   "actual": "20px/400",
+   "expected": "20px/400",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other 数の行 16px・単位 #737373",
+   "actual": "[[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"],[\"16px\",\"rgb(115, 115, 115)\"]]",
+   "expected": "16px / rgb(115,115,115)",
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other 375px 3 等分・単位が折り返さない",
+   "actual": "[[125,24],[125,24],[125,24]]",
+   "expected": "幅が等しい・単位の高さ ≤ 20",
+   "ok": false
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other タブはアイコン",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other タイル幅",
+   "actual": 124.33,
+   "expected": 124.33333333333333,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other タイル高さ（3:4）",
+   "actual": 165.77,
+   "expected": 165.77083333333331,
+   "ok": true
+  },
+  {
+   "ac": "AC-4",
+   "w": 375,
+   "what": "other タイルの隙間",
+   "actual": 1,
+   "expected": 1,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe プロフィール(other)",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 375,
+   "what": "375px は 1 列（コメント入力が写真の下）",
+   "actual": "{\"imgBottom\":573.75,\"inputY\":718}",
+   "expected": "inputY > imgBottom",
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe 投稿の画面",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "44px 投稿の画面",
+   "actual": "a[e2e_wmwuc3bg70] 127x17",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-5",
+   "w": 375,
+   "what": "モーダルの暗い背景",
+   "actual": "rgb(255, 255, 255)",
+   "expected": "暗い rgba",
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe モーダル",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-5",
+   "w": 375,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"]') resolved to 3 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-6",
+   "w": 375,
+   "what": "/notifications 直接で今のページ",
+   "actual": "/notifications",
+   "expected": "/notifications",
+   "ok": true
+  },
+  {
+   "ac": "AC-6",
+   "w": 375,
+   "what": "375px は通知のページが開く",
+   "actual": "/notifications",
+   "expected": "/notifications",
+   "ok": true
+  },
+  {
+   "ac": "AC-7",
+   "w": 375,
+   "what": "見ていた画面の上のモーダル（URL=/create）",
+   "actual": "/create",
+   "expected": "/create",
+   "ok": true
+  },
+  {
+   "ac": "AC-7",
+   "w": 375,
+   "what": "背後のホームが残る",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe 作成: 切り取り",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe 作成: キャプション",
+   "actual": "target-size:3",
+   "expected": 0,
+   "ok": false
+  },
+  {
+   "ac": "AC-7",
+   "w": 375,
+   "what": "probe error",
+   "actual": "Error: locator.evaluate: Error: strict mode violation: locator('[role=\"dialog\"]') resolved to 14 elements:",
+   "expected": "no error",
+   "ok": false
+  },
+  {
+   "ac": "AC-9",
+   "w": 375,
+   "what": "発見のグリッド幅",
+   "actual": 375,
+   "expected": 375,
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 375,
+   "what": "3 列",
+   "actual": "y: 113,113,113,280",
+   "expected": "先頭 3 つが同じ行、4 つ目は次の行",
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 375,
+   "what": "タイル 3:4",
+   "actual": 165.77,
+   "expected": 165.77083333333334,
+   "ok": true
+  },
+  {
+   "ac": "AC-9",
+   "w": 375,
+   "what": "検索の入口は 375px だけ",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe 発見",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe タグ（空）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "視差効果を減らす: 動きは 0 秒（ホーム）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "視差効果を減らす: パネルを開いても動き 0 秒",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "視差効果を減らす: 動きは 0 秒（ホーム）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "視差効果を減らす: パネルを開いても動き 0 秒",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "視差効果を減らす: 動きは 0 秒（ホーム）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "フォーカスの輪郭 2px 以上（Tab 60 回）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "Tab でナビの全項目に届く",
+   "actual": "すべて届く",
+   "expected": "すべて届く",
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "フォーカスの輪郭 2px 以上（Tab 60 回）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "Tab でナビの全項目に届く",
+   "actual": "すべて届く",
+   "expected": "すべて届く",
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "フォーカスの輪郭 2px 以上（Tab 60 回）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "Tab でナビの全項目に届く",
+   "actual": "届かない: ホーム,検索,通知,プロフィール",
+   "expected": "すべて届く",
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "ログイン 左右 2 分（hero と pane が出る）",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "フォームの幅",
+   "actual": 536,
+   "expected": 536,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "入力の高さ",
+   "actual": 60,
+   "expected": 60,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "入力の角丸 16px・ボタンは丸い端",
+   "actual": "16px / btn 22px",
+   "expected": "16px / 大きい角丸",
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "ナビが出ない（ログイン）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe ログイン",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "44px ログイン",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "登録 1 列のフォームの幅",
+   "actual": 560,
+   "expected": 560,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "登録は 1 列（hero が無い）",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe 登録",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "公開のプロフィール 上部バー 60px",
+   "actual": -1,
+   "expected": 60,
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "公開のプロフィール ナビ無し",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "上部バーの中身（ログイン・新しいアカウントを作成）",
+   "actual": "",
+   "expected": "ログイン / 新しいアカウントを作成",
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe 公開のプロフィール",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "公開の投稿 上部バー 60px",
+   "actual": -1,
+   "expected": 60,
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "公開の投稿 ナビ無し",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1280,
+   "what": "axe 公開の投稿",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 1280,
+   "what": "参照の名前・ロゴが出ない",
+   "actual": "あり",
+   "expected": "なし",
+   "ok": false
+  },
+  {
+   "ac": "AC-11",
+   "w": 1280,
+   "what": "アクセント色変数",
+   "actual": "",
+   "expected": "#4F46C8",
+   "ok": false
+  },
+  {
+   "ac": "AC-11",
+   "w": 1280,
+   "what": "フッターの非公式の注記",
+   "actual": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。",
+   "expected": "非公式の注記",
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "ログイン 左右 2 分（hero と pane が出る）",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "入力の角丸 16px・ボタンは丸い端",
+   "actual": "16px / btn 22px",
+   "expected": "16px / 大きい角丸",
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "ナビが出ない（ログイン）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe ログイン",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "44px ログイン",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "登録 1 列のフォームの幅",
+   "actual": 560,
+   "expected": 560,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "登録は 1 列（hero が無い）",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe 登録",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "公開のプロフィール 上部バー 60px",
+   "actual": -1,
+   "expected": 60,
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "公開のプロフィール ナビ無し",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "上部バーの中身（ログイン・新しいアカウントを作成）",
+   "actual": "",
+   "expected": "ログイン / 新しいアカウントを作成",
+   "ok": false
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe 公開のプロフィール",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "公開の投稿 上部バー 60px",
+   "actual": -1,
+   "expected": 60,
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 1024,
+   "what": "公開の投稿 ナビ無し",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 1024,
+   "what": "axe 公開の投稿",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 1024,
+   "what": "参照の名前・ロゴが出ない",
+   "actual": "あり",
+   "expected": "なし",
+   "ok": false
+  },
+  {
+   "ac": "AC-11",
+   "w": 1024,
+   "what": "アクセント色変数",
+   "actual": "",
+   "expected": "#4F46C8",
+   "ok": false
+  },
+  {
+   "ac": "AC-11",
+   "w": 1024,
+   "what": "フッターの非公式の注記",
+   "actual": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。",
+   "expected": "非公式の注記",
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "入力の角丸 16px・ボタンは丸い端",
+   "actual": "16px / btn 22px",
+   "expected": "16px / 大きい角丸",
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "ナビが出ない（ログイン）",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe ログイン",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "44px ログイン",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "登録 1 列のフォームの幅",
+   "actual": 343,
+   "expected": 343,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "登録は 1 列（hero が無い）",
+   "actual": false,
+   "expected": false,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe 登録",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "公開のプロフィール 上部バー 60px",
+   "actual": -1,
+   "expected": 60,
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "公開のプロフィール ナビ無し",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "上部バーの中身（ログイン・新しいアカウントを作成）",
+   "actual": "",
+   "expected": "ログイン / 新しいアカウントを作成",
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe 公開のプロフィール",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "公開の投稿 上部バー 60px",
+   "actual": -1,
+   "expected": 60,
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "公開の投稿 ナビ無し",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-10",
+   "w": 375,
+   "what": "axe 公開の投稿",
+   "actual": 0,
+   "expected": 0,
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 375,
+   "what": "参照の名前・ロゴが出ない",
+   "actual": "あり",
+   "expected": "なし",
+   "ok": false
+  },
+  {
+   "ac": "AC-11",
+   "w": 375,
+   "what": "アクセント色変数",
+   "actual": "",
+   "expected": "#4F46C8",
+   "ok": false
+  },
+  {
+   "ac": "AC-11",
+   "w": 375,
+   "what": "フッターの非公式の注記",
+   "actual": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。",
+   "expected": "非公式の注記",
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 1280,
+   "what": "ログイン後の画面にも参照の名前が出ない",
+   "actual": "なし",
+   "expected": "なし",
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 1280,
+   "what": "主の色 #4F46C8 が CSS にある",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 1024,
+   "what": "ログイン後の画面にも参照の名前が出ない",
+   "actual": "なし",
+   "expected": "なし",
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 1024,
+   "what": "主の色 #4F46C8 が CSS にある",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 375,
+   "what": "ログイン後の画面にも参照の名前が出ない",
+   "actual": "なし",
+   "expected": "なし",
+   "ok": true
+  },
+  {
+   "ac": "AC-11",
+   "w": 375,
+   "what": "主の色 #4F46C8 が CSS にある",
+   "actual": true,
+   "expected": true,
+   "ok": true
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "#96 自動入力 /accounts/login #email: ラベルと値が重ならない",
+   "actual": "{\"match\":true,\"valueTop\":314,\"labelBottom\":323,\"labelTop\":305,\"inputTop\":293,\"inputH\":60,\"labelFs\":\"12px\",\"pt\":20,\"overlap\":true}",
+   "expected": "overlap=false（:autofill を適用して計測）",
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "#96 自動入力 /accounts/login #password: ラベルと値が重ならない",
+   "actual": "{\"match\":true,\"valueTop\":386,\"labelBottom\":395,\"labelTop\":377,\"inputTop\":365,\"inputH\":60,\"labelFs\":\"12px\",\"pt\":20,\"overlap\":true}",
+   "expected": "overlap=false（:autofill を適用して計測）",
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "#96 自動入力 /accounts/login #email: ラベルと値が重ならない",
+   "actual": "{\"match\":true,\"valueTop\":103,\"labelBottom\":112,\"labelTop\":94,\"inputTop\":82,\"inputH\":60,\"labelFs\":\"12px\",\"pt\":20,\"overlap\":true}",
+   "expected": "overlap=false（:autofill を適用して計測）",
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "#96 自動入力 /accounts/login #password: ラベルと値が重ならない",
+   "actual": "{\"match\":true,\"valueTop\":175,\"labelBottom\":184,\"labelTop\":166,\"inputTop\":154,\"inputH\":60,\"labelFs\":\"12px\",\"pt\":20,\"overlap\":true}",
+   "expected": "overlap=false（:autofill を適用して計測）",
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 1280,
+   "what": "#96 自動入力 /accounts/signup #email: ラベルと値が重ならない",
+   "actual": "{\"match\":true,\"valueTop\":179,\"labelBottom\":188,\"labelTop\":170,\"inputTop\":158,\"inputH\":60,\"labelFs\":\"12px\",\"pt\":20,\"overlap\":true}",
+   "expected": "overlap=false（:autofill を適用して計測）",
+   "ok": false
+  },
+  {
+   "ac": "AC-8",
+   "w": 375,
+   "what": "#96 自動入力 /accounts/signup #email: ラベルと値が重ならない",
+   "actual": "{\"match\":true,\"valueTop\":179,\"labelBottom\":188,\"labelTop\":170,\"inputTop\":158,\"inputH\":60,\"labelFs\":\"12px\",\"pt\":20,\"overlap\":true}",
+   "expected": "overlap=false（:autofill を適用して計測）",
+   "ok": false
+  }
+ ],
+ "health": {
+  "375": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/this-user-does-not-exist-mwuc3bg7",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/stories/no_such_mwuc3bg7",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/nobody_mwuc3bg7_x",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/search",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/explore/tags/e2etagmwuc3bg7"
+   ],
+   "pageerror": [],
+   "failed": [
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http": [
+    "404 http://localhost:3101/this-user-does-not-exist-mwuc3bg7",
+    "404 http://localhost:3101/stories/no_such_mwuc3bg7",
+    "404 http://localhost:3101/nobody_mwuc3bg7_x",
+    "404 http://localhost:3101/search",
+    "404 http://localhost:3101/explore/tags/e2etagmwuc3bg7"
+   ]
+  },
+  "1024": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/this-user-does-not-exist-mwuc3bg7",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/stories/no_such_mwuc3bg7",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/nobody_mwuc3bg7_x",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/explore/tags/e2etagmwuc3bg7"
+   ],
+   "pageerror": [],
+   "failed": [
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http": [
+    "404 http://localhost:3101/this-user-does-not-exist-mwuc3bg7",
+    "404 http://localhost:3101/stories/no_such_mwuc3bg7",
+    "404 http://localhost:3101/nobody_mwuc3bg7_x",
+    "404 http://localhost:3101/explore/tags/e2etagmwuc3bg7"
+   ]
+  },
+  "1280": {
+   "console": [
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/this-user-does-not-exist-mwuc3bg7",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/stories/no_such_mwuc3bg7",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/nobody_mwuc3bg7_x",
+    "error: Failed to load resource: the server responded with a status of 404 (Not Found) @http://localhost:3101/explore/tags/e2etagmwuc3bg7"
+   ],
+   "pageerror": [],
+   "failed": [
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3101/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http": [
+    "404 http://localhost:3101/this-user-does-not-exist-mwuc3bg7",
+    "404 http://localhost:3101/stories/no_such_mwuc3bg7",
+    "404 http://localhost:3101/nobody_mwuc3bg7_x",
+    "404 http://localhost:3101/explore/tags/e2etagmwuc3bg7"
+   ]
+  },
+  "rm1280": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "rm1024": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "rm375": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "kb1280": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "kb1024": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "kb375": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "anon1280": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "anon1024": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "anon375": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "brand1280": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "brand1024": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  },
+  "brand375": {
+   "console": [],
+   "pageerror": [],
+   "failed": [],
+   "http": []
+  }
+ }
+}

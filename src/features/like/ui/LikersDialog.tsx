@@ -101,7 +101,7 @@ export function LikersDialog() {
           }
           restart();
         }}
-        className="min-h-[var(--tap-min)] rounded-lg px-2 text-[length:var(--font-size-sm)] font-bold hover:bg-surface"
+        className="min-h-[var(--tap-min)] px-0 text-[length:var(--font-size-sm)] font-semibold"
       >
         {`${snapshot.count} 件のいいね`}
       </button>
@@ -150,7 +150,7 @@ export function LikersDialog() {
                     ) : (
                       <span
                         aria-hidden="true"
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-surface font-bold text-text-secondary"
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-surface font-bold text-text"
                       >
                         {Array.from(u.username)[0]?.toUpperCase()}
                       </span>
@@ -176,7 +176,7 @@ export function LikersDialog() {
           )}
           {status === 'error' && (
             <div className="py-2 text-center">
-              <p role="alert" className="text-[length:var(--font-size-sm)] text-red-700">
+              <p role="alert" className="text-[length:var(--font-size-sm)] text-danger">
                 {message}
               </p>
               <button

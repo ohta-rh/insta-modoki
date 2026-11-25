@@ -1,0 +1,10 @@
+21:46:47
+verify: 別の verify（pid 46238、/Users/tetsuyaohta/projects/other/insta-modoki/）が終わるまで待ちます
+verify: HEAD b522b94 epic-test/110
+verify: load average 8.24853515625 / CPU 16
+verify: typecheck ...
+$ tsc --noEmit
+verify: typecheck OK
+verify: OK b522b94
+rc=0
+21:47:03

@@ -1,8 +1,9 @@
 import { headers } from 'next/headers';
 import { getSessionUser } from '@/features/auth';
 import { listComments } from '@/features/comment';
-import { getPost, PostDetail } from '@/features/post';
-import { PostModal } from '@/features/profile';
+import { getPost } from '@/features/post';
+import { PostDetail } from '@/features/post/ui';
+import { PostModal } from '@/features/profile/ui';
 import { AppError } from '@/shared/errors';
 
 // `(..)p` intercepts /p/<postId> when it is reached from a profile (a soft navigation from the

@@ -1,5 +1,38 @@
 # ドキュメントの更新履歴
 
+## 2026-11-24
+* **Creation**: [EPIC #87 見た目の総合試験（4 回目）](test-reports/epic-0087-visual-r4.md)（PASS。340dff7 で #130 の後の 11 の AC と、30 字の利用者名・200 字のファイル名の長い文字の確認が全て PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r4/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+* **Creation**: [EPIC #110 ハーネスの改善の総合試験（3 回目）](test-reports/epic-0110-harness-r3.md)（AC-2 が PASS。E2E の干渉を #131 に起票）と記録（`test-reports/evidence/epic-0110-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+* **Creation**: [ADR-0073](adr/0073-e2e-that-write-the-whole-db-run-alone-last.md)（DB の全体に書き込む E2E は `*.exclusive.spec.ts` にして、exclusive の project で最後に単独で走らせる）を追加し、[verify.md](guides/verify.md) に「DB の全体に書く E2E（exclusive）」の節を足した（#131）。
+* **Creation**: [EPIC #110 ハーネスの改善の総合試験（2 回目）](test-reports/epic-0110-harness-r2.md)（AC-2 を除き PASS）と記録（`test-reports/evidence/epic-0110-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+* **Creation**: [ADR-0072](adr/0072-main-checkout-tracks-the-integration-branch.md)（main checkout は統合ブランチの上にいて、`scripts/harness-drift.mjs` が SessionStart でハーネスの差を知らせる）を追加し、[verify.md](guides/verify.md) に書いた（#129）。
+* **Creation**: [EPIC #110 ハーネスの改善の総合試験](test-reports/epic-0110-harness.md)（FAIL。AC-5・AC-6 が FAIL、AC-2 は判定できず）と記録（`test-reports/evidence/epic-0110/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+* **Creation**: [ADR-0068](adr/0068-ci-shards-e2e-four-ways.md)（CI の E2E を 4 つの shard の job に分けて verify と同時に流す。`verify.mjs` に `--skip` を足す）を追加し、[verify.md](guides/verify.md) に書いた（#119）。
+* **Creation**: [ADR-0070](adr/0070-local-e2e-keeps-traces-of-failures.md)（手元の E2E も、落ちたテストの trace を `retain-on-failure` で残す）を追加し、[verify.md](guides/verify.md) に trace の見方を足した（#123）。
+* **Creation**: [EPIC #87 見た目の総合試験（3 回目）](test-reports/epic-0087-visual-r3.md)（PASS。5066666 で #125・#126・#127 により 2 回目の AC-10 の 3 原因が消え、11 の AC が全て PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+* **Creation**: [ADR-0066](adr/0066-visual-pbis-test-long-text-at-narrow-width.md)（見た目の PBI は、狭い画面で長い利用者の文字の配置を AC にする）を追加し、[issue-authoring.md](../.claude/rules/issue-authoring.md) に「見た目の PBI」の節を足した（#118）。
+* **Creation**: [ADR-0063](adr/0063-slot-reset-waits-for-garage-to-drain.md)（スロットの `reset` と `drop` は、Garage の削除の後始末（MklTodo）が 500 未満になるまで待って戻る。`status` で MklTodo と GcTodo を見る）を追加し、[local-development.md](guides/local-development.md) に「Garage が重い」を足した（#117）。
+* **Creation**: [EPIC #87 見た目の総合試験（2 回目）](test-reports/epic-0087-visual-r2.md)（FAIL。916efbc で 1 回目の「続きを読む」は直り、AC-10 は別の 3 原因で FAIL。他の 10 の AC は PASS）と画面の写真・記録（`test-reports/evidence/epic-0087-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた（#87）。
+* **Creation**: [ADR-0064](adr/0064-docs-log-merges-as-union.md)（`docs/log.md` は `.gitattributes` の `merge=union` で統合し、日付の見出しの直下への別々の追記を rebase で衝突させない）を追加し、[issue-authoring.md](../.claude/rules/issue-authoring.md) の追記だけの共有ファイルの段落を合わせた（#113）。
+* **Creation**: [ADR-0067](adr/0067-red-integration-ci-comes-first.md)（統合ブランチの CI が赤いときは、ほかの作業より先に直す。`scripts/ci-gate.mjs` で機械的に確かめる）を追加した（#115）。
+* **Creation**: [ADR-0065](adr/0065-agent-reports-carry-rc-and-result-lines.md)（サブエージェントの報告は、確認ごとに rc の行と結果の行を写し、道具が起動しなければ止まる）を追加した（#114）。
+* **Creation**: [EPIC #87 見た目の総合試験](test-reports/epic-0087-visual.md)（1 回目、FAIL。AC-10 のホームの「続きを読む」の target-size）と画面の写真を追加し、[test-reports/index.md](test-reports/index.md) に載せた（#87）。
+* **Creation**: [ADR-0069](adr/0069-e2e-signs-in-through-the-harness.md)（E2E は、サインアップを確かめない場面では E2E 用の窓口の `seedSession` でログイン済みのユーザーを用意する）を追加した（#116）。
+* **Creation**: [ADR-0062](adr/0062-verify-runs-one-at-a-time-and-records-head.md)（verify は同じマシンで一度に 1 つだけ走り、確かめた HEAD を出力に残す）を追加し、[verify.md](guides/verify.md) に「同時に流したとき・確かめた commit」を足した（#111）。
+* **Update**: [verify.md](guides/verify.md) の「結合テストの時間の予算」に、CI の verify の job が `fetch-depth: 0` で取るので `int-budget` が PR で変わった結合テストだけを測ることを足した。job の上限は 20 分から 30 分にした（#109）。
+
+## 2026-11-23
+* **Creation**: [ADR-0060](adr/0060-tests-clean-their-objects-and-slot-empties-buckets-in-parallel.md)（結合テストはスロットのバケットに作ったファイルを消して終わり、`slot.mjs` はバケットを 32 本並べた DELETE で空にする）を追加し、[local-development.md](guides/local-development.md) の `reset` / `drop` の行を合わせた（#108）。
+* **Creation**: [ADR-0058](adr/0058-seed-integration-test-runs-in-its-own-verify-step.md)（結合テストの seed は他の結合テストと重ねず、verify の別の手順 `integration-seed` で後から流す）と [ADR-0059](adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)（結合テストは単独で上限の 25% 以内。verify の `int-budget` で変わったファイルを測る）を追加し、[verify.md](guides/verify.md) の表と「結合テストの時間の予算」を合わせた（#107）。
+* **Creation**: [ADR-0061](adr/0061-create-modal-intercepts-from-a-root-modal-slot.md)（作成のモーダルは、ルートのレイアウトの `modal` スロットの intercepting route で開く。`[username]` の下では `/create` が username として解決され後ろのプロフィールが消えるため）を追加し、[routes.md](architecture/routes.md) の `/create` を合わせた（#92）。
+* **Creation**: [ADR-0057](adr/0057-slice-index-exports-no-client-components.md)（slice の入口 `index.ts` は `'use client'` の部品を公開せず、画面の部品は `ui/index.ts` から公開する。[ADR-0053](adr/0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) を置き換える）を追加し、[conventions.md](architecture/conventions.md) の slice の節を合わせた（#106）。
+* **Creation**: [管理者の手順](guides/admin.md)（管理者を作るコマンド、`/admin` の削除、削除は取り消せないこと）を追加し、[guides/index.md](guides/index.md) に載せた（#39）。
+* **Update**: [routes.md](architecture/routes.md) に `adminDeletePost`・`adminDeleteUser`・`listAdminPosts`・`listAdminUsers` と画面 `/admin` を、[data-model.md](architecture/data-model.md) に `admin_actions` の制約と索引を書いた（#39）。
+* **Update**: [ADR-0056](adr/0056-ui-follows-measured-web-reference-under-own-brand.md)（UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする）を追加し、[design-system.md](architecture/design-system.md) のトークン・色の使い方の決まり・アイコンの線の太さを参照の値に更新した（#88）。
+* **Creation**: [Web 版の画面の参照値と今のアプリとの差](research/web-ui-reference.md)（ログインしていない公開ページの実測と参照自身の CSS 変数から、骨格・ホーム・プロフィール・投稿・ログインの寸法と色を今のアプリと比べた調査）を追加し、[research/index.md](research/index.md) に載せた。
+* **Creation**: [ADR-0055](adr/0055-e2e-invite-required-by-request-header.md)（E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする）を追加した（#38）。
+* **Update**: [routes.md](architecture/routes.md) に `createInvite`・`listInvites`・`revokeInvite` と画面 `/admin/invites` を足し、`signUp` の `inviteCode`（`INVITE_REQUIRED` が `true` のとき必須）を書いた（#38）。
+
 ## 2026-11-22
 * **Creation**: [EPIC #11 の総合試験のレポート（2 回目）](test-reports/epic-0011-notifications-r2.md)（PASS。ADR-0048 によるやり直し。5807758 で、#86 のバッジの位置・クリック・名前を含む 5 つの AC を実ブラウザで確かめた）と、その写真・記録（`test-reports/evidence/epic-0011-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
 * **Creation**: [EPIC #12 の総合試験のレポート（2 回目）](test-reports/epic-0012-bookmarks-r2.md)（PASS。統合ブランチ m3/phase2 の 62cc427 で、未読バッジ・ストーリー・共通の投稿カードが入ったあとの再試験。4 つの AC を満たし、未読の通知があるアカウントで axe の違反は 0 件）と、その写真・記録（`test-reports/evidence/epic-0012-r2/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。

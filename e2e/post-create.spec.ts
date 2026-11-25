@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { mediaRows, postRows, setPostCount, userRow } from './support/db';
 import { makeJpeg, padTo } from './support/fixtures';
 import { tabTo } from './support/keys';
@@ -19,9 +19,9 @@ const caption = (page: Page) => page.getByLabel('キャプション');
 const alt = (page: Page, n: number) => page.getByLabel(`写真 ${n} の代替テキスト`);
 const frame = (page: Page, n: number) => page.getByRole('group', { name: `写真 ${n} の切り抜き` });
 
-/** Signs a new user up through the real screen and opens /create; returns the user's id. */
+/** Signs a new user in through the harness and opens /create; returns the user's id. */
 async function start(page: Page): Promise<{ userId: string; username: string }> {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   await page.goto('/create');
   await page.waitForLoadState('networkidle');
   return { userId: userRow(user.username)!.id as string, username: user.username };
@@ -280,7 +280,7 @@ test('JS の読み込み前でも 写真を選ぶ をキーボードで押すと
   // and a chooser that opens first is the browser's own and never reaches the test.
   const fileChooser = page.waitForEvent('filechooser');
   fileChooser.catch(() => {});
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   // Hold every script chunk back so the page stays un-hydrated while the key is pressed.
   const release = await holdScripts(page);
   await page.goto('/create', { waitUntil: 'commit' });
@@ -317,7 +317,7 @@ async function pickBeforeHydration(
 }
 
 test('JS の読み込み前に選んだ写真が ハイドレーションの後に一覧に入る', async ({ page }) => {
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   const jpeg = await makeJpeg(page, 800, 600);
   await pickBeforeHydration(page, [file('early.jpg', jpeg)]);
 
@@ -337,7 +337,7 @@ test('JS の読み込み前に選んだ写真が ハイドレーションの後�
 });
 
 test('JS の読み込み前に選んだ写真の後に 同じ写真をキーボードで選び直せる', async ({ page }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const jpeg = await makeJpeg(page, 800, 600);
   await pickBeforeHydration(page, [file('same.jpg', jpeg)]);
   await expect(page.getByRole('listitem', { name: /^写真 \d+$/ })).toHaveCount(1);
@@ -355,7 +355,7 @@ test('JS の読み込み前に選んだ写真の後に 同じ写真をキーボ�
 test('JS の読み込み前に選んだ 10MB を超える写真は ハイドレーションの後に理由が出る', async ({
   page,
 }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const jpeg = await makeJpeg(page, 200, 200);
   await pickBeforeHydration(page, [file('big.jpg', padTo(jpeg, 10_485_761))]);
 
@@ -366,7 +366,7 @@ test('JS の読み込み前に選んだ 10MB を超える写真は ハイドレ�
 test('JS の読み込み前に 11 枚選ぶと ハイドレーションの後に 10 枚が入り 上限の理由が出る', async ({
   page,
 }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const jpeg = await makeJpeg(page, 64, 48);
   await pickBeforeHydration(
     page,

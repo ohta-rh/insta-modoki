@@ -21,7 +21,9 @@ status: stable
 | `format` | `pnpm format:check` | Prettier の形式に合っていないファイルがある |
 | `docs` | `node scripts/check-docs.mjs docs` | `docs/` が OKF v0.3 の規則（下の「docs の検査」）に合っていない |
 | `unit` | `pnpm exec vitest run --coverage --exclude "**/*.int.test.ts"` | 単体テストの失敗、または `src/**/model/**` と `src/shared/config/**` の行カバレッジが 80% 未満 |
-| `integration` | `pnpm exec vitest run --passWithNoTests .int.test.ts` | 結合テストの失敗（`src/`・`scripts/`・`tests/` の `*.int.test.ts` が 1 つも無いときは `integration: テストなし` を出して成功） |
+| `integration` | `pnpm exec vitest run --passWithNoTests .int.test.ts --exclude src/shared/db/seed/seed.int.test.ts` | `seed.int.test.ts` を除く結合テストの失敗（`src/`・`scripts/`・`tests/` の `*.int.test.ts` が 1 つも無いときは `integration: テストなし` を出して成功） |
+| `integration-seed` | `pnpm exec vitest run src/shared/db/seed/seed.int.test.ts` | seed の結合テスト（bench を含む）の失敗。共有の Garage に CopyObject を大量に投げるので、他の結合テストと重ねず後から流す（[ADR-0058](../adr/0058-seed-integration-test-runs-in-its-own-verify-step.md)） |
+| `int-budget` | `node scripts/int-budget.mjs` | 変わった結合テストの 1 本が、単独で流して上限の 25% を超えた（`int-budget: FAIL <file> › <name> <最小>ms > <予算>ms（上限 <timeout>ms）`）。[結合テストの時間の予算](#結合テストの時間の予算) |
 | `build` | `pnpm build` | OpenNext のビルドの失敗 |
 | `e2e` | `pnpm e2e` | Playwright の失敗（ビルドの成果物を `pnpm start` で workerd に載せて開く） |
 | `perf-budget` | `node scripts/perf/bundle.mjs` | `/` を最初に開いたときの初期 JS が gzip で 170,000 バイトを超えた（`perf: FAIL initialJsGzipBytes / <値> > 170000`）。[性能の基準](#性能の基準) |
@@ -31,11 +33,35 @@ status: stable
 - 全部流す: `node scripts/verify.mjs`
 - 手順の一覧: `node scripts/verify.mjs --list`
 - 1 手順だけ流す: `node scripts/verify.mjs --only unit`
+- 手順を除いて流す: `node scripts/verify.mjs --skip e2e`（何度でも指定できる。`--only` とは同時に使えず 2 で終わる。存在しない名前は `verify: 不明な手順: <名前>` で 2。除いても、ロックと HEAD の記録は同じ）
 - スロットのポートを渡す: `PORT=3101 node scripts/verify.mjs`（E2E の `webServer` と `start` がこのポートを使う。未設定は 3100。スロット N は `3100 + N`）
+
+## 同時に流したとき・確かめた commit
+
+[ADR-0062](../adr/0062-verify-runs-one-at-a-time-and-records-head.md): verify は同じマシンで一度に 1 つだけ走る。ロックは `$(git rev-parse --git-common-dir)/insta-verify.lock`（全ての worktree で同じファイル。中身は `{pid, head, worktree, startedAt}`）。
+
+- 別の verify が生きていれば `verify: 別の verify（pid <N>、<worktree>）が終わるまで待ちます` を出し、10 秒ごとに見直して待つ（1 分ごとに待っている旨を出す）。60 分を超えたら `verify: 60 分待っても別の verify が終わりません` で 1 で終わる。
+- pid が生きていないロックは `verify: 終わっていない verify（pid <N>）のロックを引き継ぎます` を出して引き継ぐ。
+- 始めに `verify: HEAD <短い SHA> <ブランチ>` と `verify: load average <1 分値> / CPU <論理コア数>`（表示だけ）を出す。実行中に HEAD が動くと `verify: FAIL HEAD が実行中に <a> から <b> に変わりました` で 1 で終わる。通ると最後の行は `verify: OK <短い SHA>`（この SHA が確かめた commit）。
+- 成功・失敗・SIGINT・SIGTERM でロックを外す。`--list` と不正な引数はロックを取らない。`--only` と `--skip` は取る。
+- 死んだ verify のロックが残って止まって見えるときは、`$(git rev-parse --git-common-dir)/insta-verify.lock` を消してよい（pid が生きていないことを確かめてから）。
 
 `perf-budget` も `build` の成果物を使う（アプリが `PORT` で動いていなければ自分で `pnpm start` を起動して止める）。
 
 `e2e` は `build` の成果物を使うので、単独で流す前に `pnpm build` が要る。Chromium は初回に `pnpm exec playwright install chromium` で入れる。
+
+手元でも CI でも、E2E が落ちたテストだけ trace（操作・DOM・ネットワークの時刻つきの記録）が残る（通ったテストには残らない。[ADR-0070](../adr/0070-local-e2e-keeps-traces-of-failures.md)）。手元では `test-results/<テスト名>/trace.zip` にある。`pnpm exec playwright show-trace <その trace.zip のパス>` で開き、Network の欄で、送信の要求（server action の `POST` と、S3 への `PUT`）が出た時刻と、返るまでの時間を確かめる。送信の後の `toHaveURL` が時間切れになる落ち方は、どの要求が遅れたかをここで見分ける。
+
+E2E の用意の関数（`e2e/support/auth.ts` の `test`・`signedIn`・`freshUser` の fixture と `signInViaHarness`、`e2e/support/screens.ts` の `createWorld`）は、画面のサインアップを通らず、窓口 `/e2e-harness/db` の `seedSession` でユーザーとセッションの行を作り、返った cookie を `context.addCookies` で入れる（[ADR-0069](../adr/0069-e2e-signs-in-through-the-harness.md)）。画面のサインアップを使う（`signUpViaUi`）のは、サインアップ・ログイン・招待の画面を確かめる spec（`signup.spec.ts`・`login-logout.spec.ts`・`invite.spec.ts`）だけ。
+
+## 結合テストの時間の予算
+
+`int-budget`（[ADR-0059](../adr/0059-integration-tests-stay-within-a-quarter-of-their-timeout.md)）は、基準のコミット（`INT_BUDGET_BASE`、なければ `origin/$GITHUB_BASE_REF`・`origin/m*/*`・`origin/main` のうち、HEAD までの commit 数が一番少ない merge-base）から変わった `*.int.test.ts` を 1 本ずつ（`--no-file-parallelism`）流し、各テストの所要時間が、そのテストの上限（既定 5,000ms、`it(…, 60_000)` ならその値）の 25% 以下かを見る。超えたテストがあるファイルだけをもう 2 回流し、3 回の最小が 25% を超えたものを全て `int-budget: FAIL …` で出して 1 で終わる（ホストの混み具合は時間を延ばす方向にしか働かないため、最小で判定する）。直し方は、往復をまとめる（`t.db.batch`）・並べる（`Promise.all`）か、計測した時間を書いたコメントつきで個別の上限を付けること。vitest の既定の上限は変えない。
+
+- 変わったファイルが無ければ `int-budget: 変わった結合テストなし` で 0。どの基準も見つからない（CI の浅い checkout など）ときは `int-budget: 基準のコミットが無いので全ての結合テストを測ります` を出して全部を測る。
+- CI の verify の job は `actions/checkout` を `fetch-depth: 0` で取り、`origin/$GITHUB_BASE_REF` が手元にあるので、PR で変わった結合テストだけを測る（浅い取得だと全部を測り、job の上限 30 分を超える）。
+- `node scripts/int-budget.mjs --all` で全部を測る。`src/shared/db/seed/seed.int.test.ts` と `scripts/slot.int.test.ts` は、どちらも計測した上限を持ち、測ると数分かかりバケットを触るので測らない。
+- 結果は `node_modules/.cache/int-budget/results.json`（reporter `scripts/int-budget-reporter.mjs` が書く）。
 
 ## 性能の基準
 
@@ -74,3 +100,15 @@ status: stable
 ## 手順を足す
 
 後の PBI は `STEPS` に 1 行足し、この表にも同じ行を足す。
+
+## CI の分け方
+
+[ADR-0068](../adr/0068-ci-shards-e2e-four-ways.md): CI の `verify` の job は `node scripts/verify.mjs --skip e2e` を流し、E2E は `e2e (1/4)`〜`e2e (4/4)` の 4 つの job が同時に流す（それぞれ `pnpm build` の後に `pnpm e2e --project chromium --shard <i>/4`。`e2e (4/4)` だけが続けて `pnpm e2e --project seed --no-deps` と `pnpm e2e --project exclusive --no-deps`）。失敗した shard は `playwright-report-<i>` を残す。手元の `node scripts/verify.mjs` は e2e を含めて全部流す。
+
+## DB の全体に書く E2E（exclusive）
+
+[ADR-0073](../adr/0073-e2e-that-write-the-whole-db-run-alone-last.md): DB の全体（ほかの worker が作った行）に書き込む E2E は、`*.exclusive.spec.ts` にする。`playwright.config.ts` の project `exclusive` だけがそれを読み、`chromium` と `seed` が終わった後に 1 人で走る（`pnpm e2e` の順は `chromium`、`seed`、`exclusive`）。CI では `e2e (4/4)` が `seed` の後に `pnpm e2e --project exclusive --no-deps` を流す。
+
+## ハーネスの差（harness-drift）
+
+[ADR-0072](../adr/0072-main-checkout-tracks-the-integration-branch.md): `node scripts/harness-drift.mjs <統合ブランチ>` は、main checkout の `HEAD` の `CLAUDE.md` と `.claude/` を `origin/<統合ブランチ>` と比べる（作業ツリーの未 commit の差は数えない）。同じなら 0、違えば `harness-drift: main checkout のハーネスが origin/<branch> と違います。main checkout で git switch <branch> してください` と違うファイルを（最大 20 行、残りは `ほか <n> 件`）出して 1、引数なし・`origin/<branch>` なし・git の失敗は 2。SessionStart の hook が `ci-gate` に続けて流す。verify の手順ではない。

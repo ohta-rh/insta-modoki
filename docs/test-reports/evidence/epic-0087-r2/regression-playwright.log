@@ -1,0 +1,27 @@
+
+Running 22 tests using 2 workers
+
+  ✓   2 [chrome] › e2e/a11y.spec.ts:8:3 › サインアップ で axe の重大・深刻な違反が 0 件 (516ms)
+  ✓   3 [chrome] › e2e/a11y.spec.ts:8:3 › ログイン で axe の重大・深刻な違反が 0 件 (441ms)
+  ✓   4 [chrome] › e2e/a11y.spec.ts:8:3 › ホームフィード で axe の重大・深刻な違反が 0 件 (615ms)
+  ✓   5 [chrome] › e2e/a11y.spec.ts:8:3 › プロフィール で axe の重大・深刻な違反が 0 件 (513ms)
+  ✓   6 [chrome] › e2e/a11y.spec.ts:8:3 › プロフィールの編集 で axe の重大・深刻な違反が 0 件 (480ms)
+  ✓   1 [chrome] › e2e/keyboard.spec.ts:83:1 › フォーカスされた要素の輪郭が 2px 以上 (3.1s)
+  ✓   7 [chrome] › e2e/a11y.spec.ts:8:3 › 投稿の作成 で axe の重大・深刻な違反が 0 件 (516ms)
+  ✓   8 [chrome] › e2e/keyboard.spec.ts:117:1 › モーダルの中でフォーカスが閉じ込められる (681ms)
+  ✓   9 [chrome] › e2e/a11y.spec.ts:8:3 › 投稿詳細 で axe の重大・深刻な違反が 0 件 (655ms)
+  ✓  10 [chrome] › e2e/keyboard.spec.ts:130:1 › Esc で閉じて開いた要素にフォーカスが戻る (461ms)
+  ✓  11 [chrome] › e2e/a11y.spec.ts:8:3 › フォロワーの一覧 で axe の重大・深刻な違反が 0 件 (552ms)
+  ✓  12 [chrome] › e2e/reduced-motion.spec.ts:34:1 › 視差効果を減らす設定のとき、動きが 0 秒になる (430ms)
+  ✓  14 [chrome] › e2e/reduced-motion.spec.ts:47:1 › 設定が無いときは動きがある (449ms)
+  ✓  13 [chrome] › e2e/a11y.spec.ts:16:1 › 投稿のモーダルで axe の重大・深刻な違反が 0 件 (851ms)
+  ✓  15 [chrome] › e2e/a11y.spec.ts:27:1 › いいねした人の一覧で axe の重大・深刻な違反が 0 件 (542ms)
+  ✓  16 [chrome] › e2e/keyboard.spec.ts:9:1 › サインアップから投稿・いいね・コメントまでを、キーボードだけで完了できる (1.3s)
+  ✓  17 [chrome] › e2e/a11y.spec.ts:38:1 › 操作できる要素が全て 44×44px 以上 (1.9s)
+  ✓  18 [chrome] › e2e/a11y.spec.ts:69:1 › 投稿の写真は全て空でない alt を持つ (416ms)
+  ✓  19 [chrome] › e2e/a11y.spec.ts:81:1 › 代替テキストが無い写真は位置と枚数つきの alt を持つ (234ms)
+  ✓  20 [chrome] › e2e/a11y.spec.ts:93:1 › いいねの状態が aria-pressed と形で伝わる (251ms)
+  ✓  21 [chrome] › e2e/a11y.spec.ts:107:1 › 画面ごとに h1 が 1 つ (1.7s)
+  ✓  22 [chrome] › e2e/a11y.spec.ts:116:1 › html の lang が ja (3.0s)
+
+  22 passed (15.2s)

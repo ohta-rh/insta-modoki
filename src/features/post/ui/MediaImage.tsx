@@ -13,10 +13,13 @@ export function MediaImage({
   media,
   alt,
   priority = false,
+  fill = false,
 }: {
   media: MediaView;
   alt: string;
   priority?: boolean;
+  /** On a wide screen the photo fills its box (letterboxed), for the two-column post (#94). */
+  fill?: boolean;
 }) {
   const placeholder = thumbhashDataUrl(media.thumbhash);
   const { w320, w640, w1080 } = media.srcset;
@@ -31,7 +34,7 @@ export function MediaImage({
       loading={priority ? 'eager' : 'lazy'}
       fetchPriority={priority ? 'high' : undefined}
       decoding="async"
-      className="block h-auto w-full bg-cover"
+      className={`block h-auto w-full bg-cover ${fill ? 'lg:h-full lg:object-contain' : ''}`}
       style={{
         aspectRatio: `${media.width} / ${media.height}`,
         backgroundImage: placeholder ? `url("${placeholder}")` : undefined,

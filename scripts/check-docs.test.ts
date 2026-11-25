@@ -167,6 +167,68 @@ describe('check-docs', () => {
     expect(code).toBe(1);
   });
 
+  describe('ADR numbers and the ADR index (#112)', () => {
+    const adr = `---\ntype: ADR\ntitle: 決定\ndescription: 決定の説明\n---\n\n# 決定\n`;
+    const entry = (n: string, file: string) => `* [ADR-${n}: 決定](${file}) - 採用\n`;
+    const index = (...entries: string[]) => `# ADR\n\n${entries.join('')}`;
+
+    it('two ADR files with the same number fail', () => {
+      const { code, lines } = run({
+        'adr/0061-a.md': adr,
+        'adr/0061-b.md': adr,
+        'adr/index.md': index(entry('0061', '0061-a.md'), entry('0061', '0061-b.md')),
+      });
+      expect(lines).toEqual([
+        'docs/adr: ADR の番号 0061 が 2 つあります: 0061-a.md, 0061-b.md',
+        'check-docs: 1 件のエラー',
+      ]);
+      expect(code).toBe(1);
+    });
+
+    it('an ADR missing from the index fails', () => {
+      const { code, lines } = run({
+        'adr/0001-a.md': adr,
+        'adr/0002-b.md': adr,
+        'adr/index.md': index(entry('0001', '0001-a.md')),
+      });
+      expect(lines).toEqual([
+        'docs/adr/index.md: 0002-b.md が索引にありません',
+        'check-docs: 1 件のエラー',
+      ]);
+      expect(code).toBe(1);
+    });
+
+    it('an ADR listed twice fails, a prose link does not count', () => {
+      const prose = '書き方は [ADR-0001](0001-a.md) と [t](t.md)。\n\n';
+      const ok = run({
+        'adr/0001-a.md': adr,
+        'adr/t.md': adr,
+        'adr/index.md': `# ADR\n\n${prose}${entry('0001', '0001-a.md')}`,
+      });
+      expect(ok.lines).toEqual(['check-docs: OK (4 件の文書)']);
+      expect(ok.code).toBe(0);
+
+      const { code, lines } = run({
+        'adr/0001-a.md': adr,
+        'adr/index.md': index(entry('0001', '0001-a.md'), entry('0001', '0001-a.md')),
+      });
+      expect(lines).toEqual([
+        'docs/adr/index.md: 0001-a.md が索引に 2 回あります',
+        'check-docs: 1 件のエラー',
+      ]);
+      expect(code).toBe(1);
+    });
+
+    it('an index entry pointing to a missing ADR fails', () => {
+      const { code, lines } = run({
+        'adr/0001-a.md': adr,
+        'adr/index.md': index(entry('0001', '0001-a.md'), entry('0009', '0009-gone.md')),
+      });
+      expect(lines).toContain('docs/adr/index.md: 0009-gone.md がありません');
+      expect(code).toBe(1);
+    });
+  });
+
   it('このリポジトリの docs/ は規則を満たす', () => {
     const lines: string[] = [];
     const code = main([join(import.meta.dirname, '..', 'docs')], {

@@ -12,10 +12,10 @@ import {
   type StorageClient,
   type StorageEnv,
 } from '../../../shared/storage';
+import { avatarFileKeys } from '../model/files';
 import { AVATAR_MESSAGE, parseUpdateProfile, type ProfileView } from '../model/schema';
 import { getProfile } from './get-profile';
 
-const VARIANTS = ['orig', 'w320', 'w640', 'w1080'] as const;
 /** A stored file may not be larger than a source photo is allowed to be. */
 const MAX_OBJECT_BYTES = 10_485_760;
 const KEY_TAIL = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -29,7 +29,7 @@ export type UpdateProfileDeps = {
 };
 
 const reselect = () => new AppError('VALIDATION', { message: AVATAR_MESSAGE });
-const filesOf = (key: string) => VARIANTS.map((name) => `${key}/${name}.webp`);
+const filesOf = avatarFileKeys;
 
 /**
  * A new icon must be in the caller's own area (`media/<user id>/<UUIDv7>`), used by no post and

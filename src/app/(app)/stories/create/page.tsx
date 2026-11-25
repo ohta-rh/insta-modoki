@@ -1,4 +1,4 @@
-import { StoryComposer } from '@/features/story';
+import { StoryComposer } from '@/features/story/ui';
 
 export default function CreateStoryPage() {
   return <StoryComposer />;

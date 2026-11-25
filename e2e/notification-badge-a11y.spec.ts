@@ -1,5 +1,5 @@
 import { expect, test as base, type Page } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
 import { seedUser, userRow } from './support/db';
 import { harness } from './support/harness';
@@ -8,12 +8,13 @@ import { waitForHydration } from './support/hydration';
 const LINK = '通知（未読 1 件）';
 const WIDTHS = [
   { width: 1280, height: 800, nav: 'side' },
+  { width: 1024, height: 800, nav: 'side' },
   { width: 375, height: 800, nav: 'bottom' },
 ] as const;
 
 /** A new user with one unread notification, on `/` with the badge shown. */
 async function withUnread(page: Page): Promise<void> {
-  const me = await signUpViaUi(page);
+  const me = await signInViaHarness(page);
   const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const actor = `e2e_b${stamp}`;
   seedUser(actor, `${actor}@example.com`);
@@ -61,7 +62,7 @@ base('未読の数は通知のリンクの名前だけで読み上げ、バッ�
 
 // Opening the notifications screen marks them read, so each width gets its own user.
 for (const { width, height, nav } of WIDTHS) {
-  base(`バッジの上を押しても通知の画面に移る（${width}px）`, async ({ page }) => {
+  base(`バッジの上を押しても通知が開く（${width}px）`, async ({ page }) => {
     base.setTimeout(90_000);
     await withUnread(page);
     await page.setViewportSize({ width, height });
@@ -69,7 +70,13 @@ for (const { width, height, nav } of WIDTHS) {
     await expect(badge).toBeVisible({ timeout: 15_000 });
     const box = (await badge.boundingBox())!;
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-    await expect(page).toHaveURL(/\/notifications$/);
+    if (nav === 'side') {
+      // The side navigation opens the panel beside it and stays on the page (#99).
+      await expect(page.getByRole('dialog', { name: '通知' })).toBeVisible();
+      await expect(page).not.toHaveURL(/\/notifications$/);
+    } else {
+      await expect(page).toHaveURL(/\/notifications$/);
+    }
   });
 }
 
@@ -85,5 +92,16 @@ base('バッジは通知のリンクの上の今と同じ場所に出る', async
     expect(badge.y).toBeGreaterThanOrEqual(link.y);
     expect(badge.x + badge.width).toBeLessThanOrEqual(link.x + link.width);
     expect(badge.y + badge.height).toBeLessThanOrEqual(link.y + link.height);
+    if (width === 1280) {
+      // The row's right end, vertically centered.
+      expect(link.x + link.width - (badge.x + badge.width), '1280px 右端').toBeLessThanOrEqual(16);
+      expect(Math.abs(badge.y + badge.height / 2 - (link.y + link.height / 2))).toBeLessThanOrEqual(
+        2,
+      );
+    } else {
+      // The icon's upper right: right of the link's center, in its upper half.
+      expect(badge.x, `${width}px`).toBeGreaterThan(link.x + link.width / 2);
+      expect(badge.y + badge.height / 2, `${width}px`).toBeLessThan(link.y + link.height / 2);
+    }
   }
 });

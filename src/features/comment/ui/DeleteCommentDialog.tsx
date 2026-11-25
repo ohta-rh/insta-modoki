@@ -49,7 +49,7 @@ export function DeleteCommentDialog({
         削除したコメントは元に戻せません。返信もまとめて消えます。
       </p>
       {error && (
-        <p role="alert" className="mt-3 text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="mt-3 text-[length:var(--font-size-sm)] text-danger">
           {error}
         </p>
       )}

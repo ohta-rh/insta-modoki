@@ -14,6 +14,11 @@
 * [ADR-0012: EPIC が完了したら実ブラウザで総合試験を行い、エビデンスを commit する](0012-epic-integrated-test-in-real-browser.md) - 採用
 * [ADR-0017: PR を求められたマイルストーンは統合ブランチに入れ、main への PR を 1 つ出す](0017-milestone-on-an-integration-branch-when-a-pr-is-requested.md) - 採用
 * [ADR-0015: PBI と EPIC はグローバルの write-pbi スキルの水準で書き、このリポジトリの DoR・DoD を写す](0015-pbis-follow-the-global-write-pbi-standard.md) - 採用
+* [ADR-0058: 結合テストの seed は他の結合テストと重ねず、verify の別の手順で後から流す](0058-seed-integration-test-runs-in-its-own-verify-step.md) - 採用
+* [ADR-0059: 結合テストは単独で上限の 25% 以内に収め、verify の int-budget で変わったファイルを測る](0059-integration-tests-stay-within-a-quarter-of-their-timeout.md) - 採用
+* [ADR-0060: 結合テストはスロットのバケットに作ったファイルを消して終わり、slot.mjs はバケットを 32 本並べた DELETE で空にする](0060-tests-clean-their-objects-and-slot-empties-buckets-in-parallel.md) - 採用
+* [ADR-0064: docs/log.md は union merge で統合する](0064-docs-log-merges-as-union.md) - 採用
+* [ADR-0066: 見た目の PBI は、狭い画面で長い利用者の文字の配置を AC にする](0066-visual-pbis-test-long-text-at-narrow-width.md) - 採用
 
 # 製品と計画
 
@@ -22,6 +27,14 @@
 
 # アーキテクチャ
 
+* [ADR-0056: UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする](0056-ui-follows-measured-web-reference-under-own-brand.md) - 採用
+* [ADR-0073: DB の全体に書き込む E2E は、exclusive の project で最後に単独で走らせる](0073-e2e-that-write-the-whole-db-run-alone-last.md) - 採用
+* [ADR-0072: main checkout は統合ブランチの上にいて、ハーネスの差は SessionStart で知らせる](0072-main-checkout-tracks-the-integration-branch.md) - 採用
+* [ADR-0071: 灰色の面の上の誤りの文字は、対比のための派生色 --color-danger-on-surface を使う](0071-danger-on-surface-for-contrast.md) - 採用
+* [ADR-0070: 手元の E2E も、落ちたテストの trace を残す](0070-local-e2e-keeps-traces-of-failures.md) - 採用
+* [ADR-0061: 作成のモーダルは、ルートのレイアウトの modal スロットの intercepting route で開く](0061-create-modal-intercepts-from-a-root-modal-slot.md) - 採用
+* [ADR-0062: verify は同じマシンで一度に 1 つだけ走り、確かめた HEAD を出力に残す](0062-verify-runs-one-at-a-time-and-records-head.md) - 採用
+* [ADR-0063: スロットの reset と drop は、Garage の削除の後始末が捌けてから戻る](0063-slot-reset-waits-for-garage-to-drain.md) - 採用
 * [ADR-0014: コードは機能ごとの slice（src/features/<name>/）と共有の部分（src/shared/）に分ける](0014-code-in-feature-slices.md) - 採用
 * [ADR-0050: 通知は SSE で画面へ押し出し、サーバーは 3 秒ごとに D1 を確認する（Durable Objects は使わない）](0050-notifications-via-sse-with-d1-checks.md) - 採用
 * [ADR-0054: ハイドレーション前に選ばれたファイルはマウント時に取り込み、選択は無効にしない](0054-pick-up-files-chosen-before-hydration-on-mount.md) - 採用
@@ -34,7 +47,7 @@
 * [ADR-0028: 最初のマイグレーションは制約名と空白の扱いを固定し、DB の結合テストは D1 のメモリで流して `_test` の名前の DB にしか繋がない](0028-first-migration-conventions-and-test-db.md) - 採用
 * [ADR-0024: verify は scripts/verify.mjs が 7 つの手順を固定の順に流し、単体テストの行カバレッジ 80% を基準にする](0024-verify-command-and-coverage-gate.md) - 採用
 * [ADR-0026: CSP は src/proxy.ts が要求ごとの nonce で付け、静的ファイルは public/_headers で付ける](0026-csp-with-nonce-from-proxy-and-headers-file.md) - 採用
-* [ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする](0027-ci-runs-verify-and-docs-check.md) - 採用
+* [ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする](0027-ci-runs-verify-and-docs-check.md) - 置き換え: ADR-0068
 * [ADR-0029: サインアップは利用者・パスワード・セッションを 1 つの db.batch で書き、Better Auth の signUpEmail とその HTTP ハンドラーは使わない](0029-signup-writes-rows-in-one-db-batch.md) - 採用
 * [ADR-0030: 認証は Better Auth と PBKDF2-SHA256 + pepper のまま、セッションは 30 日・延長なしにし、users に email_verified を足す](0030-better-auth-session-and-rate-limit-rules.md) - 採用（ADR-0020 を置き換える）
 * [ADR-0031: ログインが必要な画面はルートグループ (app) に置き、そのレイアウトが未ログインを /accounts/login へ redirect する](0031-login-only-screens-in-app-route-group.md) - 採用
@@ -54,7 +67,13 @@
 * [ADR-0046: 性能の基準は THRESHOLDS に 1 か所で定め、初期 JS は verify の既定の手順で、Lighthouse・INP・フィード API の p95 は --with-perf と main への push の CI で検査する](0046-performance-budget-in-verify-and-ci.md) - 採用
 * [ADR-0048: 確かめた AC はその場で issue のチェックを付け、PASS した EPIC の画面に後から触れたら総合試験をやり直す](0048-tick-ac-on-evidence-and-retest-epics-after-later-changes.md) - 採用
 * [ADR-0052: マイルストーンの順番を M1 → M3（Phase 2 をローカルで）→ M2（Cloudflare で公開）→ M4 に変える](0052-phase-2-before-cloudflare-publication.md) - 採用
-* [ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる](0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) - 採用
+* [ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる](0053-slice-may-add-ui-entry-to-keep-components-out-of-index.md) - 置き換え: ADR-0057
+* [ADR-0057: slice の入口 index.ts は 'use client' の部品を公開せず、画面の部品は ui/index.ts から公開する](0057-slice-index-exports-no-client-components.md) - 採用
+* [ADR-0055: E2E のサーバーは招待コードを必須にせず、E2E 専用のリクエストヘッダーで、そのリクエストだけ必須にする](0055-e2e-invite-required-by-request-header.md) - 採用
+* [ADR-0065: サブエージェントの報告は、確認ごとに rc の行と結果の行を写し、道具が起動しなければ止まる](0065-agent-reports-carry-rc-and-result-lines.md) - 採用
+* [ADR-0067: 統合ブランチの CI が赤いときは、ほかの作業より先に直す。ci-gate で機械的に確かめる](0067-red-integration-ci-comes-first.md) - 採用
+* [ADR-0068: CI の E2E は 4 つの job に分けて verify と同時に流す（ADR-0027 を一部置き換える）](0068-ci-shards-e2e-four-ways.md) - 採用
+* [ADR-0069: E2E は、サインアップを確かめない場面では E2E 用の窓口の seedSession でログイン済みのユーザーを用意する](0069-e2e-signs-in-through-the-harness.md) - 採用
 
 # ひな形
 

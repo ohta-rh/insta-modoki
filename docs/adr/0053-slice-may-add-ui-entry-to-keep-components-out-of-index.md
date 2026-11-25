@@ -3,12 +3,13 @@ type: ADR
 title: "ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる"
 description: "他の slice のサーバー処理が import する index.ts に、サーバー専用の画面などの部品を載せると、クライアントの import の連鎖に入って build が落ちる。そのときは index.ts を処理の入口だけにし、画面と部品は ui/index.ts から、ルートとルートのレイアウトが import する。"
 tags: [architecture]
-status: stable
+status: deprecated
+superseded_by: 0057-slice-index-exports-no-client-components.md
 ---
 
 # ADR-0053: slice は、他の slice が import する index.ts に部品を入れられないとき、ルートが使う部品の入口 ui/index.ts を別に持てる
 
-- ステータス: 採用
+- ステータス: 置き換え: [ADR-0057](0057-slice-index-exports-no-client-components.md)
 - 日付: 2026-11-22
 - 決定者: エージェント（委任された判断。Director が採番）
 - 関連: [ADR-0014](0014-code-in-feature-slices.md)、#50

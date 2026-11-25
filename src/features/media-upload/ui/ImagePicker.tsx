@@ -10,7 +10,7 @@ const BUTTON =
   'min-h-[var(--tap-min)] rounded-lg bg-indigo px-4 font-bold text-white disabled:opacity-50';
 const SECONDARY =
   'min-h-[var(--tap-min)] rounded-lg border border-border px-4 font-bold disabled:opacity-50';
-const ERROR = 'text-[length:var(--font-size-sm)] text-red-700';
+const ERROR = 'text-[length:var(--font-size-sm)] text-danger';
 
 type Rejection = { name: string; message: string };
 
@@ -102,11 +102,13 @@ export function ImagePicker({ onUploaded }: ImagePickerProps) {
         </button>
       </div>
       {rejections.length > 0 && (
-        <ul role="alert" className={`${ERROR} list-disc pl-5`}>
-          {rejections.map((r, i) => (
-            <li key={i}>{`${r.name}: ${r.message}`}</li>
-          ))}
-        </ul>
+        <div role="alert">
+          <ul className={`${ERROR} list-disc pl-5`}>
+            {rejections.map((r, i) => (
+              <li key={i}>{`${r.name}: ${r.message}`}</li>
+            ))}
+          </ul>
+        </div>
       )}
       {failure !== null && (
         <p role="alert" className={ERROR}>

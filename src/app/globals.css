@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 @import '../shared/ui/tokens.css';
+@import '../shared/ui/shell.css';
+@import '../features/post/ui/post.css';
 
 /* The heart that flashes over a photo after a double tap (it is not rendered with reduced motion). */
 @keyframes like-burst {
@@ -43,12 +45,44 @@
   }
 }
 
+/* From 1160px (--breakpoint-aside) the home's right column carries the footer; the page's own is
+   hidden then, so the notice shows once. */
+@media (min-width: 1160px) {
+  body:has([data-aside-footer]) [data-shell-footer] {
+    display: none;
+  }
+}
+
 @layer base {
   html {
     font-family: var(--font-family);
     font-size: var(--font-size-md);
     background: var(--color-bg);
     color: var(--color-text);
+  }
+
+  body {
+    font-size: var(--font-size-sm);
+    line-height: var(--leading-sm);
+    color: var(--color-text);
+  }
+
+  /* A component that sets its own size through a font-size token gets the matching line height,
+     so it does not inherit body's 18px (utilities such as leading-* still win: they are in a later layer). */
+  [class~='text-[length:var(--font-size-xs)]'] {
+    line-height: var(--leading-xs);
+  }
+  [class~='text-[length:var(--font-size-sm)]'] {
+    line-height: var(--leading-sm);
+  }
+  [class~='text-[length:var(--font-size-md)]'] {
+    line-height: var(--leading-md);
+  }
+  [class~='text-[length:var(--font-size-lg)]'] {
+    line-height: var(--leading-lg);
+  }
+  [class~='text-[length:var(--font-size-xl)]'] {
+    line-height: var(--leading-xl);
   }
 
   :focus-visible {

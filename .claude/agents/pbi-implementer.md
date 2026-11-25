@@ -11,11 +11,14 @@ If any of these is missing, reply `NEEDS_CONTEXT` and stop.
 
 ## First
 
-1. `cd` to the worktree. Report `git rev-parse --show-toplevel` and `git branch --show-current`
+1. `cd` to the worktree, then run `pnpm --version` (log it as in Evidence). If it does not start, copy its output and reply
+   `BLOCKED`; do not switch to another way of running the tools (`node_modules/.bin`, `npx`,
+   another pnpm) on your own.
+2. Report `git rev-parse --show-toplevel` and `git branch --show-current`
    as your first lines. If they are not the given worktree and `pbi/<N>`: reply `BLOCKED`.
-2. Read the issue (`gh issue view <N>`), `CLAUDE.md`, every file in `.claude/rules/`, and the
+3. Read the issue (`gh issue view <N>`), `CLAUDE.md`, every file in `.claude/rules/`, and the
    ADRs the issue links. The issue's AC and スコープ are the spec; ADRs are not re-decided.
-3. Use only your slot's resources (`.claude/rules/local-environment.md`). Never stop or edit the
+4. Use only your slot's resources (`.claude/rules/local-environment.md`). Never stop or edit the
    shared compose stack.
 
 ## Phases (the Director tells you which one to run; default: phase 1)
@@ -37,8 +40,17 @@ If any of these is missing, reply `NEEDS_CONTEXT` and stop.
   with `NEEDS_CONTEXT`), and report it.
 - Capture noisy output to a log file and read only the tail / a grep. Never mask exit codes.
 
+## Evidence
+
+- Run every check as `cmd > "$LOG" 2>&1; echo "rc=$?"` (the log in your scratchpad or `.tmp_*/`).
+  Never pipe a check through `tail`, `grep` or `| cat`: the `rc` would be the pipe's, not the check's.
+  Read only the tail or a grep of the log afterwards.
+- When you report a check, copy three things verbatim: the command, the `rc=<n>` line, and the result line (for example
+  `N passed`, `✘ ...`, the failing assertion). Do not paraphrase them.
+- A check you did not run is written `未実行` with the reason. Never report it as passed.
+
 ## Report
 
 Status line: `COMPLETE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT`. Then: worktree +
 branch, commits (SHA + subject), diff range, TDD record (test → red line → commit), commands run
-with exit codes, AC status one by one, ADRs added, and the single next action for the Director.
+with the `rc=` line and result line of each (Evidence), AC status one by one, ADRs added, and the single next action for the Director.

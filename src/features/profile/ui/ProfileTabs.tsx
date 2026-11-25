@@ -1,10 +1,11 @@
 'use client';
 
 import { useRef, type KeyboardEvent, type ReactNode } from 'react';
+import { BookmarkIcon, GridIcon } from '../../../shared/ui/icons';
 import type { ProfileTab } from '../model/tab';
 
 const TAB_CLASS =
-  'flex min-h-[var(--tap-min)] flex-1 items-center justify-center border-t-2 text-[length:var(--font-size-sm)] font-bold';
+  'flex h-11 w-16 items-center justify-center border-b-2 max-nav:w-auto max-nav:flex-1';
 
 /**
  * The profile's tabs: 投稿, and 保存済み for the owner only. Each tab is a link, so it opens
@@ -23,9 +24,18 @@ export function ProfileTabs({
   children: ReactNode;
 }) {
   const list = useRef<HTMLDivElement>(null);
-  const tabs: { id: ProfileTab; label: string; href: string }[] = [
-    { id: 'posts', label: '投稿', href: `/${username}` },
-    ...(isMe ? [{ id: 'saved' as const, label: '保存済み', href: `/${username}?tab=saved` }] : []),
+  const tabs: { id: ProfileTab; label: string; href: string; Icon: typeof GridIcon }[] = [
+    { id: 'posts', label: '投稿', href: `/${username}`, Icon: GridIcon },
+    ...(isMe
+      ? [
+          {
+            id: 'saved' as const,
+            label: '保存済み',
+            href: `/${username}?tab=saved`,
+            Icon: BookmarkIcon,
+          },
+        ]
+      : []),
   ];
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -45,7 +55,7 @@ export function ProfileTabs({
         role="tablist"
         aria-label="プロフィールの表示"
         onKeyDown={onKeyDown}
-        className="flex border-t border-border"
+        className="flex h-[45px] justify-center gap-[60px] border-b border-border max-nav:gap-0"
       >
         {tabs.map((tab) => {
           const selected = tab.id === current;
@@ -55,11 +65,12 @@ export function ProfileTabs({
               id={`profile-tab-${tab.id}`}
               role="tab"
               href={tab.href}
+              aria-label={tab.label}
               aria-selected={selected}
               tabIndex={selected ? 0 : -1}
               className={`${TAB_CLASS} ${selected ? 'border-text text-text' : 'border-transparent text-text-secondary'}`}
             >
-              {tab.label}
+              <tab.Icon size={24} filled={selected} />
             </a>
           );
         })}

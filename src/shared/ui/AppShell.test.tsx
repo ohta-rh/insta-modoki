@@ -21,10 +21,11 @@ describe('AppShell', () => {
     expect(html).toContain('href="/accounts/login"');
   });
 
-  it('スキップリンク → サイドナビ → main → フッター → 下部ナビの順に描く', () => {
+  it('スキップリンク → 上部バー → サイドナビ → main → フッター → 下部ナビの順に描く', () => {
     const html = render();
     const order = [
       'href="#main"',
+      'data-shell-top-bar',
       'data-nav="side"',
       '<main id="main"',
       FOOTER_NOTICE,
@@ -35,8 +36,66 @@ describe('AppShell', () => {
   });
 
   it('現在の項目だけに aria-current="page"（2 つのナビで各 1 つ）', () => {
-    const html = render({ currentPath: '/explore/search' });
+    const html = render({ currentPath: '/explore' });
     expect(html.match(/aria-current="page"/g)).toHaveLength(2);
+  });
+
+  it('検索はサイドナビだけにあり、下部タブは 5 項目', () => {
+    const html = render({ currentPath: '/explore/search' });
+    expect(html.match(/href="\/explore\/search"/g)).toHaveLength(1);
+    expect(html.match(/aria-current="page"/g)).toHaveLength(1);
+    const bottomNav = html.slice(html.indexOf('data-nav="bottom"'));
+    expect(bottomNav.match(/<a /g)).toHaveLength(5);
+    expect(html.slice(html.indexOf('data-nav="side"')).split('data-nav="bottom"')[0]).toContain(
+      'href="/explore/search"',
+    );
+  });
+
+  it('今の項目は塗りつぶしのアイコン、他は輪郭で、項目に線のクラスが無い', () => {
+    const html = render();
+    const side = html.slice(html.indexOf('data-nav="side"'), html.indexOf('<main'));
+    expect(side.match(/data-filled="true"/g)).toHaveLength(1);
+    expect(html).not.toMatch(/border-l-2|border-t-2/);
+  });
+
+  it('viewer がいるときだけ、その他のボタンとメニューと上部バーを描く', () => {
+    const html = render();
+    expect(html.match(/popovertarget="more-menu"/gi)).toHaveLength(2);
+    expect(html).toContain('id="more-menu"');
+    expect(html).toContain('href="/accounts/edit"');
+    expect(html).toContain('href="/accounts/logout"');
+    expect(html).toContain('data-shell-top-bar');
+    const none = render({ viewer: null });
+    expect(none.toLowerCase()).not.toContain('popovertarget');
+    expect(none).not.toContain('more-menu');
+    expect(none).not.toContain('data-shell-top-bar');
+    const hidden = render({ hideNav: true });
+    expect(hidden).not.toContain('data-shell-top-bar');
+    expect(hidden).not.toContain('more-menu');
+  });
+
+  it('ログインしていないときは公開の上部バーだけを描く', () => {
+    const html = render({ viewer: null });
+    expect(html).toContain('<header data-public-bar');
+    expect(html).toContain('href="/accounts/login"');
+    expect(html).toContain('href="/accounts/signup"');
+    expect(html).toContain('href="/"');
+    expect(html).not.toContain('data-nav="side"');
+    expect(html).not.toContain('data-nav="bottom"');
+    expect(html).not.toContain('data-shell-top-bar');
+    expect(html).toContain('<main id="main"');
+    // A logged-in viewer gets the nav and none of the public bar.
+    expect(render()).not.toContain('data-public-bar');
+    // The sign-up and log-in screens draw no bar either.
+    const hidden = render({ viewer: null, hideNav: true });
+    expect(hidden).not.toContain('data-public-bar');
+    expect(hidden).not.toContain('data-nav=');
+  });
+
+  it('main は画面が広げられる（data-page-width="wide"）、フッターに印がある', () => {
+    const html = render();
+    expect(html).toMatch(/<main id="main" class="[^"]*has-\[\[data-page-width=wide\]\]:max-w-none/);
+    expect(html).toContain('<footer data-shell-footer');
   });
 
   it('hideNav のときはナビを描かず、スキップリンクと本文とフッターは残す', () => {
@@ -66,11 +125,36 @@ describe('AppShell', () => {
     const html = render({ badges: { notifications: <b>BADGE</b> } });
     // Each navigation: <div class="relative ..."><a ...>…<span>通知</span></a><span class="pointer-events-none absolute ..."><b>BADGE</b></span></div>
     const wrapped = html.match(
-      /<div class="relative[^"]*"><a [^>]*href="\/notifications"[^>]*>(?:(?!<\/a>).)*<span>通知<\/span><\/a><span class="pointer-events-none absolute [^"]*"><b>BADGE<\/b><\/span><\/div>/g,
+      /<div class="relative[^"]*"><a [^>]*href="\/notifications"[^>]*>(?:(?!<\/a>).)*<span[^>]*>通知<\/span><\/a><span class="pointer-events-none absolute [^"]*"><b>BADGE<\/b><\/span><\/div>/g,
     );
     expect(wrapped).toHaveLength(2);
     // Nothing of the badge inside any link.
     for (const a of html.match(/<a [^>]*>.*?<\/a>/g) ?? []) expect(a).not.toContain('BADGE');
+  });
+
+  it('panels が無ければ検索は通常のリンクのまま', () => {
+    const html = render();
+    expect(html).toContain('href="/explore/search"');
+    expect(html).not.toContain('aria-expanded="');
+    expect(html).not.toContain('id="side-panel"');
+    expect(html).not.toContain('data-panel');
+  });
+
+  it('panels を渡すと検索のリンクに aria-expanded と data-panel が付き、パネルがナビの直後に出る', () => {
+    const html = render({
+      panels: { search: { title: '検索', content: <i>CONTENT</i> } },
+    });
+    expect(html).toMatch(/<a [^>]*data-panel="search"[^>]*aria-expanded="false"/);
+    expect(html.indexOf('id="side-panel"')).toBeGreaterThan(html.indexOf('</nav>'));
+    expect(html.indexOf('id="side-panel"')).toBeLessThan(html.indexOf('<main'));
+    expect(html).not.toContain('CONTENT');
+    const opened = render({
+      panels: { search: { title: '検索', content: <i>CONTENT</i> } },
+      openPanel: 'search',
+    });
+    expect(opened).toContain('CONTENT');
+    expect(opened).toMatch(/data-panel="search"[^>]*aria-expanded="true"/);
+    expect(opened).toContain('data-panel-open');
   });
 
   it('linkAs を渡したときだけその項目の <a> を差し替える', () => {

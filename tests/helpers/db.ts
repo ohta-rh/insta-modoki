@@ -15,6 +15,8 @@ const TABLES = [
   'story_views',
   'stories',
   'bookmarks',
+  'invites',
+  'admin_actions',
   'likes',
   'follows',
   'comments',

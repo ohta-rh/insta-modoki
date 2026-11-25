@@ -3,8 +3,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { applyMigrations } from '../../../../tests/helpers/db';
 import { headObject, loadStorageEnv } from '../../../../tests/helpers/storage';
 import { verifyPassword } from '../../../features/auth/model/password';
-import { type StorageEnv } from '../../storage/client';
-import { runSeed, type SeedD1, type SeedEnv } from './seed';
+import { getStorageClient, type StorageEnv } from '../../storage/client';
+import { listObjects } from '../../storage/list';
+import { createStore } from './store';
+import { removeSeed, runSeed, type SeedD1, type SeedEnv } from './seed';
 
 const SUFFIX = '@seed.invalid';
 const SEED_USERS = `SELECT id FROM users WHERE email LIKE '%${SUFFIX}'`;
@@ -13,11 +15,45 @@ const SEED_POSTS = `SELECT id FROM posts WHERE author_id IN (${SEED_USERS})`;
 let proxy: Awaited<ReturnType<typeof getPlatformProxy<{ DB: SeedD1 }>>>;
 let storage: StorageEnv;
 let env: SeedEnv;
+let objectsBefore = 0;
+let benchLastKey = '';
 const demoPassword = `p${crypto.randomUUID()}`;
 
 type Counter = { n: number };
 const one = async (sql: string): Promise<number> => (await env.DB.prepare(sql).first<Counter>())!.n;
 const rows = async <T>(sql: string): Promise<T[]> => (await env.DB.prepare(sql).all<T>()).results;
+
+/** Counts every object in the slot's bucket, a page of 1,000 at a time. */
+async function countObjects(): Promise<number> {
+  const client = getStorageClient(storage);
+  let n = 0;
+  let startAfter: string | undefined;
+  for (;;) {
+    const page = await listObjects(client, { prefix: '', startAfter, maxKeys: 1000 });
+    n += page.objects.length;
+    if (!page.isTruncated) return n;
+    startAfter = page.objects.at(-1)!.key;
+  }
+}
+
+/**
+ * The trigger above deletes posts (and their media rows) after their files were written, so
+ * `removeSeed` cannot find those files by key: list them by the seed users' prefix and delete them.
+ */
+async function removeOrphanFiles(): Promise<void> {
+  const client = getStorageClient(storage);
+  const store = createStore(env);
+  for (const { id } of await rows<{ id: string }>(
+    `SELECT id FROM users WHERE email LIKE '%${SUFFIX}'`,
+  )) {
+    for (let startAfter: string | undefined; ;) {
+      const page = await listObjects(client, { prefix: `media/${id}/`, startAfter, maxKeys: 1000 });
+      await store.remove(page.objects.map((o) => o.key));
+      if (!page.isTruncated) break;
+      startAfter = page.objects.at(-1)!.key;
+    }
+  }
+}
 
 async function seed(profile: 'demo' | 'bench', extra: Partial<Parameters<typeof runSeed>[1]> = {}) {
   const lines: string[] = [];
@@ -34,6 +70,7 @@ beforeAll(async () => {
   proxy = await getPlatformProxy<{ DB: SeedD1 }>({ persist: false });
   await applyMigrations(proxy.env.DB as never);
   storage = await loadStorageEnv();
+  objectsBefore = await countObjects();
   env = {
     ...storage,
     DB: proxy.env.DB,
@@ -209,6 +246,7 @@ describe('seed の数の確認', () => {
       expect(lines.at(-1)).toBe('seed: FAIL users=6 posts=17');
     } finally {
       await env.DB.prepare('DROP TRIGGER seed_test_drop_post').run();
+      await removeOrphanFiles();
     }
   }, 300_000);
 });
@@ -226,6 +264,7 @@ describe('seed:bench', () => {
     const [{ k }] = (await rows<{ k: string }>(
       'SELECT storage_key AS k FROM media ORDER BY storage_key DESC LIMIT 1',
     )) as [{ k: string }];
+    benchLastKey = k;
     for (const name of ['orig', 'w320', 'w640', 'w1080']) {
       expect(await headObject(storage, `${k}/${name}.webp`)).not.toBeNull();
     }
@@ -235,5 +274,16 @@ describe('seed:bench', () => {
       ),
     ).toBe(100);
     // Measured: 21 s alone, 41-61 s in CI, over 204 s on a loaded host (2026-11-22); 600 s leaves headroom.
+  }, 600_000);
+});
+
+describe('seed の後片付け', () => {
+  // 62,324 deletes, 16 at a time (store.ts:10): 1.8-3.6 ms each measured on 2026-11-23, 2-4 min; 600 s leaves headroom.
+  it('シードで作った利用者と、そのファイルをバケットから消す', async () => {
+    expect(benchLastKey).not.toBe('');
+    await removeSeed(env.DB, createStore(env));
+    expect(await one('SELECT count(*) AS n FROM media')).toBe(0);
+    expect(await headObject(storage, `${benchLastKey}/orig.webp`)).toBeNull();
+    expect(await countObjects()).toBeLessThanOrEqual(objectsBefore);
   }, 600_000);
 });

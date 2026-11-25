@@ -4,4 +4,3 @@ export { unsavePost } from './api/unsave-post';
 export { listSavedPosts } from './api/list-saved-posts';
 export { listSavedPostsInput, saveInput, SAVED_PAGE_SIZE, type SaveResult } from './model/schema';
 export { listSavedPostsAction, type SavedPostsActionResult } from './api/actions';
-export { SaveButton } from './ui/SaveButton';

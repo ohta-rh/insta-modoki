@@ -14,6 +14,7 @@ export const MESSAGES = {
   password: 'パスワードは 8〜72 字で入力してください',
   loginEmail: 'メールアドレスを入力してください',
   loginPassword: 'パスワードを入力してください',
+  inviteCodeFormat: '招待コードが正しくありません',
 } as const;
 
 const USERNAME_SHAPE = /^[a-z0-9_]([a-z0-9._]*[a-z0-9_])?$/;
@@ -68,7 +69,15 @@ const loginPassword = z
 
 const logInSchema = z.object({ email: loginEmail, password: loginPassword });
 
-const signUpSchema = z.object({ email, username, displayName, password });
+/** Trimmed and upper-cased; blank counts as not given (the caller decides whether that is allowed). */
+const inviteCode = z
+  .string({ error: MESSAGES.inviteCodeFormat })
+  .max(100, MESSAGES.inviteCodeFormat)
+  .transform((v) => v.trim().toUpperCase())
+  .optional()
+  .transform((v) => (v === undefined || v === '' ? undefined : v));
+
+const signUpSchema = z.object({ email, username, displayName, password, inviteCode });
 const usernameOnlySchema = z.object({ username });
 
 export type SignUpInput = z.output<typeof signUpSchema>;

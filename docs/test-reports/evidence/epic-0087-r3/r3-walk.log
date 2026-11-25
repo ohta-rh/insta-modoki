@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ✓  1 .tmp_epic87r3/r3.spec.ts:90:1 › seed (8.6s)
+  ✓  2 .tmp_epic87r3/r3.spec.ts:137:3 › signed-in walk 1280 (22.0s)
+  ✓  3 .tmp_epic87r3/r3.spec.ts:137:3 › signed-in walk 1024 (19.2s)
+  ✓  4 .tmp_epic87r3/r3.spec.ts:137:3 › signed-in walk 375 (15.7s)
+  ✓  5 .tmp_epic87r3/r3.spec.ts:443:1 › keyboard, focus ring and reduced motion (AC-10) (9.0s)
+  ✓  6 .tmp_epic87r3/r3.spec.ts:508:1 › anonymous: login, signup, public pages (AC-8, AC-11) (9.6s)
+
+  6 passed (1.4m)

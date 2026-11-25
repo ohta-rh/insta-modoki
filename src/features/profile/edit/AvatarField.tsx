@@ -103,7 +103,7 @@ export function AvatarField({
           アイコンを変更
         </label>
         {error !== null && (
-          <p role="alert" className="text-[length:var(--font-size-sm)] text-red-700">
+          <p role="alert" className="text-[length:var(--font-size-sm)] text-danger">
             {error}
           </p>
         )}

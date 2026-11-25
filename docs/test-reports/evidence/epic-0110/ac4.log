@@ -1,0 +1,26 @@
+$ cat .gitattributes
+docs/log.md merge=union
+$ git rebase a   (on branch b)
+Rebasing (1/1)Successfully rebased and updated refs/heads/b.
+rc=0
+$ cat docs/log.md
+# Log
+
+## 2026-11-24
+
+- base entry
+- entry from branch a
+- entry from branch b
+## control: same steps without merge=union
+$ git rebase a   (on branch c, union disabled)
+Rebasing (1/1)warning: Cannot merge binary files: docs/log.md (HEAD vs. 274ee01 (c))
+Auto-merging docs/log.md
+CONFLICT (content): Merge conflict in docs/log.md
+error: could not apply 274ee01... c
+hint: Resolve all conflicts manually, mark them as resolved with
+hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
+hint: You can instead skip this commit: run "git rebase --skip".
+hint: To abort and get back to the state before "git rebase", run "git rebase --abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
+Could not apply 274ee01... # c
+rc=1

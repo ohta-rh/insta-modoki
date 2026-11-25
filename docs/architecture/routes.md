@@ -18,11 +18,12 @@ status: stable
 | `/accounts/signup` / `/accounts/login` | サインアップ / ログイン | 不要（ログイン済みは `/` へ） | M1 |
 | `/accounts/logout` | ログアウトの確認 | 要 | M1 |
 | `/accounts/edit` | プロフィールの編集 | 要 | M1 |
-| `/create` | 投稿の作成 | 要 | M1 |
+| `/create` | 投稿の作成。ナビの「投稿」から開くと、見ている画面の上にモーダル（選ぶ → 切り取る → キャプションの 3 段）で重なる（intercepting route。直接開く・再読み込み・スクリプトの前は 1 ページのフォーム。[ADR-0061](../adr/0061-create-modal-intercepts-from-a-root-modal-slot.md)） | 要 | M1 |
 | `/p/[postId]` | 投稿詳細 | 不要 | M1 |
 | `/[username]` | プロフィール。タブは「投稿」と、本人だけの「保存済み」（`?tab=saved`。本人以外・他の値は「投稿」になり、保存は読まない）。グリッドの投稿を押すと `/p/[postId]` がモーダルで開く（intercepting route。直接開く・再読み込みは通常の投稿詳細。[ADR-0043](../adr/0043-profile-grid-modal-by-intercepting-route.md)） | 不要 | M1 |
 | `/[username]/followers` / `/[username]/following` | フォロワー / フォロー中の一覧 | 不要 | M1 |
-| `/admin` | 管理（招待コード・削除・通報） | 管理者 | M2 |
+| `/admin` | 管理。タブ「投稿」「利用者」（`role="tablist"`）に 20 件ずつの一覧と「削除」（確認の `<dialog>` つき）、`/admin/invites` へのリンク。管理者でない利用者は「ページが見つかりません」（存在を知らせない）、未ログインは `/accounts/login` へ。通報は M4 | 管理者 | M2 |
+| `/admin/invites` | 招待コードの管理（発行・一覧・コピー・失効。管理者でない利用者は「ページが見つかりません」） | 管理者 | M2 |
 | `/explore` / `/explore/search` / `/explore/tags/[tag]` | 発見 / 検索 / ハッシュタグ | 要 | M3 |
 | `/notifications` | 通知 | 要 | M3 |
 | `/stories/create` / `/stories/[username]` | ストーリーの投稿 / ビューア（ホームなど `(app)` の画面から開くとモーダルで重なる（intercepting route。直接開く・再読み込みは全画面）） | 要 | M3 |
@@ -42,10 +43,17 @@ status: stable
 
 | 処理 | slice | 入力 | 成功 | 主なエラー |
 |---|---|---|---|---|
-| `signUp` | auth | email, username, displayName, password（8〜72 字）, inviteCode（M2〜） | セッションを作り `{ username }` | VALIDATION、CONFLICT（`username` / `email`）、RATE_LIMITED |
+| `signUp` | auth | email, username, displayName, password（8〜72 字）, inviteCode（M2〜。環境変数 `INVITE_REQUIRED` が `true` のとき必須、そうでなければ省略可で、付いていれば同じ検証。前後の空白を除き大文字にする） | セッションを作り `{ username }` | VALIDATION（`inviteCode`: 不明・失効・期限切れ・使い切り・未入力）、CONFLICT（`username` / `email`）、RATE_LIMITED |
 | `checkUsername` | auth | username | `{ available: boolean }` | VALIDATION |
 | `logIn` | auth | email, password | セッションを作る | UNAUTHENTICATED（文言は 1 つ）、RATE_LIMITED |
 | `logOut` | auth | – | セッションを消す | – |
+| `createInvite` | invite | maxUses（1〜100 の整数）, expiresInDays?（1〜90 の整数、既定 7） | `InviteView`（`code`・`maxUses`・`usedCount`・`expiresAt`・`revokedAt`・`createdAt`・`status`） | UNAUTHENTICATED、FORBIDDEN（管理者のみ）、VALIDATION |
+| `listInvites` | invite | cursor? | `Page<InviteView>`（20 件、新しい発行順） | UNAUTHENTICATED、FORBIDDEN、VALIDATION |
+| `revokeInvite` | invite | code | `{ revoked: true }`（失効済みでも同じ。`revoked_at` は最初の時刻のまま） | UNAUTHENTICATED、FORBIDDEN、VALIDATION、NOT_FOUND |
+| `adminDeletePost` | admin | postId | `{ deleted: true }`（行と、media・likes・comments の連鎖、ファイルを消す。`admin_actions` の行を同じ batch で足す。ファイルの削除が失敗しても行は戻さず `storage_orphans` に記録する） | UNAUTHENTICATED、FORBIDDEN（`users.role` が `'admin'` でない）、NOT_FOUND（無い・UUID でない）、VALIDATION（余計な項目） |
+| `adminDeleteUser` | admin | username（小文字にしてから引く） | `{ deleted: true }`（利用者の行・投稿・media・いいね・コメント・フォロー・セッション・ストーリー・通知・保存と、写真・ストーリー・アイコンのファイルを消す。触れられた他人の投稿の `like_count` と `comment_count` は実際の行の数に数え直す。`admin_actions` の行を同じ batch で足す） | UNAUTHENTICATED、FORBIDDEN（管理者でない・自分・別の管理者）、NOT_FOUND、VALIDATION（余計な項目） |
+| `listAdminPosts` | admin | cursor? | `Page<AdminPostRow>`（20 件、新しい順。`{ id, authorUsername, captionExcerpt（先頭 50 字）, createdAt }`） | UNAUTHENTICATED、FORBIDDEN、VALIDATION（壊れたカーソル・余計な項目） |
+| `listAdminUsers` | admin | query?（ユーザー名の前方一致。小文字にして、`%` `_` は文字として扱う）, cursor? | `Page<AdminUserRow>`（20 件、新しい登録順。`{ username, displayName, role, postCount, createdAt }`） | UNAUTHENTICATED、FORBIDDEN、VALIDATION |
 | `getProfile` | profile | username | `ProfileView`（[conventions.md](conventions.md)） | NOT_FOUND |
 | `listProfilePosts` | profile | username, cursor? | `Page<PostThumb>`（12 件） | NOT_FOUND |
 | `updateProfile` | profile | displayName, bio, avatarKey? | `ProfileView`（`avatarKey` があれば、`createPost` と同じ所有の検査の後に `HEAD` で `image/webp` と大きさを確かめる） | UNAUTHENTICATED、VALIDATION |
@@ -70,6 +78,7 @@ status: stable
 | `deleteComment` | comment | commentId | `{ deleted: true }`（親を消すと返信も消え、`comment_count` は消えた行の数だけ減る） | UNAUTHENTICATED、FORBIDDEN（本人でも投稿者でもない）、NOT_FOUND |
 | `follow` / `unfollow` | follow | username | `{ following, followerCount }`（何度呼んでも同じ結果） | UNAUTHENTICATED、VALIDATION（自分自身）、NOT_FOUND |
 | `listFollowers` / `listFollowing` | follow | username, cursor? | `Page<UserSummary>`（20 件） | NOT_FOUND |
+| `listSuggestedUsers` | follow | –（余計な項目は VALIDATION） | { items: (UserSummary & { reason })[] }（5 人まで。閲覧者のフォロー中の人がフォローしていて閲覧者がフォローしていない人を、その数の多い順、同じなら新しいアカウントが先。足りなければフォロワーの多い順（同じなら新しいアカウント）で埋める。自分は入れない。1 回の問い合わせ、束縛 1 個。HTTP の入口と Server Action は無く、ホームのサーバーコンポーネントだけが呼ぶ。費用: `pop` の集計が `follows` 全体を読み（EXPLAIN QUERY PLAN は `follows_followee_created_idx` の全走査と ORDER BY の一時 B-tree）、`users` 全体を並べ替えるので、ホームを開くたびに行を読む。デモの規模では問題ないが、利用者が増える前に見直す（D1 無料枠の読み取り行数）） | UNAUTHENTICATED、VALIDATION |
 | `listNotifications` | notification | cursor? | `Page<NotificationView>`（20 件、`created_at` の新しい順、同じ時刻は `id` の降順）。宛先はセッションの利用者だけで、入力に利用者の項目は無い（余計な項目は VALIDATION）。コメントは先頭 100 字と切ったかどうか | UNAUTHENTICATED、VALIDATION（壊れたカーソル・余計な項目） |
 | `getUnreadNotificationCount` | notification | – | `{ count }`（`read_at IS NULL` の数。100 で頭打ち） | UNAUTHENTICATED |
 | `streamNotifications` | notification | –（セッション） | `GET /api/notifications/stream`。`text/event-stream`。最初に `retry: 1000` と `event: unread` / `data: {"unreadCount":N}`、その後は変わったときだけ同じイベント、15 秒ごとに `: ping`、60 秒で終わる（[ADR-0050](../adr/0050-notifications-via-sse-with-d1-checks.md)） | UNAUTHENTICATED（401、JSON。イベントは流さない） |

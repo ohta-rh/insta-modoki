@@ -15,7 +15,7 @@ export type SignUpState = {
   message?: string;
   fieldErrors?: Record<string, string[]>;
   /** What the user typed, so the form can keep it (never the password). */
-  values?: { email: string; username: string; displayName: string };
+  values?: { email: string; username: string; displayName: string; inviteCode: string };
 };
 
 const text = (data: FormData, name: string): string => {
@@ -30,8 +30,14 @@ export async function signUpAction(_prev: SignUpState, data: FormData): Promise<
     username: text(data, 'username'),
     displayName: text(data, 'displayName'),
     password: text(data, 'password'),
+    inviteCode: text(data, 'inviteCode'),
   };
-  const values = { email: input.email, username: input.username, displayName: input.displayName };
+  const values = {
+    email: input.email,
+    username: input.username,
+    displayName: input.displayName,
+    inviteCode: input.inviteCode,
+  };
   try {
     const result = await signUp(input, {
       env: await getRequestEnv<AuthEnv>(),

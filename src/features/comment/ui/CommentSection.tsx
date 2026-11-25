@@ -1,7 +1,7 @@
 'use client';
 
 import { INTERNAL_MESSAGE } from '../../../shared/errors';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import {
   addCommentAction,
   deleteCommentAction,
@@ -28,7 +28,7 @@ import { DeleteCommentDialog } from './DeleteCommentDialog';
 
 const NETWORK_MESSAGE = INTERNAL_MESSAGE;
 const more =
-  'min-h-[var(--tap-min)] rounded-lg px-3 text-[length:var(--font-size-sm)] font-bold text-text-secondary hover:bg-surface disabled:opacity-50';
+  'min-h-[var(--tap-min)] rounded-lg px-3 text-[length:var(--font-size-sm)] font-bold text-text-secondary hover:bg-surface hover:text-text disabled:opacity-50';
 
 type Viewer = { username: string } | null;
 type Reply<T> = { ok: true; data: T } | { ok: false; error: { message: string } };
@@ -53,6 +53,7 @@ export function CommentSection({
   viewer,
   initial,
   requestId,
+  before,
 }: {
   postId: string;
   /** The signed-in user, or null for a visitor (who can read but not write). */
@@ -60,6 +61,8 @@ export function CommentSection({
   initial: Page<CommentView>;
   /** The id the no-script path of the form sends as `clientRequestId`. */
   requestId: string;
+  /** The first row of the list (the post's caption, #94). */
+  before?: ReactNode;
 }) {
   const [state, setState] = useState<ThreadState>(() => initThread(initial));
   const [ready, setReady] = useState(false);
@@ -176,57 +179,60 @@ export function CommentSection({
   };
 
   return (
-    <section aria-label="コメント">
-      {state.items.length === 0 && (
-        <p className="px-3 py-6 text-center text-[length:var(--font-size-sm)] text-text-muted">
-          まだコメントはありません
-        </p>
-      )}
-      <ul aria-live="polite" aria-relevant="additions removals" className="px-3">
-        {state.items.flatMap((comment) => [
-          <CommentItem
-            key={comment.id}
-            comment={comment}
-            isReply={false}
-            now={now}
-            canReply={viewer !== null}
-            onReply={startReply}
-            onDelete={askDelete}
-          />,
-          ...(comment.replies ?? []).map((reply) => (
+    <>
+      <section aria-label="コメント" className="lg:min-h-0 lg:[grid-area:2/2] lg:overflow-y-auto">
+        {before}
+        {state.items.length === 0 && (
+          <p className="px-3 py-6 text-center text-[length:var(--font-size-sm)] text-text-secondary">
+            まだコメントはありません
+          </p>
+        )}
+        <ul aria-live="polite" aria-relevant="additions removals" className="px-3">
+          {state.items.flatMap((comment) => [
             <CommentItem
-              key={reply.id}
-              comment={reply}
-              isReply
+              key={comment.id}
+              comment={comment}
+              isReply={false}
               now={now}
               canReply={viewer !== null}
               onReply={startReply}
               onDelete={askDelete}
-            />
-          )),
-          ...(hasMoreReplies(state, comment)
-            ? [
-                <li key={`${comment.id}-more`} className="ml-11">
-                  <button
-                    type="button"
-                    disabled={busy !== null}
-                    onClick={() => loadReplies(comment)}
-                    className={more}
-                  >
-                    {`返信 ${remainingReplies(comment)} 件を見る`}
-                  </button>
-                </li>,
-              ]
-            : []),
-        ])}
-      </ul>
-      {state.nextCursor !== null && (
-        <div className="flex justify-center px-3 py-2">
-          <button type="button" disabled={busy !== null} onClick={loadMore} className={more}>
-            コメントをさらに読み込む
-          </button>
-        </div>
-      )}
+            />,
+            ...(comment.replies ?? []).map((reply) => (
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                isReply
+                now={now}
+                canReply={viewer !== null}
+                onReply={startReply}
+                onDelete={askDelete}
+              />
+            )),
+            ...(hasMoreReplies(state, comment)
+              ? [
+                  <li key={`${comment.id}-more`} className="ml-11">
+                    <button
+                      type="button"
+                      disabled={busy !== null}
+                      onClick={() => loadReplies(comment)}
+                      className={more}
+                    >
+                      {`返信 ${remainingReplies(comment)} 件を見る`}
+                    </button>
+                  </li>,
+                ]
+              : []),
+          ])}
+        </ul>
+        {state.nextCursor !== null && (
+          <div className="flex justify-center px-3 py-2">
+            <button type="button" disabled={busy !== null} onClick={loadMore} className={more}>
+              コメントをさらに読み込む
+            </button>
+          </div>
+        )}
+      </section>
       {viewer ? (
         <CommentForm
           postId={postId}
@@ -241,8 +247,8 @@ export function CommentSection({
           onCancelReply={() => setState((s) => ({ ...s, replyTo: null }))}
         />
       ) : (
-        <p className="border-t border-border py-4 text-center text-[length:var(--font-size-sm)]">
-          <a href="/accounts/login" className="font-bold text-link">
+        <p className="border-t border-border py-4 text-center text-[length:var(--font-size-sm)] lg:[grid-area:4/2]">
+          <a href="/accounts/login" className="inline-tap-link font-bold text-link">
             ログイン
           </a>
           してコメントする
@@ -255,6 +261,6 @@ export function CommentSection({
         onConfirm={confirmDelete}
         onClose={() => trigger.current?.focus()}
       />
-    </section>
+    </>
   );
 }

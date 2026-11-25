@@ -1,0 +1,408 @@
+[
+ {
+  "k": "1280 search panel",
+  "v": {
+   "box": [
+    72,
+    397,
+    800
+   ],
+   "nav": 72,
+   "url": "/"
+  }
+ },
+ {
+  "k": "1280 axe search",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1280 axe notif",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1280 create0",
+  "v": {
+   "url": "/create",
+   "home": 1,
+   "box": [
+    300,
+    38,
+    680,
+    724
+   ],
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "1280 create1",
+  "v": {
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "1280 create2",
+  "v": {
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "1280 shared",
+  "v": "/p/01a20c56-80a5-7000-8f62-99cc4d5d225c"
+ },
+ {
+  "k": "1280 bad file",
+  "v": {
+   "text": "閉じる 新規投稿を作成 写真を選んでください コンピューターから選択 x.txt: この形式は使えません（JPEG・PNG・WebP・HEIC）",
+   "crop": false
+  }
+ },
+ {
+  "k": "1280 direct create",
+  "v": {
+   "dialogNamed": 0,
+   "h": [
+    "投稿を作成"
+   ],
+   "axe": []
+  }
+ },
+ {
+  "k": "1280 autofill login-email",
+  "v": {
+   "x": 684,
+   "y": 285,
+   "width": 552,
+   "height": 76,
+   "labelBottom": 323,
+   "matches": true
+  }
+ },
+ {
+  "k": "1280 autofill login-password",
+  "v": {
+   "x": 684,
+   "y": 357,
+   "width": 552,
+   "height": 76,
+   "labelBottom": 395,
+   "matches": true
+  }
+ },
+ {
+  "k": "1280 autofill signup-email",
+  "v": {
+   "x": 352,
+   "y": 150,
+   "width": 576,
+   "height": 76,
+   "labelBottom": 188,
+   "matches": true
+  }
+ },
+ {
+  "k": "1024 search panel",
+  "v": {
+   "box": [
+    72,
+    397,
+    768
+   ],
+   "nav": 72,
+   "url": "/"
+  }
+ },
+ {
+  "k": "1024 axe search",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(2) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(6) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(11) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1024 axe notif",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(2) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(6) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(11) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1024 create0",
+  "v": {
+   "url": "/create",
+   "home": 1,
+   "box": [
+    218,
+    68,
+    588,
+    632
+   ],
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(2) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(6) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(11) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "1024 create1",
+  "v": {
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(2) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(6) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(11) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "1024 create2",
+  "v": {
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(2) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(6) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(11) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "1024 shared",
+  "v": "/p/01a20c56-a954-7000-a1ef-b53f25db5208"
+ },
+ {
+  "k": "1024 bad file",
+  "v": {
+   "text": "閉じる 新規投稿を作成 写真を選んでください コンピューターから選択 x.txt: この形式は使えません（JPEG・PNG・WebP・HEIC）",
+   "crop": false
+  }
+ },
+ {
+  "k": "1024 direct create",
+  "v": {
+   "dialogNamed": 0,
+   "h": [
+    "投稿を作成"
+   ],
+   "axe": []
+  }
+ },
+ {
+  "k": "1024 autofill login-email",
+  "v": {
+   "x": 556,
+   "y": 269,
+   "width": 424,
+   "height": 76,
+   "labelBottom": 307,
+   "matches": true
+  }
+ },
+ {
+  "k": "1024 autofill login-password",
+  "v": {
+   "x": 556,
+   "y": 341,
+   "width": 424,
+   "height": 76,
+   "labelBottom": 379,
+   "matches": true
+  }
+ },
+ {
+  "k": "1024 autofill signup-email",
+  "v": {
+   "x": 224,
+   "y": 150,
+   "width": 576,
+   "height": 76,
+   "labelBottom": 188,
+   "matches": true
+  }
+ },
+ {
+  "k": "375 create0",
+  "v": {
+   "url": "/create",
+   "home": 1,
+   "box": [
+    0,
+    0,
+    375,
+    812
+   ],
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(3) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(7) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(12) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "375 create1",
+  "v": {
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(3) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(7) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(12) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "375 create2",
+  "v": {
+   "small": [],
+   "axe": [
+    {
+     "id": "target-size",
+     "nodes": [
+      "div:nth-child(3) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(7) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+      "div:nth-child(12) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "k": "375 shared",
+  "v": "/p/01a20c56-c6cb-7000-afb0-28889016c8c4"
+ },
+ {
+  "k": "375 bad file",
+  "v": {
+   "text": "新規投稿を作成 写真を選んでください コンピューターから選択 x.txt: この形式は使えません（JPEG・PNG・WebP・HEIC）",
+   "crop": false
+  }
+ },
+ {
+  "k": "375 direct create",
+  "v": {
+   "dialogNamed": 0,
+   "h": [
+    "投稿を作成"
+   ],
+   "axe": []
+  }
+ },
+ {
+  "k": "375 autofill login-email",
+  "v": {
+   "x": 44,
+   "y": 74,
+   "width": 287,
+   "height": 76,
+   "labelBottom": 112,
+   "matches": true
+  }
+ },
+ {
+  "k": "375 autofill login-password",
+  "v": {
+   "x": 44,
+   "y": 146,
+   "width": 287,
+   "height": 76,
+   "labelBottom": 184,
+   "matches": true
+  }
+ },
+ {
+  "k": "375 autofill signup-email",
+  "v": {
+   "x": 8,
+   "y": 150,
+   "width": 359,
+   "height": 76,
+   "labelBottom": 188,
+   "matches": true
+  }
+ }
+]

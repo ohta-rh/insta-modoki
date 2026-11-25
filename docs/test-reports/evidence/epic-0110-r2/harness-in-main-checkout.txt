@@ -1,0 +1,8 @@
+$ git -C <main checkout> branch --show-current
+m2/cloudflare-demo
+$ grep -c "rc=" .claude/agents/code-reviewer.md .claude/agents/security-reviewer.md .claude/agents/pbi-implementer.md   (main checkout)
+.claude/agents/pbi-implementer.md:3
+.claude/agents/security-reviewer.md:3
+.claude/agents/code-reviewer.md:3
+$ grep -n "## 見た目の PBI" .claude/rules/issue-authoring.md   (main checkout)
+37:## 見た目の PBI

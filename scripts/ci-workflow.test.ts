@@ -21,8 +21,12 @@ describe('.github/workflows/ci.yml', () => {
     ]);
   });
 
-  it('timeout-minutes が 20 で、同じ ref の古い実行を取り消す', () => {
-    expect(has(/^ {4}timeout-minutes: 20\s*$/)).toBe(true);
+  it('timeout-minutes が 30 で、同じ ref の古い実行を取り消す', () => {
+    const verifyJob = ci.split(/^ {2}perf:/m)[0] ?? '';
+    expect(verifyJob).toMatch(/^ {4}timeout-minutes: 30\s*$/m);
+    expect(verifyJob).toMatch(
+      /actions\/checkout@[^\n]*\n {8}with:\n(?: {10}[^\n]*\n)*? {10}fetch-depth: 0\s*$/m,
+    );
     expect(ci).toMatch(
       /^concurrency:\s*\n {2}group: .*github\.ref.*\n {2}cancel-in-progress: true/m,
     );
@@ -39,7 +43,7 @@ describe('.github/workflows/ci.yml', () => {
       /run: docker compose up -d --wait\s*$/,
       /run: node scripts\/slot\.mjs prepare 0\s*$/,
       /run: pnpm exec playwright install --with-deps chromium\s*$/,
-      /run: node scripts\/verify\.mjs\s*$/,
+      /run: node scripts\/verify\.mjs --skip e2e\s*$/,
     ].map((re) => lines.findIndex((l) => re.test(l)));
     expect(order.every((i) => i >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
@@ -60,6 +64,86 @@ describe('.github/workflows/ci.yml', () => {
     const step = lines.slice(Math.max(0, i - 3), i + 6).join('\n');
     expect(step).toMatch(/if: failure\(\)/);
     expect(step).toMatch(/path: playwright-report/);
+  });
+
+  /** The lines of one top-level job (from `  <name>:` to the next job). */
+  const job = (name: string) => {
+    const i = lines.findIndex((l) => l === `  ${name}:`);
+    if (i < 0) return [];
+    const next = lines.findIndex((l, n) => n > i && /^ {2}[a-z0-9-]+:\s*$/.test(l));
+    return lines.slice(i, next === -1 ? undefined : next);
+  };
+  const stepIndex = (jobLines: string[], re: RegExp) => jobLines.findIndex((l) => re.test(l));
+
+  it('e2e runs as a 4-way shard matrix beside verify', () => {
+    const e2e = job('e2e');
+    expect(e2e.length).toBeGreaterThan(0);
+    const text = e2e.join('\n');
+    expect(e2e.some((l) => /^ {4}needs:/.test(l))).toBe(false); // starts with verify, not after it
+    expect(job('verify').some((l) => /^ {4}needs:/.test(l))).toBe(false);
+    expect(text).toMatch(/^ {4}timeout-minutes: 20\s*$/m);
+    expect(text).toMatch(/^ {6}fail-fast: false\s*$/m);
+    expect(text).toMatch(/^ {6}matrix:\s*\n {8}shard: \[1, 2, 3, 4\]\s*$/m);
+    expect(text).toMatch(/^ {4}name: e2e \(\$\{\{ matrix\.shard \}\}\/4\)\s*$/m);
+    const order = [
+      /run: docker compose up -d --wait\s*$/,
+      /run: node scripts\/slot\.mjs prepare 0\s*$/,
+      /run: pnpm exec playwright install --with-deps chromium\s*$/,
+      /run: pnpm build\s*$/,
+      /run: pnpm e2e --project chromium --shard \$\{\{ matrix\.shard \}\}\/4\s*$/,
+    ].map((re) => stepIndex(e2e, re));
+    expect(order.every((n) => n >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(text).toMatch(/PORT: 3100/);
+    expect(text).toMatch(/persist-credentials: false/);
+  });
+
+  it('the seed project runs once, in the last shard, after its chromium share', () => {
+    const e2e = job('e2e');
+    const seed = e2e.filter((l) => /--project seed/.test(l));
+    expect(seed).toHaveLength(1);
+    expect(seed[0]).toMatch(/run: pnpm e2e --project seed --no-deps\s*$/);
+    const i = stepIndex(e2e, /--project seed/);
+    expect(e2e[i - 1]).toMatch(/if: matrix\.shard == 4\s*$/);
+    expect(i).toBeGreaterThan(stepIndex(e2e, /--project chromium --shard/));
+  });
+
+  it('the exclusive project runs once, in the last shard, right after seed', () => {
+    const e2e = job('e2e');
+    const ex = e2e.filter((l) => /--project exclusive/.test(l));
+    expect(ex).toHaveLength(1);
+    expect(ex[0]).toMatch(/run: pnpm e2e --project exclusive --no-deps\s*$/);
+    const i = stepIndex(e2e, /--project exclusive/);
+    expect(e2e[i - 1]).toMatch(/if: matrix\.shard == 4\s*$/);
+    expect(i).toBeGreaterThan(stepIndex(e2e, /--project seed/));
+  });
+
+  it('the verify job runs every step but e2e', () => {
+    const verify = job('verify');
+    expect(verify.some((l) => /run: node scripts\/verify\.mjs --skip e2e\s*$/.test(l))).toBe(true);
+    expect(verify.some((l) => /pnpm e2e/.test(l))).toBe(false);
+    for (const re of [
+      /run: pnpm install --frozen-lockfile/,
+      /run: docker compose up -d --wait/,
+      /run: node scripts\/slot\.mjs prepare 0/,
+      /run: pnpm exec playwright install --with-deps chromium/,
+      /SLOT_INT: 1/,
+      /SLOT_INT_A: '3'/,
+      /SLOT_INT_B: '4'/,
+      /fetch-depth: 0/,
+    ]) {
+      expect(verify.some((l) => re.test(l))).toBe(true);
+    }
+  });
+
+  it('each shard uploads its own report on failure', () => {
+    const e2e = job('e2e');
+    const i = stepIndex(e2e, /uses: actions\/upload-artifact@/);
+    expect(i).toBeGreaterThan(0);
+    const step = e2e.slice(i - 3, i + 6).join('\n');
+    expect(step).toMatch(/if: failure\(\)/);
+    expect(step).toMatch(/name: playwright-report-\$\{\{ matrix\.shard \}\}\s*$/m);
+    expect(step).toMatch(/path: playwright-report\s*$/m);
   });
 
   it('全ての uses が 40 桁の commit SHA で固定されている', () => {

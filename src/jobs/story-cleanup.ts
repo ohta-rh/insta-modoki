@@ -1,18 +1,16 @@
 import { getStorageClient } from '../shared/storage/client.ts';
 import { removeObjects as removeStorageObjects } from '../shared/storage/remove.ts';
+import { storyFileKeys } from '../features/story/model/files.ts';
 import type { Job } from './types.ts';
 
 /** Rows deleted per statement: D1 allows 100 bound variables, and one round costs 2 queries. */
 const PAGE = 100;
 /** At most 10 rounds (1,000 rows) per run: inside the free plan's 50 queries / 50 subrequests. */
 const MAX_ROUNDS = 10;
-const PHOTO_FILES = ['orig', 'w320', 'w640', 'w1080'].map((n) => `${n}.webp`);
 
 type Deleted = { type: string; storage_key: string };
 
-/** The object keys a story's `storage_key` stands for (derived from its type, never listed). */
-const keysOf = ({ type, storage_key }: Deleted): string[] =>
-  type === 'video' ? [`${storage_key}/video.mp4`] : PHOTO_FILES.map((f) => `${storage_key}/${f}`);
+const keysOf = ({ type, storage_key }: Deleted): string[] => storyFileKeys(type, storage_key);
 
 /**
  * Deletes the stories whose `expires_at` has passed (their `story_views` cascade), then their

@@ -1,5 +1,5 @@
 import { expect, test as base, type Browser, type Page } from '@playwright/test';
-import { baseURL, freshUser, signedIn, signUpViaUi, type NewUser } from './support/auth';
+import { baseURL, freshUser, signedIn, signInViaHarness, type NewUser } from './support/auth';
 import { unreadNotificationCount } from './support/db';
 import { waitForHydration } from './support/hydration';
 import { insertPost, putPostFiles } from './support/posts';
@@ -14,7 +14,7 @@ async function otherPerson(
     storageState: { cookies: [], origins: [] },
   });
   const page = await context.newPage();
-  const user = await signUpViaUi(page);
+  const user = await signInViaHarness(page);
   return { page, user, close: () => context.close() };
 }
 

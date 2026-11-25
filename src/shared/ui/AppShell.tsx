@@ -1,16 +1,30 @@
-import type { ComponentProps, ComponentType, ReactNode } from 'react';
+import type { ComponentProps, ComponentType, MouseEvent, ReactNode } from 'react';
 import { FOOTER_NOTICE } from './brand';
-import { BellIcon, HomeIcon, PlusSquareIcon, SearchIcon, UserIcon, type IconProps } from './icons';
+import {
+  BellIcon,
+  CompassIcon,
+  HomeIcon,
+  MenuIcon,
+  PlusSquareIcon,
+  SearchIcon,
+  UserIcon,
+  type IconProps,
+} from './icons';
 import { Logo } from './Logo';
+import { MORE_MENU_ID, MoreMenu } from './MoreMenu';
+import { SIDE_PANEL_ID, SidePanel } from './SidePanel';
 import { isCurrent, navItems, type NavIcon, type NavItem, type Viewer } from './nav-items';
 
 const ICONS: Record<NavIcon, ComponentType<IconProps>> = {
   home: HomeIcon,
   search: SearchIcon,
+  compass: CompassIcon,
   'plus-square': PlusSquareIcon,
   bell: BellIcon,
   user: UserIcon,
 };
+
+export type PanelKey = 'search' | 'notifications';
 
 export type AppShellProps = {
   currentPath: string;
@@ -22,19 +36,18 @@ export type AppShellProps = {
    * component of a feature, which sets an `aria-label` from client state such as the unread count).
    */
   linkAs?: Partial<Record<NavItem['key'], ComponentType<ComponentProps<'a'>>>>;
+  panels?: Partial<Record<PanelKey, { title: string; content: ReactNode }>>;
+  openPanel?: PanelKey | null;
+  /** Click handler of a navigation item that opens a panel. */
+  onPanelClick?: (key: PanelKey, event: MouseEvent<HTMLAnchorElement>) => void;
   /** Sign-up and log-in screens render without navigation. */
   hideNav?: boolean;
   children: ReactNode;
 };
 
-const TRANSITION = 'transition-colors duration-[var(--motion-fast)]';
-
 function SkipLink() {
   return (
-    <a
-      href="#main"
-      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-bg focus:px-4 focus:py-3 focus:text-text"
-    >
+    <a href="#main" className="shell-skip">
       本文へ移動
     </a>
   );
@@ -46,6 +59,9 @@ type NavProps = {
   viewer: Viewer;
   badges?: AppShellProps['badges'];
   linkAs?: AppShellProps['linkAs'];
+  panels?: AppShellProps['panels'];
+  openPanel?: PanelKey | null;
+  onPanelClick?: AppShellProps['onPanelClick'];
 };
 
 function NavLinks({
@@ -54,61 +70,108 @@ function NavLinks({
   viewer,
   badges,
   linkAs,
+  panels,
+  openPanel,
+  onPanelClick,
   layout,
 }: NavProps & { layout: 'side' | 'bottom' }) {
   return (
     <>
-      {items.map((item) => {
-        const Icon = ICONS[item.icon];
-        const isHere = isCurrent(item, current, viewer);
-        const Link = linkAs?.[item.key] ?? 'a';
-        const badge = badges?.[item.key];
-        const link = (
-          <Link
-            key={badge ? undefined : item.key}
-            href={item.href}
-            aria-current={isHere ? 'page' : undefined}
-            className={
-              layout === 'side'
-                ? `flex min-h-[var(--tap-min)] items-center gap-3 rounded-lg border-l-2 border-transparent px-3 text-[length:var(--font-size-md)] text-text-secondary hover:bg-surface aria-[current=page]:border-indigo aria-[current=page]:font-bold aria-[current=page]:text-text ${TRANSITION}`
-                : `relative flex h-full min-h-[var(--tap-min)] min-w-[var(--tap-min)] flex-1 flex-col items-center justify-center gap-0.5 border-t-2 border-transparent text-[length:var(--font-size-xs)] text-text-secondary aria-[current=page]:border-indigo aria-[current=page]:font-bold aria-[current=page]:text-text ${TRANSITION}`
-            }
-          >
-            <Icon />
-            <span>{item.label}</span>
-          </Link>
-        );
-        if (!badge) return link;
-        // The badge sits beside the link, not in it: its digits would be visible text that the
-        // link's accessible name (set with aria-label) does not contain (WCAG 2.5.3).
-        return (
-          <div key={item.key} className={layout === 'side' ? 'relative' : 'relative flex flex-1'}>
-            {link}
-            <span
-              className={`pointer-events-none absolute ${
-                layout === 'side'
-                  ? 'top-1/2 right-3 -translate-y-1/2'
-                  : 'top-0.5 left-[calc(50%+4px)]'
-              }`}
+      {items
+        .filter((item) => layout === 'side' || item.placement === 'all')
+        .map((item) => {
+          const Icon = ICONS[item.icon];
+          const isHere = isCurrent(item, current, viewer);
+          const Link = linkAs?.[item.key] ?? 'a';
+          const badge = badges?.[item.key];
+          const panelKey = layout === 'side' && panels?.[item.key as PanelKey] ? item.key : null;
+          const panelProps =
+            panelKey === null
+              ? {}
+              : {
+                  'data-panel': panelKey,
+                  'aria-expanded': openPanel === panelKey,
+                  'aria-controls': SIDE_PANEL_ID,
+                  onClick: (e: MouseEvent<HTMLAnchorElement>) =>
+                    onPanelClick?.(panelKey as PanelKey, e),
+                };
+          const folded = openPanel != null;
+          const link = (
+            <Link
+              key={badge ? undefined : item.key}
+              href={item.href}
+              aria-current={isHere ? 'page' : undefined}
+              {...panelProps}
+              className={layout === 'side' ? 'shell-item' : 'shell-tab'}
             >
-              {badge}
-            </span>
-          </div>
-        );
-      })}
+              <Icon filled={isHere} />
+              <span
+                className={
+                  layout === 'side' && !folded ? 'sr-only nav-wide:not-sr-only' : 'sr-only'
+                }
+              >
+                {item.label}
+              </span>
+            </Link>
+          );
+          if (!badge) return link;
+          // The badge sits beside the link, not in it: its digits would be visible text that the
+          // link's accessible name (set with aria-label) does not contain (WCAG 2.5.3).
+          return (
+            <div key={item.key} className={layout === 'side' ? 'relative' : 'relative flex flex-1'}>
+              {link}
+              <span
+                className={`pointer-events-none absolute ${
+                  layout === 'bottom'
+                    ? 'shell-badge-tab'
+                    : folded
+                      ? 'shell-badge-folded'
+                      : 'shell-badge-side'
+                }`}
+              >
+                {badge}
+              </span>
+            </div>
+          );
+        })}
     </>
   );
 }
 
-function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
+function MoreButton({ folded }: { folded: boolean }) {
+  return (
+    <button type="button" popoverTarget={MORE_MENU_ID} className="shell-item w-full text-left">
+      <MenuIcon />
+      <span className={folded ? 'sr-only' : 'sr-only nav-wide:not-sr-only'}>その他</span>
+    </button>
+  );
+}
+
+function SideNav({
+  items,
+  current,
+  viewer,
+  badges,
+  linkAs,
+  panels,
+  openPanel,
+  onPanelClick,
+}: NavProps) {
   return (
     <nav
       aria-label="メイン"
       data-nav="side"
-      className="sticky top-0 hidden h-screen w-[244px] shrink-0 flex-col gap-1 border-r border-border p-3 nav:flex"
+      data-panel-open={openPanel != null ? '' : undefined}
+      // pr-[11px]: 72 - 1 (border) - 12 - 11 = 48px wide items at the narrow width.
+      className={openPanel != null ? 'shell-side shell-side-folded' : 'shell-side'}
     >
-      <div className="mb-4 flex min-h-[var(--tap-min)] items-center px-3">
-        <Logo withName />
+      <div className="mb-4 flex min-h-12 items-center px-3">
+        <span className={openPanel != null ? '' : 'nav-wide:hidden'}>
+          <Logo size={24} />
+        </span>
+        <span className={openPanel != null ? 'hidden' : 'hidden nav-wide:inline'}>
+          <Logo withName />
+        </span>
       </div>
       <NavLinks
         items={items}
@@ -116,19 +179,55 @@ function SideNav({ items, current, viewer, badges, linkAs }: NavProps) {
         viewer={viewer}
         badges={badges}
         linkAs={linkAs}
+        panels={panels}
+        openPanel={openPanel}
+        onPanelClick={onPanelClick}
         layout="side"
       />
+      {viewer ? (
+        <div className="mt-auto">
+          <MoreButton folded={openPanel != null} />
+        </div>
+      ) : null}
     </nav>
+  );
+}
+
+function TopBar() {
+  return (
+    <header data-shell-top-bar className="shell-top">
+      <Logo size={24} withName />
+      <button type="button" popoverTarget={MORE_MENU_ID} className="shell-top-more">
+        <MenuIcon />
+        <span className="sr-only">その他</span>
+      </button>
+    </header>
+  );
+}
+
+function PublicTopBar() {
+  return (
+    <header data-public-bar className="shell-public">
+      <div className="shell-public-inner">
+        <a href="/" aria-label="Mado（仮称） ホーム" className="shell-public-logo">
+          <Logo size={29} withName />
+        </a>
+        <div className="shell-public-actions">
+          <a href="/accounts/login" className="shell-public-login">
+            ログイン
+          </a>
+          <a href="/accounts/signup" className="shell-public-signup">
+            新しいアカウントを作成
+          </a>
+        </div>
+      </div>
+    </header>
   );
 }
 
 function BottomNav({ items, current, viewer, badges, linkAs }: NavProps) {
   return (
-    <nav
-      aria-label="メイン"
-      data-nav="bottom"
-      className="fixed inset-x-0 bottom-0 z-40 flex h-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] border-t border-border bg-bg pb-[env(safe-area-inset-bottom)] nav:hidden"
-    >
+    <nav aria-label="メイン" data-nav="bottom" className="shell-bottom">
       <NavLinks
         items={items}
         current={current}
@@ -144,7 +243,8 @@ function BottomNav({ items, current, viewer, badges, linkAs }: NavProps) {
 function Footer({ hideNav }: { hideNav: boolean }) {
   return (
     <footer
-      className={`px-4 py-6 text-center text-[length:var(--font-size-xs)] text-text-secondary ${
+      data-shell-footer
+      className={`shell-footer ${
         hideNav
           ? ''
           : 'pb-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom)+var(--space-4))] nav:pb-6'
@@ -160,13 +260,38 @@ export function AppShell({
   viewer,
   badges,
   linkAs,
+  panels,
+  openPanel = null,
+  onPanelClick,
   hideNav = false,
   children,
 }: AppShellProps) {
   const items = navItems(viewer);
+  // Someone not logged in sees the public bar instead of every navigation (the sign-up and log-in
+  // screens, `hideNav`, show nothing).
+  if (!viewer && !hideNav) {
+    return (
+      <div className="min-h-screen bg-bg pt-[var(--public-top-bar-height)] text-text">
+        <SkipLink />
+        <PublicTopBar />
+        <div className="mx-auto flex min-h-[calc(100vh-var(--public-top-bar-height))] w-full justify-center">
+          <div className="flex min-w-0 flex-1 flex-col">
+            <main
+              id="main"
+              className="mx-auto w-full max-w-[var(--content-max)] flex-1 has-[[data-page-width=wide]]:max-w-none"
+            >
+              {children}
+            </main>
+            <Footer hideNav />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-bg text-text">
       <SkipLink />
+      {viewer && !hideNav ? <TopBar /> : null}
       <div className="mx-auto flex min-h-screen w-full justify-center">
         {hideNav ? null : (
           <SideNav
@@ -175,15 +300,23 @@ export function AppShell({
             viewer={viewer}
             badges={badges}
             linkAs={linkAs}
+            panels={panels}
+            openPanel={openPanel}
+            onPanelClick={onPanelClick}
           />
         )}
+        {viewer && !hideNav && panels ? <SidePanel panels={panels} open={openPanel} /> : null}
         <div className="flex min-w-0 flex-1 flex-col">
-          <main id="main" className="mx-auto w-full max-w-[var(--content-max)] flex-1">
+          <main
+            id="main"
+            className="mx-auto w-full max-w-[var(--content-max)] flex-1 has-[[data-page-width=wide]]:max-w-none"
+          >
             {children}
           </main>
           <Footer hideNav={hideNav} />
         </div>
       </div>
+      {viewer && !hideNav ? <MoreMenu /> : null}
       {hideNav ? null : (
         <BottomNav
           items={items}

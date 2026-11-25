@@ -15,7 +15,16 @@ const secondary =
  * "削除" with a confirmation dialog (role alertdialog). The dialog traps the focus, Escape and
  * "キャンセル" close it and return the focus to the button, and "削除" goes to the author's page.
  */
-export function DeletePostButton({ postId, username }: { postId: string; username: string }) {
+export function DeletePostButton({
+  postId,
+  username,
+  variant = 'button',
+}: {
+  postId: string;
+  username: string;
+  /** `menu-item` is a row of the post's "…" menu (#94); closing the dialog returns to its "…". */
+  variant?: 'button' | 'menu-item';
+}) {
   const router = useRouter();
   const onDeleted = usePostDeletedHandler();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -71,7 +80,11 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
         // Invoker commands are not in @types/react yet; React passes unknown attributes through.
         {...({ commandfor: dialogId, command: 'show-modal' } as object)}
         onClick={open}
-        className={`${secondary} text-text-secondary hover:bg-surface`}
+        className={
+          variant === 'menu-item'
+            ? 'flex min-h-[var(--tap-min)] w-full items-center justify-center border-b border-border px-4 text-[length:var(--font-size-sm)] font-semibold text-danger hover:bg-wash'
+            : `${secondary} text-text-secondary hover:bg-surface hover:text-text`
+        }
       >
         削除
       </button>
@@ -83,7 +96,14 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
         aria-describedby={messageId}
         // Escape is ignored while the request is running.
         onCancel={(e) => pending && e.preventDefault()}
-        onClose={() => trigger.current?.focus()}
+        onClose={() => {
+          // The browser closes the menu when the dialog opens; its "…" is where the focus belongs.
+          const more =
+            variant === 'menu-item'
+              ? document.querySelector<HTMLElement>(`[popovertarget="post-menu-${postId}"]`)
+              : null;
+          (more ?? trigger.current)?.focus();
+        }}
         onKeyDown={trapFocus}
         className="m-auto w-[min(92vw,360px)] rounded-xl bg-bg p-5 text-text shadow-xl backdrop:bg-black/50"
       >
@@ -94,7 +114,7 @@ export function DeletePostButton({ postId, username }: { postId: string; usernam
           削除した投稿は元に戻せません。
         </p>
         {error && (
-          <p role="alert" className="mt-3 text-[length:var(--font-size-sm)] text-red-700">
+          <p role="alert" className="mt-3 text-[length:var(--font-size-sm)] text-danger">
             {error}
           </p>
         )}

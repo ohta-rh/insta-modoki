@@ -1,5 +1,5 @@
 import { expect, test as base } from '@playwright/test';
-import { baseURL, freshUser, signedIn, signUpViaUi } from './support/auth';
+import { baseURL, freshUser, signedIn, signInViaHarness } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
 import { seedUser, unreadNotificationCount, userRow } from './support/db';
 import { harness } from './support/harness';
@@ -11,7 +11,7 @@ const NAV = 'メイン';
 freshUser(
   'いいねの通知がバッジに 10 秒以内に出て、一覧を開くと既読になる',
   async ({ page, browser, me }) => {
-    // The badge waits for one 10 s poll, on top of two sign-ups and a like.
+    // The badge waits for one 10 s poll, on top of two harness sign-ins and a like.
     freshUser.setTimeout(90_000);
     const post = insertPost({ authorUsername: me.username, caption: '通知の対象' });
     await putPostFiles(page, post);
@@ -28,7 +28,7 @@ freshUser(
     });
     try {
       const other = await context.newPage();
-      await signUpViaUi(other);
+      await signInViaHarness(other);
       await other.goto(`/p/${post.id}`);
       await waitForHydration(other);
       await other.getByRole('button', { name: 'いいね', exact: true }).click();
@@ -43,9 +43,10 @@ freshUser(
     });
 
     await nav.getByRole('link', { name: '通知（未読 1 件）', exact: true }).click();
-    await expect(page).toHaveURL(/\/notifications$/);
-    await expect(page.getByRole('heading', { level: 1, name: '通知' })).toBeVisible();
-    const row = page.getByRole('link', { name: /さんがあなたの投稿にいいねしました/ });
+    // At this width the navigation opens the notifications in a panel beside it (#99).
+    const panel = page.getByRole('dialog', { name: '通知' });
+    await expect(panel).toBeVisible();
+    const row = panel.getByRole('link', { name: /さんがあなたの投稿にいいねしました/ });
     await expect(row).toHaveCount(1);
     await expect(row).toContainText('新着');
     await expect(row).toHaveAttribute('href', `/p/${post.id}`);
@@ -54,8 +55,8 @@ freshUser(
     await expect(row).toContainText('新着');
     await expect.poll(() => unreadNotificationCount(me.username)).toBe(0);
 
-    await page.reload();
-    await waitForHydration(page);
+    await page.goto('/notifications');
+    await expect(page.getByRole('heading', { level: 1, name: '通知' })).toBeVisible();
     await expect(
       page.getByRole('link', { name: /さんがあなたの投稿にいいねしました/ }),
     ).not.toContainText('新着');
@@ -133,11 +134,11 @@ base('同じタブで別の人がログインしても、前の人の未読の�
   });
   let bob;
   try {
-    bob = await signUpViaUi(await context.newPage());
+    bob = await signInViaHarness(await context.newPage());
   } finally {
     await context.close();
   }
-  const alice = await signUpViaUi(page);
+  const alice = await signInViaHarness(page);
   const stamp = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const actor = `e2e_n${stamp}`;
   seedUser(actor, `${actor}@example.com`);

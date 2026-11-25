@@ -35,10 +35,13 @@ export function Carousel({
   media,
   username,
   priority = false,
+  fill = false,
 }: {
   media: MediaView[];
   username: string;
   priority?: boolean;
+  /** On a wide screen the strip fills its box's height (the two-column post, #94). */
+  fill?: boolean;
 }) {
   const strip = useRef<HTMLDivElement>(null);
   /** The index a button or key is scrolling to; scroll events on the way are ignored. */
@@ -49,7 +52,9 @@ export function Carousel({
     photoAlt({ altText: m.altText, username, position: i + 1, count });
 
   if (count === 1) {
-    return <MediaImage media={media[0]!} alt={altOf(media[0]!, 0)} priority={priority} />;
+    return (
+      <MediaImage media={media[0]!} alt={altOf(media[0]!, 0)} priority={priority} fill={fill} />
+    );
   }
 
   const go = (to: number) => {
@@ -80,7 +85,7 @@ export function Carousel({
   };
 
   return (
-    <div className="relative">
+    <div className={`relative ${fill ? 'lg:h-full' : ''}`}>
       <div
         ref={strip}
         role="group"
@@ -92,7 +97,7 @@ export function Carousel({
         // A touch or wheel by the user takes over from a scroll the buttons started.
         onPointerDown={() => (target.current = null)}
         onWheel={() => (target.current = null)}
-        className="flex snap-x snap-mandatory items-center overflow-x-auto bg-surface motion-safe:scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className={`flex snap-x snap-mandatory items-center overflow-x-auto bg-surface ${fill ? 'lg:h-full lg:bg-black' : ''} motion-safe:scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
       >
         {media.map((m, i) => (
           <div
@@ -100,9 +105,9 @@ export function Carousel({
             role="group"
             aria-roledescription="slide"
             aria-label={`${i + 1} / ${count}`}
-            className="w-full flex-none snap-start snap-always"
+            className={`w-full flex-none snap-start snap-always ${fill ? 'lg:h-full' : ''}`}
           >
-            <MediaImage media={m} alt={altOf(m, i)} priority={priority && i === 0} />
+            <MediaImage media={m} alt={altOf(m, i)} priority={priority && i === 0} fill={fill} />
           </div>
         ))}
       </div>

@@ -1,0 +1,8 @@
+## SessionStart hook command (from .claude/settings.json, run in the main checkout)
+b="$(git config insta.integrationBranch || echo main)"; node scripts/ci-gate.mjs "$b" || true; node scripts/harness-drift.mjs "$b" || true
+ci-gate: m2/cloudflare-demo は緑です（b522b94aca04bb364b4f3602324c6ae19769aeef）
+harness-drift: main checkout のハーネスは origin/m2/cloudflare-demo と同じです
+## red branch
+$ node scripts/ci-gate.mjs ci-red-check
+ci-gate: ci-red-check の最新の CI（d092e5db0b5e05f17a243e47664cbfdcfe84ae25）は failure です。ほかの作業より先に直してください: https://github.com/ohta-rh/insta-modoki/actions/runs/44853230180
+rc=1

@@ -11,9 +11,12 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
 
 ## First
 
-1. Report `git rev-parse --show-toplevel` and the branch; if they are not the given worktree and
+1. Run `pnpm --version` (log it as in Evidence). If it does not start, copy its output and reply
+   `BLOCKED`; do not switch to another way of running the tools (`node_modules/.bin`, `npx`,
+   another pnpm) on your own.
+2. Report `git rev-parse --show-toplevel` and the branch; if they are not the given worktree and
    `epic-test/<N>` → `BLOCKED`.
-2. Check the browser: `list_pages` must answer. If the chrome-devtools tools are unavailable or
+3. Check the browser: `list_pages` must answer. If the chrome-devtools tools are unavailable or
    fail twice (e.g. "The browser is already running for …/chrome-devtools-mcp/chrome-profile"),
    switch to the second means (ADR-0045): a script in your worktree's `.tmp_*/` directory
    launches **headed Google Chrome** with `chromium.launch({ channel: 'chrome', headless: false })`
@@ -23,7 +26,7 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
    Record the means and `browser.version()` under `## 対象`. Only if that also fails →
    `BLOCKED` ("real browser unavailable"). Never substitute headless mode or the bundled
    Chromium for the integrated test.
-3. Read the EPIC (`gh issue view <N>`), every child PBI, `CLAUDE.md`, `.claude/rules/`, and the
+4. Read the EPIC (`gh issue view <N>`), every child PBI, `CLAUDE.md`, `.claude/rules/`, and the
    ADRs they link. Use only your slot's resources (`.claude/rules/local-environment.md`).
 
 ## What to run
@@ -52,6 +55,15 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
 You do not fix product code. A failure is recorded with reproduction steps, expected vs actual,
 and the screenshot, and reported as `DONE_WITH_CONCERNS` with result `FAIL`.
 
+## Evidence
+
+- Run every check as `cmd > "$LOG" 2>&1; echo "rc=$?"` (the log in your scratchpad or `.tmp_*/`).
+  Never pipe a check through `tail`, `grep` or `| cat`: the `rc` would be the pipe's, not the check's.
+  Read only the tail or a grep of the log afterwards.
+- When you report a check, copy three things verbatim: the command, the `rc=<n>` line, and the result line (for example
+  `N passed`, `✘ ...`, the failing assertion). Do not paraphrase them.
+- A check you did not run is written `未実行` with the reason. Never report it as passed.
+
 ## The report (committed)
 
 `docs/test-reports/epic-<NNNN>-<slug>.md` (NNNN = EPIC number, zero-padded); screenshots and logs
@@ -72,4 +84,4 @@ Add the report to `docs/test-reports/index.md` and `docs/log.md` (OKF v0.3,
 ## Report to the Director
 
 Status line, then: worktree + branch, commit SHA, PASS/FAIL, the report path, each failure in
-one line, commands run with exit codes, and the single next action.
+one line, commands run with the `rc=` line and result line of each (Evidence), and the single next action.

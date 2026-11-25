@@ -1,0 +1,26 @@
+## 22:11:14 seed
+rc=0
+seed: demo OK users=30 posts=300 media=473
+## 22:11:36 status before reset
+Garage: MklTodo=0 GcTodo=1998127
+GcTodo が 1000000 を超えています。ボリュームの作り直しは利用者が docker compose down -v で行ってください（全スロットのデータが消える）
+## 22:11:36 node scripts/slot.mjs reset 4
+slot 4 のポート 3104 のプロセスを 0 個止めました
+バケット insta-s4 のオブジェクトを 1892 / 1892 個消しました
+slot 4: Garage の後始末を待っています（MklTodo=1791）
+slot 4 を初期化しました（insta-s4、PORT=3104、.dev.vars）
+rc=
+## 22:12:10 status after reset
+Garage: MklTodo=0 GcTodo=2000019
+GcTodo が 1000000 を超えています。ボリュームの作り直しは利用者が docker compose down -v で行ってください（全スロットのデータが消える）
+## 22:12:10 PORT=3104 node scripts/verify.mjs
+rc=1
+verify: HEAD 340dff7 epic-test/110
+ Test Files  126 passed (126)
+      Tests  755 passed (755)
+      Tests  405 passed | 4 skipped (409)
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+  380 passed (1.4m)
+verify: FAIL e2e
+## 22:21:43 end

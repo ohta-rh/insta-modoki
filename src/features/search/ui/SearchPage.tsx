@@ -24,7 +24,7 @@ export function SearchPage({
         <SearchBox defaultValue={q} />
       </form>
       {error !== undefined && (
-        <p role="alert" className="px-4 py-2 text-[length:var(--font-size-sm)] text-red-700">
+        <p role="alert" className="px-4 py-2 text-[length:var(--font-size-sm)] text-danger">
           {error}
         </p>
       )}

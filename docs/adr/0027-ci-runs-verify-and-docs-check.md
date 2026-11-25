@@ -3,12 +3,13 @@ type: ADR
 title: "ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする"
 description: "main への push と pull request で verify 全体（docs の検査を含む）を 1 job で流す。docs の検査は Node の標準だけで書き、トップレベルの frontmatter だけを読む。action は commit SHA で固定する。"
 tags: [ci, testing, docs]
-status: stable
+status: deprecated
+superseded_by: 0068-ci-shards-e2e-four-ways.md
 ---
 
 # ADR-0027: CI は GitHub Actions の 1 つの job で verify を流し、docs の検査は依存の無い scripts/check-docs.mjs を verify の手順にする
 
-- ステータス: 採用
+- ステータス: 置き換え: [ADR-0068](0068-ci-shards-e2e-four-ways.md)（CI の E2E を 4 つの job に分け、verify と同時に流す。docs の検査・action の SHA 固定などの他の決定は引き継ぐ）
 - 日付: 2026-11-21
 - 決定者: エージェント（委任された判断）
 - 関連: #22、[ADR-0002](0002-docs-as-okf-v0-3-bundle.md)、[ADR-0009](0009-tdd-review-e2e-verify-loop.md)、[ADR-0022](0022-testing-ui-and-package-management.md)、[ADR-0023](0023-slots-with-garage-and-d1-files.md)、[ADR-0024](0024-verify-command-and-coverage-gate.md)

@@ -4,17 +4,10 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { getSessionUser } from '@/features/auth';
 import { listSavedPosts } from '@/features/bookmark';
-import { FollowButton, FollowerCount, FollowScope } from '@/features/follow';
-import {
-  getProfile,
-  listProfilePosts,
-  PostGrid,
-  ProfileEmptyState,
-  ProfileHeader,
-  profileTab,
-  ProfileTabs,
-  SavedGrid,
-} from '@/features/profile';
+import { FollowButton, FollowerCount, FollowScope } from '@/features/follow/ui';
+import { getProfile, listProfilePosts, profileTab } from '@/features/profile';
+import { ProfileEmptyState, ProfileHeader } from '@/features/profile/ui';
+import { PostGrid, ProfileTabs, SavedGrid } from '@/features/profile/ui';
 import { AppError } from '@/shared/errors';
 
 // Anyone may open a profile, so this route is outside the (app) group (ADR-0031). The reserved
@@ -53,7 +46,7 @@ export default async function ProfilePage({ params, searchParams }: Props) {
   // Someone else's profile gets the follow button; your own keeps the edit link (ProfileHeader).
   const viewer = profile.isMe ? null : await getSessionUser(await headers());
   return (
-    <div className="mx-auto w-full max-w-[var(--content-max)]">
+    <div data-page-width="wide" className="mx-auto w-full max-w-[var(--site-width-wide)] pt-[30px]">
       {profile.isMe ? (
         <ProfileHeader profile={profile} />
       ) : (

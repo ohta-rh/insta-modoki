@@ -13,12 +13,6 @@ export {
   type PostView,
   type UserSummary,
 } from './model/schema';
-export { Carousel } from './ui/Carousel';
-export { DeletePostButton } from './ui/DeletePostButton';
-export { MediaImage } from './ui/MediaImage';
-export { PostActionBar } from './ui/PostActionBar';
-export { PostCard } from './ui/PostCard';
-export { PostDetail } from './ui/PostDetail';
-export { PostTileGrid } from './ui/PostTileGrid';
 export { thumbhashDataUrl } from './model/thumbhash';
-export { PostDeletedProvider, usePostDeletedHandler } from './ui/PostDeletedContext';
+export { removePost, photoFileKeys } from './api/remove-post';
+export { removeFilesRecordingFailures } from './api/remove-post';

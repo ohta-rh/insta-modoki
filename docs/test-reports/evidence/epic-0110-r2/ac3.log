@@ -1,0 +1,12 @@
+## case 1: duplicate number
+docs/adr: ADR の番号 0072 が 2 つあります: 0072-duplicate-number-probe.md, 0072-main-checkout-tracks-the-integration-branch.md
+docs/adr/index.md: 0072-duplicate-number-probe.md が索引にありません
+check-docs: 2 件のエラー
+rc=1
+## case 2: not in the index
+docs/adr/index.md: 0073-missing-from-index-probe.md が索引にありません
+check-docs: 1 件のエラー
+rc=1
+## after removing the probes
+check-docs: OK (113 件の文書)
+rc=0

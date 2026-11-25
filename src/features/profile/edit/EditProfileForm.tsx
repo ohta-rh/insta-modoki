@@ -12,9 +12,9 @@ import { AvatarField, type PickedAvatar } from './AvatarField';
 
 const UPLOAD_FAILED = 'アップロードに失敗しました。もう一度お試しください';
 const INPUT =
-  'min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 py-2 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-red-600';
+  'min-h-[var(--tap-min)] w-full rounded-lg border border-border bg-bg px-3 py-2 text-[length:var(--font-size-md)] text-text aria-[invalid=true]:border-danger';
 const COUNT = 'mt-1 text-right text-[length:var(--font-size-sm)]';
-const ERROR = 'text-[length:var(--font-size-sm)] text-red-700';
+const ERROR = 'text-[length:var(--font-size-sm)] text-danger';
 
 /**
  * /accounts/edit: display name, bio and icon. Saving stores a new icon (the same photo is not
@@ -112,7 +112,7 @@ export function EditProfileForm({ profile }: { profile: ProfileView }) {
           />
           <p
             id="displayName-count"
-            className={`${COUNT} ${nameBad ? 'font-bold text-red-700' : 'text-text-muted'}`}
+            className={`${COUNT} ${nameBad ? 'font-bold text-danger' : 'text-text-secondary'}`}
           >
             {nameLength} / {MAX_DISPLAY_NAME}
           </p>
@@ -138,7 +138,7 @@ export function EditProfileForm({ profile }: { profile: ProfileView }) {
           />
           <p
             id="bio-count"
-            className={`${COUNT} ${bioBad ? 'font-bold text-red-700' : 'text-text-muted'}`}
+            className={`${COUNT} ${bioBad ? 'font-bold text-danger' : 'text-text-secondary'}`}
           >
             {bioLength} / {MAX_BIO}
           </p>

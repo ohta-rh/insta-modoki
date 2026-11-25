@@ -1,6 +1,7 @@
 import { randomInt } from 'node:crypto';
 import { test as base, expect, type BrowserContext, type Page } from '@playwright/test';
 import { rateRows, unreadNotificationCount } from './db';
+import { harness } from './harness';
 
 /** The origin the app under test listens on (`PORT`, 3100 by default). */
 export const baseURL = () => `http://localhost:${process.env.PORT ?? 3100}`;
@@ -55,10 +56,40 @@ export async function signUpViaUi(page: Page, user: NewUser = newUser()): Promis
   return user;
 }
 
+/**
+ * Makes a new user with a live session through the E2E harness and puts its cookie in the browser
+ * (ADR-0069). Use it wherever the sign-up screen itself is not what the spec checks. The page is
+ * not navigated: open the screen you need.
+ */
+export async function signInViaHarness(
+  target: Page | BrowserContext,
+  user: NewUser = newUser(),
+): Promise<NewUser> {
+  const context = 'addCookies' in target ? target : target.context();
+  const { cookie } = harness<{ cookie: { name: string; value: string } }>({
+    op: 'seedSession',
+    username: user.username,
+    email: user.email,
+    displayName: user.displayName,
+    password: user.password,
+  });
+  await context.addCookies([
+    {
+      name: cookie.name,
+      value: cookie.value,
+      domain: 'localhost',
+      path: '/',
+      httpOnly: true,
+      sameSite: 'Lax',
+    },
+  ]);
+  return user;
+}
+
 /** `test` whose `page` is already signed in, for specs of screens that need a session. */
 export const test = base.extend({
   page: async ({ page }, use) => {
-    await signUpViaUi(page);
+    await signInViaHarness(page);
     await use(page);
   },
 });
@@ -75,7 +106,7 @@ export const signedIn = base.extend<
   account: [
     async ({ browser }, use) => {
       const context = await browser.newContext({ baseURL: baseURL() });
-      const me = await signUpViaUi(await context.newPage());
+      const me = await signInViaHarness(context);
       const state = await context.storageState();
       await context.close();
       await use({ state, me });
@@ -106,7 +137,7 @@ export const signedIn = base.extend<
  */
 export const freshUser = base.extend<{ me: NewUser }>({
   me: async ({ page }, use) => {
-    await use(await signUpViaUi(page));
+    await use(await signInViaHarness(page));
   },
 });
 export { expect };

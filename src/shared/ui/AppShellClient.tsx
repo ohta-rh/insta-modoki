@@ -1,31 +1,115 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import type { ComponentProps, ComponentType, ReactNode } from 'react';
-import { AppShell } from './AppShell';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ComponentProps,
+  type ComponentType,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
+import { AppShell, type AppShellProps, type PanelKey } from './AppShell';
 import { isAuthScreen, type NavItem, type Viewer } from './nav-items';
+import { SIDE_PANEL_ID } from './SidePanel';
 
-/** Reads the current path on the client and hands it to AppShell. */
+/** From this width the navigation is at the side and a panel can slide out next to it. */
+const SIDE_NAV_QUERY = '(min-width: 768px)';
+
+/** Reads the current path on the client and hands it to AppShell, with the side panel's state. */
 export function AppShellClient({
   viewer,
   badges,
   linkAs,
+  panels,
   hideNav,
   children,
 }: {
   viewer: Viewer;
   badges?: Partial<Record<NavItem['key'], ReactNode>>;
   linkAs?: Partial<Record<NavItem['key'], ComponentType<ComponentProps<'a'>>>>;
+  panels?: AppShellProps['panels'];
   hideNav?: boolean;
   children: ReactNode;
 }) {
   const path = usePathname();
+  // A panel belongs to the page it was opened on: moving to another path closes it.
+  const [opened, setOpened] = useState<{ key: PanelKey; path: string } | null>(null);
+  if (opened !== null && opened.path !== path) setOpened(null);
+  const open = opened !== null && opened.path === path ? opened.key : null;
+
+  const close = useCallback((returnFocusTo?: PanelKey) => {
+    setOpened(null);
+    if (returnFocusTo) {
+      document
+        .querySelector<HTMLElement>(`nav[data-nav="side"] [data-panel="${returnFocusTo}"]`)
+        ?.focus();
+    }
+  }, []);
+
+  const onPanelClick = useCallback(
+    (key: PanelKey, e: MouseEvent<HTMLAnchorElement>) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+        return;
+      if (!window.matchMedia(SIDE_NAV_QUERY).matches) return;
+      e.preventDefault();
+      if (open === key) close(key);
+      else setOpened({ key, path });
+    },
+    [open, close, path],
+  );
+
+  useEffect(() => {
+    if (open === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      // Enter on a highlighted candidate of a combobox in the panel navigates with no click, and
+      // possibly to the path already shown: close the panel here (the box handles Enter first).
+      if (e.key === 'Enter') {
+        const t = e.target as Element | null;
+        if (
+          t?.closest(`#${SIDE_PANEL_ID}`) &&
+          t.getAttribute('role') === 'combobox' &&
+          (t.getAttribute('aria-activedescendant') ?? '') !== ''
+        )
+          close();
+        return;
+      }
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      // A modal dialog over the page takes the Escape key first.
+      if (document.querySelector('dialog[open], [role="dialog"][aria-modal="true"]')) return;
+      close(open);
+    };
+    const onPointer = (e: PointerEvent) => {
+      const target = e.target as Element | null;
+      if (target?.closest(`#${SIDE_PANEL_ID}, nav[data-nav="side"]`)) return;
+      close();
+    };
+    // Pressing a link or a candidate inside the panel closes it, also when it leads to the path
+    // already shown (a path change alone would leave the panel open).
+    const onClick = (e: Event) => {
+      const target = e.target as Element | null;
+      if (target?.closest(`#${SIDE_PANEL_ID} :is(a[href], [role="option"])`)) close();
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('click', onClick);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('click', onClick);
+    };
+  }, [open, close]);
+
   return (
     <AppShell
       currentPath={path}
       viewer={viewer}
       badges={badges}
       linkAs={linkAs}
+      panels={panels}
+      openPanel={open}
+      onPanelClick={onPanelClick}
       hideNav={hideNav ?? isAuthScreen(path)}
     >
       {children}

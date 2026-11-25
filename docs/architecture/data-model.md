@@ -150,7 +150,7 @@ PK `(key, window_start)`。
 ## M2
 
 - **invites**: `code`（PK、英大文字と数字 10 字）、`created_by`（FK users）、`max_uses`（1〜100）、`used_count`、`expires_at`、`revoked_at`（NULL 可）、`created_at`。
-- **admin_actions**: `id`、`admin_id`（FK users）、`action`（`'delete_post'` / `'delete_user'` / `'resolve_report'`）、`target_id`、`created_at`。対象を消しても記録は残す（FK を張らない）。
+- **admin_actions**（`migrations/0014_admin_actions.sql`、#39）: `id`、`admin_id`（FK users CASCADE）、`action`（`'delete_post'` / `'delete_user'` / `'resolve_report'`。`admin_actions_action_check`。`'resolve_report'` は M4 まで使わない）、`target_id`（投稿または利用者の id。対象を消しても記録は残すので FK を張らない）、`created_at`。インデックス `admin_actions_created_idx (created_at DESC)`。成功した削除だけが、行の削除と同じ `db.batch` で 1 行足す。
 
 ## M3
 

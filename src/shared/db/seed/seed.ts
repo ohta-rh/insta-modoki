@@ -113,8 +113,11 @@ async function count(d1: SeedD1, sql: string): Promise<number> {
 
 const SEED_USERS = `SELECT id FROM users WHERE substr(email, -${SEED_EMAIL_SUFFIX.length}) = '${SEED_EMAIL_SUFFIX}'`;
 
-/** Removes the earlier seed: its users (rows cascade) and only the storage keys of their posts. */
-async function cleanup(d1: SeedD1, store: Store): Promise<void> {
+/**
+ * Removes the seed: the storage files of its users' posts, then the users (rows cascade). Files go
+ * first so that a failed delete leaves the rows and the next run still finds the keys.
+ */
+export async function removeSeed(d1: SeedD1, store: Store): Promise<void> {
   const keys = (
     await d1
       .prepare(
@@ -122,8 +125,8 @@ async function cleanup(d1: SeedD1, store: Store): Promise<void> {
       )
       .all<{ k: string }>()
   ).results.map((r) => r.k);
-  await d1.prepare(`DELETE FROM users WHERE id IN (${SEED_USERS})`).run();
   await store.remove(keys.flatMap((k) => VARIANTS.map((n) => `${k}/${n}.webp`)));
+  await d1.prepare(`DELETE FROM users WHERE id IN (${SEED_USERS})`).run();
 }
 
 export async function runSeed(argv: string[], deps: SeedDeps): Promise<number> {
@@ -153,7 +156,7 @@ export async function runSeed(argv: string[], deps: SeedDeps): Promise<number> {
   const store = deps.store ?? createStore(env);
   const password = resolveDemoPassword(vars, log);
 
-  await cleanup(d1, store);
+  await removeSeed(d1, store);
 
   const data = generateDataset(profile, SEED);
   const userIds = data.users.map(() => newId());

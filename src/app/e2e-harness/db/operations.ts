@@ -1,16 +1,20 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { hashPassword, newSession, sessionSetCookie, type AuthEnv } from '../../../features/auth';
 import { hashtagStatements } from '../../../features/hashtag';
 import { getDb, type DbEnv } from '../../../shared/db/client';
 import {
+  accounts,
   bookmarks,
   comments,
   follows,
+  invites,
   likes,
   media,
   notifications,
   posts,
   rateLimits,
+  sessions,
   stories,
   storyViews,
   users,
@@ -40,6 +44,15 @@ export const operationSchema = z.discriminatedUnion('op', [
     email: text(254),
     displayName: text(30).optional(),
     bio: z.string().max(150).optional(),
+  }),
+  // A user with a password account and a live session, as the sign-up screen would leave them
+  // (ADR-0069): the answer carries the session cookie for `context.addCookies`.
+  z.strictObject({
+    op: z.literal('seedSession'),
+    username: z.string().min(3).max(30),
+    email: z.string().email().max(254),
+    displayName: text(30).optional(),
+    password: z.string().min(8).max(128).optional(),
   }),
   z.strictObject({
     op: z.literal('insertPost'),
@@ -147,13 +160,60 @@ export const operationSchema = z.discriminatedUnion('op', [
       .min(1)
       .max(50),
   }),
+  // Invites (#38): an administrator for the admin screen, and codes for the sign-up scenarios.
+  z.strictObject({ op: z.literal('makeAdmin'), username: text(30) }),
+  z.strictObject({
+    op: z.literal('seedInvite'),
+    code: z.string().regex(/^[A-Z0-9]{10}$/),
+    maxUses: z.number().int().min(1).max(100),
+    usedCount: z.number().int().min(0).max(100).optional(),
+    expiresAt: ms,
+    revokedAt: ms.optional(),
+  }),
 ]);
 
 export type Operation = z.infer<typeof operationSchema>;
 
-export async function runOperation(env: DbEnv, operation: Operation): Promise<void> {
+export async function runOperation(env: DbEnv, operation: Operation): Promise<unknown> {
   const db = getDb(env);
   switch (operation.op) {
+    case 'seedSession': {
+      const authEnv = env as AuthEnv;
+      const now = Date.now();
+      const at = new Date(now);
+      const userId = crypto.randomUUID();
+      const session = newSession(userId, { now });
+      await db.batch([
+        db.insert(users).values({
+          id: userId,
+          username: operation.username,
+          email: operation.email,
+          displayName: operation.displayName ?? operation.username,
+          bio: '',
+          createdAt: at,
+          updatedAt: at,
+        }),
+        db.insert(accounts).values({
+          id: crypto.randomUUID(),
+          accountId: userId,
+          providerId: 'credential',
+          userId,
+          password: await hashPassword(
+            operation.password ?? crypto.randomUUID(),
+            authEnv.AUTH_PEPPER,
+          ),
+          createdAt: at,
+          updatedAt: at,
+        }),
+        db.insert(sessions).values(session.row),
+      ]);
+      const { cookie } = await sessionSetCookie(authEnv, session.token);
+      return {
+        userId,
+        username: operation.username,
+        cookie: { name: cookie.name, value: cookie.value },
+      };
+    }
     case 'seedUser': {
       const now = new Date();
       await db.insert(users).values({
@@ -357,6 +417,46 @@ export async function runOperation(env: DbEnv, operation: Operation): Promise<vo
             .onConflictDoNothing(),
         ) as unknown as Parameters<typeof db.batch>[0],
       );
+      return;
+    }
+    case 'makeAdmin': {
+      const done = await db
+        .update(users)
+        .set({ role: 'admin' })
+        .where(eq(users.username, operation.username))
+        .returning({ id: users.id });
+      if (done.length === 0) throw new Error(`no such user: ${operation.username}`);
+      return;
+    }
+    case 'seedInvite': {
+      // Every seeded code belongs to one administrator, found or made here.
+      const username = 'e2e_inviter';
+      let [admin] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.username, username));
+      if (!admin) {
+        const now = new Date();
+        admin = { id: crypto.randomUUID() };
+        await db.insert(users).values({
+          id: admin.id,
+          username,
+          email: `${username}@example.com`,
+          displayName: username,
+          role: 'admin',
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+      await db.insert(invites).values({
+        code: operation.code,
+        createdBy: admin.id,
+        maxUses: operation.maxUses,
+        usedCount: operation.usedCount ?? 0,
+        expiresAt: new Date(operation.expiresAt),
+        revokedAt: operation.revokedAt === undefined ? null : new Date(operation.revokedAt),
+        createdAt: new Date(),
+      });
       return;
     }
     case 'tagPost': {

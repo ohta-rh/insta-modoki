@@ -1,16 +1,58 @@
 import { expect, type Page } from '@playwright/test';
 import { expectNoSeriousViolations } from './support/axe';
-import { newScreenPage, openSettled, SCREENS, test } from './support/screens';
+import { VIEWPORTS } from './support/measure';
+import { newScreenPage, openSettled, SCREENS, test, type World } from './support/screens';
 
 const MOBILE = 375;
+const WIDTHS = [VIEWPORTS.mobile, VIEWPORTS.narrow, VIEWPORTS.wide];
+const PDF = { name: 'memo.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4') };
 
-for (const screen of SCREENS) {
-  test(`${screen.name} で axe の重大・深刻な違反が 0 件`, async ({ browser, world }) => {
-    const page = await newScreenPage(browser, { world, loggedIn: screen.loggedIn, width: MOBILE });
-    await openSettled(page, screen.path(world));
-    await expectNoSeriousViolations(page, screen.name);
-    await page.context().close();
-  });
+type Scene = { name: string; open: (page: Page, world: World) => Promise<void>; loggedIn: boolean };
+
+/** Every screen, and the create modal after a file that cannot be used was chosen. */
+const SCENES: Scene[] = [
+  ...SCREENS.map((screen) => ({
+    name: screen.name,
+    loggedIn: screen.loggedIn,
+    open: (page: Page, world: World) => openSettled(page, screen.path(world)),
+  })),
+  {
+    name: '作成のモーダル（使えないファイルを選んだ状態）',
+    loggedIn: true,
+    open: async (page) => {
+      await openSettled(page, '/');
+      await page.getByRole('link', { name: '投稿', exact: true }).first().click();
+      const modal = page.getByRole('dialog', { name: '新規投稿を作成' });
+      await expect(modal).toBeVisible();
+      await modal.locator('input[type="file"]').setInputFiles(PDF);
+      await expect(
+        page
+          .locator('[role="alert"]:not(#__next-route-announcer__)')
+          .filter({ has: page.getByRole('listitem') }),
+      ).toHaveCount(1);
+      // The modal fades in; measure and scan the settled colours.
+      await expect(modal.getByTestId('create-box')).toHaveCSS('opacity', '1');
+    },
+  },
+];
+
+for (const vp of WIDTHS) {
+  for (const scene of SCENES) {
+    test(`${vp.width}px ${scene.name} で axe の重大・深刻な違反が 0 件`, async ({
+      browser,
+      world,
+    }) => {
+      const page = await newScreenPage(browser, {
+        world,
+        loggedIn: scene.loggedIn,
+        width: vp.width,
+        height: vp.height,
+      });
+      await scene.open(page, world);
+      await expectNoSeriousViolations(page, `${vp.width}px ${scene.name}`);
+      await page.context().close();
+    });
+  }
 }
 
 test('投稿のモーダルで axe の重大・深刻な違反が 0 件', async ({ browser, world }) => {
@@ -35,26 +77,46 @@ test('いいねした人の一覧で axe の重大・深刻な違反が 0 件', 
   await page.context().close();
 });
 
-test('操作できる要素が全て 44×44px 以上', async ({ browser, world }) => {
-  for (const screen of SCREENS) {
-    const page = await newScreenPage(browser, { world, loggedIn: screen.loggedIn, width: MOBILE });
-    await openSettled(page, screen.path(world));
-    const small = await page.evaluate(() => {
-      const selector = 'button, [role=button], input, select, textarea, [role=tab], nav a';
-      return Array.from(document.querySelectorAll(selector)).flatMap((el) => {
-        if (el instanceof HTMLInputElement && el.type === 'hidden') return [];
-        const box = el.getBoundingClientRect();
-        // Not on screen (display: none) or only for a screen reader (sr-only, 1px).
-        if (box.width <= 1 || box.height <= 1) return [];
-        if (box.width >= 44 && box.height >= 44) return [];
-        const name = el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 30) ?? '';
-        return [`<${el.tagName.toLowerCase()}> "${name}" ${box.width}x${box.height}`];
+for (const vp of WIDTHS) {
+  test(`${vp.width}px で操作できる要素が全て 44×44px 以上`, async ({ browser, world }) => {
+    for (const scene of SCENES) {
+      const page = await newScreenPage(browser, {
+        world,
+        loggedIn: scene.loggedIn,
+        width: vp.width,
+        height: vp.height,
       });
-    });
-    expect(small, `${screen.name} の小さい要素`).toEqual([]);
-    await page.context().close();
-  }
-});
+      await scene.open(page, world);
+      if (vp.width >= 1160 && scene.name === 'ホームフィード') {
+        // The scene must put the 「おすすめ」 names under the check, or it checks nothing about them.
+        await expect(
+          page.locator('aside[aria-label="おすすめ"] li > span > a').first(),
+        ).toBeVisible();
+      }
+      const small = await page.evaluate(() => {
+        // Every link and button inside main (EPIC #87 AC-10), and the other controls of the page.
+        const selector =
+          'main a, main button, button, [role=button], input, select, textarea, [role=tab], nav a, aside a';
+        const targets = Array.from(document.querySelectorAll(selector));
+        return targets.flatMap((el) => {
+          if (el instanceof HTMLInputElement && el.type === 'hidden') return [];
+          const box = el.getBoundingClientRect();
+          // Not on screen (display: none) or only for a screen reader (sr-only, 1px).
+          if (box.width <= 1 || box.height <= 1) return [];
+          if (box.width >= 44 && box.height >= 44) return [];
+          const name = el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 30) ?? '';
+          return [`<${el.tagName.toLowerCase()}> "${name}" ${box.width}x${box.height}`];
+        });
+      });
+      if (scene.name === 'ホームフィード') {
+        // The scene must put "続きを読む" under the check, or it checks nothing about it.
+        await expect(page.getByRole('link', { name: '続きを読む' }).first()).toBeVisible();
+      }
+      expect(small, `${vp.width}px ${scene.name} の小さい要素`).toEqual([]);
+      await page.context().close();
+    }
+  });
+}
 
 const photoAlts = (page: Page) =>
   page.locator('img[srcset]').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('alt')));

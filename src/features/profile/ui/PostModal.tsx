@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, type ReactNode } from 'react';
-import { PostDeletedProvider } from '../../post';
+import { PostDeletedProvider } from '../../post/ui';
+import { CloseIcon } from '../../../shared/ui/icons';
 import { trapTab } from '../../../shared/ui/focus-trap';
 import { useDeletedPosts } from './ProfilePostsProvider';
 
@@ -66,7 +67,7 @@ export function PostModal({ postId, children }: { postId: string; children: Reac
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex justify-center bg-bg md:items-center md:bg-black/60"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-bg lg:bg-black/65"
       onClick={(e) => e.target === e.currentTarget && close()}
     >
       <div
@@ -74,16 +75,17 @@ export function PostModal({ postId, children }: { postId: string; children: Reac
         role="dialog"
         aria-modal="true"
         aria-label="投稿"
-        className="post-modal relative h-full w-full overflow-y-auto bg-bg md:h-auto md:max-h-[90vh] md:max-w-[900px] md:rounded-xl"
+        className="post-modal relative h-full w-full overflow-y-auto bg-bg lg:h-auto lg:w-auto lg:overflow-visible lg:[--post-h:min(calc(100dvh-80px),calc(100vw-335px-96px),1032px)]"
       >
-        <div className="sticky top-0 z-10 flex justify-end bg-bg">
+        <div className="sticky top-0 z-10 flex justify-end bg-bg lg:static lg:block lg:bg-transparent">
           <button
             ref={closeButton}
             type="button"
             onClick={close}
-            className="min-h-[var(--tap-min)] min-w-[var(--tap-min)] px-4 font-bold hover:bg-surface"
+            aria-label="閉じる"
+            className="flex h-11 w-11 items-center justify-center hover:bg-surface lg:fixed lg:top-2 lg:right-2 lg:z-10 lg:rounded-full lg:text-white lg:hover:bg-white/20"
           >
-            閉じる
+            <CloseIcon size={24} />
           </button>
         </div>
         <PostDeletedProvider value={onDeleted}>{children}</PostDeletedProvider>

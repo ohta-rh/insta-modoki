@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { cache } from 'react';
-import { listTagPosts, TagPage } from '@/features/hashtag';
+import { listTagPosts } from '@/features/hashtag';
+import { TagPage } from '@/features/hashtag/ui';
 import { AppError } from '@/shared/errors';
 
 // The tag's name in the URL is percent-encoded (a Japanese tag is). Tag names never contain `%`,

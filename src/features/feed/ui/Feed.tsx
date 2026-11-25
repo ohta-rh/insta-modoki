@@ -29,8 +29,8 @@ export function Feed({
     );
   }
   return (
-    <section aria-label="フィード" className="mx-auto w-full max-w-[600px]">
-      <div className="flex flex-col gap-2">
+    <section aria-label="フィード" className="mx-auto w-full max-w-[var(--feed-width)]">
+      <div className="flex flex-col gap-[var(--feed-item-gap)]">
         {cards.map((card) => (
           <div key={card.id}>{card.node}</div>
         ))}

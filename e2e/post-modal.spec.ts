@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Locator, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
-import { signUpViaUi } from './support/auth';
+import { signInViaHarness } from './support/auth';
 import { seedUser, userRow } from './support/db';
 import { harness } from './support/harness';
 import { holdScripts, waitForHydration } from './support/hydration';
@@ -44,7 +44,7 @@ const tile = (page: Page, id: string) =>
 const dialog = (page: Page) => page.getByRole('dialog', { name: '投稿', exact: true });
 const scrollY = (page: Page) => page.evaluate(() => window.scrollY);
 
-/** Opens the profile, waits for hydration, scrolls 800px down and returns the scroll position. */
+/** Opens the profile, waits for hydration, scrolls a middle tile to the centre and returns the scroll position. */
 async function openProfileScrolled(page: Page, username: string): Promise<number> {
   await page.goto(`/${username}`);
   await waitForHydration(page);
@@ -54,8 +54,18 @@ async function openProfileScrolled(page: Page, username: string): Promise<number
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     expect(await links.count()).toBeGreaterThanOrEqual(24);
   }).toPass();
-  await page.evaluate(() => window.scrollTo(0, 800));
-  await expect.poll(() => scrollY(page)).toBe(800);
+  // A tile from the middle of the grid goes to the vertical centre, so one tile is fully inside the
+  // viewport below the bar whatever the tile height (a fixed offset left none fully visible).
+  await links.nth(9).evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+  let last = -1;
+  await expect
+    .poll(async () => {
+      const y = await scrollY(page);
+      const stable = y > 0 && y === last;
+      last = y;
+      return stable;
+    })
+    .toBe(true);
   return scrollY(page);
 }
 
@@ -91,7 +101,7 @@ test('グリッドの投稿をクリックすると モーダルで開き URL �
   // The post detail (#28) is inside the dialog, and the profile stays behind it.
   await expect(dialog(page).getByText(/モーダル試験の投稿 \d+/)).toBeVisible();
   await expect(page.getByTestId('post-grid')).toBeAttached();
-  await expect(page.getByRole('heading', { name: 'モーダルの人' })).toBeAttached();
+  await expect(page.getByRole('heading', { level: 1, name: username, exact: true })).toBeAttached();
   expect(await scrollY(page)).toBe(before);
 
   // The page behind does not scroll.
@@ -181,6 +191,10 @@ test('フォーカスがモーダルの外に出ない', async ({ page }) => {
   const { username } = await strangerWithPosts(page, 6);
   await page.goto(`/${username}`);
   await waitForHydration(page);
+  await page
+    .locator('[data-testid="post-grid"] a')
+    .nth(1)
+    .evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
   const id = (await visibleTileId(page)) ?? '';
   await tile(page, id).click();
   await expect(dialog(page)).toBeVisible();
@@ -204,7 +218,7 @@ test('フォーカスがモーダルの外に出ない', async ({ page }) => {
 });
 
 test('モーダルから自分の投稿を削除すると グリッドから消える', async ({ page }) => {
-  const me = await signUpViaUi(page);
+  const me = await signInViaHarness(page);
   const { ids } = await postsFor(page, me.username, 3);
   await page.goto(`/${me.username}`);
   await waitForHydration(page);
@@ -213,7 +227,11 @@ test('モーダルから自分の投稿を削除すると グリッドから消�
   await tile(page, target).click();
   await expect(dialog(page)).toBeVisible();
 
-  await dialog(page).getByRole('button', { name: '削除', exact: true }).click();
+  await dialog(page).getByRole('button', { name: 'その他の操作' }).click();
+  await page
+    .getByRole('dialog', { name: 'その他の操作' })
+    .getByRole('button', { name: '削除', exact: true })
+    .click();
   const confirm = page.getByRole('alertdialog', { name: 'この投稿を削除しますか？' });
   await expect(confirm).toBeVisible();
   await confirm.getByRole('button', { name: '削除', exact: true }).click();
@@ -233,7 +251,9 @@ test('モーダルから自分の投稿を削除すると グリッドから消�
   await tile(page, other.ids[0]!).click();
   await expect(dialog(page)).toBeVisible();
   await expect(dialog(page).getByText(/モーダル試験の投稿 \d+/)).toBeVisible();
-  await expect(dialog(page).getByRole('button', { name: '削除', exact: true })).toHaveCount(0);
+  await dialog(page).getByRole('button', { name: 'その他の操作' }).click();
+  await expect(page.getByRole('dialog', { name: 'その他の操作' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '削除', exact: true })).toHaveCount(0);
 });
 
 test('開こうとした投稿が無いとき モーダルの中に見つからないと表示される', async ({ page }) => {
@@ -274,9 +294,11 @@ test('3 つの幅でモーダルが崩れず axe の重大な違反が無い', a
       expect(box.width, '375px は画面いっぱい').toBeCloseTo(375, 0);
       expect(box.height).toBeCloseTo(800, 0);
     } else {
-      expect(box.width).toBeLessThanOrEqual(900);
+      // Below 1024px the modal is a full-screen column; from 1024px it is the two-column box,
+      // sized from the screen (#94) instead of the old 900px box.
+      if (width < 1024) expect(box.width).toBeLessThanOrEqual(900);
+      else expect(box.width).toBeLessThanOrEqual(width);
       expect(Math.abs(box.x + box.width / 2 - width / 2), '中央').toBeLessThan(1);
-      if (width === 1280) expect(box.width).toBeCloseTo(900, 0);
     }
     const overflow = await page.evaluate(() => ({
       page: document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -333,7 +355,7 @@ test('JS が読み込まれる前にグリッドの投稿を押すと 通常の�
 });
 
 test('モーダルの中でコメントを送ると 一覧にすぐ出て 件数のリンクが増える', async ({ page }) => {
-  await signUpViaUi(page);
+  await signInViaHarness(page);
   const { username, ids } = await strangerWithPosts(page, 3);
   await page.goto(`/${username}`);
   await waitForHydration(page);

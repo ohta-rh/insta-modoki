@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isAuthScreen, isCurrent, navItems } from './nav-items';
+import { isAuthScreen, isCurrent, MORE_LINKS, navItems } from './nav-items';
 
 const haru = { username: 'haru' };
 
@@ -10,10 +10,11 @@ function currentLabels(path: string, viewer: { username: string } | null): strin
 }
 
 describe('navItems', () => {
-  it('5 項目が ホーム・検索・投稿・通知・プロフィール の順に並ぶ', () => {
+  it('6 項目が ホーム・検索・発見・投稿・通知・プロフィール の順に並ぶ', () => {
     expect(navItems(haru).map((i) => i.label)).toEqual([
       'ホーム',
       '検索',
+      '発見',
       '投稿',
       '通知',
       'プロフィール',
@@ -25,6 +26,7 @@ describe('navItems', () => {
     expect(items.find((i) => i.label === 'プロフィール')?.href).toBe('/haru');
     expect(items.map((i) => i.href)).toEqual([
       '/',
+      '/explore/search',
       '/explore',
       '/create',
       '/notifications',
@@ -38,7 +40,23 @@ describe('navItems', () => {
       expect(items.find((i) => i.label === label)?.href, label).toBe('/accounts/login');
     }
     expect(items.find((i) => i.label === 'ホーム')?.href).toBe('/');
-    expect(items.find((i) => i.label === '検索')?.href).toBe('/explore');
+    expect(items.find((i) => i.label === '検索')?.href).toBe('/explore/search');
+    expect(items.find((i) => i.label === '発見')?.href).toBe('/explore');
+  });
+
+  it('検索だけが side、他は all（下部タブは 5 項目）', () => {
+    const items = navItems(haru);
+    expect(items.filter((i) => i.placement === 'side').map((i) => i.label)).toEqual(['検索']);
+    expect(items.filter((i) => i.placement === 'all')).toHaveLength(5);
+  });
+});
+
+describe('MORE_LINKS', () => {
+  it('プロフィールを編集とログアウトのリンク', () => {
+    expect(MORE_LINKS).toEqual([
+      { label: 'プロフィールを編集', href: '/accounts/edit' },
+      { label: 'ログアウト', href: '/accounts/logout' },
+    ]);
   });
 });
 
@@ -47,11 +65,10 @@ describe('isCurrent', () => {
     expect(currentLabels('/', haru)).toEqual(['ホーム']);
   });
 
-  it('検索 は /explore を指し、/explore の下で現在になる', () => {
-    expect(navItems(haru).find((i) => i.key === 'search')?.href).toBe('/explore');
-    for (const path of ['/explore', '/explore/search', '/explore/tags/tokyo']) {
-      expect(currentLabels(path, haru), path).toEqual(['検索']);
-    }
+  it('検索は /explore/search、発見はそれ以外の /explore の下で今の項目になる', () => {
+    expect(currentLabels('/explore/search', haru)).toEqual(['検索']);
+    expect(currentLabels('/explore', haru)).toEqual(['発見']);
+    expect(currentLabels('/explore/tags/a', haru)).toEqual(['発見']);
     expect(currentLabels('/exploreX', haru)).toEqual([]);
   });
 

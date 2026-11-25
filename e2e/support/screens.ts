@@ -1,5 +1,5 @@
 import { test as base, type Browser, type BrowserContext, type Page } from '@playwright/test';
-import { baseURL, signUpViaUi, type NewUser } from './auth';
+import { baseURL, signInViaHarness, type NewUser } from './auth';
 import { seedFollow, seedUser, userRow } from './db';
 import { waitForHydration } from './hydration';
 import { insertPost, putPostFiles } from './posts';
@@ -25,7 +25,7 @@ export type Screen = {
   loggedIn: boolean;
 };
 
-/** The eight main screens (375px wide in the specs). */
+/** The main screens, plus a signed-out public post; the a11y specs run them at 375, 1024 and 1280px. */
 export const SCREENS: Screen[] = [
   { name: 'サインアップ', path: () => '/accounts/signup', loggedIn: false },
   { name: 'ログイン', path: () => '/accounts/login', loggedIn: false },
@@ -35,25 +35,39 @@ export const SCREENS: Screen[] = [
   { name: '投稿の作成', path: () => '/create', loggedIn: true },
   { name: '投稿詳細', path: (w) => `/p/${w.detailPostId}`, loggedIn: true },
   { name: 'フォロワーの一覧', path: (w) => `/${w.author}/followers`, loggedIn: true },
+  // A signed-out visitor's public post (the bar with 「ログイン」 instead of the app shell).
+  {
+    name: 'ログインしていない人の公開の投稿',
+    path: (w) => `/p/${w.detailPostId}`,
+    loggedIn: false,
+  },
 ];
 
-/** Signs a viewer up and gives an author they follow three posts with real photo files. */
+/** Signs a viewer in (through the harness) and gives an author they follow three posts with real photo files. */
 async function createWorld(browser: Browser): Promise<World> {
   const context = await browser.newContext({ baseURL: baseURL() });
   const page = await context.newPage();
-  const viewer = await signUpViaUi(page);
+  const viewer = await signInViaHarness(context);
   const state = await context.storageState();
 
   const author = `e2e_x${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   seedUser(author, `${author}@example.com`, { displayName: '見本の人' });
   seedFollow(userRow(viewer.username)!.id as string, userRow(author)!.id as string);
+  // Someone the author follows: the viewer's 「おすすめ」 (1280px) names them, so the checks see its links.
+  const friend = `e2e_y${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  seedUser(friend, `${friend}@example.com`);
+  seedFollow(userRow(author)!.id as string, userRow(friend)!.id as string);
   const detail = insertPost({
     authorUsername: author,
     caption: 'アクセシビリティの試験',
     mediaCount: 3,
     altTexts: ['猫', '', ''],
   });
-  const like = insertPost({ authorUsername: author, caption: 'いいねの試験' });
+  // Longer than two lines, so the feed shows "続きを読む" and the 44px check covers it.
+  const like = insertPost({
+    authorUsername: author,
+    caption: `いいねの試験。${'長いキャプション。'.repeat(30)}`,
+  });
   const likers = insertPost({ authorUsername: author, caption: 'いいねした人の試験' });
   for (const post of [detail, like, likers]) await putPostFiles(page, post);
   await context.close();

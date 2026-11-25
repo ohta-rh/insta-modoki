@@ -1,0 +1,843 @@
+[
+ {
+  "k": "1280 axe home nodes",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (446px by 18px, should be at least 24px by 24px)",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (446px by 18px, should be at least 24px by 24px)",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (446px by 18px, should be at least 24px by 24px)"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1280 article html",
+  "v": "<article ><header ><span aria-hidden=\"true\" >E</span><a href=\"/e2e_wmwuc3bg70\" >e2e_wmwuc3bg70</a><span aria-hidden=\"true\" >•</span><a href=\"/p/26d2eb40-ec35-455e-9166-953c53a25c2d\" ><time datetime=\"2026-11-24T06:39:03.487Z\">13分前</time></a><div ><button type=\"button\" popovertarget=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" aria-label=\"その他の操作\" ><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"5.5\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle><circle cx=\"12\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle><circle cx=\"18.5\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle></svg></button><div id=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" popover=\"auto\" role=\"dialog\" aria-label=\"その他の操作\" ><a href=\"/p/26d2eb40-ec35-455e-9166-953c53a25c2d\" >投稿へ移動</a><button type=\"button\" >リンクをコピー</button><button type=\"button\" popovertarget=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" popovertargetaction=\"hide\" >キャンセル</button></div><div role=\"status\" ></div></div></header><div ><img src=\"http://insta-s1.web.localhost:3912/media/9c8d53dd-7240-421d-b637-d6262f5b7ca9/013fe14b-2bc4-4328-b1bd-4d0d08bdb49a/w640.webp\"  sizes=\"(min-width: 768px) 600px, 100vw\" width=\"1080\" height=\"1080\" alt=\"e2e_wmwuc3bg70 が投稿した写真（1 / 1）\" loading=\"eager\" fetchpriority=\"high\" decoding=\"async\"  style=\"aspect-ratio:1080 / 1080;background-image:url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAQxklEQVR4AQCBAH7/AORLMwDjTDUA3045ANpQPwDTU0YAy1ZNAMFZVQC2XF0Iql9lGJ5ibCSSZXIsh2l3MX5tfDR3cYA2cneCOnB9hT5xhIZFdIyGTXqUhVaBnIJeiqN9Y5Opd2Ocrm9epbFlUqyyWUCysk0ot7FADLqvNAC9rSkAvqogAL+oGgDApxcAAIEAfv8A5Uw0AONNNgDgTjoA21FAANRURwDLV04AwVpWALZdXhSqYGUknmNsMJNmcziIaXg9f219QHhygEJzeINFcX6FSnKFh1B1jYdYe5WGYYKdg2iLpH5ulKp4bp2vcGmmsmZdrbRbS7O0TjO4s0IYvLE2AL6uKwDArCIAwaocAMGpGQAAgQB+/wDmTTYA5E44AOFQPADcUkIA1VVIAMxYUALCW1gYt15gLKthZzyfZG5HlGd0T4lrelOAb35WeXOCV3R5hVpyf4dfc4aIZXaOiW18lod1hJ6FfY2mgYKWrHqDn7Fyfqi1aXKvtl5gtrdRSbu2RS2/tDkQwbEuAMOvJgDErR8AxK0cAACBAH7/AOdPOADmUDsA4lI+AN1URADWV0sMzVpSI8NdWjm4YGJNrWNpXKFmcGeVaXZuimx8cYFwgHN6dYR1dXuHd3OBiXt0iIuBeJCLiX6ZipGGoYiZj6iDnpivfZ+itHaaq7hsj7O6YX25ulVmvrpJSsK4Pi7FtjMSx7QqAMiyJADIsSEAAIEAfv8A6VE7AOdSPQDjVEEL3lZGHtdZTTTPXFVLxV9cYLpiZHOuZWyBomhzi5ZreZKLbn6VgnKDlnt3hpd2fImYdYOMnHaKjaJ6k46pgJuNsYiji7mRq4e+m7KBv6W3ebquu3Cvtr5mnr2/WofDvk5sx71DUMq7ODTMuTAdzbcqDM22JwMAgQB+/wDqUz4h6FRAKOVWRDbfWElI2VtQXtBeV3TGYV+Iu2Rnmq9nbqij"
+ },
+ {
+  "k": "1280 aside/feed",
+  "v": {
+   "aside": {
+    "x": 949.5,
+    "y": 16,
+    "w": 319,
+    "h": 9280,
+    "r": 1268.5,
+    "b": 9296
+   },
+   "art": {
+    "x": 335.5,
+    "y": 142,
+    "w": 470,
+    "h": 729,
+    "r": 805.5,
+    "b": 871
+   }
+  }
+ },
+ {
+  "k": "1280 story avatar/name",
+  "v": {
+   "ring": {
+    "x": 342.5,
+    "y": 24,
+    "w": 66,
+    "h": 66,
+    "r": 408.5,
+    "b": 90
+   },
+   "av": {
+    "x": 347.5,
+    "y": 29,
+    "w": 56,
+    "h": 56,
+    "r": 403.5,
+    "b": 85
+   },
+   "nameFs": [
+    "12px",
+    "400",
+    "16px",
+    "rgb(0, 0, 0)"
+   ],
+   "item": {
+    "x": 335.5,
+    "y": 24,
+    "w": 80,
+    "h": 86,
+    "r": 415.5,
+    "b": 110
+   }
+  }
+ },
+ {
+  "k": "1280 tab reach nav",
+  "v": [
+   "side:ホーム",
+   "side:検索",
+   "side:発見",
+   "side:投稿",
+   "side:通知",
+   "side:プロフィール",
+   "side:その他"
+  ]
+ },
+ {
+  "k": "1280 44px(project selector)",
+  "v": []
+ },
+ {
+  "k": "1280 profile count unit",
+  "v": [
+   {
+    "text": "4 投稿",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   },
+   {
+    "text": "1 フォロワー",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   },
+   {
+    "text": "0 フォロー中",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   }
+  ]
+ },
+ {
+  "k": "1280 modal",
+  "v": {
+   "media": [
+    576,
+    720
+   ],
+   "article": [
+    183.5,
+    913,
+    722
+   ],
+   "bd": "oklab(0 0 0 / 0.65)",
+   "close": [
+    44,
+    44
+   ],
+   "col": 10
+  }
+ },
+ {
+  "k": "1280 axe modal",
+  "v": []
+ },
+ {
+  "k": "1280 after close url",
+  "v": "http://localhost:3101/e2e_wmwuc3bg70"
+ },
+ {
+  "k": "1280 post page",
+  "v": {
+   "media": {
+    "x": 354.5,
+    "y": 1,
+    "w": 480,
+    "h": 600,
+    "r": 834.5,
+    "b": 601
+   },
+   "art": {
+    "x": 353.5,
+    "y": 0,
+    "w": 817,
+    "h": 602,
+    "r": 1170.5,
+    "b": 602
+   }
+  }
+ },
+ {
+  "k": "1280 panel 検索",
+  "v": "ERR TimeoutError: locator.evaluate: Timeout 8000ms exceeded."
+ },
+ {
+  "k": "1280 axe panel 検索",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1280 44 panel 検索",
+  "v": []
+ },
+ {
+  "k": "1280 esc nav",
+  "v": 244
+ },
+ {
+  "k": "1280 検索 same item closes",
+  "v": true
+ },
+ {
+  "k": "1280 検索 outside closes",
+  "v": true
+ },
+ {
+  "k": "1280 panel 通知",
+  "v": "ERR TimeoutError: locator.evaluate: Timeout 8000ms exceeded."
+ },
+ {
+  "k": "1280 axe panel 通知",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1280 44 panel 通知",
+  "v": []
+ },
+ {
+  "k": "1280 esc nav",
+  "v": 244
+ },
+ {
+  "k": "1280 通知 same item closes",
+  "v": true
+ },
+ {
+  "k": "1280 通知 outside closes",
+  "v": true
+ },
+ {
+  "k": "1280 create dialogs count",
+  "v": {
+   "n": 1,
+   "box": {
+    "x": 300,
+    "y": 38,
+    "w": 680,
+    "h": 724,
+    "r": 980,
+    "b": 762
+   },
+   "bd": "rgba(0, 0, 0, 0.65)",
+   "main": 1
+  }
+ },
+ {
+  "k": "1280 44 create",
+  "v": []
+ },
+ {
+  "k": "1280 axe create0",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1280 public bar profile",
+  "v": {
+   "bar": {
+    "x": 0,
+    "y": 0,
+    "w": 1280,
+    "h": 60,
+    "r": 1280,
+    "b": 60
+   },
+   "text": "Mado ログイン 新しいアカウントを作成",
+   "nav": 0
+  }
+ },
+ {
+  "k": "1280 public bar post",
+  "v": {
+   "bar": {
+    "x": 0,
+    "y": 0,
+    "w": 1280,
+    "h": 60,
+    "r": 1280,
+    "b": 60
+   },
+   "nav": 0
+  }
+ },
+ {
+  "k": "1280 brand",
+  "v": {
+   "m": [
+    "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。 | @e2e_wmwuc"
+   ],
+   "accent": [],
+   "title": "@e2e_wmwuc3bg70 の投稿",
+   "foot": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"
+  }
+ },
+ {
+  "k": "1024 axe home nodes",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (446px by 18px, should be at least 24px by 24px)",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (446px by 18px, should be at least 24px by 24px)",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (446px by 18px, should be at least 24px by 24px)"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1024 article html",
+  "v": "<article ><header ><span aria-hidden=\"true\" >E</span><a href=\"/e2e_wmwuc3bg70\" >e2e_wmwuc3bg70</a><span aria-hidden=\"true\" >•</span><a href=\"/p/26d2eb40-ec35-455e-9166-953c53a25c2d\" ><time datetime=\"2026-11-24T06:39:03.487Z\">14分前</time></a><div ><button type=\"button\" popovertarget=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" aria-label=\"その他の操作\" ><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"5.5\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle><circle cx=\"12\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle><circle cx=\"18.5\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle></svg></button><div id=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" popover=\"auto\" role=\"dialog\" aria-label=\"その他の操作\" ><a href=\"/p/26d2eb40-ec35-455e-9166-953c53a25c2d\" >投稿へ移動</a><button type=\"button\" >リンクをコピー</button><button type=\"button\" popovertarget=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" popovertargetaction=\"hide\" >キャンセル</button></div><div role=\"status\" ></div></div></header><div ><img src=\"http://insta-s1.web.localhost:3912/media/9c8d53dd-7240-421d-b637-d6262f5b7ca9/013fe14b-2bc4-4328-b1bd-4d0d08bdb49a/w640.webp\"  sizes=\"(min-width: 768px) 600px, 100vw\" width=\"1080\" height=\"1080\" alt=\"e2e_wmwuc3bg70 が投稿した写真（1 / 1）\" loading=\"eager\" fetchpriority=\"high\" decoding=\"async\"  style=\"aspect-ratio:1080 / 1080;background-image:url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAQxklEQVR4AQCBAH7/AORLMwDjTDUA3045ANpQPwDTU0YAy1ZNAMFZVQC2XF0Iql9lGJ5ibCSSZXIsh2l3MX5tfDR3cYA2cneCOnB9hT5xhIZFdIyGTXqUhVaBnIJeiqN9Y5Opd2Ocrm9epbFlUqyyWUCysk0ot7FADLqvNAC9rSkAvqogAL+oGgDApxcAAIEAfv8A5Uw0AONNNgDgTjoA21FAANRURwDLV04AwVpWALZdXhSqYGUknmNsMJNmcziIaXg9f219QHhygEJzeINFcX6FSnKFh1B1jYdYe5WGYYKdg2iLpH5ulKp4bp2vcGmmsmZdrbRbS7O0TjO4s0IYvLE2AL6uKwDArCIAwaocAMGpGQAAgQB+/wDmTTYA5E44AOFQPADcUkIA1VVIAMxYUALCW1gYt15gLKthZzyfZG5HlGd0T4lrelOAb35WeXOCV3R5hVpyf4dfc4aIZXaOiW18lod1hJ6FfY2mgYKWrHqDn7Fyfqi1aXKvtl5gtrdRSbu2RS2/tDkQwbEuAMOvJgDErR8AxK0cAACBAH7/AOdPOADmUDsA4lI+AN1URADWV0sMzVpSI8NdWjm4YGJNrWNpXKFmcGeVaXZuimx8cYFwgHN6dYR1dXuHd3OBiXt0iIuBeJCLiX6ZipGGoYiZj6iDnpivfZ+itHaaq7hsj7O6YX25ulVmvrpJSsK4Pi7FtjMSx7QqAMiyJADIsSEAAIEAfv8A6VE7AOdSPQDjVEEL3lZGHtdZTTTPXFVLxV9cYLpiZHOuZWyBomhzi5ZreZKLbn6VgnKDlnt3hpd2fImYdYOMnHaKjaJ6k46pgJuNsYiji7mRq4e+m7KBv6W3ebquu3Cvtr5mnr2/WofDvk5sx71DUMq7ODTMuTAdzbcqDM22JwMAgQB+/wDqUz4h6FRAKOVWRDbfWElI2VtQXtBeV3TGYV+Iu2Rnmq9nbqij"
+ },
+ {
+  "k": "1024 aside/feed",
+  "v": {
+   "aside": {
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "r": 0,
+    "b": 0
+   },
+   "art": {
+    "x": 313,
+    "y": 142,
+    "w": 470,
+    "h": 729,
+    "r": 783,
+    "b": 871
+   }
+  }
+ },
+ {
+  "k": "1024 story avatar/name",
+  "v": {
+   "ring": {
+    "x": 320,
+    "y": 24,
+    "w": 66,
+    "h": 66,
+    "r": 386,
+    "b": 90
+   },
+   "av": {
+    "x": 325,
+    "y": 29,
+    "w": 56,
+    "h": 56,
+    "r": 381,
+    "b": 85
+   },
+   "nameFs": [
+    "12px",
+    "400",
+    "16px",
+    "rgb(0, 0, 0)"
+   ],
+   "item": {
+    "x": 313,
+    "y": 24,
+    "w": 80,
+    "h": 86,
+    "r": 393,
+    "b": 110
+   }
+  }
+ },
+ {
+  "k": "1024 tab reach nav",
+  "v": [
+   "side:ホーム",
+   "side:検索",
+   "side:発見",
+   "side:投稿",
+   "side:通知",
+   "side:プロフィール",
+   "side:その他"
+  ]
+ },
+ {
+  "k": "1024 44px(project selector)",
+  "v": []
+ },
+ {
+  "k": "1024 profile count unit",
+  "v": [
+   {
+    "text": "4 投稿",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   },
+   {
+    "text": "1 フォロワー",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   },
+   {
+    "text": "0 フォロー中",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   }
+  ]
+ },
+ {
+  "k": "1024 modal",
+  "v": {
+   "media": [
+    474.3984375,
+    593
+   ],
+   "article": [
+    106.296875,
+    811.3984375,
+    595
+   ],
+   "bd": "oklab(0 0 0 / 0.65)",
+   "close": [
+    44,
+    44
+   ],
+   "col": 10
+  }
+ },
+ {
+  "k": "1024 axe modal",
+  "v": []
+ },
+ {
+  "k": "1024 after close url",
+  "v": "http://localhost:3101/e2e_wmwuc3bg70"
+ },
+ {
+  "k": "1024 post page",
+  "v": {
+   "media": {
+    "x": 140.5,
+    "y": 1,
+    "w": 480,
+    "h": 600,
+    "r": 620.5,
+    "b": 601
+   },
+   "art": {
+    "x": 139.5,
+    "y": 0,
+    "w": 817,
+    "h": 602,
+    "r": 956.5,
+    "b": 602
+   }
+  }
+ },
+ {
+  "k": "1024 panel 検索",
+  "v": "ERR TimeoutError: locator.evaluate: Timeout 8000ms exceeded."
+ },
+ {
+  "k": "1024 axe panel 検索",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1024 44 panel 検索",
+  "v": []
+ },
+ {
+  "k": "1024 esc nav",
+  "v": 72
+ },
+ {
+  "k": "1024 検索 same item closes",
+  "v": true
+ },
+ {
+  "k": "1024 検索 outside closes",
+  "v": true
+ },
+ {
+  "k": "1024 panel 通知",
+  "v": "ERR TimeoutError: locator.evaluate: Timeout 8000ms exceeded."
+ },
+ {
+  "k": "1024 axe panel 通知",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1024 44 panel 通知",
+  "v": []
+ },
+ {
+  "k": "1024 esc nav",
+  "v": 72
+ },
+ {
+  "k": "1024 通知 same item closes",
+  "v": true
+ },
+ {
+  "k": "1024 通知 outside closes",
+  "v": true
+ },
+ {
+  "k": "1024 create dialogs count",
+  "v": {
+   "n": 1,
+   "box": {
+    "x": 218,
+    "y": 68,
+    "w": 588,
+    "h": 632,
+    "r": 806,
+    "b": 700
+   },
+   "bd": "rgba(0, 0, 0, 0.65)",
+   "main": 1
+  }
+ },
+ {
+  "k": "1024 44 create",
+  "v": []
+ },
+ {
+  "k": "1024 axe create0",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "1024 public bar profile",
+  "v": {
+   "bar": {
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 60,
+    "r": 1024,
+    "b": 60
+   },
+   "text": "Mado ログイン 新しいアカウントを作成",
+   "nav": 0
+  }
+ },
+ {
+  "k": "1024 public bar post",
+  "v": {
+   "bar": {
+    "x": 0,
+    "y": 0,
+    "w": 1024,
+    "h": 60,
+    "r": 1024,
+    "b": 60
+   },
+   "nav": 0
+  }
+ },
+ {
+  "k": "1024 brand",
+  "v": {
+   "m": [
+    "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。 | @e2e_wmwuc"
+   ],
+   "accent": [],
+   "title": "@e2e_wmwuc3bg70 の投稿",
+   "foot": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"
+  }
+ },
+ {
+  "k": "375 axe home nodes",
+  "v": [
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (351px by 18px, should be at least 24px by 24px)",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (351px by 18px, should be at least 24px by 24px)",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block :: Target has insufficient size (351px by 18px, should be at least 24px by 24px)"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "375 article html",
+  "v": "<article ><header ><span aria-hidden=\"true\" >E</span><a href=\"/e2e_wmwuc3bg70\" >e2e_wmwuc3bg70</a><span aria-hidden=\"true\" >•</span><a href=\"/p/26d2eb40-ec35-455e-9166-953c53a25c2d\" ><time datetime=\"2026-11-24T06:39:03.487Z\">14分前</time></a><div ><button type=\"button\" popovertarget=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" aria-label=\"その他の操作\" ><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"5.5\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle><circle cx=\"12\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle><circle cx=\"18.5\" cy=\"12\" r=\"1\" fill=\"currentColor\"></circle></svg></button><div id=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" popover=\"auto\" role=\"dialog\" aria-label=\"その他の操作\" ><a href=\"/p/26d2eb40-ec35-455e-9166-953c53a25c2d\" >投稿へ移動</a><button type=\"button\" >リンクをコピー</button><button type=\"button\" popovertarget=\"post-menu-26d2eb40-ec35-455e-9166-953c53a25c2d\" popovertargetaction=\"hide\" >キャンセル</button></div><div role=\"status\" ></div></div></header><div ><img src=\"http://insta-s1.web.localhost:3912/media/9c8d53dd-7240-421d-b637-d6262f5b7ca9/013fe14b-2bc4-4328-b1bd-4d0d08bdb49a/w640.webp\"  sizes=\"(min-width: 768px) 600px, 100vw\" width=\"1080\" height=\"1080\" alt=\"e2e_wmwuc3bg70 が投稿した写真（1 / 1）\" loading=\"eager\" fetchpriority=\"high\" decoding=\"async\"  style=\"aspect-ratio:1080 / 1080;background-image:url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAQxklEQVR4AQCBAH7/AORLMwDjTDUA3045ANpQPwDTU0YAy1ZNAMFZVQC2XF0Iql9lGJ5ibCSSZXIsh2l3MX5tfDR3cYA2cneCOnB9hT5xhIZFdIyGTXqUhVaBnIJeiqN9Y5Opd2Ocrm9epbFlUqyyWUCysk0ot7FADLqvNAC9rSkAvqogAL+oGgDApxcAAIEAfv8A5Uw0AONNNgDgTjoA21FAANRURwDLV04AwVpWALZdXhSqYGUknmNsMJNmcziIaXg9f219QHhygEJzeINFcX6FSnKFh1B1jYdYe5WGYYKdg2iLpH5ulKp4bp2vcGmmsmZdrbRbS7O0TjO4s0IYvLE2AL6uKwDArCIAwaocAMGpGQAAgQB+/wDmTTYA5E44AOFQPADcUkIA1VVIAMxYUALCW1gYt15gLKthZzyfZG5HlGd0T4lrelOAb35WeXOCV3R5hVpyf4dfc4aIZXaOiW18lod1hJ6FfY2mgYKWrHqDn7Fyfqi1aXKvtl5gtrdRSbu2RS2/tDkQwbEuAMOvJgDErR8AxK0cAACBAH7/AOdPOADmUDsA4lI+AN1URADWV0sMzVpSI8NdWjm4YGJNrWNpXKFmcGeVaXZuimx8cYFwgHN6dYR1dXuHd3OBiXt0iIuBeJCLiX6ZipGGoYiZj6iDnpivfZ+itHaaq7hsj7O6YX25ulVmvrpJSsK4Pi7FtjMSx7QqAMiyJADIsSEAAIEAfv8A6VE7AOdSPQDjVEEL3lZGHtdZTTTPXFVLxV9cYLpiZHOuZWyBomhzi5ZreZKLbn6VgnKDlnt3hpd2fImYdYOMnHaKjaJ6k46pgJuNsYiji7mRq4e+m7KBv6W3ebquu3Cvtr5mnr2/WofDvk5sx71DUMq7ODTMuTAdzbcqDM22JwMAgQB+/wDqUz4h6FRAKOVWRDbfWElI2VtQXtBeV3TGYV+Iu2Rnmq9nbqij"
+ },
+ {
+  "k": "375 aside/feed",
+  "v": {
+   "aside": {
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "r": 0,
+    "b": 0
+   },
+   "art": {
+    "x": 0,
+    "y": 187,
+    "w": 375,
+    "h": 634,
+    "r": 375,
+    "b": 821
+   }
+  }
+ },
+ {
+  "k": "375 story avatar/name",
+  "v": {
+   "ring": {
+    "x": 87,
+    "y": 69,
+    "w": 66,
+    "h": 66,
+    "r": 153,
+    "b": 135
+   },
+   "av": {
+    "x": 92,
+    "y": 74,
+    "w": 56,
+    "h": 56,
+    "r": 148,
+    "b": 130
+   },
+   "nameFs": [
+    "12px",
+    "400",
+    "16px",
+    "rgb(0, 0, 0)"
+   ],
+   "item": {
+    "x": 80,
+    "y": 69,
+    "w": 80,
+    "h": 86,
+    "r": 160,
+    "b": 155
+   }
+  }
+ },
+ {
+  "k": "375 tab reach nav",
+  "v": []
+ },
+ {
+  "k": "375 44px(project selector)",
+  "v": []
+ },
+ {
+  "k": "375 profile count unit",
+  "v": [
+   {
+    "text": "4 投稿",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   },
+   {
+    "text": "1 フォロワー",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   },
+   {
+    "text": "0 フォロー中",
+    "uh": 24,
+    "rangeH": 19,
+    "lh": "24px",
+    "rects": 1
+   }
+  ]
+ },
+ {
+  "k": "375 modal",
+  "v": {
+   "media": [
+    375,
+    468.75
+   ],
+   "article": [
+    0,
+    375,
+    807.75
+   ],
+   "bd": "rgb(255, 255, 255)",
+   "close": [
+    44,
+    44
+   ],
+   "col": 0
+  }
+ },
+ {
+  "k": "375 axe modal",
+  "v": []
+ },
+ {
+  "k": "375 after close url",
+  "v": "http://localhost:3101/e2e_wmwuc3bg70"
+ },
+ {
+  "k": "375 post page",
+  "v": {
+   "media": {
+    "x": 0,
+    "y": 105,
+    "w": 375,
+    "h": 468.75,
+    "r": 375,
+    "b": 573.75
+   },
+   "art": {
+    "x": 0,
+    "y": 45,
+    "w": 375,
+    "h": 807.75,
+    "r": 375,
+    "b": 852.75
+   }
+  }
+ },
+ {
+  "k": "375 create dialogs count",
+  "v": {
+   "n": 1,
+   "box": {
+    "x": 0,
+    "y": 0,
+    "w": 375,
+    "h": 812,
+    "r": 375,
+    "b": 812
+   },
+   "bd": "rgb(255, 255, 255)",
+   "main": 1
+  }
+ },
+ {
+  "k": "375 44 create",
+  "v": []
+ },
+ {
+  "k": "375 axe create0",
+  "v": [
+   {
+    "id": "color-contrast",
+    "nodes": [
+     ".cursor-pointer"
+    ]
+   },
+   {
+    "id": "target-size",
+    "nodes": [
+     "div:nth-child(1) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(5) > article > .px-3:nth-child(5) > .text-text-secondary.block",
+     "div:nth-child(10) > article > .px-3:nth-child(5) > .text-text-secondary.block"
+    ]
+   }
+  ]
+ },
+ {
+  "k": "375 public bar profile",
+  "v": {
+   "bar": {
+    "x": 0,
+    "y": 0,
+    "w": 375,
+    "h": 60,
+    "r": 375,
+    "b": 60
+   },
+   "text": "ログイン 新しいアカウントを作成",
+   "nav": 0
+  }
+ },
+ {
+  "k": "375 public bar post",
+  "v": {
+   "bar": {
+    "x": 0,
+    "y": 0,
+    "w": 375,
+    "h": 60,
+    "r": 375,
+    "b": 60
+   },
+   "nav": 0
+  }
+ },
+ {
+  "k": "375 brand",
+  "v": {
+   "m": [
+    "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。 | @e2e_wmwuc"
+   ],
+   "accent": [],
+   "title": "@e2e_wmwuc3bg70 の投稿",
+   "foot": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"
+  }
+ }
+]

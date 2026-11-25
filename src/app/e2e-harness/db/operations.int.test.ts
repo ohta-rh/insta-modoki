@@ -2,11 +2,16 @@ import { eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 import { useTestDb } from '../../../../tests/helpers/db';
 import { createPost, createLike } from '../../../../tests/helpers/posts';
+import { testAuthEnv } from '../../../../tests/helpers/session';
 import { createUser } from '../../../../tests/helpers/users';
+import { getSessionUser } from '../../../features/auth';
+import { verifyPassword } from '../../../features/auth/model/password';
 import {
+  accounts,
   bookmarks,
   comments,
   follows,
+  invites,
   likes,
   media,
   posts,
@@ -22,6 +27,55 @@ const run = (operation: unknown) =>
   runOperation({ DB: t.d1 as never }, operationSchema.parse(operation) as Operation);
 
 describe('E2E ハーネスの操作', () => {
+  it('seedSession creates a user and a session the app accepts', async () => {
+    const env = testAuthEnv(t.d1);
+    const password = crypto.randomUUID();
+    const result = (await runOperation(
+      env,
+      operationSchema.parse({
+        op: 'seedSession',
+        username: 'harness_s',
+        email: 'harness_s@example.com',
+        password,
+      }) as Operation,
+    )) as { userId: string; username: string; cookie: { name: string; value: string } };
+
+    const [user] = await t.db.select().from(users).where(eq(users.username, 'harness_s'));
+    expect(result).toMatchObject({ userId: user!.id, username: 'harness_s' });
+    expect(user!.displayName).toBe('harness_s');
+    expect(result.cookie.name).toBe('__Secure-better-auth.session_token');
+    const [account] = await t.db.select().from(accounts).where(eq(accounts.userId, user!.id));
+    expect(account!.providerId).toBe('credential');
+    expect(await verifyPassword(password, account!.password!, env.AUTH_PEPPER)).toBe(true);
+    const headers = new Headers({ cookie: `${result.cookie.name}=${result.cookie.value}` });
+    expect(await getSessionUser(headers, { env })).toEqual({
+      id: user!.id,
+      username: 'harness_s',
+    });
+  });
+
+  it('seedSession makes a random password when none is given and rejects a bad username', async () => {
+    const env = testAuthEnv(t.d1);
+    await runOperation(
+      env,
+      operationSchema.parse({
+        op: 'seedSession',
+        username: 'harness_r',
+        email: 'harness_r@example.com',
+      }) as Operation,
+    );
+    expect((await t.db.select().from(accounts)).length).toBe(1);
+    for (const username of ['ab', 'x'.repeat(31)]) {
+      expect(
+        operationSchema.safeParse({ op: 'seedSession', username, email: 'a@example.com' }).success,
+      ).toBe(false);
+    }
+    expect(
+      operationSchema.safeParse({ op: 'seedSession', username: 'abc', email: 'not-an-email' })
+        .success,
+    ).toBe(false);
+  });
+
   it('seedUser が既定の表示名と空の自己紹介で利用者の行を書く', async () => {
     await run({ op: 'seedUser', username: 'harness_a', email: 'harness_a@example.com' });
     await run({
@@ -401,6 +455,43 @@ describe('E2E ハーネスの操作（保存）', () => {
         userId: viewer.id,
         items: [{ ...item, extra: 1 }],
       }).success,
+    ).toBe(false);
+  });
+
+  it('makeAdmin が利用者の role を admin にし 知らない利用者は失敗する', async () => {
+    const user = await createUser(t.db, { username: 'will_admin' });
+    await run({ op: 'makeAdmin', username: 'will_admin' });
+    const [row] = await t.db.select().from(users).where(eq(users.id, user.id));
+    expect(row!.role).toBe('admin');
+    await expect(run({ op: 'makeAdmin', username: 'nobody_here' })).rejects.toThrow();
+  });
+
+  it('seedInvite が管理者の利用者を 1 人だけ作って その名前で招待コードの行を書く', async () => {
+    const expiresAt = Date.UTC(2026, 10, 30);
+    await run({ op: 'seedInvite', code: 'ABCDE12345', maxUses: 1, expiresAt });
+    await run({
+      op: 'seedInvite',
+      code: 'ZYXWV98765',
+      maxUses: 3,
+      usedCount: 3,
+      expiresAt,
+      revokedAt: expiresAt - 1,
+    });
+    const rows = await t.db.select().from(invites).orderBy(invites.code);
+    expect(rows.map((r) => [r.code, r.maxUses, r.usedCount, r.expiresAt.getTime()])).toEqual([
+      ['ABCDE12345', 1, 0, expiresAt],
+      ['ZYXWV98765', 3, 3, expiresAt],
+    ]);
+    expect(rows[1]!.revokedAt!.getTime()).toBe(expiresAt - 1);
+    const admins = (await t.db.select().from(users)).filter((u) => u.role === 'admin');
+    expect(admins).toHaveLength(1);
+    expect(rows.every((r) => r.createdBy === admins[0]!.id)).toBe(true);
+    expect(
+      operationSchema.safeParse({ op: 'seedInvite', code: 'abc', maxUses: 1, expiresAt }).success,
+    ).toBe(false);
+    expect(
+      operationSchema.safeParse({ op: 'seedInvite', code: 'ABCDE12345', maxUses: 101, expiresAt })
+        .success,
     ).toBe(false);
   });
 });

@@ -1,0 +1,438 @@
+[
+ {
+  "k": "1280 gap",
+  "v": {
+   "story": [
+    255.5,
+    630
+   ],
+   "aside": 949.5,
+   "art": [
+    335.5,
+    470
+   ],
+   "gapFromStory": 64,
+   "gapFromArticle": 144
+  }
+ },
+ {
+  "k": "1280 article styles",
+  "v": {
+   "name": {
+    "fs": "14px",
+    "lh": "44px",
+    "fw": "600",
+    "color": "rgb(0, 0, 0)",
+    "y": 148,
+    "h": 44,
+    "text": "e2e_wmwuc3bg70"
+   },
+   "time": {
+    "fs": "14px",
+    "lh": "44px",
+    "fw": "400",
+    "color": "rgb(115, 115, 115)",
+    "y": 162,
+    "h": 17,
+    "text": "15分前"
+   },
+   "more": "その他の操作",
+   "caption": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 756,
+    "h": 36,
+    "text": "e2e_wmwuc3bg70 長いキャプション。長いキャプシ"
+   },
+   "more2": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(115, 115, 115)",
+    "y": 792,
+    "h": 18,
+    "text": "続きを読む"
+   },
+   "border": "1px solid rgb(219, 219, 219)",
+   "kids": [
+    "HEADER: Ee2e_wmwuc3bg70•15分前投稿へ移動 y=142",
+    "DIV:  y=198",
+    "DIV:post-actions  y=668",
+    "DIV: 0 件のいいねいいねした人閉じる y=712",
+    "DIV: e2e_wmwuc3bg70 長いキャプション。長 y=756",
+    "DIV: コメントを追加投稿 y=810"
+   ],
+   "input": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 0,
+    "h": 0,
+    "text": ""
+   },
+   "body": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 756,
+    "h": 54,
+    "text": "e2e_wmwuc3bg70 長いキャプション。長いキャプシ"
+   }
+  }
+ },
+ {
+  "k": "1280 captionLines",
+  "v": {
+   "lines": 2,
+   "clamp": "2"
+  }
+ },
+ {
+  "k": "1280 likes line",
+  "v": {
+   "actBottom": 712,
+   "likes": [
+    "0 件のいいね",
+    712
+   ]
+  }
+ },
+ {
+  "k": "1280 tab reach via shift+tab",
+  "v": [
+   "-:e2e_wmwuc3",
+   "-:e2e_wmwuc3",
+   "-:Ee2e_mwuc3",
+   "-:",
+   "-:0 件のいいね",
+   "-:保存",
+   "-:コメント 0 件",
+   "-:いいね",
+   "-:その他の操作",
+   "-:1時間前",
+   "-:e2e_wmwuc3",
+   "-:"
+  ]
+ },
+ {
+  "k": "1280 search panel",
+  "v": [
+   -83.86997985839844,
+   397,
+   800
+  ]
+ },
+ {
+  "k": "1280 notif panel",
+  "v": {
+   "box": [
+    72,
+    397,
+    800
+   ],
+   "heads": [
+    "通知",
+    "今日",
+    "今週",
+    "それ以前"
+   ]
+  }
+ },
+ {
+  "k": "1280 login button/accent",
+  "v": {
+   "bg": "rgb(79, 70, 200)",
+   "vars": []
+  }
+ },
+ {
+  "k": "1024 gap",
+  "v": {
+   "story": [
+    233,
+    630
+   ],
+   "aside": 0,
+   "art": [
+    313,
+    470
+   ],
+   "gapFromStory": -863,
+   "gapFromArticle": -783
+  }
+ },
+ {
+  "k": "1024 article styles",
+  "v": {
+   "name": {
+    "fs": "14px",
+    "lh": "44px",
+    "fw": "600",
+    "color": "rgb(0, 0, 0)",
+    "y": 148,
+    "h": 44,
+    "text": "e2e_wmwuc3bg70"
+   },
+   "time": {
+    "fs": "14px",
+    "lh": "44px",
+    "fw": "400",
+    "color": "rgb(115, 115, 115)",
+    "y": 162,
+    "h": 17,
+    "text": "15分前"
+   },
+   "more": "その他の操作",
+   "caption": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 756,
+    "h": 36,
+    "text": "e2e_wmwuc3bg70 長いキャプション。長いキャプシ"
+   },
+   "more2": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(115, 115, 115)",
+    "y": 792,
+    "h": 18,
+    "text": "続きを読む"
+   },
+   "border": "1px solid rgb(219, 219, 219)",
+   "kids": [
+    "HEADER: Ee2e_wmwuc3bg70•15分前投稿へ移動 y=142",
+    "DIV:  y=198",
+    "DIV:post-actions  y=668",
+    "DIV: 0 件のいいねいいねした人閉じる y=712",
+    "DIV: e2e_wmwuc3bg70 長いキャプション。長 y=756",
+    "DIV: コメントを追加投稿 y=810"
+   ],
+   "input": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 0,
+    "h": 0,
+    "text": ""
+   },
+   "body": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 756,
+    "h": 54,
+    "text": "e2e_wmwuc3bg70 長いキャプション。長いキャプシ"
+   }
+  }
+ },
+ {
+  "k": "1024 captionLines",
+  "v": {
+   "lines": 2,
+   "clamp": "2"
+  }
+ },
+ {
+  "k": "1024 likes line",
+  "v": {
+   "actBottom": 712,
+   "likes": [
+    "0 件のいいね",
+    712
+   ]
+  }
+ },
+ {
+  "k": "1024 tab reach via shift+tab",
+  "v": [
+   "-:",
+   "-:0 件のいいね",
+   "-:保存",
+   "-:コメント 0 件",
+   "-:いいね",
+   "-:その他の操作",
+   "-:1時間前",
+   "-:e2e_wmwuc3",
+   "-:",
+   "-:0 件のいいね",
+   "-:保存",
+   "-:コメント 0 件"
+  ]
+ },
+ {
+  "k": "1024 search panel",
+  "v": [
+   -175.09970092773438,
+   397,
+   768
+  ]
+ },
+ {
+  "k": "1024 notif panel",
+  "v": {
+   "box": [
+    72,
+    397,
+    768
+   ],
+   "heads": [
+    "通知",
+    "今日",
+    "今週",
+    "それ以前"
+   ]
+  }
+ },
+ {
+  "k": "1024 login button/accent",
+  "v": {
+   "bg": "rgb(79, 70, 200)",
+   "vars": []
+  }
+ },
+ {
+  "k": "375 gap",
+  "v": {
+   "story": [
+    0,
+    375
+   ],
+   "aside": 0,
+   "art": [
+    0,
+    375
+   ],
+   "gapFromStory": -375,
+   "gapFromArticle": -375
+  }
+ },
+ {
+  "k": "375 article styles",
+  "v": {
+   "name": {
+    "fs": "14px",
+    "lh": "44px",
+    "fw": "600",
+    "color": "rgb(0, 0, 0)",
+    "y": 193,
+    "h": 44,
+    "text": "e2e_wmwuc3bg70"
+   },
+   "time": {
+    "fs": "14px",
+    "lh": "44px",
+    "fw": "400",
+    "color": "rgb(115, 115, 115)",
+    "y": 207,
+    "h": 17,
+    "text": "15分前"
+   },
+   "more": "その他の操作",
+   "caption": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 706,
+    "h": 36,
+    "text": "e2e_wmwuc3bg70 長いキャプション。長いキャプシ"
+   },
+   "more2": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(115, 115, 115)",
+    "y": 742,
+    "h": 18,
+    "text": "続きを読む"
+   },
+   "border": "1px solid rgb(219, 219, 219)",
+   "kids": [
+    "HEADER: Ee2e_wmwuc3bg70•15分前投稿へ移動 y=187",
+    "DIV:  y=243",
+    "DIV:post-actions  y=618",
+    "DIV: 0 件のいいねいいねした人閉じる y=662",
+    "DIV: e2e_wmwuc3bg70 長いキャプション。長 y=706",
+    "DIV: コメントを追加投稿 y=760"
+   ],
+   "input": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 0,
+    "h": 0,
+    "text": ""
+   },
+   "body": {
+    "fs": "14px",
+    "lh": "18px",
+    "fw": "400",
+    "color": "rgb(0, 0, 0)",
+    "y": 706,
+    "h": 54,
+    "text": "e2e_wmwuc3bg70 長いキャプション。長いキャプシ"
+   }
+  }
+ },
+ {
+  "k": "375 captionLines",
+  "v": {
+   "lines": 2,
+   "clamp": "2"
+  }
+ },
+ {
+  "k": "375 likes line",
+  "v": {
+   "actBottom": 662,
+   "likes": [
+    "0 件のいいね",
+    662
+   ]
+  }
+ },
+ {
+  "k": "375 tab reach via shift+tab",
+  "v": [
+   "bottom:プロフィール",
+   "bottom:通知",
+   "bottom:投稿",
+   "bottom:発見",
+   "bottom:ホーム",
+   "-:",
+   "-:0 件のいいね",
+   "-:保存",
+   "-:コメント 0 件",
+   "-:いいね",
+   "-:その他の操作",
+   "-:1時間前"
+  ]
+ },
+ {
+  "k": "375 nav bottom focusable",
+  "v": [
+   "ホーム tab=0",
+   "発見 tab=0",
+   "投稿 tab=0",
+   "通知 tab=0",
+   "プロフィール tab=0"
+  ]
+ },
+ {
+  "k": "375 login button/accent",
+  "v": {
+   "bg": "rgb(79, 70, 200)",
+   "vars": []
+  }
+ }
+]

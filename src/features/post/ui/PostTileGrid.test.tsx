@@ -27,7 +27,7 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-import { PostTileGrid, PostTileGridView, mergeTiles } from './PostTileGrid';
+import { PostTileGrid, PostTileGridView, PostTileItem, mergeTiles } from './PostTileGrid';
 
 const tile = (id: string, over: Partial<PostTile> = {}): PostTile => ({
   id,
@@ -182,6 +182,28 @@ describe('PostTileGrid', () => {
     expect(html).toContain('aria-label="3 枚の写真"');
     expect(html).toContain('alt="猫"');
     expect(html.match(/<img /g)).toHaveLength(2);
+  });
+
+  it('マスは 3:4・隙間 1px で、複数枚の印は右上の白いアイコンだけ（数字なし）', () => {
+    const html = renderToStaticMarkup(grid({ items: [tile('a', { mediaCount: 3 }), tile('b')] }));
+    expect(html).toContain('gap-px');
+    expect(html).not.toContain('gap-[2px]');
+    expect(html).toContain('aspect-[3/4]');
+    expect(html).toContain('bg-highlight');
+    expect(html).toContain('aspect-ratio:3 / 4');
+    expect(html).toMatch(
+      /<span role="img" aria-label="3 枚の写真" class="[^"]*top-2 right-2[^"]*text-white/,
+    );
+    expect(html).toContain('data-filled="true"');
+    expect(html).not.toContain('>3<');
+  });
+
+  it('PostTileItem は単独で使え、scroll を渡せる', () => {
+    const html = renderToStaticMarkup(
+      <PostTileItem post={tile('z', { mediaCount: 2 })} eager scroll={false} />,
+    );
+    expect(html).toContain('href="/p/z"');
+    expect(html).toContain('aria-label="2 枚の写真"');
   });
 
   it('0 件なら emptyText を出す', () => {

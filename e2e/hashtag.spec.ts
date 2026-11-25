@@ -67,7 +67,12 @@ signedIn('投稿の無いタグは空の文言、知らないタグは 404', asy
   const tag = `e2e${unique()}`;
   await createWithCaption(page, `これは消す #${tag}`);
   await waitForHydration(page);
-  await page.getByRole('button', { name: '削除', exact: true }).click();
+  // The author's delete is a row of the post's "…" menu.
+  await page.getByRole('button', { name: 'その他の操作' }).click();
+  await page
+    .getByRole('dialog', { name: 'その他の操作' })
+    .getByRole('button', { name: '削除', exact: true })
+    .click();
   await page
     .getByRole('alertdialog', { name: 'この投稿を削除しますか？' })
     .getByRole('button', { name: '削除', exact: true })

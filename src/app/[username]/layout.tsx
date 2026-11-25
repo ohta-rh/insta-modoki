@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ProfilePostsProvider } from '@/features/profile';
+import { ProfilePostsProvider } from '@/features/profile/ui';
 
 // `modal` is the parallel slot where a post opened from the grid is shown over the profile
 // (ADR-0043). The provider lets the modal tell the grid a post was deleted.

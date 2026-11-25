@@ -1,0 +1,80 @@
+/* The AppShell's long utility lists live here, not in the component: class names in a component
+   ship as JavaScript, and the first load's JS is under a budget (scripts/perf). */
+@layer components {
+  .shell-footer {
+    @apply px-4 py-6 text-center text-[length:var(--font-size-xs)] text-text-secondary;
+  }
+  .shell-skip {
+    @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-bg focus:px-4 focus:py-3 focus:text-text;
+  }
+  .shell-side {
+    @apply sticky top-0 hidden h-screen w-[var(--nav-narrow-width)] shrink-0 flex-col gap-1 border-r border-border p-3 pr-[11px] nav:flex nav-wide:w-[var(--nav-wide-width)];
+  }
+  .shell-side-folded {
+    @apply nav-wide:w-[var(--nav-narrow-width)];
+  }
+  .shell-badge-folded {
+    @apply top-1.5 left-[26px];
+  }
+  .shell-panel {
+    @apply fixed inset-y-0 left-[var(--nav-narrow-width)] z-30 hidden w-[var(--side-panel-width)] flex-col overflow-y-auto rounded-r-2xl bg-bg text-text transition-transform duration-[var(--motion-panel)] ease-move-in nav:flex;
+    /* Plain: the shadow-* utility adds ring layers to the computed value. */
+    box-shadow: var(--shadow-panel);
+  }
+  .shell-panel-closed {
+    @apply invisible -translate-x-full;
+  }
+  .shell-panel-title {
+    @apply px-6 pt-6 pb-9 text-[length:var(--font-size-xl)] font-bold outline-none;
+  }
+  .shell-item {
+    @apply flex min-h-12 items-center gap-4 rounded-lg p-3 text-base transition-colors duration-[var(--motion-fast)] hover:bg-surface aria-[current=page]:font-bold;
+  }
+  .shell-tab {
+    @apply relative flex h-full min-h-11 min-w-11 flex-1 items-center justify-center transition-colors duration-[var(--motion-fast)];
+  }
+  .shell-badge-side {
+    @apply top-1.5 left-[26px] nav-wide:top-1/2 nav-wide:right-3 nav-wide:left-auto nav-wide:-translate-y-1/2;
+  }
+  .shell-badge-tab {
+    @apply top-0.5 left-[calc(50%+4px)];
+  }
+  .shell-top {
+    @apply sticky top-0 z-40 flex h-[var(--mobile-top-bar-height)] items-center justify-between border-b border-border bg-bg px-4 nav:hidden;
+  }
+  .shell-top-more {
+    @apply -mr-3 flex size-11 items-center justify-center rounded-lg;
+  }
+  .shell-public {
+    @apply fixed inset-x-0 top-0 z-40 h-[var(--public-top-bar-height)] border-b border-border bg-bg;
+  }
+  .shell-public-inner {
+    @apply mx-auto flex h-full w-full max-w-[calc(var(--site-width-wide)+32px)] items-center justify-between px-4;
+  }
+  .shell-public-logo {
+    @apply flex min-h-[var(--tap-min)] min-w-[var(--tap-min)] shrink-0 items-center;
+  }
+  /* Narrow phones: the mark alone (the name stays in the link's accessible name), so the two
+     buttons fit on one line each. */
+  .shell-public-logo span[aria-hidden='true'] {
+    @apply hidden min-[480px]:inline;
+  }
+  .shell-public-actions {
+    @apply flex shrink-0 items-center gap-2 whitespace-nowrap;
+  }
+  .shell-public-login {
+    @apply flex h-[var(--tap-min)] items-center rounded-lg bg-indigo px-4 text-[length:var(--font-size-sm)] font-semibold text-white;
+  }
+  .shell-public-signup {
+    @apply flex h-[var(--tap-min)] items-center px-2 text-[length:var(--font-size-sm)] font-semibold text-indigo;
+  }
+  .shell-bottom {
+    @apply fixed inset-x-0 bottom-0 z-40 flex h-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] border-t border-border bg-bg pb-[env(safe-area-inset-bottom)] nav:hidden;
+  }
+  .shell-more-menu {
+    @apply fixed inset-auto top-[calc(var(--mobile-top-bar-height)+4px)] right-2 m-0 w-[266px] rounded-[20px] border-0 bg-bg p-2 text-text shadow-panel nav:top-auto nav:right-auto nav:bottom-[76px] nav:left-3;
+  }
+  .shell-more-link {
+    @apply flex min-h-11 items-center rounded-lg px-3 text-base transition-colors duration-[var(--motion-fast)] hover:bg-surface;
+  }
+}

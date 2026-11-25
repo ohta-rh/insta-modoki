@@ -18,7 +18,7 @@ export function PostActionBar({
   return (
     <div
       data-slot="post-actions"
-      className="flex min-h-[var(--tap-min)] flex-wrap items-center gap-1 px-1"
+      className="flex min-h-[var(--tap-min)] flex-wrap items-center gap-0 px-1"
     >
       {like}
       {comment}

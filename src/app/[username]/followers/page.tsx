@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
-import { FollowList, listFollowers } from '@/features/follow';
+import { listFollowers } from '@/features/follow';
+import { FollowList } from '@/features/follow/ui';
 import { AppError } from '@/shared/errors';
 
 // Anyone may read the list, so this route is outside the (app) group (ADR-0031). The page and

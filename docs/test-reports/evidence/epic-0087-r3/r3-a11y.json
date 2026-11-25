@@ -1,0 +1,650 @@
+[
+ {
+  "label": "ホーム＋その他のメニュー",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 154,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "404 の画面",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "ホーム",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 154,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "ストーリーの画面",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 11,
+  "mainLinksButtons": 4
+ },
+ {
+  "label": "プロフィール(own)",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 24,
+  "mainLinksButtons": 17
+ },
+ {
+  "label": "プロフィール(other)",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 15,
+  "mainLinksButtons": 8
+ },
+ {
+  "label": "投稿の画面",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 29,
+  "mainLinksButtons": 27
+ },
+ {
+  "label": "投稿のモーダル",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 38,
+  "mainLinksButtons": 36
+ },
+ {
+  "label": "searchのパネル（ホームの上）",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 155,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "notifのパネル（ホームの上）",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 154,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "検索の 0 件（パネル）",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 155,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "/notifications",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 10,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "/explore/search",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "/explore/search の 0 件",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "/explore/search の結果",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "作成のモーダル 1 段目（ホームの上）",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 155,
+  "mainLinksButtons": 187
+ },
+ {
+  "label": "作成のモーダル 2 段目 切り取り",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 158,
+  "mainLinksButtons": 189
+ },
+ {
+  "label": "作成のモーダル 3 段目 キャプション",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 162,
+  "mainLinksButtons": 191
+ },
+ {
+  "label": "作成のモーダル（不正なファイル）",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 155,
+  "mainLinksButtons": 187
+ },
+ {
+  "label": "/create 直接",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 11,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "発見",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 11,
+  "mainLinksButtons": 5
+ },
+ {
+  "label": "タグ（空）",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "ホーム＋その他のメニュー",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 151,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "404 の画面",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "ホーム",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 151,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "ストーリーの画面",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 11,
+  "mainLinksButtons": 4
+ },
+ {
+  "label": "プロフィール(own)",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 24,
+  "mainLinksButtons": 17
+ },
+ {
+  "label": "プロフィール(other)",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 15,
+  "mainLinksButtons": 8
+ },
+ {
+  "label": "投稿の画面",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 29,
+  "mainLinksButtons": 27
+ },
+ {
+  "label": "投稿のモーダル",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 38,
+  "mainLinksButtons": 36
+ },
+ {
+  "label": "searchのパネル（ホームの上）",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 152,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "notifのパネル（ホームの上）",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 151,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "検索の 0 件（パネル）",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 152,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "/notifications",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 10,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "/explore/search",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "/explore/search の 0 件",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "/explore/search の結果",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "作成のモーダル 1 段目（ホームの上）",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 152,
+  "mainLinksButtons": 187
+ },
+ {
+  "label": "作成のモーダル 2 段目 切り取り",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 155,
+  "mainLinksButtons": 189
+ },
+ {
+  "label": "作成のモーダル 3 段目 キャプション",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 159,
+  "mainLinksButtons": 191
+ },
+ {
+  "label": "作成のモーダル（不正なファイル）",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 150,
+  "mainLinksButtons": 185
+ },
+ {
+  "label": "/create 直接",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 11,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "発見",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 11,
+  "mainLinksButtons": 5
+ },
+ {
+  "label": "タグ（空）",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "ホーム＋その他のメニュー",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 147,
+  "mainLinksButtons": 180
+ },
+ {
+  "label": "404 の画面",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "ホーム",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 147,
+  "mainLinksButtons": 180
+ },
+ {
+  "label": "ストーリーの画面",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 10,
+  "mainLinksButtons": 4
+ },
+ {
+  "label": "プロフィール(own)",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 23,
+  "mainLinksButtons": 17
+ },
+ {
+  "label": "プロフィール(other)",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 14,
+  "mainLinksButtons": 8
+ },
+ {
+  "label": "投稿の画面",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 28,
+  "mainLinksButtons": 27
+ },
+ {
+  "label": "投稿のモーダル",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 37,
+  "mainLinksButtons": 36
+ },
+ {
+  "label": "/notifications",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 9,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "/explore/search",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "/explore/search の 0 件",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "/explore/search の結果",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 0
+ },
+ {
+  "label": "作成のモーダル 1 段目（ホームの上）",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 148,
+  "mainLinksButtons": 184
+ },
+ {
+  "label": "作成のモーダル 2 段目 切り取り",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 150,
+  "mainLinksButtons": 186
+ },
+ {
+  "label": "作成のモーダル 3 段目 キャプション",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 154,
+  "mainLinksButtons": 188
+ },
+ {
+  "label": "作成のモーダル（不正なファイル）",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 147,
+  "mainLinksButtons": 183
+ },
+ {
+  "label": "/create 直接",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 10,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "発見",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 11,
+  "mainLinksButtons": 5
+ },
+ {
+  "label": "タグ（空）",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 1
+ },
+ {
+  "label": "ログイン",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 4,
+  "mainLinksButtons": 2
+ },
+ {
+  "label": "ログインの誤り",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 4,
+  "mainLinksButtons": 2
+ },
+ {
+  "label": "登録",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "登録の空の送信",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "公開のプロフィール",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 8
+ },
+ {
+  "label": "公開の投稿",
+  "w": 1280,
+  "axe": [],
+  "small": [],
+  "measured": 15,
+  "mainLinksButtons": 21
+ },
+ {
+  "label": "ログイン",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 4,
+  "mainLinksButtons": 2
+ },
+ {
+  "label": "ログインの誤り",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 4,
+  "mainLinksButtons": 2
+ },
+ {
+  "label": "登録",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "登録の空の送信",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "公開のプロフィール",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 8
+ },
+ {
+  "label": "公開の投稿",
+  "w": 1024,
+  "axe": [],
+  "small": [],
+  "measured": 15,
+  "mainLinksButtons": 21
+ },
+ {
+  "label": "ログイン",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 4,
+  "mainLinksButtons": 2
+ },
+ {
+  "label": "ログインの誤り",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 4,
+  "mainLinksButtons": 2
+ },
+ {
+  "label": "登録",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "登録の空の送信",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 7,
+  "mainLinksButtons": 3
+ },
+ {
+  "label": "公開のプロフィール",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 8,
+  "mainLinksButtons": 8
+ },
+ {
+  "label": "公開の投稿",
+  "w": 375,
+  "axe": [],
+  "small": [],
+  "measured": 15,
+  "mainLinksButtons": 21
+ }
+]
