@@ -9,13 +9,16 @@ import {
 } from '@/features/notification/ui';
 import { CreateNavLink } from '@/features/post-create/ui';
 import { SearchPanel } from '@/features/search/ui';
-import { AppShellClient, HydrationMarker } from '@/shared/ui';
+import { PwaRegister } from '@/shared/pwa';
+import { AppShellClient, HydrationMarker, TOKENS } from '@/shared/ui';
 import './globals.css';
 
 export const metadata = {
   title: 'Mado（仮称）',
   icons: { icon: '/brand/favicon.svg' },
 };
+
+export const viewport = { themeColor: TOKENS['--color-bg'] };
 
 // `modal` is the slot the create modal opens in over the current screen (src/app/@modal, ADR-0043).
 export default async function RootLayout({
@@ -34,6 +37,7 @@ export default async function RootLayout({
     <html lang="ja">
       <body>
         <HydrationMarker />
+        <PwaRegister />
         <AppShellClient
           viewer={viewer}
           panels={

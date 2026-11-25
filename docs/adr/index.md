@@ -28,6 +28,7 @@
 # アーキテクチャ
 
 * [ADR-0056: UI の値は実測した参照の Web 版に従い、ブランドの色と形は自前のままにする](0056-ui-follows-measured-web-reference-under-own-brand.md) - 採用
+* [ADR-0076: Service Worker はオフラインの案内の画面だけをキャッシュし、ページと API の応答は保存しない](0076-service-worker-caches-only-the-offline-notice.md) - 採用
 * [ADR-0074: ぼかしの PNG は優先読み込みの写真だけに埋め込み、ほかの写真は ThumbHash の平均の色を背景にする](0074-inline-blur-placeholder-only-for-the-priority-photo.md) - 採用
 * [ADR-0073: DB の全体に書き込む E2E は、exclusive の project で最後に単独で走らせる](0073-e2e-that-write-the-whole-db-run-alone-last.md) - 採用
 * [ADR-0072: main checkout は統合ブランチの上にいて、ハーネスの差は SessionStart で知らせる](0072-main-checkout-tracks-the-integration-branch.md) - 採用

@@ -3,20 +3,34 @@
 const CACHE = 'offline-v1';
 const OFFLINE_URL = '/assets/offline.html';
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches
-      .open(CACHE)
-      .then((cache) => cache.add(OFFLINE_URL))
-      .then(() => self.skipWaiting()),
+// Workers Static Assets answers /assets/offline.html with a redirect to /assets/offline. A response
+// marked `redirected` cannot answer a navigation (the browser fails it), so the stored copy is a
+// fresh Response with the same body and headers.
+async function cacheOfflinePage() {
+  const response = await fetch(OFFLINE_URL);
+  if (!response.ok) throw new Error('offline page: ' + response.status);
+  const cache = await caches.open(CACHE);
+  await cache.put(
+    OFFLINE_URL,
+    new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    }),
   );
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(cacheOfflinePage().then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((names) => Promise.all(names.filter((name) => name !== CACHE).map((name) => caches.delete(name))))
+      .then((names) =>
+        Promise.all(names.filter((name) => name !== CACHE).map((name) => caches.delete(name))),
+      )
       .then(() => self.clients.claim()),
   );
 });

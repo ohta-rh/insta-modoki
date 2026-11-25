@@ -60,6 +60,10 @@ S3 API はホストの `http://localhost:3910`（署名付きの PUT・HEAD・DE
 * 終了コード: 成功 0、数が合わない・本番・失敗 1、引数の誤り 2。
 * E2E は `e2e/support/demo.ts` の `ensureDemoSeed()` と `loginAsDemo(page)` を使う。
 
+# PWA のアイコン
+
+`node scripts/pwa-icons.mjs` は `public/brand/logo-mark.svg` を、入れてある Playwright の Chromium で `public/icons/` の 3 つの PNG（192・512・maskable 512）に描き直す。ロゴを変えたときだけ流し、できた PNG を commit する。
+
 # 定期ジョブを手で動かす
 
 スロットを準備した後（`node scripts/slot.mjs prepare <N>`）、worktree の中で流す。Worker の Cron Trigger（毎日 18:00 UTC）と同じコードが、スロットの D1 とバケットに対して動く（[ADR-0049](../adr/0049-scheduled-jobs-run-from-cron-trigger-in-a-custom-worker-entry.md)）。

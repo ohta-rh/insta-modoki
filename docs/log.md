@@ -1,5 +1,8 @@
 # ドキュメントの更新履歴
 
+## 2026-11-26
+* **Creation**: [ADR-0076](adr/0076-service-worker-caches-only-the-offline-notice.md)（Service Worker はオフラインの案内の画面だけをキャッシュし、ページと API の応答は保存しない）を追加し、ホーム画面に追加できる PWA の manifest・アイコン・`sw.js`・案内の画面を足した（#52）。
+
 ## 2026-11-25
 * **Creation**: [ADR-0074](adr/0074-inline-blur-placeholder-only-for-the-priority-photo.md)（ぼかしの PNG は優先読み込みの写真だけに埋め込み、ほかは ThumbHash の平均の色にする）を追加した（#132）。
 
