@@ -1,0 +1,4 @@
+$ node scripts/seed/index.ts --profile bench
+Using secrets defined in .dev.vars
+seed: bench OK users=1000 posts=10000
+pnpm seed:bench  31.12s user 4.74s system 17% cpu 3:24.79 total

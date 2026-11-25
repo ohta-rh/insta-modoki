@@ -1,0 +1,175 @@
+{
+  "chrome": "157.0.8103.80",
+  "steps": [
+    {
+      "name": "visitor / → login",
+      "url": "http://localhost:3103/accounts/login",
+      "console": [],
+      "failed": [],
+      "redirectedTo": "http://localhost:3103/accounts/login"
+    },
+    {
+      "name": "sign-up",
+      "url": "http://localhost:3103/",
+      "console": [],
+      "failed": [],
+      "user": "epic1_352pfa"
+    },
+    {
+      "name": "home 1280px",
+      "url": "http://localhost:3103/",
+      "console": [],
+      "failed": [],
+      "layout": {
+        "innerWidth": 1280,
+        "navs": [
+          {
+            "label": "メイン",
+            "box": {
+              "x": 0,
+              "y": 0,
+              "w": 244,
+              "h": 900
+            },
+            "items": [
+              "ホーム",
+              "検索",
+              "投稿",
+              "通知",
+              "プロフィール"
+            ]
+          }
+        ],
+        "footer": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。",
+        "hScroll": false
+      }
+    },
+    {
+      "name": "home 768px",
+      "url": "http://localhost:3103/",
+      "console": [],
+      "failed": [],
+      "layout": {
+        "innerWidth": 768,
+        "navs": [
+          {
+            "label": "メイン",
+            "box": {
+              "x": 0,
+              "y": 0,
+              "w": 244,
+              "h": 900
+            },
+            "items": [
+              "ホーム",
+              "検索",
+              "投稿",
+              "通知",
+              "プロフィール"
+            ]
+          }
+        ],
+        "footer": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。",
+        "hScroll": false
+      }
+    },
+    {
+      "name": "home 375px",
+      "url": "http://localhost:3103/",
+      "console": [],
+      "failed": [],
+      "layout": {
+        "innerWidth": 375,
+        "navs": [
+          {
+            "label": "メイン",
+            "box": {
+              "x": 0,
+              "y": 756,
+              "w": 375,
+              "h": 56
+            },
+            "items": [
+              "ホーム",
+              "検索",
+              "投稿",
+              "通知",
+              "プロフィール"
+            ]
+          }
+        ],
+        "footer": "学習目的の非公式プロジェクトです。Meta 社とは関係ありません。",
+        "hScroll": false
+      }
+    },
+    {
+      "name": "404 page",
+      "url": "http://localhost:3103/does-not-exist",
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "failed": []
+    }
+  ],
+  "headers": {
+    "/": {
+      "status": 200,
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-YWZmOWJiMWUtYjc1Ny00ZWNhLThlMzYtYTRlNDFmNjQ0ZThm'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s3.web.localhost:3912; media-src 'self' http://insta-s3.web.localhost:3912; connect-src 'self' http://insta-s3.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "x-frame-options": null,
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+      "strict-transport-security": null
+    },
+    "/does-not-exist": {
+      "status": 404,
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-NTgzZjZhMDEtMGM2Zi00MzY2LThjM2UtNTE1ZmMxZGVlMjEy'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s3.web.localhost:3912; media-src 'self' http://insta-s3.web.localhost:3912; connect-src 'self' http://insta-s3.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "x-frame-options": null,
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+      "strict-transport-security": null
+    },
+    "/brand/favicon.svg": {
+      "status": 200,
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "x-frame-options": null,
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+      "strict-transport-security": null
+    },
+    "/nope.png": {
+      "status": 404,
+      "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-MzFhMDA4ZTktNTQ2ZS00ZDEwLWEzNGUtMjQ2ODUyNWE5MWE1'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: http://insta-s3.web.localhost:3912; media-src 'self' http://insta-s3.web.localhost:3912; connect-src 'self' http://insta-s3.web.localhost:3912 http://localhost:3910; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "x-frame-options": null,
+      "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+      "strict-transport-security": null
+    },
+    "/favicon.ico": {
+      "status": 404,
+      "content-security-policy": null,
+      "x-content-type-options": null,
+      "referrer-policy": null,
+      "x-frame-options": null,
+      "permissions-policy": null,
+      "strict-transport-security": null
+    },
+    "/_next/static/nope.js": {
+      "status": 404,
+      "content-security-policy": null,
+      "x-content-type-options": null,
+      "referrer-policy": null,
+      "x-frame-options": null,
+      "permissions-policy": null,
+      "strict-transport-security": null
+    }
+  }
+}

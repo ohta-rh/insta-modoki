@@ -1,0 +1,346 @@
+{
+ "chrome": "157.0.8103.80",
+ "axe": [
+  {
+   "label": "サインアップ",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "ログイン",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "ホームフィード",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "プロフィール",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "プロフィールの編集",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "投稿の作成",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "投稿詳細",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "フォロワーの一覧",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "投稿のモーダル",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  },
+  {
+   "label": "AC-5 投稿詳細（コメント後）",
+   "width": 375,
+   "serious_critical": 0,
+   "all": []
+  }
+ ],
+ "tabOrder": {
+  "feed": [
+   "a[本文へ移動]",
+   "a[seed_user_29]",
+   "button[いいね]",
+   "button[0 件のいいね]",
+   "a[コメント 1 件]",
+   "a[seed_user_29]",
+   "a[コメント 1 件をすべて見る]",
+   "a[seed_user_26]",
+   "button[いいね]",
+   "button[6 件のいいね]",
+   "a[コメント 4 件]",
+   "a[seed_user_26]",
+   "a[コメント 4 件をすべて見る]",
+   "a[seed_user_24]",
+   "button[いいね]",
+   "button[3 件のいいね]",
+   "a[コメント 2 件]",
+   "a[seed_user_24]",
+   "a[コメント 2 件をすべて見る]",
+   "a[seed_user_23]",
+   "button[いいね]",
+   "button[4 件のいいね]",
+   "a[コメント 3 件]",
+   "a[seed_user_23]",
+   "a[コメント 3 件をすべて見る]",
+   "a[seed_user_22]",
+   "button[いいね]",
+   "button[2 件のいいね]",
+   "a[コメント 6 件]",
+   "a[seed_user_22]",
+   "a[コメント 6 件をすべて見る]",
+   "a[seed_user_21]",
+   "button[いいね]",
+   "button[3 件のいいね]",
+   "a[コメント 0 件]",
+   "a[seed_user_21]",
+   "a[seed_user_19]",
+   "div[投稿の写真]",
+   "button[前の写真]",
+   "button[次の写真]"
+  ],
+  "profile": [
+   "a[本文へ移動]",
+   "a[プロフィールを編集]",
+   "a[10 フォロワー]",
+   "a[20 フォロー中]",
+   "a[/p/01a1fed8-8794-702d-bba2-3c1]",
+   "a[/p/01a1fed8-8794-700f-8adc-e6e]",
+   "a[/p/01a1fed8-8793-70f0-8fb9-4d6]",
+   "a[/p/01a1fed8-8793-70d2-acaf-c2a]",
+   "a[/p/01a1fed8-8793-70b4-b99e-f41]",
+   "a[2]",
+   "a[/p/01a1fed8-8793-7078-afbb-8b6]",
+   "a[/p/01a1fed8-8793-705a-a5a7-09b]",
+   "a[3]",
+   "a[/p/01a1fed8-8793-701e-82b0-5db]",
+   "a[ホーム]",
+   "a[検索]",
+   "a[投稿]",
+   "a[通知]",
+   "a[プロフィール]",
+   "BODY"
+  ],
+  "postDetail": [
+   "a[本文へ移動]",
+   "a[demo]",
+   "button[削除]",
+   "button[いいね]",
+   "button[4 件のいいね]",
+   "a[コメント 2 件]",
+   "a[demo]",
+   "a[seed_user_21]",
+   "button[@seed_user_21 に返信する]",
+   "button[@seed_user_21 のコメントを削除]",
+   "a[seed_user_05]",
+   "button[@seed_user_05 に返信する]",
+   "button[@seed_user_05 のコメントを削除]",
+   "input[コメントを追加…]",
+   "a[ホーム]",
+   "a[検索]",
+   "a[投稿]",
+   "a[通知]",
+   "a[プロフィール]",
+   "BODY"
+  ]
+ },
+ "motion": {
+  "reduce": {
+   "matchMediaReduce": true,
+   "carousel": {
+    "transition": "0s",
+    "animation": "0s",
+    "scroll": "auto"
+   },
+   "modal": {
+    "transition": "0s",
+    "animation": "0s",
+    "scroll": "auto"
+   }
+  },
+  "no-preference": {
+   "matchMediaReduce": false,
+   "carousel": {
+    "transition": "0s",
+    "animation": "0s",
+    "scroll": "smooth"
+   },
+   "modal": {
+    "transition": "0s",
+    "animation": "0.15s",
+    "scroll": "auto"
+   }
+  }
+ },
+ "ac1": {
+  "feedArticles": 12,
+  "feedImgs": 25,
+  "grid": {
+   "cols": 3,
+   "items": 10
+  },
+  "profileText": "D デモ 太郎 @demo プロフィールを編集 10 投稿 10 フォロワー 20 フォロー中 週末はだいたい外にいます 2 3"
+ },
+ "ac5": {
+  "mouseEvents": 0
+ },
+ "results": {
+  "AC-1": [
+   {
+    "step": "wrong password",
+    "ok": true,
+    "text": "login refused, url=http://localhost:3101/accounts/login"
+   },
+   {
+    "step": "feed",
+    "ok": true,
+    "text": "feed articles=12 imgs=25"
+   },
+   {
+    "step": "profile grid",
+    "ok": true,
+    "text": "grid cols=3 items=10; D デモ 太郎 @demo プロフィールを編集 10 投稿 10 フォロワー 20 フォロー中 週末はだいたい外にいます 2 3"
+   },
+   {
+    "step": "unknown profile",
+    "ok": true,
+    "text": "status=404"
+   }
+  ],
+  "AC-4": [
+   {
+    "step": "サインアップ",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "ログイン",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "ホームフィード",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "プロフィール",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "プロフィールの編集",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "投稿の作成",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "投稿詳細",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "フォロワーの一覧",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   },
+   {
+    "step": "投稿のモーダル",
+    "ok": true,
+    "text": "axe serious/critical=0"
+   }
+  ],
+  "AC-6": [
+   {
+    "step": "carousel post",
+    "ok": true,
+    "text": "carouselId found=true"
+   },
+   {
+    "step": "reduce",
+    "ok": true,
+    "text": "{\"reduced\":true,\"carousel\":{\"transition\":\"0s\",\"animation\":\"0s\",\"scroll\":\"auto\"},\"modal\":{\"transition\":\"0s\",\"animation\":\"0s\",\"scroll\":\"auto\"}}"
+   },
+   {
+    "step": "no-preference",
+    "ok": true,
+    "text": "{\"reduced\":false,\"carousel\":{\"transition\":\"0s\",\"animation\":\"0s\",\"scroll\":\"smooth\"},\"modal\":{\"transition\":\"0s\",\"animation\":\"0.15s\",\"scroll\":\"auto\"}}"
+   }
+  ],
+  "AC-5": [
+   {
+    "step": "focus メールアドレス",
+    "ok": true,
+    "text": "reached"
+   },
+   {
+    "step": "focus ユーザー名",
+    "ok": true,
+    "text": "reached"
+   },
+   {
+    "step": "focus 表示名",
+    "ok": true,
+    "text": "reached"
+   },
+   {
+    "step": "focus パスワード",
+    "ok": true,
+    "text": "reached"
+   },
+   {
+    "step": "bad input refused",
+    "ok": true,
+    "text": "url=http://localhost:3101/accounts/signup text=アカウントを作成 入力を確認してください メールアドレス メールアドレスの形式を確認してください ユーザー名 表示名 パスワード パスワードは 8〜72 字で入力してください サインアップ"
+   },
+   {
+    "step": "signup",
+    "ok": true,
+    "text": "landed on /"
+   },
+   {
+    "step": "post created",
+    "ok": true,
+    "text": "/p/01a1fed9-bc1e-7000-a870-d57e558695aa"
+   },
+   {
+    "step": "liked",
+    "ok": true,
+    "text": "aria-pressed=true"
+   },
+   {
+    "step": "empty comment send disabled",
+    "ok": true,
+    "text": "disabled while empty"
+   },
+   {
+    "step": "commented",
+    "ok": true,
+    "text": "comment listed"
+   },
+   {
+    "step": "no mouse",
+    "ok": true,
+    "text": "mouse/pointer events=0"
+   }
+  ]
+ },
+ "health": {
+  "AC-1: unknown profile (404)": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [],
+   "http": []
+  }
+ }
+}

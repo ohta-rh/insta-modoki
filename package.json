@@ -1,0 +1,58 @@
+{
+  "name": "insta-modoki",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "dev": "next dev --port ${PORT:-3100}",
+    "build": "opennextjs-cloudflare build",
+    "start": "opennextjs-cloudflare preview --port ${PORT:-3100}",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format:check": "prettier . --check",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "verify": "node scripts/verify.mjs",
+    "db:migrate": "wrangler d1 migrations apply DB --local",
+    "seed:demo": "node scripts/seed/index.ts --profile demo",
+    "seed:bench": "node scripts/seed/index.ts --profile bench",
+    "jobs:run": "node scripts/run-job.ts"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "1.20.16",
+    "aws4fetch": "1.0.20",
+    "better-auth": "1.7.18",
+    "drizzle-orm": "0.45.4",
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "thumbhash": "0.1.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.0",
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "eslint": "10.14.0",
+    "globals": "17.0.0",
+    "lighthouse": "13.6.0",
+    "postcss": "8.5.33",
+    "prettier": "3.9.10",
+    "sharp": "0.35.5",
+    "tailwindcss": "4.3.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.73.0",
+    "vitest": "5.1.0",
+    "web-vitals": "6.2.3",
+    "wrangler": "4.158.0"
+  }
+}

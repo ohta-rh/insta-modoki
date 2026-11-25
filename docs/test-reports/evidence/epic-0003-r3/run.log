@@ -1,0 +1,34 @@
+ac1.header {"h1":"撮影者 A","headerText":"E 撮影者 A @e3a_mwrb9wvi203ba6 フォローする 3 投稿 0 フォロワー 0 フォロー中 旅と写真が好きです。 毎週末に撮っています。"}
+ac1.order ["撮影者 A の写真 3","撮影者 A の写真 2","撮影者 A の写真 1"]
+ac1.404 {"status":404,"body":"本文へ移動 Mado ホーム 検索 投稿 通知 プロフィール ページが見つかりません リンクが間違っているか、このアカウントは存在しません。 ホームへ戻る 学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"}
+ac4.otherHasEditLink false
+ac4.otherHasEditButton false
+ac4.ownHasEditLink true
+ac4.anonEditUrl "http://localhost:3103/accounts/login"
+ac4.anonProfileHasEdit false
+ac2.emptyNameMessage ["表示名は 1〜30 字で入力してください"]
+ac2.emptyNameSaveDisabled true
+ac2.ownAfter {"h1":"新しい名前 B 😀","bio":"新しい自己紹介です。\n二行目あり。","avatarSrc":"http://insta-s3.web.localhost:3912/media/01a2016c-0264-7000-8834-bf2db32ae3af/01"}
+ac2.otherView {"h1":"新しい名前 B 😀","bio":"新しい自己紹介です。\n二行目あり。","avatarLoaded":true,"editLink":false}
+ac3.151.alert ["自己紹介は 150 字までです"]
+ac3.151.saveDisabled true
+ac3.151.bioAfterReload "新しい自己紹介です。\n二行目あり。"
+ac3.150.alert []
+ac3.150.saveDisabled false
+ac3.150.saved {"length":150}
+ac5.1280.keyboardSaved {"stage":3,"h1":"キーボード1280","overflowX":false}
+ac5.375.keyboardSaved {"stage":3,"h1":"キーボード375","overflowX":false}
+[s1] before hydration: {"tabs":6,"count":0,"loaded":false,"crop":null,"src":null,"hydrated":false,"inputFiles":1,"current":"shown"}
+[s1] hydrated after 76 ms
+[s1] after hydration: {"count":1,"loaded":true,"crop":"150,0,600,600","src":"blob:http://localhos","hydrated":true,"inputFiles":0,"current":"hidden"} / after 1s: {"count":1,"loaded":true,"crop":"150,0,600,600","src":"blob:http://localhos","hydrated":true,"inputFiles":0,"current":"hidden"} alerts=0
+[s1] saved: avatar src changed=true naturalWidth=320
+[s2] before hydration: {"tabs":6,"count":0,"loaded":false,"crop":null,"src":null,"hydrated":false,"inputFiles":1,"current":"shown"}
+[s2] throttled 500 kbps / 400 ms (Slow 3G class)
+[s2] hydrated after 9320 ms
+[s2] after hydration: {"count":1,"loaded":true,"crop":"0,100,700,700","src":"blob:http://localhos","hydrated":true,"inputFiles":0,"current":"hidden"} / after 1s: {"count":1,"loaded":true,"crop":"0,100,700,700","src":"blob:http://localhos","hydrated":true,"inputFiles":0,"current":"hidden"}
+[s2] re-pick blue: {"count":1,"loaded":true,"crop":"0,0,800,800","src":"blob:http://localhos","hydrated":true,"inputFiles":0,"current":"hidden"}; same again: {"count":1,"loaded":true,"crop":"0,0,800,800","src":"blob:http://localhos","hydrated":true,"inputFiles":0,"current":"hidden"}
+[s3] before hydration: {"tabs":6,"count":0,"loaded":false,"crop":null,"src":null,"hydrated":false,"inputFiles":1,"current":"shown"}
+[s3] hydrated after 75 ms
+[s3] after hydration: {"count":0,"loaded":false,"crop":null,"src":null,"hydrated":true,"inputFiles":0,"current":"shown"} alert="ファイルが大きすぎます（1 枚 10MB まで）"
+[s3] large picked after hydration: alert="ファイルが大きすぎます（1 枚 10MB まで）" preview={"count":0,"loaded":false,"crop":null,"src":null,"hydrated":true,"inputFiles":0,"current":"shown"}; valid pick after: {"alerts":0,"count":1,"loaded":true,"crop":"150,0,600,600","src":"blob:http://localhos","hydrated":true,"inputFiles":0,"current":"hidden"}
+events 2

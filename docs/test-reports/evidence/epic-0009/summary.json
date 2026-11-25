@@ -1,0 +1,856 @@
+{
+  "acs": {
+    "setup": [
+      {
+        "name": "A, B, C signed up through the UI",
+        "ok": true,
+        "detail": ""
+      }
+    ],
+    "AC-4": [
+      {
+        "name": "create screen opens",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "16 s video: message at pick time",
+        "ok": true,
+        "detail": "動画は 15 秒までです"
+      },
+      {
+        "name": "16 s video: submit disabled",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "16 s video: no upload request at all",
+        "ok": true,
+        "detail": "[]"
+      },
+      {
+        "name": "16 s video: no story row",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "unsupported format explained",
+        "ok": true,
+        "detail": "この形式は使えません（JPEG・PNG・WebP・HEIC・MP4）"
+      },
+      {
+        "name": "#81 pick made before hydration (held chunks 10, hydrated at pick: 0)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "#81 16 s video picked before hydration: message after hydration",
+        "ok": true,
+        "detail": "動画は 15 秒までです"
+      },
+      {
+        "name": "#81 submit disabled and no upload requests",
+        "ok": true,
+        "detail": "[]"
+      },
+      {
+        "name": "15 s video accepted: label shows 0:15, no alert",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "15 s video: submit enabled",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "15 s video posted, redirected home",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "15 s video row: duration 15000, type video",
+        "ok": true,
+        "detail": "{\"t\":\"video\",\"d\":15000,\"w\":320,\"h\":568}"
+      }
+    ],
+    "AC-1": [
+      {
+        "name": "#81 photo picked before hydration (hydrated at pick 0, held 10) shows in preview after hydration",
+        "ok": true,
+        "detail": "previews 1"
+      },
+      {
+        "name": "#81 submit enabled after hydration",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "A photo story posted, redirected home",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "A photo row: image, expires_at = created_at + 24 h, alt text",
+        "ok": true,
+        "detail": "[[\"image\",86400000]]"
+      },
+      {
+        "name": "5 s video accepted (label 0:05)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "A 5 s video posted",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "A now has 2 stories (image, video 5000 ms)",
+        "ok": true,
+        "detail": "[[\"image\",null],[\"video\",5000]]"
+      },
+      {
+        "name": "tray: first is the add button, then A as 未視聴",
+        "ok": true,
+        "detail": "[\"ストーリーを追\",\"e9_aのストーリー（未視聴）\",\"e9_cのストーリー（未視聴）\",\"e9_fのストーリー（未視聴）\",\"e9_gのストーリー（未視聴）\",\"e9_dのストーリー（視聴済み）\"]"
+      },
+      {
+        "name": "tray order: unseen (A, C, F, G) before seen (D); expired E absent",
+        "ok": true,
+        "detail": "[\"e9_aのストーリー（未視聴）\",\"e9_cのストーリー（未視聴）\",\"e9_fのストーリー（未視聴）\",\"e9_gのストーリー（未視聴）\",\"e9_dのストーリー（視聴済み）\"]"
+      },
+      {
+        "name": "tapping A opens the viewer dialog at /stories/e9_a",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "viewer starts at story 1 / 2",
+        "ok": true,
+        "detail": "ストーリー 1 / 2"
+      },
+      {
+        "name": "photo advances on its own to story 2 / 2 (≈5 s of un-held time)",
+        "ok": true,
+        "detail": "4987 ms after release (held 1208 ms)"
+      },
+      {
+        "name": "story 2 is a playing video",
+        "ok": true,
+        "detail": "video elements 1"
+      },
+      {
+        "name": "video (5 s) advances after its length, to the next person C (next unseen)",
+        "ok": true,
+        "detail": "4424 ms"
+      },
+      {
+        "name": "C viewer open at 1 / 1 (15 s video)",
+        "ok": true,
+        "detail": "ストーリー 1 / 1"
+      },
+      {
+        "name": "video story plays (C, 15 s)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "opened F (first unseen in the tray)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "F ends -> next unseen person G",
+        "ok": true,
+        "detail": "http://localhost:3103/stories/e9_g"
+      },
+      {
+        "name": "the walk visits the saved tray order (F, G, A, C, D), each once",
+        "ok": true,
+        "detail": "[\"e9_f\",\"e9_g\",\"e9_a\",\"e9_c\",\"e9_d\"]"
+      },
+      {
+        "name": "#82 after the last person (D, the last in the order) the viewer closes to home and stays (no bounce back to the person just seen)",
+        "ok": true,
+        "detail": "http://localhost:3103/"
+      },
+      {
+        "name": "next-person moves did not add history",
+        "ok": true,
+        "detail": "6 -> 6"
+      },
+      {
+        "name": "#82 walking the last tray person (e9_d) ends at home, no dialog, no bounce",
+        "ok": true,
+        "detail": "http://localhost:3103/"
+      },
+      {
+        "name": "Esc: back on home, tray link focused, scroll 40 kept, loaded feed kept",
+        "ok": true,
+        "detail": "scrollY 40, articles 14/14, focus a \"e9_gのストーリー（視聴済み）視e9_g\" -> /stories/e9_g"
+      },
+      {
+        "name": "閉じる button: same restore (scroll 40, focus on tray link)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "holding 7 s keeps the story (no advance)",
+        "ok": true,
+        "detail": "ストーリー 1 / 2 -> ストーリー 1 / 2"
+      },
+      {
+        "name": "→ goes to 2 / 2",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "← goes back to 1 / 2",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "tap right goes to 2 / 2",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "tap left goes to 1 / 2",
+        "ok": true,
+        "detail": ""
+      }
+    ],
+    "AC-2": [
+      {
+        "name": "story_views row for A's story 01a2021f",
+        "ok": true,
+        "detail": "1"
+      },
+      {
+        "name": "story_views row for A's story 01a2021f",
+        "ok": true,
+        "detail": "1"
+      },
+      {
+        "name": "closing the viewer (Esc, soft back to home): A already shows 視聴済み without a reload",
+        "ok": false,
+        "detail": "[\"ストーリーを追\",\"e9_aのストーリー（未視聴）\",\"e9_cのストーリー（未視聴）\",\"e9_fのストーリー（未視聴）\",\"e9_gのストーリー（未視聴）\",\"e9_dのストーリー（視聴済み）\"]"
+      },
+      {
+        "name": "after a reload: unseen first (F, G), then A 視聴済み behind them, then C, D",
+        "ok": true,
+        "detail": "[\"ストーリーを追\",\"e9_fのストーリー（未視聴）\",\"e9_gのストーリー（未視聴）\",\"e9_aのストーリー（視聴済み）\",\"e9_cのストーリー（視聴済み）\",\"e9_dのストーリー（視聴済み）\"]"
+      },
+      {
+        "name": "seen ring (A) is styled differently from the unseen one (F)",
+        "ok": true,
+        "detail": "{\"a\":{\"bg\":\"none\",\"bc\":\"rgb(17, 24, 39)\"},\"f\":{\"bg\":\"conic-gradient(rgb(79, 70, 200), rgb(43, 108, 246), rgb(79, 70, 200))\",\"bc\":\"rgb(17, 24, 39)\"}}"
+      },
+      {
+        "name": "A sees 閲覧者 1 人 on own story",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "viewers list shows B",
+        "ok": true,
+        "detail": "[\"E\\ne9_b\\n閲覧者 B\"]"
+      },
+      {
+        "name": "captured the list action",
+        "ok": true,
+        "detail": "403207335138"
+      },
+      {
+        "name": "B has no viewers button on A's story",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "the same action as A returns the list (e9_b)",
+        "ok": true,
+        "detail": "0:{\"a\":\"$@1\",\"q\":\"\",\"i\":true,\"b\":\"ihRu_x8rCgyBPxEywH93P\"}\n1:{\"ok\":true,\"page\":{\"items\":[{\"username\":\"e9_b\",\"displayName\""
+      },
+      {
+        "name": "the same action as B is refused (FORBIDDEN, no list)",
+        "ok": true,
+        "detail": "0:{\"a\":\"$@1\",\"q\":\"\",\"i\":true,\"b\":\"ihRu_x8rCgyBPxEywH93P\"}\n1:{\"ok\":false,\"error\":{\"code\":\"FORBIDDEN\",\"message\":\"この操作はできません\"}}\n"
+      },
+      {
+        "name": "the same action as a visitor is refused (UNAUTHENTICATED)",
+        "ok": true,
+        "detail": "0:{\"a\":\"$@1\",\"q\":\"\",\"i\":true,\"b\":\"ihRu_x8rCgyBPxEywH93P\"}\n1:{\"ok\":false,\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"ログインしてください\"}}\n"
+      },
+      {
+        "name": "after the walk, after a reload, every ring is 視聴済み",
+        "ok": true,
+        "detail": "[\"ストーリーを追\",\"e9_aのストーリー（視聴済み）\",\"e9_cのストーリー（視聴済み）\",\"e9_fのストーリー（視聴済み）\",\"e9_gのストーリー（視聴済み）\",\"e9_dのストーリー（視聴済み）\"]"
+      }
+    ],
+    "AC-3": [
+      {
+        "name": "expired E is absent from the tray",
+        "ok": true,
+        "detail": "[\"ストーリーを追\",\"e9_aのストーリー（視聴済み）\",\"e9_cのストーリー（視聴済み）\",\"e9_fのストーリー（視聴済み）\",\"e9_gのストーリー（視聴済み）\",\"e9_dのストーリー（視聴済み）\"]"
+      },
+      {
+        "name": "E story row exists in DB before the job (25 h old)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file exists before the job: orig.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file exists before the job: w320.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file exists before the job: w640.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file exists before the job: w1080.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "viewer URL of the expired story: 404 \"ページが見つかりません\"",
+        "ok": true,
+        "detail": "status 404"
+      },
+      {
+        "name": "opened over home: modal says ページが見つかりません",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "pnpm jobs:run story-cleanup exits 0",
+        "ok": true,
+        "detail": "Using secrets defined in .dev.vars / story-cleanup: deleted=1 / $ node scripts/run-job.ts story-cleanup"
+      },
+      {
+        "name": "E row deleted",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file deleted: orig.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file deleted: w320.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file deleted: w640.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "E file deleted: w1080.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "live stories kept (A 2, C 1, D 1, F 1, G 2 rows)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "live D file kept: orig.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "live D file kept: w320.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "live D file kept: w640.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "live D file kept: w1080.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "pnpm jobs:run upload-orphan-sweep exits 0",
+        "ok": true,
+        "detail": "Using secrets defined in .dev.vars / upload-orphan-sweep: deleted=0 / $ node scripts/run-job.ts upload-orphan-sweep"
+      },
+      {
+        "name": "sweep keeps referenced file orig.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "sweep keeps referenced file w320.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "sweep keeps referenced file w640.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "sweep keeps referenced file w1080.webp",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "sweep keeps a fresh unreferenced file (inside the 24 h grace)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "after the job: home 200, expired viewer URL still 404",
+        "ok": true,
+        "detail": "200/404"
+      }
+    ],
+    "AC-5": [
+      {
+        "name": "axe: /stories/create initial has 0 serious/critical",
+        "ok": true,
+        "detail": "[{\"width\":1280,\"all\":[],\"seriousOrCritical\":0},{\"width\":375,\"all\":[],\"seriousOrCritical\":0}]"
+      },
+      {
+        "name": "Tab after the picker reaches 代替テキスト",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "axe: /stories/create with a photo has 0 serious/critical",
+        "ok": true,
+        "detail": "[{\"width\":1280,\"all\":[],\"seriousOrCritical\":0},{\"width\":375,\"all\":[],\"seriousOrCritical\":0}]"
+      },
+      {
+        "name": "Tab reaches 投稿",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Space on 投稿 posts and goes home",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "reduced motion: tray ring does not move on hover",
+        "ok": true,
+        "detail": "{\"transform\":\"none\",\"duration\":\"0s\"}"
+      },
+      {
+        "name": "axe: home with the tray 0 serious/critical",
+        "ok": true,
+        "detail": "[{\"width\":1280,\"all\":[],\"seriousOrCritical\":0},{\"width\":375,\"all\":[],\"seriousOrCritical\":0}]"
+      },
+      {
+        "name": "Enter on the tray item opens the viewer; focus lands on 閉じる",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "axe: viewer (modal) 0 serious/critical",
+        "ok": true,
+        "detail": "[{\"width\":1280,\"all\":[],\"seriousOrCritical\":0},{\"width\":375,\"all\":[],\"seriousOrCritical\":0}]"
+      },
+      {
+        "name": "Tab cycles only inside the viewer",
+        "ok": true,
+        "detail": "[\"button \\\"前へ\\\"\",\"button \\\"次へ\\\"\",\"button \\\"一時停止\\\"\",\"button \\\"閉じる\\\"\",\"button \\\"前へ\\\"\",\"button \\\"次へ\\\"\",\"button \\\"一時停止\\\"\",\"button \\\"閉じる\\\"\"]"
+      },
+      {
+        "name": "reduced motion: no auto advance after 7 s (still 1 / 2)",
+        "ok": true,
+        "detail": "ストーリー 1 / 2"
+      },
+      {
+        "name": "→ moves to 2 / 2",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "← moves to 1 / 2",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "→ at the last story ends the walk home (nobody after G for H)",
+        "ok": true,
+        "detail": "http://localhost:3103/"
+      },
+      {
+        "name": "Esc closes the viewer and focus returns to the tray item",
+        "ok": true,
+        "detail": "a \"e9_gのストーリー（未視聴）視e9_g\" -> /stories/e9_g"
+      },
+      {
+        "name": "axe: viewer (full page) 0 serious/critical",
+        "ok": true,
+        "detail": "[{\"width\":1280,\"all\":[],\"seriousOrCritical\":0},{\"width\":375,\"all\":[],\"seriousOrCritical\":0}]"
+      },
+      {
+        "name": "axe: viewers list 0 serious/critical",
+        "ok": true,
+        "detail": "[{\"width\":1280,\"all\":[],\"seriousOrCritical\":0},{\"width\":375,\"all\":[],\"seriousOrCritical\":0}]"
+      },
+      {
+        "name": "reduced motion: C's video story does not auto advance either",
+        "ok": true,
+        "detail": "http://localhost:3103/stories/e9_c"
+      }
+    ]
+  },
+  "health": {
+    "ac4": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+      ],
+      "http4xx5xx": []
+    },
+    "ac1-post": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+      ],
+      "http4xx5xx": []
+    },
+    "ac1-view": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+      ],
+      "http4xx5xx": []
+    },
+    "ac2": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+      ],
+      "http4xx5xx": []
+    },
+    "walk": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+      ],
+      "http4xx5xx": []
+    },
+    "ac3": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3103/stories/e9_e",
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3103/stories/e9_e"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+      ],
+      "http4xx5xx": [
+        "404 GET http://localhost:3103/stories/e9_e",
+        "404 GET http://localhost:3103/stories/e9_e"
+      ]
+    },
+    "ac5": {
+      "console": [],
+      "pageerror": [],
+      "requestfailed": [
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+        "GET http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+      ],
+      "http4xx5xx": []
+    }
+  },
+  "notes": {
+    "chromeVersion": "157.0.8103.80",
+    "c-story": "01a2021f-d571-7000-967b-4909dadb34c2",
+    "a-stories": [
+      "01a2021f-ec91-7000-a1cf-3369d305dac8",
+      "01a2021f-fef2-7000-92cb-abc0223a69af"
+    ],
+    "seed": {
+      "d": "546f3f7b-ae99-4cb1-99ca-4fbfd8c90bbf",
+      "f": "58874e74-d96b-471d-93df-206c85172954",
+      "e": "a92ecd42-14e1-4f1d-9436-bef51849b969",
+      "eKeys": [
+        "stories/a2bfa916-2ef7-43a0-bbc8-0d4c7a0b44e6/f9dcbffb-2c2f-4d25-b20f-8bed7cbd9b62/orig.webp",
+        "stories/a2bfa916-2ef7-43a0-bbc8-0d4c7a0b44e6/f9dcbffb-2c2f-4d25-b20f-8bed7cbd9b62/w320.webp",
+        "stories/a2bfa916-2ef7-43a0-bbc8-0d4c7a0b44e6/f9dcbffb-2c2f-4d25-b20f-8bed7cbd9b62/w640.webp",
+        "stories/a2bfa916-2ef7-43a0-bbc8-0d4c7a0b44e6/f9dcbffb-2c2f-4d25-b20f-8bed7cbd9b62/w1080.webp"
+      ]
+    },
+    "tray-before": [
+      "ストーリーを追",
+      "e9_aのストーリー（未視聴）",
+      "e9_cのストーリー（未視聴）",
+      "e9_fのストーリー（未視聴）",
+      "e9_gのストーリー（未視聴）",
+      "e9_dのストーリー（視聴済み）"
+    ],
+    "ring-style-before": [
+      {
+        "bg": "none",
+        "border": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "conic-gradient(rgb(79, 70, 200), rgb(43, 108, 246), rgb(79, 70, 200))",
+        "border": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "conic-gradient(rgb(79, 70, 200), rgb(43, 108, 246), rgb(79, 70, 200))",
+        "border": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "conic-gradient(rgb(79, 70, 200), rgb(43, 108, 246), rgb(79, 70, 200))",
+        "border": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "conic-gradient(rgb(79, 70, 200), rgb(43, 108, 246), rgb(79, 70, 200))",
+        "border": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "none",
+        "border": "rgb(17, 24, 39)"
+      }
+    ],
+    "tray-after-soft-close": [
+      "ストーリーを追",
+      "e9_aのストーリー（未視聴）",
+      "e9_cのストーリー（未視聴）",
+      "e9_fのストーリー（未視聴）",
+      "e9_gのストーリー（未視聴）",
+      "e9_dのストーリー（視聴済み）"
+    ],
+    "tray-after-reload": [
+      "ストーリーを追",
+      "e9_fのストーリー（未視聴）",
+      "e9_gのストーリー（未視聴）",
+      "e9_aのストーリー（視聴済み）",
+      "e9_cのストーリー（視聴済み）",
+      "e9_dのストーリー（視聴済み）"
+    ],
+    "ring-style-after-reload": [
+      {
+        "bg": "none",
+        "bc": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "conic-gradient(rgb(79, 70, 200), rgb(43, 108, 246), rgb(79, 70, 200))",
+        "bc": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "conic-gradient(rgb(79, 70, 200), rgb(43, 108, 246), rgb(79, 70, 200))",
+        "bc": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "none",
+        "bc": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "none",
+        "bc": "rgb(17, 24, 39)"
+      },
+      {
+        "bg": "none",
+        "bc": "rgb(17, 24, 39)"
+      }
+    ],
+    "tray-after-second-soft-close": [
+      "ストーリーを追",
+      "e9_fのストーリー（未視聴）",
+      "e9_gのストーリー（未視聴）",
+      "e9_aのストーリー（視聴済み）",
+      "e9_cのストーリー（視聴済み）",
+      "e9_dのストーリー（視聴済み）"
+    ],
+    "viewers-action": {
+      "asA": "0:{\"a\":\"$@1\",\"q\":\"\",\"i\":true,\"b\":\"ihRu_x8rCgyBPxEywH93P\"}\n1:{\"ok\":true,\"page\":{\"items\":[{\"username\":\"e9_b\",\"displayName\":\"閲覧者 B\",\"avatarUrl\":null}],\"nextCursor\"",
+      "asB": "0:{\"a\":\"$@1\",\"q\":\"\",\"i\":true,\"b\":\"ihRu_x8rCgyBPxEywH93P\"}\n1:{\"ok\":false,\"error\":{\"code\":\"FORBIDDEN\",\"message\":\"この操作はできません\"}}\n",
+      "asV": "0:{\"a\":\"$@1\",\"q\":\"\",\"i\":true,\"b\":\"ihRu_x8rCgyBPxEywH93P\"}\n1:{\"ok\":false,\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"ログインしてください\"}}\n"
+    },
+    "tray-before-walk": [
+      "ストーリーを追",
+      "e9_fのストーリー（未視聴）",
+      "e9_gのストーリー（未視聴）",
+      "e9_aのストーリー（視聴済み）",
+      "e9_cのストーリー（視聴済み）",
+      "e9_dのストーリー（視聴済み）"
+    ],
+    "walk-visited": [
+      "e9_f",
+      "e9_g",
+      "e9_a",
+      "e9_c",
+      "e9_d"
+    ],
+    "walk-urls": [
+      "http://localhost:3103/stories/e9_g",
+      "http://localhost:3103/stories/e9_a",
+      "http://localhost:3103/stories/e9_c",
+      "http://localhost:3103/stories/e9_d",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/stories/e9_d",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/stories/e9_g",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/stories/e9_g",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/stories/e9_g",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/stories/e9_e",
+      "http://localhost:3103/stories/e9_e",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/stories/e9_e",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/",
+      "http://localhost:3103/stories/e9_e",
+      "http://localhost:3103/stories/e9_e"
+    ],
+    "tray-after-walk": [
+      "ストーリーを追",
+      "e9_aのストーリー（視聴済み）",
+      "e9_cのストーリー（視聴済み）",
+      "e9_fのストーリー（視聴済み）",
+      "e9_gのストーリー（視聴済み）",
+      "e9_dのストーリー（視聴済み）"
+    ]
+  },
+  "tabOrder": {
+    "createToPicker": 7,
+    "tray": [],
+    "homeToTrayG": 3,
+    "viewer": [
+      "button \"前へ\"",
+      "button \"次へ\"",
+      "button \"一時停止\"",
+      "button \"閉じる\"",
+      "button \"前へ\"",
+      "button \"次へ\"",
+      "button \"一時停止\"",
+      "button \"閉じる\""
+    ]
+  },
+  "axe": {
+    "create-initial": [
+      {
+        "width": 1280,
+        "all": [],
+        "seriousOrCritical": 0
+      },
+      {
+        "width": 375,
+        "all": [],
+        "seriousOrCritical": 0
+      }
+    ],
+    "create-photo": [
+      {
+        "width": 1280,
+        "all": [],
+        "seriousOrCritical": 0
+      },
+      {
+        "width": 375,
+        "all": [],
+        "seriousOrCritical": 0
+      }
+    ],
+    "home-tray": [
+      {
+        "width": 1280,
+        "all": [],
+        "seriousOrCritical": 0
+      },
+      {
+        "width": 375,
+        "all": [],
+        "seriousOrCritical": 0
+      }
+    ],
+    "viewer-modal": [
+      {
+        "width": 1280,
+        "all": [],
+        "seriousOrCritical": 0
+      },
+      {
+        "width": 375,
+        "all": [],
+        "seriousOrCritical": 0
+      }
+    ],
+    "viewer-page": [
+      {
+        "width": 1280,
+        "all": [],
+        "seriousOrCritical": 0
+      },
+      {
+        "width": 375,
+        "all": [],
+        "seriousOrCritical": 0
+      }
+    ],
+    "viewers-sheet": [
+      {
+        "width": 1280,
+        "all": [],
+        "seriousOrCritical": 0
+      },
+      {
+        "width": 375,
+        "all": [],
+        "seriousOrCritical": 0
+      }
+    ]
+  },
+  "timing": {
+    "photoAdvanceAfterRelease": 4987,
+    "videoAdvanceAfterRelease": 4424
+  }
+}

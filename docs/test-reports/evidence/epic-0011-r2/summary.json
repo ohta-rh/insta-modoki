@@ -1,0 +1,674 @@
+{
+ "acs": {
+  "86": [
+   {
+    "name": "unread1 1280px: badge rect sits inside the link rect, badge is outside the <a>, name \"通知（未読 1 件）\" contains visible \"通知\" + digit",
+    "ok": true,
+    "detail": "{\"lb\":{\"x\":12,\"y\":220,\"width\":219,\"height\":44},\"bb\":{\"x\":199,\"y\":233.5,\"width\":20,\"height\":20},\"pe\":\"none\"}"
+   },
+   {
+    "name": "unread1 768px: badge rect sits inside the link rect, badge is outside the <a>, name \"通知（未読 1 件）\" contains visible \"通知\" + digit",
+    "ok": true,
+    "detail": "{\"lb\":{\"x\":12,\"y\":220,\"width\":219,\"height\":44},\"bb\":{\"x\":199,\"y\":233.5,\"width\":20,\"height\":20},\"pe\":\"none\"}"
+   },
+   {
+    "name": "unread1 375px: badge rect sits inside the link rect, badge is outside the <a>, name \"通知（未読 1 件）\" contains visible \"通知\" + digit",
+    "ok": false,
+    "detail": "{\"lb\":{\"x\":225,\"y\":757,\"width\":75,\"height\":55},\"bb\":{\"x\":266.5,\"y\":762.5,\"width\":20,\"height\":20},\"pe\":\"none\"}"
+   },
+   {
+    "name": "mouse click on the badge centre at 1280px opens /notifications",
+    "ok": true,
+    "detail": "http://localhost:3102/notifications"
+   },
+   {
+    "name": "mouse click on the badge centre at 375px opens /notifications",
+    "ok": true,
+    "detail": "http://localhost:3102/notifications"
+   }
+  ],
+  "setup": [
+   {
+    "name": "A and B signed up via the UI in two separate browser contexts",
+    "ok": true,
+    "detail": ""
+   }
+  ],
+  "AC-1": [
+   {
+    "name": "A has no badge before any reaction (bell has no unread)",
+    "ok": true,
+    "detail": "通知"
+   },
+   {
+    "name": "round 1: A's badge rose by 1 within 5 s of B's click",
+    "ok": true,
+    "detail": "2503 ms"
+   },
+   {
+    "name": "list shows \"B さんがあなたの投稿にいいねしました\"",
+    "ok": true,
+    "detail": "通知 E 通知 Bさんがあなたの投稿にいいねしました たった今 新着"
+   },
+   {
+    "name": "badge is gone after opening the list",
+    "ok": true,
+    "detail": "通知"
+   },
+   {
+    "name": "DB: unread 0 after opening",
+    "ok": true,
+    "detail": "0"
+   },
+   {
+    "name": "round 2: A's badge rose by 1 within 5 s of B's click",
+    "ok": true,
+    "detail": "548 ms"
+   },
+   {
+    "name": "round 3: A's badge rose by 1 within 5 s of B's click",
+    "ok": true,
+    "detail": "975 ms"
+   },
+   {
+    "name": "round 4: A's badge rose by 1 within 5 s of B's click",
+    "ok": true,
+    "detail": "966 ms"
+   },
+   {
+    "name": "round 5: A's badge rose by 1 within 5 s of B's click",
+    "ok": true,
+    "detail": "551 ms"
+   },
+   {
+    "name": "round 6: A's badge rose by 1 within 5 s of B's click",
+    "ok": true,
+    "detail": "391 ms"
+   },
+   {
+    "name": "all 6 latencies <= 5000 ms",
+    "ok": true,
+    "detail": "2503, 548, 975, 966, 551, 391"
+   },
+   {
+    "name": "failure path: logged-out stream request is 401 JSON (not event-stream)",
+    "ok": true,
+    "detail": "401 application/json"
+   }
+  ],
+  "AC-5": [
+   {
+    "name": "axe with unread present: home, no serious/critical (1280, 375)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "B (own session) sees none of A's notifications: empty list, no badge",
+    "ok": true,
+    "detail": "通知 まだ通知はありません"
+   },
+   {
+    "name": "B's stream, even with userId=A in the query, reports B's count only (0)",
+    "ok": true,
+    "detail": "{\"plain\":{\"status\":200,\"first\":\"retry: 1000 event: unread data: {\\\"unreadCount\\\":0} \"},\"spoof\":{\"status\":200,\"first\":\"retry: 1000 event: unread data: {\\\"unreadCount\\\":0} \"}}"
+   },
+   {
+    "name": "B gets exactly their own 1 unread (not A's count)",
+    "ok": true,
+    "detail": "通知（未読 1 件）"
+   },
+   {
+    "name": "B's list has only A's like on B's post (1 row)",
+    "ok": true,
+    "detail": "[\"E 通知 Aさんがあなたの投稿にいいねしました たった今 新着\"]"
+   },
+   {
+    "name": "Tab reaches all 16 list rows (each link is in the Tab sequence)",
+    "ok": true,
+    "detail": "16 rows"
+   },
+   {
+    "name": "Enter on the focused first row navigates to its target",
+    "ok": true,
+    "detail": "/p/15f3ae4a-da64-4813-92bc-8384d0e9b961"
+   },
+   {
+    "name": "axe: A's notification list, no serious/critical (1280, 375)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: B's list, no serious/critical (1280, 375)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "axe: empty list, no serious/critical (1280, 375)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "failure path: logged-out /notifications goes to login",
+    "ok": true,
+    "detail": "http://localhost:3102/accounts/login"
+   }
+  ],
+  "AC-2": [
+   {
+    "name": "B reacting on B's own post made no notification (B rows = 0)",
+    "ok": true,
+    "detail": "0"
+   },
+   {
+    "name": "list has the follow first and the comment second (newest first)",
+    "ok": true,
+    "detail": "follow@0 comment@1"
+   },
+   {
+    "name": "comment shows its leading text, cut with an ellipsis at 100 chars",
+    "ok": true,
+    "detail": "E 通知 Bさんがコメントしました: 長いコメントです。あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ… たった今 新着"
+   },
+   {
+    "name": "comment row links to the post, follow row to the profile",
+    "ok": true,
+    "detail": "/p/0e02c76e-34ce-4b4b-8503-6c9316466713 /e11_b"
+   },
+   {
+    "name": "pressing the comment row opens the post detail",
+    "ok": true,
+    "detail": "http://localhost:3102/p/0e02c76e-34ce-4b4b-8503-6c9316466713"
+   },
+   {
+    "name": "pressing the follow row opens the profile",
+    "ok": true,
+    "detail": "http://localhost:3102/e11_b"
+   }
+  ],
+  "AC-3": [
+   {
+    "name": "DevTools offline only (tab visible): after the network is back the badge equals the DB (1)",
+    "ok": true,
+    "detail": "during offline badge=1, then 1 / db 1"
+   },
+   {
+    "name": "while offline and hidden, nothing reaches A (badge still 0) though DB has 2",
+    "ok": true,
+    "detail": "badge 0, db 2"
+   },
+   {
+    "name": "after returning, badge shows exactly 2 (no loss, no double) within 5 s",
+    "ok": true,
+    "detail": "14 ms; badge 2; db 2"
+   },
+   {
+    "name": "badge stays 2 after 4 s more (not counted twice)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "SSE blocked, round: badge rose within 10 s (polling)",
+    "ok": true,
+    "detail": "5770 ms"
+   },
+   {
+    "name": "SSE blocked, round: badge rose within 10 s (polling)",
+    "ok": true,
+    "detail": "6484 ms"
+   },
+   {
+    "name": "SSE blocked, round: badge rose within 10 s (polling)",
+    "ok": true,
+    "detail": "6283 ms"
+   },
+   {
+    "name": "SSE: an open connection closes at about 60 s and a new one opens (>= 2 finished in 135 s, each 55-65 s)",
+    "ok": true,
+    "detail": "60013, 60016"
+   }
+  ],
+  "AC-4": [
+   {
+    "name": "before: list shows the 91-day, 1-day and 89-day notifications",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "job exit code 0",
+    "ok": true,
+    "detail": "Using secrets defined in .dev.vars | notification-cleanup: deleted=1"
+   },
+   {
+    "name": "only the 91-day row is gone (old 1->0, new 1->1, edge 1->1)",
+    "ok": true,
+    "detail": "{\"e11_oldd3u5\":0,\"e11_newd3u5\":1,\"e11_edged3u5\":1}"
+   },
+   {
+    "name": "other notifications untouched",
+    "ok": true,
+    "detail": "17 -> 16"
+   },
+   {
+    "name": "after: list no longer shows the 91-day one, still the 1-day and 89-day ones",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "name": "failure path: rerun deletes nothing more (rows same), exit 0; unknown job name exits non-zero",
+    "ok": true,
+    "detail": "rerun rc 0, bad name rc 2"
+   }
+  ]
+ },
+ "health": {
+  "ac1-fail": {
+   "console": [],
+   "pageerror": [],
+   "requestfailed": [],
+   "http4xx5xx": [
+    "(provoked) 401 GET /api/notifications/stream via request API, no page"
+   ]
+  },
+  "ac3-offline-only": {
+   "console": [
+    "[e11_a] error: Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ http://insta-s2.web.localhost:3912/media/01a2026c-0062-7000-a2ad-60c68b0728c9/fea92f37-bab8-463a-9c8a-1601817d78b4/w640.webp"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "[e11_a] GET http://insta-s2.web.localhost:3912/media/01a2026c-0062-7000-a2ad-60c68b0728c9/fea92f37-bab8-463a-9c8a-1601817d78b4/w640. net::ERR_INTERNET_DISCONNECTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac3-hidden": {
+   "console": [
+    "[e11_a] error: Failed to load resource: net::ERR_INTERNET_DISCONNECTED @ http://insta-s2.web.localhost:3912/media/01a2026c-0062-7000-a2ad-60c68b0728c9/fea92f37-bab8-463a-9c8a-1601817d78b4/w640.webp"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "[e11_a] GET http://insta-s2.web.localhost:3912/media/01a2026c-0062-7000-a2ad-60c68b0728c9/fea92f37-bab8-463a-9c8a-1601817d78b4/w640. net::ERR_INTERNET_DISCONNECTED"
+   ],
+   "http4xx5xx": []
+  },
+  "ac3-sse-blocked": {
+   "console": [
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream",
+    "[e11_a] error: Failed to load resource: net::ERR_FAILED @ http://localhost:3102/api/notifications/stream"
+   ],
+   "pageerror": [],
+   "requestfailed": [],
+   "http4xx5xx": []
+  }
+ },
+ "notes": {
+  "chromeVersion": "157.0.8103.80",
+  "aPosts": [
+   "03298742-c1d8-45fd-8a97-7463b4861305",
+   "1d43b9f0-4df5-4b11-87cd-27e03fc33a3e",
+   "4e3056c2-2dfa-40d6-bd9c-8a248122c878",
+   "15efa1ed-33ae-4144-a243-18d8f5f7519f",
+   "73e6e496-4435-49b1-a2ff-874f3a976041",
+   "8562e926-2fcd-46fb-9d7c-f37a0e376b22",
+   "0e02c76e-34ce-4b4b-8503-6c9316466713",
+   "b14d3346-40f8-4f98-a5bf-936ade26da70",
+   "fc148c14-42be-4abc-94ca-a95143ef8bcb",
+   "829114ba-daf7-4a70-9236-1e0a124250e2",
+   "d820ee0f-e149-4fcd-80cf-2a56e173176a",
+   "f2acaf43-f47d-4eb1-b15a-96e4ba9debdb",
+   "15f3ae4a-da64-4813-92bc-8384d0e9b961",
+   "3d744319-26ec-41a0-93fb-fbe3f5cf090c",
+   "61b79869-e524-48d6-bf94-362267928245",
+   "92cc88da-b6e8-4c81-99e4-9e6dcd956422",
+   "b4c3f2d0-a4ef-4384-b6e3-a4ecc1313928",
+   "710a8623-8d9f-42a8-9d7f-7dc5e85b9ed8"
+  ],
+  "bPosts": [
+   "12722481-ed6f-4e91-99ae-b978f32bf78d",
+   "2c6d15e2-efff-4873-9fa8-cea6d125037a"
+  ],
+  "userIds": {
+   "a": "01a2026c-0062-7000-a2ad-60c68b0728c9",
+   "b": "01a2026c-0172-7000-8416-f4014ce81f92"
+  },
+  "b86-unread1": {
+   "375": {
+    "name": "通知（未読 1 件）",
+    "visible": "通知 1",
+    "inside": true,
+    "lb": {
+     "x": 225,
+     "y": 757,
+     "width": 75,
+     "height": 55
+    },
+    "bb": {
+     "x": 266.5,
+     "y": 762.5,
+     "width": 20,
+     "height": 20
+    },
+    "pe": "none",
+    "insideLink": false,
+    "snap": "- navigation \"ストーリー\":\n  - list:\n    - listitem:\n      - link \"ストーリーを追加\":\n        - /url: /stories/create"
+   },
+   "768": {
+    "name": "通知（未読 1 件）",
+    "visible": "通知 1",
+    "inside": true,
+    "lb": {
+     "x": 12,
+     "y": 220,
+     "width": 219,
+     "height": 44
+    },
+    "bb": {
+     "x": 199,
+     "y": 233.5,
+     "width": 20,
+     "height": 20
+    },
+    "pe": "none",
+    "insideLink": false,
+    "snap": "- navigation \"メイン\":\n  - img \"Mado（仮称）\"\n  - link \"ホーム\":\n    - /url: /\n  - link \"検索\":\n    - /url: /explore\n  - link \"投稿\":\n    - /url: /create\n  - link \"通知（未読 1 件）\":\n    - /url: /notifications\n    - text: 通知\n  - link \"プロフィール\":\n    - /url: /e11_a"
+   },
+   "1280": {
+    "name": "通知（未読 1 件）",
+    "visible": "通知 1",
+    "inside": true,
+    "lb": {
+     "x": 12,
+     "y": 220,
+     "width": 219,
+     "height": 44
+    },
+    "bb": {
+     "x": 199,
+     "y": 233.5,
+     "width": 20,
+     "height": 20
+    },
+    "pe": "none",
+    "insideLink": false,
+    "snap": "- navigation \"メイン\":\n  - img \"Mado（仮称）\"\n  - link \"ホーム\":\n    - /url: /\n  - link \"検索\":\n    - /url: /explore\n  - link \"投稿\":\n    - /url: /create\n  - link \"通知（未読 1 件）\":\n    - /url: /notifications\n    - text: 通知\n  - link \"プロフィール\":\n    - /url: /e11_a"
+   }
+  },
+  "ac1LatencyMs": [
+   2503,
+   548,
+   975,
+   966,
+   551,
+   391
+  ],
+  "ac2Items": [
+   {
+    "href": "/e11_b",
+    "text": "E 通知 Bさんがあなたをフォローしました たった今 新着"
+   },
+   {
+    "href": "/p/0e02c76e-34ce-4b4b-8503-6c9316466713",
+    "text": "E 通知 Bさんがコメントしました: 長いコメントです。あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ… たった今 新着"
+   },
+   {
+    "href": "/p/8562e926-2fcd-46fb-9d7c-f37a0e376b22",
+    "text": "E 通知 Bさんがあなたの投稿にいいねしました たった今"
+   },
+   {
+    "href": "/p/73e6e496-4435-49b1-a2ff-874f3a976041",
+    "text": "E 通知 Bさんがあなたの投稿にいいねしました たった今"
+   },
+   {
+    "href": "/p/15efa1ed-33ae-4144-a243-18d8f5f7519f",
+    "text": "E 通知 Bさんがあなたの投稿にいいねしました たった今"
+   },
+   {
+    "href": "/p/4e3056c2-2dfa-40d6-bd9c-8a248122c878",
+    "text": "E 通知 Bさんがあなたの投稿にいいねしました たった今"
+   },
+   {
+    "href": "/p/1d43b9f0-4df5-4b11-87cd-27e03fc33a3e",
+    "text": "E 通知 Bさんがあなたの投稿にいいねしました たった今"
+   },
+   {
+    "href": "/p/03298742-c1d8-45fd-8a97-7463b4861305",
+    "text": "E 通知 Bさんがあなたの投稿にいいねしました 1分前"
+   }
+  ],
+  "aTypes": [
+   {
+    "type": "comment",
+    "n": 1
+   },
+   {
+    "type": "follow",
+    "n": 1
+   },
+   {
+    "type": "like",
+    "n": 6
+   }
+  ],
+  "offlineOnlyBadgeAfter9s": 1,
+  "pollingLatencyMs": [
+   5770,
+   6484,
+   6283
+  ],
+  "ac4Before": {
+   "e11_oldd3u5": 1,
+   "e11_newd3u5": 1,
+   "e11_edged3u5": 1
+  },
+  "ac4JobRc": 0,
+  "ac4After": {
+   "e11_oldd3u5": 0,
+   "e11_newd3u5": 1,
+   "e11_edged3u5": 1
+  },
+  "bEmptyText": "通知 まだ通知はありません",
+  "streamB": {
+   "plain": {
+    "status": 200,
+    "first": "retry: 1000 event: unread data: {\"unreadCount\":0} "
+   },
+   "spoof": {
+    "status": 200,
+    "first": "retry: 1000 event: unread data: {\"unreadCount\":0} "
+   }
+  },
+  "bList": [
+   "E 通知 Aさんがあなたの投稿にいいねしました たった今 新着"
+  ],
+  "cEmptyText": "通知 まだ通知はありません",
+  "sseEvents135s": [
+   {
+    "ev": "failed:net::ERR_ABORTED",
+    "ms": 10272
+   },
+   {
+    "ev": "finished",
+    "ms": 60013
+   },
+   {
+    "ev": "finished",
+    "ms": 60016
+   }
+  ]
+ },
+ "tabOrder": {
+  "notifications": [
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知\" -> /notifications",
+   "a \"プロフィール\" -> /e11_a",
+   "a \"E通知 Bさんがあなたの投稿にいいねしましたたった今\" -> /p/15f3ae4a-da64-4813-92bc-8384d0e9b961",
+   "a \"E通知 Bさんがあなたの投稿にいいねしましたたった今\" -> /p/f2acaf43-f47d-4eb1-b15a-96e4ba9debdb",
+   "a \"E通知 Bさんがあなたの投稿にいいねしましたたった今\" -> /p/d820ee0f-e149-4fcd-80cf-2a56e173176a",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/829114ba-daf7-4a70-9236-1e0a124250e2",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/fc148c14-42be-4abc-94ca-a95143ef8bcb",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/b14d3346-40f8-4f98-a5bf-936ade26da70",
+   "a \"E通知 Bさんがあなたをフォローしました1分前\" -> /e11_b",
+   "a \"E通知 Bさんがコメントしました: 長いコメントです。あああああああああああああああああああああああ\" -> /p/0e02c76e-34ce-4b4b-8503-6c9316466713",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/8562e926-2fcd-46fb-9d7c-f37a0e376b22",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/73e6e496-4435-49b1-a2ff-874f3a976041",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました2分前\" -> /p/15efa1ed-33ae-4144-a243-18d8f5f7519f",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました2分前\" -> /p/4e3056c2-2dfa-40d6-bd9c-8a248122c878",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました2分前\" -> /p/1d43b9f0-4df5-4b11-87cd-27e03fc33a3e",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました2分前\" -> /p/03298742-c1d8-45fd-8a97-7463b4861305",
+   "a \"E新しい人さんがあなたの投稿にいいねしました1日前\" -> /p/61b79869-e524-48d6-bf94-362267928245",
+   "a \"E境目の人さんがあなたの投稿にいいねしました8月25日\" -> /p/92cc88da-b6e8-4c81-99e4-9e6dcd956422",
+   "body",
+   "a \"本文へ移動\" -> #main",
+   "a \"ホーム\" -> /",
+   "a \"検索\" -> /explore",
+   "a \"投稿\" -> /create",
+   "a \"通知\" -> /notifications",
+   "a \"プロフィール\" -> /e11_a",
+   "a \"E通知 Bさんがあなたの投稿にいいねしましたたった今\" -> /p/15f3ae4a-da64-4813-92bc-8384d0e9b961",
+   "a \"E通知 Bさんがあなたの投稿にいいねしましたたった今\" -> /p/f2acaf43-f47d-4eb1-b15a-96e4ba9debdb",
+   "a \"E通知 Bさんがあなたの投稿にいいねしましたたった今\" -> /p/d820ee0f-e149-4fcd-80cf-2a56e173176a",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/829114ba-daf7-4a70-9236-1e0a124250e2",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/fc148c14-42be-4abc-94ca-a95143ef8bcb",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/b14d3346-40f8-4f98-a5bf-936ade26da70",
+   "a \"E通知 Bさんがあなたをフォローしました1分前\" -> /e11_b",
+   "a \"E通知 Bさんがコメントしました: 長いコメントです。あああああああああああああああああああああああ\" -> /p/0e02c76e-34ce-4b4b-8503-6c9316466713",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/8562e926-2fcd-46fb-9d7c-f37a0e376b22",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました1分前\" -> /p/73e6e496-4435-49b1-a2ff-874f3a976041",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました2分前\" -> /p/15efa1ed-33ae-4144-a243-18d8f5f7519f",
+   "a \"E通知 Bさんがあなたの投稿にいいねしました2分前\" -> /p/4e3056c2-2dfa-40d6-bd9c-8a248122c878"
+  ]
+ },
+ "axe": {
+  "home-with-unread": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "notifications-with-items": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "notifications-b": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ],
+  "notifications-empty": [
+   {
+    "width": 1280,
+    "all": [],
+    "seriousOrCritical": 0
+   },
+   {
+    "width": 375,
+    "all": [],
+    "seriousOrCritical": 0
+   }
+  ]
+ },
+ "sse": [
+  {
+   "label": "e11_a",
+   "phase": "sse-lifetime",
+   "ev": "failed:net::ERR_ABORTED",
+   "ms": 10272,
+   "at": 1795337146482
+  },
+  {
+   "label": "e11_b",
+   "phase": "sse-lifetime",
+   "ev": "finished",
+   "ms": 60023,
+   "at": 1795337198299
+  },
+  {
+   "label": "e11_c",
+   "phase": "sse-lifetime",
+   "ev": "finished",
+   "ms": 60020,
+   "at": 1795337200550
+  },
+  {
+   "label": "e11_a",
+   "phase": "sse-lifetime",
+   "ev": "finished",
+   "ms": 60013,
+   "at": 1795337206528
+  },
+  {
+   "label": "e11_b",
+   "phase": "sse-lifetime",
+   "ev": "finished",
+   "ms": 60024,
+   "at": 1795337259325
+  },
+  {
+   "label": "e11_c",
+   "phase": "sse-lifetime",
+   "ev": "finished",
+   "ms": 60011,
+   "at": 1795337261564
+  },
+  {
+   "label": "e11_a",
+   "phase": "sse-lifetime",
+   "ev": "finished",
+   "ms": 60016,
+   "at": 1795337267547
+  }
+ ],
+ "timings": {
+  "ac1": [
+   2503,
+   548,
+   975,
+   966,
+   551,
+   391
+  ],
+  "ac3Recovery": 14,
+  "ac3Polling": [
+   5770,
+   6484,
+   6283
+  ]
+ },
+ "failedChecks": [
+  "86: unread1 375px: badge rect sits inside the link rect, badge is outside the <a>, name \"通知（未読 1 件）\" contains visible \"通知\" + digit"
+ ]
+}

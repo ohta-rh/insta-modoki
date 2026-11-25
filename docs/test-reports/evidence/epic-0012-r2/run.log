@@ -1,0 +1,53 @@
+NOTE chromeVersion "157.0.8103.80"
+ok   setup A, B, C signed up via the UI
+NOTE posts {"c":["63aa1b82-7a5d-4d48-8977-18305a7c788a","311d2970-6462-41ab-b7dc-e50953639c4a","d554d0d2-38f1-4ab9-90e4-af89ce029d2a","f49e8262-c15a-4943-b4c1-b4c35b191838","960b82db-c9b0-4395-a02c-8c6dbb84fde1","bfa85b09-6f76-428a-90f0-b862b67617c6","e3a4e808-fd88-4e94-b177-7a2bfffce51d","21cb730a-aeda-4e4f-9435-1b98f287bd05","700984eb-ffb1-456a-bcdf-4d7de134da29","7f94520c-c4a7-4560-8519-aa92d5dcb23a","0f287522-3e80-4ad7-b1cd-1e7cb3b6d9ec","8ba37a9a-679d-4421-add0-3cb6b8804d51","d1ce665d-dc93-4d76-8ce3-c6af5f22ae89","79099e50-1ff9-46b5-a0ce-151b6bb3d234","3204f9b9-e71e-4bf3-b270-3058f99667b5"],"a":"a08266b2-9644-41e4-9876-82dd71d23d58"}
+ok   setup A has an unread notification (bell label) 通知（未読 1 件）
+NOTE bell "通知（未読 1 件）"
+ok   AC-1 empty saved tab says no saved posts E 保存 A @e12_a プロフィールを編集 1 投稿 0 フォロワー 1 フォロー中 投稿 保存済み 保存した投稿はまだありません
+ok   AC-1 own profile shows 投稿 and 保存済み tabs 投稿,保存済み
+ok   AC-1 feed shows save buttons, first is unpressed (outline)
+ok   AC-1 pressed instantly (aria-pressed true, filled) before the server replied db rows 0
+ok   AC-1 server stored 1 row for the newest post
+ok   AC-1 still saved after reload
+ok   AC-1 post detail save -> 1 row
+ok   AC-1 feed 2nd save (posts[13]) -> 1 row
+ok   AC-1 saved tab lists the 3 posts newest-saved first (13, 10, 14) ["/p/79099e50-1ff9-46b5-a0ce-151b6bb3d234","/p/0f287522-3e80-4ad7-b1cd-1e7cb3b6d9ec","/p/3204f9b9-e71e-4bf3-b270-3058f99667b5"]
+ok   AC-1 saved tab: tab aria-selected
+ok   AC-1 tile opens the post in a modal showing it as saved
+ok   AC-1 press again in the modal -> 0 rows (unsaved)
+ok   AC-1 after reopening the saved tab, the unsaved post is gone ["/p/79099e50-1ff9-46b5-a0ce-151b6bb3d234","/p/3204f9b9-e71e-4bf3-b270-3058f99667b5"]
+ok   AC-1 failed POST rolls the button back and shows the fixed message ["エラーが発生しました。しばらくしてからもう一度お試しください"]
+ok   AC-1 visitor pressing save goes to login, 0 rows http://localhost:3101/accounts/login
+ok   AC-1 no-JS: unsaved before
+ok   AC-1 no-JS: form submit saved (row + pressed after reload) rows 1
+ok   AC-1 no-JS: form submit again unsaved
+ok   AC-1 unsaving the last ones empties the list []
+ok   AC-1 empty state again after unsaving all
+ok   AC-1 first page: 12 tiles 12
+ok   AC-1 after scrolling: 13 tiles, no duplicates, newest-saved first 13 unique 13
+ok   AC-2 B sees no 保存済み tab on A 投稿
+ok   AC-2 B with ?tab=saved: 200, shows 投稿 (A own post), no saved tab, none of the 13 saved ids in HTML status 200 own true leaked 0
+ok   AC-2 B with ?tab=saved: selected tab is 投稿 投稿
+ok   AC-2 B's own saved tab is empty (A's saves are not readable from B's session)
+ok   AC-2 visitor: no saved tab, no saved ids http://localhost:3101/e12_a?tab=saved
+ok   AC-2 A with ?tab=foo shows 投稿
+ok   AC-3 before deletion the victim is in A saved tab
+ok   AC-3 author deleted the post through the UI (row gone)
+ok   AC-3 bookmark rows cascaded away
+ok   AC-3 A saved tab no longer shows the deleted post (12 left) 12
+ok   AC-3 opening the deleted post is 404 404
+ok   AC-4 A still has the unread notification during keyboard/axe checks 通知（未読 1 件）
+ok   AC-4 save button tap area >= 44x44 44x44
+ok   AC-4 accessible name is 保存
+ok   AC-4 Enter saves (aria-pressed true, row, live message 保存しました) |保存しました|
+ok   AC-4 Space unsaves (aria-pressed false, row gone, 保存を取り消しました) |保存を取り消しました|
+ok   AC-4 tablist with role=tab; selected has aria-selected=true tabindex=0, other -1
+ok   AC-4 ArrowRight moves focus to 保存済み
+ok   AC-4 Enter opens the saved tab
+ok   AC-4 ArrowLeft moves focus back to 投稿
+ok   AC-4 axe: feed 0 serious/critical
+ok   AC-4 axe: post detail 0 serious/critical
+ok   AC-4 axe: saved tab 0 serious/critical
+ok   AC-4 axe: profile (posts tab) 0 serious/critical
+NOTE done true
+FAILED CHECKS 0

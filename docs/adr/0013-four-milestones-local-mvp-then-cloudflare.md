@@ -3,12 +3,13 @@ type: ADR
 title: "ADR-0013: 企画書のロードマップを 4 つのマイルストーン（ローカルの MVP → Cloudflare で公開 → Phase 2 → Phase 3）に組み直す"
 description: "企画書の M0〜M3 を、ADR-0006 と ADR-0011 に合わせて M1 ローカルの MVP、M2 Cloudflare での招待制公開、M3 Phase 2、M4 Phase 3 と成功指標の計測、に組み直す。"
 tags: [planning, milestone]
-status: stable
+status: deprecated
+superseded_by: 0052-phase-2-before-cloudflare-publication.md
 ---
 
 # ADR-0013: 企画書のロードマップを 4 つのマイルストーン（ローカルの MVP → Cloudflare で公開 → Phase 2 → Phase 3）に組み直す
 
-- ステータス: 採用
+- ステータス: 置き換え: [ADR-0052](0052-phase-2-before-cloudflare-publication.md)（順番と期日。中身はそのまま引き継ぐ）
 - 日付: 2026-11-20
 - 決定者: エージェント（委任された判断。ユーザーは企画書からマイルストーン・EPIC・PBI を作るよう指示した）
 - 関連: [企画書](../proposal/)、[ADR-0004](0004-milestone-epic-pbi-with-dor-ac-dod.md)、[ADR-0006](0006-first-milestone-runs-locally-on-docker-compose.md)、[ADR-0011](0011-deploy-to-cloudflare-free-tier-first.md)

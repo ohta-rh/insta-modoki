@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/tetsuyaohta/projects/other/insta-modoki/.worktrees/epic-7
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 12 skipped (13)
+   Start at  01:08:10
+   Duration  21.18s (tests 96%, import 3%, transform 1%)
+
+rc=0

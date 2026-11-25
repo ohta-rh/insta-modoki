@@ -62,21 +62,36 @@ TDD → impl → code-review ∥ security-review → E2E → verify
 4. **Verify** (implementer, then Director): the full verify command exits 0 in the worktree.
    The Director then checks each AC by its 確認方法 and each DoD item against evidence (run
    checks through `check-runner` / captured logs, not raw output). Anything unmet → back to
-   step 1.
+   step 1. **Tick each AC's checkbox on the issue as soon as it holds on evidence (ADR-0048)** —
+   an unticked AC means "not verified". If the test an AC names was renamed, fix the 確認方法
+   in the issue first (dated note at the top of the body), then tick.
 
 Bugs found anywhere in the loop are fixed inside the PBI, test-first. Adjacent improvements
 are filed as new PBIs, not folded in.
 
 ## 4. Integration (Director, one PBI at a time)
 
+**When the user asked for a PR (ADR-0017):** replace `main` / `origin/main` below with the
+milestone's integration branch `m<N>/<slug>` (worktrees are cut from it, PBIs fast-forward into
+it, it is pushed after every merge). Issues get their DoD ticked and the comment, but are not
+closed: the single draft PR to `main` lists `Closes #N` for each and is updated after every PBI
+and EPIC test. The user merges.
+
 1. `git -C .worktrees/pbi-<N> rebase origin/main` (after `git fetch`). If the rebase changed
    anything, re-run verify in the worktree; green from before the rebase does not carry over.
 2. In the main checkout: `git merge --ff-only pbi/<N>`, `git diff --check origin/main..HEAD`,
-   `git push origin main`; confirm `git status -sb` shows no `ahead`.
-3. On the issue: tick DoD, comment with the commit SHA, the verify result and the review
+   `git push origin main`; confirm `git status -sb` shows no `ahead`. Do not push the next
+   integration until the CI run of this push has **completed**: a newer push cancels the running
+   one, and on 2026-11-21 six consecutive pushes left the gate with no completed run at all.
+3. On the issue: confirm every AC box is ticked (§3 step 4), tick DoD, comment with the commit SHA, the verify result and the review
    verdicts; close; tick it in the EPIC.
-4. Clean up by exact name: `git worktree remove .worktrees/pbi-<N>`, `git branch -d pbi/<N>`,
-   drop the slot's databases/bucket, free the slot. Then re-evaluate the ready set (§2).
+4. Clean up by exact name. **First** `node scripts/slot.mjs drop <N>` in the worktree: it stops
+   whatever listens on the slot's port `3100 + N` (children included) and deletes the D1 files and
+   the bucket. Read its "止めたプロセス" line (`slot N のポート 310N のプロセスを M 個止めました`);
+   exit 1 means a process would not die (its PID is printed): fix that before going on. Then
+   `git worktree remove .worktrees/pbi-<N>`, `git branch -d pbi/<N>`, free the slot, and
+   re-evaluate the ready set (§2). A server stopped by hand is not enough: `pnpm start` leaves
+   `workerd` behind (#83).
 
 ## 5. EPIC integrated test — in a real browser (ADR-0012)
 
@@ -86,17 +101,27 @@ When the last child PBI of an EPIC is closed, the EPIC is **not** closed yet:
    reset it. Only one EPIC test runs at a time: the real Chrome is a shared resource.
 2. Spawn `epic-tester` (`model: "sonnet"`, `ALLOW_COMMIT=true`, contract paste block). It drives
    **real Chrome through the chrome-devtools MCP** — headless Playwright never counts as the
-   integrated test. If it returns `BLOCKED` for the browser, the Director runs the same test
-   itself with the claude-in-chrome tools and writes the same report.
+   integrated test. If the MCP's Chrome is unavailable (e.g. another session holds its profile),
+   it drives a headed Google Chrome with a throwaway profile over CDP instead (Playwright
+   `channel: 'chrome'`, `headless: false`; ADR-0045). Only if both fail does it return
+   `BLOCKED`; then the Director runs the same test itself with the claude-in-chrome tools and
+   writes the same report.
 3. `PASS` → verify the report against the EPIC's AC (every AC has screenshots; console and
    network clean), integrate the report and evidence like a PBI (§4: rebase, ff-merge, push),
-   tick the EPIC's DoD, comment with the report link and SHA, close the EPIC.
+   tick each EPIC AC the report shows PASS, tick the EPIC's DoD, comment with the report link and
+   SHA, close the EPIC.
 4. `FAIL` → integrate the report anyway (the failure is evidence), file one bug PBI per root
    cause under the EPIC (`.claude/rules/issue-authoring.md`), deliver them through §3, then
    rerun the whole integrated test on the new `main`. Repeat until `PASS`.
+5. **Retest after later changes (ADR-0048).** Once an EPIC has passed, any change integrated
+   afterwards that touches code behind that EPIC's screens (a refactor or `/simplify` included)
+   reruns that EPIC's integrated test, with evidence, before the PR is handed over (marked ready
+   for review). Every EPIC whose screens use a touched file is retested; verify and headless E2E
+   do not substitute. Reports of reruns are suffixed `-r<N>`.
 
 ## 6. Never
 
+- Close an issue, or hand over a PR containing one, with an unticked AC (ADR-0048).
 - Close an issue with an unmet AC, a missing review approval, a skipped gate, or no E2E for a
   screen-observable AC.
 - Close an EPIC without a `PASS` integrated test run in real Chrome whose report and screenshots

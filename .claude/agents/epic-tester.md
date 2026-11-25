@@ -14,14 +14,21 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
 1. Report `git rev-parse --show-toplevel` and the branch; if they are not the given worktree and
    `epic-test/<N>` → `BLOCKED`.
 2. Check the browser: `list_pages` must answer. If the chrome-devtools tools are unavailable or
-   fail twice → `BLOCKED` ("real browser unavailable"). Never substitute headless Playwright
-   for the integrated test.
+   fail twice (e.g. "The browser is already running for …/chrome-devtools-mcp/chrome-profile"),
+   switch to the second means (ADR-0045): a script in your worktree's `.tmp_*/` directory
+   launches **headed Google Chrome** with `chromium.launch({ channel: 'chrome', headless: false })`
+   from `@playwright/test` (a throwaway profile), drives it over CDP, sets the widths with
+   `page.setViewportSize`, saves screenshots straight into the evidence directory, and counts
+   `console` (error/warning), `pageerror`, `requestfailed` and `response` ≥ 400 events per screen.
+   Record the means and `browser.version()` under `## 対象`. Only if that also fails →
+   `BLOCKED` ("real browser unavailable"). Never substitute headless mode or the bundled
+   Chromium for the integrated test.
 3. Read the EPIC (`gh issue view <N>`), every child PBI, `CLAUDE.md`, `.claude/rules/`, and the
    ADRs they link. Use only your slot's resources (`.claude/rules/local-environment.md`).
 
 ## What to run
 
-1. Build and start the app on port `3000 + slot` the way a user would run it (production build
+1. Build and start the app on port `3100 + slot` the way a user would run it (production build
    when one exists, not the dev server). Start from an empty slot; create data only through the
    app's own seed command or the UI.
 2. **EPIC AC scenarios, in real Chrome** — for each EPIC AC, operate the app by its stated
@@ -34,6 +41,13 @@ the slot number, the verify command, and `ALLOW_COMMIT=true`. Missing any → `N
    new screens (Tab order reaches every control).
 4. **Regression** — the E2E specs of every child PBI and the full verify command (supporting
    evidence only; the verdict comes from steps 2–3).
+
+5. **Clean up before you report.** Run `node scripts/slot.mjs drop <slot>` in your worktree: it
+   stops the app server on port `3100 + slot` with all its children (`pnpm start` leaves
+   `workerd` behind when only the shell is stopped) and removes the slot's data. Check its
+   output line (`slot N のポート 310N のプロセスを M 個止めました`: the "止めたプロセス" count), then confirm
+   `lsof -ti tcp:<3100 + slot>` prints nothing. Report the
+   count. Never stop a process on another port.
 
 You do not fix product code. A failure is recorded with reproduction steps, expected vs actual,
 and the screenshot, and reported as `DONE_WITH_CONCERNS` with result `FAIL`.

@@ -12,11 +12,14 @@ description: 写真共有 SNS の UX を独自ブランドで再現する Web �
 
 * [企画書](proposal/) - 目的・機能の優先度・画面・データモデル・ロードマップ（PDF と HTML の原本）
 * [Architecture Decision Records](adr/) - 決定とその理由の一覧
+* [技術スタックの選定の調査](research/stack-selection.md) - フレームワーク・DB・ORM・認証・UI・テスト・画像の配信を一次情報と試作で比べた結果
 
 # ディレクトリ
 
 * [proposal/](proposal/) - 企画書
+* [research/](research/) - 技術の調査の結果
 * [architecture/](architecture/) - データモデル・URL とサーバーの処理・実装の共通の決まり
+* [guides/](guides/) - 動かし方・運用の手順（verify の流し方）
 * [adr/](adr/) - 決定とその理由
 * [test-reports/](test-reports/) - EPIC の総合試験のレポートとエビデンス
 

@@ -1,0 +1,244 @@
+{
+ "checks": {
+  "ac1.header": {
+   "h1": "撮影者 A",
+   "headerText": "E 撮影者 A @e3a_mwqhhwuyd0c808 フォローする 3 投稿 0 フォロワー 0 フォロー中 旅と写真が好きです。 毎週末に撮っています。"
+  },
+  "ac1.order": [
+   "撮影者 A の写真 3",
+   "撮影者 A の写真 2",
+   "撮影者 A の写真 1"
+  ],
+  "ac1.404": {
+   "status": 404,
+   "body": "本文へ移動 Mado ホーム 検索 投稿 通知 プロフィール ページが見つかりません リンクが間違っているか、このアカウントは存在しません。 ホームへ戻る 学習目的の非公式プロジェクトです。Meta 社とは関係ありません。"
+  },
+  "ac4.otherHasEditLink": false,
+  "ac4.otherHasEditButton": false,
+  "ac4.ownHasEditLink": true,
+  "ac4.anonEditUrl": "http://localhost:3104/accounts/login",
+  "ac4.anonProfileHasEdit": false,
+  "ac2.emptyNameMessage": [
+   "表示名は 1〜30 字で入力してください"
+  ],
+  "ac2.emptyNameSaveDisabled": true,
+  "ac2.ownAfter": {
+   "h1": "新しい名前 B 😀",
+   "bio": "新しい自己紹介です。\n二行目あり。",
+   "avatarSrc": "http://insta-s4.web.localhost:3912/media/01a1fe70-d125-7000-b45a-ba59194f9859/01"
+  },
+  "ac2.otherView": {
+   "h1": "新しい名前 B 😀",
+   "bio": "新しい自己紹介です。\n二行目あり。",
+   "avatarLoaded": true,
+   "editLink": false
+  },
+  "ac3.151.alert": [
+   "自己紹介は 150 字までです"
+  ],
+  "ac3.151.saveDisabled": true,
+  "ac3.151.bioAfterReload": "新しい自己紹介です。\n二行目あり。",
+  "ac3.150.alert": [],
+  "ac3.150.saveDisabled": false,
+  "ac3.150.saved": {
+   "length": 150
+  },
+  "ac5.1280.keyboardSaved": {
+   "stage": 3,
+   "h1": "キーボード1280",
+   "overflowX": false
+  },
+  "ac5.375.keyboardSaved": {
+   "stage": 3,
+   "h1": "キーボード375",
+   "overflowX": false
+  }
+ },
+ "events": [
+  {
+   "label": "ac1-404",
+   "kind": "http404",
+   "text": "http://localhost:3104/no_such_user_mwqhhwuyd0c808"
+  },
+  {
+   "label": "ac1-404",
+   "kind": "console.error",
+   "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+   "url": "http://localhost:3104/no_such_user_mwqhhwuyd0c808"
+  }
+ ],
+ "keyboard": {
+  "profile-1280": [
+   "a:本文へ移動",
+   "a:ホーム",
+   "a:検索",
+   "a:投稿",
+   "a:通知",
+   "a:プロフィール",
+   "button:フォローする",
+   "a:0 フォロワー",
+   "a:0 フォロー中",
+   "a:撮影者 A の写真 3",
+   "a:撮影者 A の写真 2",
+   "a:撮影者 A の写真 1",
+   "body:撮影者 A の写真 3"
+  ],
+  "edit-1280": [
+   "a:本文へ移動",
+   "a:ホーム",
+   "a:検索",
+   "a:投稿",
+   "a:通知",
+   "a:プロフィール",
+   "input:",
+   "input:displayName",
+   "textarea:bio",
+   "button:保存"
+  ],
+  "profile-375": [
+   "a:本文へ移動",
+   "button:フォローする",
+   "a:0 フォロワー",
+   "a:0 フォロー中",
+   "a:撮影者 A の写真 3",
+   "a:撮影者 A の写真 2",
+   "a:撮影者 A の写真 1",
+   "a:ホーム",
+   "a:検索",
+   "a:投稿",
+   "a:通知",
+   "a:プロフィール",
+   "body:撮影者 A の写真 3"
+  ],
+  "edit-375": [
+   "a:本文へ移動",
+   "input:",
+   "input:displayName",
+   "textarea:bio",
+   "button:保存"
+  ]
+ },
+ "alts": {
+  "profileA": [
+   {
+    "alt": "撮影者 A の写真 3",
+    "src": "70-c510-7000-bea2-1556f599bd9a/w320.webp"
+   },
+   {
+    "alt": "撮影者 A の写真 2",
+    "src": "70-b919-7000-af18-779cebe08698/w320.webp"
+   },
+   {
+    "alt": "撮影者 A の写真 1",
+    "src": "70-acd4-7000-93bb-ed1054d732bd/w320.webp"
+   }
+  ],
+  "profileB": [
+   {
+    "alt": "",
+    "src": "71-1f85-7000-a309-e6b35a1ff18a/w320.webp"
+   }
+  ],
+  "editAfter-1280": [
+   {
+    "alt": "",
+    "src": "71-1f85-7000-a309-e6b35a1ff18a/w320.webp"
+   }
+  ],
+  "edit-1280": [
+   {
+    "alt": "現在のアイコン",
+    "src": "71-1f85-7000-a309-e6b35a1ff18a/w320.webp"
+   }
+  ],
+  "editAfter-375": [
+   {
+    "alt": "",
+    "src": "71-1f85-7000-a309-e6b35a1ff18a/w320.webp"
+   }
+  ],
+  "edit-375": [
+   {
+    "alt": "現在のアイコン",
+    "src": "71-1f85-7000-a309-e6b35a1ff18a/w320.webp"
+   }
+  ]
+ },
+ "layout": {
+  "gap1280": 2,
+  "gap768": 2,
+  "gap375": 2,
+  "ac1": {
+   "375": [
+    {
+     "x": 0,
+     "y": 253,
+     "w": 123.7,
+     "h": 123.7,
+     "alt": "撮影者 A の写真 3"
+    },
+    {
+     "x": 125.7,
+     "y": 253,
+     "w": 123.7,
+     "h": 123.7,
+     "alt": "撮影者 A の写真 2"
+    },
+    {
+     "x": 251.3,
+     "y": 253,
+     "w": 123.7,
+     "h": 123.7,
+     "alt": "撮影者 A の写真 1"
+    }
+   ],
+   "768": [
+    {
+     "x": 244,
+     "y": 225,
+     "w": 173.3,
+     "h": 173.3,
+     "alt": "撮影者 A の写真 3"
+    },
+    {
+     "x": 419.3,
+     "y": 225,
+     "w": 173.3,
+     "h": 173.3,
+     "alt": "撮影者 A の写真 2"
+    },
+    {
+     "x": 594.7,
+     "y": 225,
+     "w": 173.3,
+     "h": 173.3,
+     "alt": "撮影者 A の写真 1"
+    }
+   ],
+   "1280": [
+    {
+     "x": 447,
+     "y": 225,
+     "w": 208.7,
+     "h": 208.7,
+     "alt": "撮影者 A の写真 3"
+    },
+    {
+     "x": 657.7,
+     "y": 225,
+     "w": 208.7,
+     "h": 208.7,
+     "alt": "撮影者 A の写真 2"
+    },
+    {
+     "x": 868.3,
+     "y": 225,
+     "w": 208.7,
+     "h": 208.7,
+     "alt": "撮影者 A の写真 1"
+    }
+   ]
+  }
+ },
+ "chrome": "157.0.8103.80"
+}

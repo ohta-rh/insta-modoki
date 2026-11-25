@@ -1,0 +1,20 @@
+{
+ "seed": 200,
+ "snap": "- navigation \"メイン\":\n  - link \"ホーム\":\n    - /url: /\n  - link \"検索\":\n    - /url: /explore\n  - link \"投稿\":\n    - /url: /create\n  - link \"通知（未読 1 件）\":\n    - /url: /notifications\n    - text: 通知\n  - link \"プロフィール\":\n    - /url: /e11_d",
+ "link": {
+  "x": 225,
+  "y": 757,
+  "width": 75,
+  "height": 55
+ },
+ "badge": {
+  "x": 266.5,
+  "y": 762.5,
+  "width": 20,
+  "height": 20
+ },
+ "visibleText": "通知 + badge \"1\"",
+ "badgeInsideA": false,
+ "snapHasStrayDigit": false
+}
+console errors/warnings: 0

@@ -1,0 +1,67 @@
+NOTE chromeVersion "157.0.8103.80"
+ok   setup A and B signed up via the UI in two separate browser contexts
+NOTE aPosts ["03298742-c1d8-45fd-8a97-7463b4861305","1d43b9f0-4df5-4b11-87cd-27e03fc33a3e","4e3056c2-2dfa-40d6-bd9c-8a248122c878","15efa1ed-33ae-4144-a243-18d8f5f7519f","73e6e496-4435-49b1-a2ff-874f3a976041","8562e926-2fcd-46fb-9d7c-f37a0e376b22","0e02c76e-34ce-4b4b-8503-6c9316466713","b14d3346-40f8-4f98-a5bf-936ade26da70","fc148c14-42be-4abc-94ca-a95143ef8bcb","829114ba-daf7-4a70-9236-1e0a124250e2","d820ee0f-e149-4fcd-80cf-2a56e173176a","f2acaf43-f47d-4eb1-b15a-96e4ba9debdb","15f3ae4a-da64-4813-92bc-8384d0e9b961","3d744319-26ec-41a0-93fb-fbe3f5cf090c","61b79869-e524-48d6-bf94-362267928245","92cc88da-b6e8-4c81-99e4-9e6dcd956422","b4c3f2d0-a4ef-4384-b6e3-a4ecc1313928","710a8623-8d9f-42a8-9d7f-7dc5e85b9ed8"]
+NOTE bPosts ["12722481-ed6f-4e91-99ae-b978f32bf78d","2c6d15e2-efff-4873-9fa8-cea6d125037a"]
+NOTE userIds {"a":"01a2026c-0062-7000-a2ad-60c68b0728c9","b":"01a2026c-0172-7000-8416-f4014ce81f92"}
+ok   AC-1 A has no badge before any reaction (bell has no unread) 通知
+ok   AC-1 round 1: A's badge rose by 1 within 5 s of B's click 2503 ms
+ok   86 unread1 1280px: badge rect sits inside the link rect, badge is outside the <a>, name "通知（未読 1 件）" contains visible "通知" + digit {"lb":{"x":12,"y":220,"width":219,"height":44},"bb":{"x":199,"y":233.5,"width":20,"height":20},"pe":"none"}
+ok   86 unread1 768px: badge rect sits inside the link rect, badge is outside the <a>, name "通知（未読 1 件）" contains visible "通知" + digit {"lb":{"x":12,"y":220,"width":219,"height":44},"bb":{"x":199,"y":233.5,"width":20,"height":20},"pe":"none"}
+FAIL 86 unread1 375px: badge rect sits inside the link rect, badge is outside the <a>, name "通知（未読 1 件）" contains visible "通知" + digit {"lb":{"x":225,"y":757,"width":75,"height":55},"bb":{"x":266.5,"y":762.5,"width":20,"height":20},"pe":"none"}
+ok   AC-5 axe with unread present: home, no serious/critical (1280, 375)
+ok   86 mouse click on the badge centre at 1280px opens /notifications http://localhost:3102/notifications
+ok   AC-1 list shows "B さんがあなたの投稿にいいねしました" 通知 E 通知 Bさんがあなたの投稿にいいねしました たった今 新着
+ok   AC-1 badge is gone after opening the list 通知
+ok   AC-1 DB: unread 0 after opening 0
+ok   AC-1 round 2: A's badge rose by 1 within 5 s of B's click 548 ms
+ok   86 mouse click on the badge centre at 375px opens /notifications http://localhost:3102/notifications
+ok   AC-1 round 3: A's badge rose by 1 within 5 s of B's click 975 ms
+ok   AC-1 round 4: A's badge rose by 1 within 5 s of B's click 966 ms
+ok   AC-1 round 5: A's badge rose by 1 within 5 s of B's click 551 ms
+ok   AC-1 round 6: A's badge rose by 1 within 5 s of B's click 391 ms
+NOTE ac1LatencyMs [2503,548,975,966,551,391]
+ok   AC-1 all 6 latencies <= 5000 ms 2503, 548, 975, 966, 551, 391
+ok   AC-1 failure path: logged-out stream request is 401 JSON (not event-stream) 401 application/json
+ok   AC-2 B reacting on B's own post made no notification (B rows = 0) 0
+NOTE ac2Items [{"href":"/e11_b","text":"E 通知 Bさんがあなたをフォローしました たった今 新着"},{"href":"/p/0e02c76e-34ce-4b4b-8503-6c9316466713","text":"E 通知 Bさんがコメントしました: 長いコメントです。あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ… たった今 新着"},{"href":"/p/8562e926-2fcd-46fb-9d7c-f37a0e376b22","text":"E 通知 Bさんがあなたの投稿にいいねしました たった今"},{"href":"/p/73e6e496-4435-49b1-a2ff-874f3a976041","text":"E 通知 Bさんがあなたの投稿にいいねしました たった今"},{"href":"/p/15efa1ed-33ae-4144-a243-18d8f5f7519f","text":"E 通知 Bさんがあなたの投稿にいいねしました たった今"},{"href":"/p/4e3056c2-2dfa-40d6-bd9c-8a248122c878","text":"E 通知 Bさんがあなたの投稿にいいねしました たった今"},{"href":"/p/1d43b9f0-4df5-4b11-87cd-27e03fc33a3e","text":"E 通知 Bさんがあなたの投稿にいいねしました たった今"},{"href":"/p/03298742-c1d8-45fd-8a97-7463b4861305","text":"E 通知 Bさんがあなたの投稿にいいねしました 1分前"}]
+ok   AC-2 list has the follow first and the comment second (newest first) follow@0 comment@1
+ok   AC-2 comment shows its leading text, cut with an ellipsis at 100 chars E 通知 Bさんがコメントしました: 長いコメントです。あああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ… たった今 新着
+ok   AC-2 comment row links to the post, follow row to the profile /p/0e02c76e-34ce-4b4b-8503-6c9316466713 /e11_b
+NOTE aTypes [{"type":"comment","n":1},{"type":"follow","n":1},{"type":"like","n":6}]
+ok   AC-2 pressing the comment row opens the post detail http://localhost:3102/p/0e02c76e-34ce-4b4b-8503-6c9316466713
+ok   AC-2 pressing the follow row opens the profile http://localhost:3102/e11_b
+NOTE offlineOnlyBadgeAfter9s 1
+ok   AC-3 DevTools offline only (tab visible): after the network is back the badge equals the DB (1) during offline badge=1, then 1 / db 1
+ok   AC-3 while offline and hidden, nothing reaches A (badge still 0) though DB has 2 badge 0, db 2
+ok   AC-3 after returning, badge shows exactly 2 (no loss, no double) within 5 s 14 ms; badge 2; db 2
+ok   AC-3 badge stays 2 after 4 s more (not counted twice)
+ok   AC-3 SSE blocked, round: badge rose within 10 s (polling) 5770 ms
+ok   AC-3 SSE blocked, round: badge rose within 10 s (polling) 6484 ms
+ok   AC-3 SSE blocked, round: badge rose within 10 s (polling) 6283 ms
+NOTE pollingLatencyMs [5770,6484,6283]
+NOTE ac4Before {"e11_oldd3u5":1,"e11_newd3u5":1,"e11_edged3u5":1}
+ok   AC-4 before: list shows the 91-day, 1-day and 89-day notifications
+NOTE ac4JobRc 0
+NOTE ac4After {"e11_oldd3u5":0,"e11_newd3u5":1,"e11_edged3u5":1}
+ok   AC-4 job exit code 0 Using secrets defined in .dev.vars | notification-cleanup: deleted=1
+ok   AC-4 only the 91-day row is gone (old 1->0, new 1->1, edge 1->1) {"e11_oldd3u5":0,"e11_newd3u5":1,"e11_edged3u5":1}
+ok   AC-4 other notifications untouched 17 -> 16
+ok   AC-4 after: list no longer shows the 91-day one, still the 1-day and 89-day ones
+ok   AC-4 failure path: rerun deletes nothing more (rows same), exit 0; unknown job name exits non-zero rerun rc 0, bad name rc 2
+NOTE bEmptyText "通知 まだ通知はありません"
+ok   AC-5 B (own session) sees none of A's notifications: empty list, no badge 通知 まだ通知はありません
+NOTE streamB {"plain":{"status":200,"first":"retry: 1000 event: unread data: {\"unreadCount\":0} "},"spoof":{"status":200,"first":"retry: 1000 event: unread data: {\"unreadCount\":0} "}}
+ok   AC-5 B's stream, even with userId=A in the query, reports B's count only (0) {"plain":{"status":200,"first":"retry: 1000 event: unread data: {\"unreadCount\":0} "},"spoof":{"status":200,"first":"retry: 1000 event: unread data: {\"unreadCount\":0} "}}
+ok   AC-5 B gets exactly their own 1 unread (not A's count) 通知（未読 1 件）
+NOTE bList ["E 通知 Aさんがあなたの投稿にいいねしました たった今 新着"]
+ok   AC-5 B's list has only A's like on B's post (1 row) ["E 通知 Aさんがあなたの投稿にいいねしました たった今 新着"]
+ok   AC-5 Tab reaches all 16 list rows (each link is in the Tab sequence) 16 rows
+ok   AC-5 Enter on the focused first row navigates to its target /p/15f3ae4a-da64-4813-92bc-8384d0e9b961
+ok   AC-5 axe: A's notification list, no serious/critical (1280, 375)
+ok   AC-5 axe: B's list, no serious/critical (1280, 375)
+NOTE cEmptyText "通知 まだ通知はありません"
+ok   AC-5 axe: empty list, no serious/critical (1280, 375)
+ok   AC-5 failure path: logged-out /notifications goes to login http://localhost:3102/accounts/login
+NOTE sseEvents135s [{"ev":"failed:net::ERR_ABORTED","ms":10272},{"ev":"finished","ms":60013},{"ev":"finished","ms":60016}]
+ok   AC-3 SSE: an open connection closes at about 60 s and a new one opens (>= 2 finished in 135 s, each 55-65 s) 60013, 60016
+DONE failed= false failedChecks= 1

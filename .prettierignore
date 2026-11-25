@@ -1,0 +1,13 @@
+.next/
+.open-next/
+.wrangler/
+coverage/
+node_modules/
+test-results/
+playwright-report/
+pnpm-lock.yaml
+next-env.d.ts
+docs/
+.claude/
+CLAUDE.md
+.tmp_*/

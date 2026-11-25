@@ -1,0 +1,394 @@
+{
+  "acs": {},
+  "tabOrder": {
+    "create": [
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "input[file]:",
+      "input[radio]:ratio",
+      "div:写真 1 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 1）",
+      "button[button]:後ろへ（写真 1）",
+      "button[button]:この写真を外す（写真 1）",
+      "div:写真 2 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 2）",
+      "button[button]:後ろへ（写真 2）",
+      "button[button]:この写真を外す（写真 2）",
+      "div:写真 3 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 3）",
+      "button[button]:後ろへ（写真 3）",
+      "button[button]:この写真を外す（写真 3）",
+      "textarea:",
+      "button[submit]:投稿",
+      "body:本文へ移動 Mado ホーム 検索 投稿 通知 プロフィール",
+      "a:本文へ移動",
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "input[file]:",
+      "input[radio]:ratio",
+      "div:写真 1 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 1）",
+      "button[button]:後ろへ（写真 1）",
+      "button[button]:この写真を外す（写真 1）",
+      "div:写真 2 の切り抜き",
+      "textarea:"
+    ],
+    "post": [
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "a:ep4_mwqjpiq6lj12",
+      "button[button]:削除",
+      "div:投稿の写真",
+      "button[button]:前の写真",
+      "button[button]:次の写真",
+      "button[submit]:いいね",
+      "button[button]:0 件のいいね",
+      "a:コメント 0 件",
+      "a:ep4_mwqjpiq6lj12",
+      "input[text]:body",
+      "a:本文へ移動",
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "a:ep4_mwqjpiq6lj12",
+      "button[button]:削除",
+      "div:投稿の写真",
+      "button[button]:前の写真"
+    ]
+  },
+  "chrome": "157.0.8103.80",
+  "userA": "ep4_mwqjpiq6lj12",
+  "crop": [
+    "200,0,1200,1200",
+    "0,150,900,900",
+    "0,0,1000,1000"
+  ],
+  "P1": "01a1fea9-57bd-7000-8e56-338dbf7ec45d",
+  "slides": [
+    {
+      "alt": "赤い写真",
+      "color": "rgb(216,24,24)",
+      "w": 640,
+      "h": 640,
+      "status": 200
+    },
+    {
+      "alt": "緑の写真",
+      "color": "rgb(24,184,56)",
+      "w": 640,
+      "h": 640,
+      "status": 200
+    },
+    {
+      "alt": "青い写真",
+      "color": "rgb(24,56,232)",
+      "w": 640,
+      "h": 640,
+      "status": 200
+    }
+  ],
+  "P1keys": [
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578b-7000-b5ef-563da0bc4fa2/orig.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578b-7000-b5ef-563da0bc4fa2/w1080.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578b-7000-b5ef-563da0bc4fa2/w320.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578b-7000-b5ef-563da0bc4fa2/w640.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7000-9376-396388f7c04b/orig.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7000-9376-396388f7c04b/w1080.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7000-9376-396388f7c04b/w320.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7000-9376-396388f7c04b/w640.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7001-8309-a7b517cc6a77/orig.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7001-8309-a7b517cc6a77/w1080.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7001-8309-a7b517cc6a77/w320.webp",
+    "media/01a1fea9-46a5-7000-bb2f-ea1513df297f/01a1fea9-578c-7001-8309-a7b517cc6a77/w640.webp"
+  ],
+  "gpsSource": {
+    "exif": true,
+    "gps": true,
+    "gpsTags": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "ac5": [
+    "post: 01a1fea9-8594-7000-8fe8-84534860b7f1",
+    "objects added: 4",
+    "01a1fea9-8557-7000-93be-5ae5d8d6045c/orig.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false",
+    "01a1fea9-8557-7000-93be-5ae5d8d6045c/w1080.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false",
+    "01a1fea9-8557-7000-93be-5ae5d8d6045c/w320.webp: webp 320x320 750B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false",
+    "01a1fea9-8557-7000-93be-5ae5d8d6045c/w640.webp: webp 640x640 1296B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false"
+  ],
+  "ac4Reqs": [],
+  "postIds": [
+    "01a1fea9-57bd-7000-8e56-338dbf7ec45d",
+    "01a1fea9-8594-7000-8fe8-84534860b7f1",
+    "01a1fea9-b454-7000-84fd-bbf68980eb0d",
+    "01a1fea9-b76e-7000-82d7-6de1aadf6908",
+    "01a1fea9-ba69-7000-9e8c-5a65014def11",
+    "01a1fea9-bd9a-7000-9a7a-8b0be27179c5",
+    "01a1fea9-c087-7000-8194-3adbb926a8ed",
+    "01a1fea9-c3a1-7000-aa06-e86dd7ffc685",
+    "01a1fea9-c69f-7000-855d-334e5c0d7c86",
+    "01a1fea9-c9b9-7000-8a86-31d2a4a0b352"
+  ],
+  "modal": [
+    {
+      "w": 1280,
+      "href": "/p/01a1fea9-c087-7000-8194-3adbb926a8ed",
+      "url": "http://localhost:3103/p/01a1fea9-c087-7000-8194-3adbb926a8ed",
+      "before": 300,
+      "afterY": 300,
+      "afterUrl": "http://localhost:3103/ep4_mwqjpiq6lj12",
+      "newTab": {
+        "url": "http://localhost:3103/p/01a1fea9-c087-7000-8194-3adbb926a8ed",
+        "noDialog": true,
+        "hasCaption": true
+      }
+    },
+    {
+      "w": 768,
+      "href": "/p/01a1fea9-c087-7000-8194-3adbb926a8ed",
+      "url": "http://localhost:3103/p/01a1fea9-c087-7000-8194-3adbb926a8ed",
+      "before": 288.5,
+      "afterY": 288.5,
+      "afterUrl": "http://localhost:3103/ep4_mwqjpiq6lj12",
+      "newTab": {
+        "url": "http://localhost:3103/p/01a1fea9-c087-7000-8194-3adbb926a8ed",
+        "noDialog": true,
+        "hasCaption": true
+      }
+    },
+    {
+      "w": 375,
+      "href": "/p/01a1fea9-c9b9-7000-8a86-31d2a4a0b352",
+      "url": "http://localhost:3103/p/01a1fea9-c9b9-7000-8a86-31d2a4a0b352",
+      "before": 131.5,
+      "afterY": 131.5,
+      "afterUrl": "http://localhost:3103/ep4_mwqjpiq6lj12",
+      "newTab": {
+        "url": "http://localhost:3103/p/01a1fea9-c9b9-7000-8a86-31d2a4a0b352",
+        "noDialog": true,
+        "hasCaption": true
+      }
+    }
+  ],
+  "slow": [
+    {
+      "w": 1280,
+      "early": {
+        "w": 600,
+        "h": 600
+      },
+      "earlyLoaded": 0,
+      "late": {
+        "w": 600,
+        "h": 600
+      },
+      "loaded": 3,
+      "cls": 0,
+      "shifts": 1
+    },
+    {
+      "w": 768,
+      "early": {
+        "w": 524,
+        "h": 524
+      },
+      "earlyLoaded": 0,
+      "late": {
+        "w": 524,
+        "h": 524
+      },
+      "loaded": 3,
+      "cls": 0,
+      "shifts": 1
+    },
+    {
+      "w": 375,
+      "early": {
+        "w": 375,
+        "h": 375
+      },
+      "earlyLoaded": 0,
+      "late": {
+        "w": 375,
+        "h": 375
+      },
+      "loaded": 3,
+      "cls": 0.0076,
+      "shifts": 3
+    }
+  ],
+  "results": {
+    "AC-1": [
+      {
+        "step": "create-empty",
+        "ok": true,
+        "text": "写真が 0 枚のとき「投稿」は無効（空の状態）"
+      },
+      {
+        "step": "url",
+        "ok": true,
+        "text": "投稿後の URL: /p/<uuid>（01a1fea9-57bd-7000-8e56-338dbf7ec45d）"
+      },
+      {
+        "step": "carousel",
+        "ok": true,
+        "text": "枚数バッジ 1/3: true、ドット: 3、スライド: 3"
+      },
+      {
+        "step": "order-alt",
+        "ok": true,
+        "text": "選んだ順の alt と色: 赤い写真=rgb(216,24,24) 640x640 / 緑の写真=rgb(24,184,56) 640x640 / 青い写真=rgb(24,56,232) 640x640"
+      },
+      {
+        "step": "caption",
+        "ok": true,
+        "text": "キャプションが表示される"
+      },
+      {
+        "step": "stored-keys",
+        "ok": true,
+        "text": "バケットの新しいファイル 12 個（3 枚 × 4）"
+      },
+      {
+        "step": "arrow-keys",
+        "ok": true,
+        "text": "ArrowRight で 2/3（1280:true, 768:true, 375:true）"
+      },
+      {
+        "step": "arrow-keys-end",
+        "ok": true,
+        "text": "→→ で 3/3: true、← で 2/3: true"
+      }
+    ],
+    "AC-5": [
+      {
+        "step": "source-has-gps",
+        "ok": true,
+        "text": "元の写真の EXIF: {\"exif\":true,\"gps\":true,\"gpsTags\":[1,2,3,4]}"
+      },
+      {
+        "step": "stored-clean",
+        "ok": true,
+        "text": "01a1fea9-8557-7000-93be-5ae5d8d6045c/orig.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false | 01a1fea9-8557-7000-93be-5ae5d8d6045c/w1080.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false | 01a1fea9-8557-7000-93be-5ae5d8d6045c/w320.webp: webp 320x320 750B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false | 01a1fea9-8557-7000-93be-5ae5d8d6045c/w640.webp: webp 640x640 1296B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false"
+      }
+    ],
+    "AC-4": [
+      {
+        "step": "11th",
+        "ok": true,
+        "text": "メッセージ「写真は 10 枚までです」、写真 10 枚のまま、送信した通信 0 件"
+      },
+      {
+        "step": "too-large",
+        "ok": true,
+        "text": "10491823B のファイル。メッセージ「too-large.jpg: ファイルが大きすぎます（1 枚 10MB まで）」、写真 0 枚、通信 0 件"
+      },
+      {
+        "step": "gif",
+        "ok": true,
+        "text": "メッセージ「not-allowed.gif: この形式は使えません（JPEG・PNG・WebP・HEIC）」、写真 0 枚、通信 0 件"
+      },
+      {
+        "step": "caption-2201",
+        "ok": true,
+        "text": "メッセージ「キャプションは 2,200 字までです」、投稿ボタン無効: true、通信 0 件、カウンタ true"
+      }
+    ],
+    "AC-2": [
+      {
+        "step": "modal",
+        "ok": true,
+        "text": "1280px: クリック前 scrollY=300、モーダル中 URL=/p/01a1fea9-c087-7000-8194-3adbb926a8ed、Esc 後 scrollY=300・URL=/ep4_mwqjpiq6lj12、新しいタブ: ダイアログ無し=true / 768px: クリック前 scrollY=288.5、モーダル中 URL=/p/01a1fea9-c087-7000-8194-3adbb926a8ed、Esc 後 scrollY=288.5・URL=/ep4_mwqjpiq6lj12、新しいタブ: ダイアログ無し=true / 375px: クリック前 scrollY=131.5、モーダル中 URL=/p/01a1fea9-c9b9-7000-8a86-31d2a4a0b352、Esc 後 scrollY=131.5・URL=/ep4_mwqjpiq6lj12、新しいタブ: ダイアログ無し=true"
+      },
+      {
+        "step": "unknown-post",
+        "ok": true,
+        "text": "存在しない /p/<id> は HTTP 404（想定した 404）"
+      }
+    ],
+    "AC-6": [
+      {
+        "step": "cls",
+        "ok": true,
+        "text": "1280px: 枠 600x600 → 600x600（読み込み前に完了した写真 0、後 3）、CLS=0 / 768px: 枠 524x524 → 524x524（読み込み前に完了した写真 0、後 3）、CLS=0 / 375px: 枠 375x375 → 375x375（読み込み前に完了した写真 0、後 3）、CLS=0.0076"
+      },
+      {
+        "step": "og",
+        "ok": true,
+        "text": "Cookie 無しの HTML の meta 12 個、足りないもの: なし"
+      }
+    ],
+    "AC-3": [
+      {
+        "step": "other-user-no-delete",
+        "ok": true,
+        "text": "他の利用者（B）の画面の「削除」: 0 個、本人（A）の画面: 1 個"
+      },
+      {
+        "step": "likers",
+        "ok": true,
+        "text": "いいねした人の一覧に 1 人"
+      },
+      {
+        "step": "likers-empty",
+        "ok": true,
+        "text": "0 件のとき「まだいいねはありません」"
+      },
+      {
+        "step": "bucket",
+        "ok": true,
+        "text": "削除前 48 個 → 後 36 個。消えたのは 12 個（3 枚 × orig・w320・w640・w1080）で、投稿 01a1fea9-57bd-7000-8e56-338dbf7ec45d のファイルと一致。残り 0 個"
+      },
+      {
+        "step": "grid",
+        "ok": true,
+        "text": "削除後の作者のプロフィールのグリッドに 01a1fea9-57bd-7000-8e56-338dbf7ec45d は 0 件"
+      },
+      {
+        "step": "gone",
+        "ok": true,
+        "text": "削除した投稿の URL は HTTP 404（想定した 404）"
+      }
+    ]
+  },
+  "health": {
+    "EXPECTED-404: AC-2 unknown post": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [],
+      "http": [
+        "404 GET http://localhost:3103/p/00000000-0000-7000-8000-000000000000"
+      ]
+    },
+    "EXPECTED-404: AC-3 deleted post": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [],
+      "http": [
+        "404 GET http://localhost:3103/p/01a1fea9-57bd-7000-8e56-338dbf7ec45d"
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+[WebServer] $ opennextjs-cloudflare preview --port ${PORT:-3100} --var E2E_HARNESS:1 --var APP_ENV:local
+
+Running 22 tests using 8 workers
+
+  ✓   2 [chromium] › e2e/a11y.spec.ts:8:3 › ホームフィード で axe の重大・深刻な違反が 0 件 (526ms)
+  ✓   5 [chromium] › e2e/a11y.spec.ts:8:3 › サインアップ で axe の重大・深刻な違反が 0 件 (570ms)
+  ✓   7 [chromium] › e2e/a11y.spec.ts:8:3 › 投稿の作成 で axe の重大・深刻な違反が 0 件 (620ms)
+  ✓   1 [chromium] › e2e/a11y.spec.ts:8:3 › ログイン で axe の重大・深刻な違反が 0 件 (664ms)
+  ✓   8 [chromium] › e2e/a11y.spec.ts:8:3 › 投稿詳細 で axe の重大・深刻な違反が 0 件 (737ms)
+  ✓   6 [chromium] › e2e/a11y.spec.ts:8:3 › フォロワーの一覧 で axe の重大・深刻な違反が 0 件 (817ms)
+  ✓   4 [chromium] › e2e/a11y.spec.ts:8:3 › プロフィールの編集 で axe の重大・深刻な違反が 0 件 (810ms)
+  ✓   3 [chromium] › e2e/a11y.spec.ts:8:3 › プロフィール で axe の重大・深刻な違反が 0 件 (853ms)
+  ✓  13 [chromium] › e2e/a11y.spec.ts:74:1 › 代替テキストが無い写真は位置と枚数つきの alt を持つ (238ms)
+  ✓  14 [chromium] › e2e/a11y.spec.ts:86:1 › いいねの状態が aria-pressed と形で伝わる (289ms)
+  ✓  10 [chromium] › e2e/a11y.spec.ts:27:1 › いいねした人の一覧で axe の重大・深刻な違反が 0 件 (619ms)
+  ✓   9 [chromium] › e2e/a11y.spec.ts:16:1 › 投稿のモーダルで axe の重大・深刻な違反が 0 件 (953ms)
+  ✓  12 [chromium] › e2e/a11y.spec.ts:62:1 › 投稿の写真は全て空でない alt を持つ (725ms)
+  ✓  19 [chromium] › e2e/keyboard.spec.ts:117:1 › Esc で閉じて開いた要素にフォーカスが戻る (749ms)
+  ✓  18 [chromium] › e2e/keyboard.spec.ts:104:1 › モーダルの中でフォーカスが閉じ込められる (817ms)
+  ✓  20 [chromium] › e2e/reduced-motion.spec.ts:34:1 › 視差効果を減らす設定のとき、動きが 0 秒になる (972ms)
+  ✓  21 [chromium] › e2e/reduced-motion.spec.ts:47:1 › 設定が無いときは動きがある (926ms)
+  ✓  11 [chromium] › e2e/a11y.spec.ts:38:1 › 操作できる要素が全て 44×44px 以上 (2.3s)
+  ✓  16 [chromium] › e2e/a11y.spec.ts:109:1 › html の lang が ja (2.3s)
+  ✓  15 [chromium] › e2e/a11y.spec.ts:100:1 › 画面ごとに h1 が 1 つ (2.3s)
+  ✓  17 [chromium] › e2e/keyboard.spec.ts:70:1 › フォーカスされた要素の輪郭が 2px 以上 (2.2s)
+  ✓  22 [chromium] › e2e/keyboard.spec.ts:9:1 › サインアップから投稿・いいね・コメントまでを、キーボードだけで完了できる (1.0s)
+
+  22 passed (8.2s)
+rc=0

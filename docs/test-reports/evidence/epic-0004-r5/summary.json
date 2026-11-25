@@ -1,0 +1,654 @@
+{
+  "acs": {},
+  "tabOrder": {
+    "create": [
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "input[file]:",
+      "input[radio]:ratio",
+      "div:写真 1 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 1）",
+      "button[button]:後ろへ（写真 1）",
+      "button[button]:この写真を外す（写真 1）",
+      "div:写真 2 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 2）",
+      "button[button]:後ろへ（写真 2）",
+      "button[button]:この写真を外す（写真 2）",
+      "div:写真 3 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 3）",
+      "button[button]:後ろへ（写真 3）",
+      "button[button]:この写真を外す（写真 3）",
+      "textarea:",
+      "button[submit]:投稿",
+      "body:本文へ移動 Mado ホーム 検索 投稿 通知 プロフィール",
+      "a:本文へ移動",
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "input[file]:",
+      "input[radio]:ratio",
+      "div:写真 1 の切り抜き",
+      "textarea:",
+      "button[button]:前へ（写真 1）",
+      "button[button]:後ろへ（写真 1）",
+      "button[button]:この写真を外す（写真 1）",
+      "div:写真 2 の切り抜き",
+      "textarea:"
+    ],
+    "post": [
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "a:ep4_mwraj58dbop6",
+      "button[button]:削除",
+      "div:投稿の写真",
+      "button[button]:前の写真",
+      "button[button]:次の写真",
+      "button[submit]:いいね",
+      "button[button]:0 件のいいね",
+      "a:コメント 0 件",
+      "a:ep4_mwraj58dbop6",
+      "input[text]:body",
+      "a:本文へ移動",
+      "a:ホーム",
+      "a:検索",
+      "a:投稿",
+      "a:通知",
+      "a:プロフィール",
+      "a:ep4_mwraj58dbop6",
+      "button[button]:削除",
+      "div:投稿の写真",
+      "button[button]:前の写真"
+    ]
+  },
+  "chrome": "157.0.8103.80",
+  "userA": "ep4_mwraj58dbop6",
+  "crop": [
+    "200,0,1200,1200",
+    "0,150,900,900",
+    "0,0,1000,1000"
+  ],
+  "P1": "01a20158-c92d-7000-a8c4-3cba2a94f5ef",
+  "slides": [
+    {
+      "alt": "赤い写真",
+      "color": "rgb(216,24,24)",
+      "w": 640,
+      "h": 640,
+      "status": 200
+    },
+    {
+      "alt": "緑の写真",
+      "color": "rgb(24,184,56)",
+      "w": 640,
+      "h": 640,
+      "status": 200
+    },
+    {
+      "alt": "青い写真",
+      "color": "rgb(24,56,232)",
+      "w": 640,
+      "h": 640,
+      "status": 200
+    }
+  ],
+  "P1keys": [
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f3-7000-8aa3-b2f6d5f45712/orig.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f3-7000-8aa3-b2f6d5f45712/w1080.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f3-7000-8aa3-b2f6d5f45712/w320.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f3-7000-8aa3-b2f6d5f45712/w640.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7000-9e4e-9693178cd969/orig.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7000-9e4e-9693178cd969/w1080.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7000-9e4e-9693178cd969/w320.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7000-9e4e-9693178cd969/w640.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7001-89e4-730145249486/orig.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7001-89e4-730145249486/w1080.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7001-89e4-730145249486/w320.webp",
+    "media/01a20158-b7e5-7000-9a5b-38d9dfa0d5ec/01a20158-c8f4-7001-89e4-730145249486/w640.webp"
+  ],
+  "gpsSource": {
+    "exif": true,
+    "gps": true,
+    "gpsTags": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "ac5": [
+    "post: 01a20158-f6ef-7000-b460-d533f602cd24",
+    "objects added: 4",
+    "01a20158-f6da-7000-b14f-aee5ea31d77e/orig.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false",
+    "01a20158-f6da-7000-b14f-aee5ea31d77e/w1080.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false",
+    "01a20158-f6da-7000-b14f-aee5ea31d77e/w320.webp: webp 320x320 750B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false",
+    "01a20158-f6da-7000-b14f-aee5ea31d77e/w640.webp: webp 640x640 1296B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false"
+  ],
+  "ac4Reqs": [],
+  "postIds": [
+    "01a20158-c92d-7000-a8c4-3cba2a94f5ef",
+    "01a20158-f6ef-7000-b460-d533f602cd24",
+    "01a20159-2603-7000-bd5f-8c69f967cbb9",
+    "01a20159-2943-7000-8327-510c7592d61f",
+    "01a20159-2caa-7000-bdf7-83009a92a4f9",
+    "01a20159-3062-7000-9565-8c51e165cdb2",
+    "01a20159-33c9-7000-89a0-576a9eefea45",
+    "01a20159-37da-7000-82e7-88aa03ac27a3",
+    "01a20159-3b0e-7000-bbed-e22eeefd1ad9",
+    "01a20159-3e95-7000-afe5-85e3f83b4655"
+  ],
+  "modal": [
+    {
+      "w": 1280,
+      "href": "/p/01a20159-33c9-7000-89a0-576a9eefea45",
+      "url": "http://localhost:3103/p/01a20159-33c9-7000-89a0-576a9eefea45",
+      "before": 300,
+      "afterY": 300,
+      "afterUrl": "http://localhost:3103/ep4_mwraj58dbop6",
+      "newTab": {
+        "url": "http://localhost:3103/p/01a20159-33c9-7000-89a0-576a9eefea45",
+        "noDialog": true,
+        "hasCaption": true
+      }
+    },
+    {
+      "w": 768,
+      "href": "/p/01a20159-33c9-7000-89a0-576a9eefea45",
+      "url": "http://localhost:3103/p/01a20159-33c9-7000-89a0-576a9eefea45",
+      "before": 288.5,
+      "afterY": 288.5,
+      "afterUrl": "http://localhost:3103/ep4_mwraj58dbop6",
+      "newTab": {
+        "url": "http://localhost:3103/p/01a20159-33c9-7000-89a0-576a9eefea45",
+        "noDialog": true,
+        "hasCaption": true
+      }
+    },
+    {
+      "w": 375,
+      "href": "/p/01a20159-3e95-7000-afe5-85e3f83b4655",
+      "url": "http://localhost:3103/p/01a20159-3e95-7000-afe5-85e3f83b4655",
+      "before": 131.5,
+      "afterY": 131.5,
+      "afterUrl": "http://localhost:3103/ep4_mwraj58dbop6",
+      "newTab": {
+        "url": "http://localhost:3103/p/01a20159-3e95-7000-afe5-85e3f83b4655",
+        "noDialog": true,
+        "hasCaption": true
+      }
+    }
+  ],
+  "slow": [
+    {
+      "w": 1280,
+      "early": {
+        "w": 600,
+        "h": 600
+      },
+      "earlyLoaded": 0,
+      "late": {
+        "w": 600,
+        "h": 600
+      },
+      "loaded": 3,
+      "cls": 0.0001,
+      "shifts": 2
+    },
+    {
+      "w": 768,
+      "early": {
+        "w": 524,
+        "h": 524
+      },
+      "earlyLoaded": 0,
+      "late": {
+        "w": 524,
+        "h": 524
+      },
+      "loaded": 3,
+      "cls": 0.0002,
+      "shifts": 2
+    },
+    {
+      "w": 375,
+      "early": {
+        "w": 375,
+        "h": 375
+      },
+      "earlyLoaded": 0,
+      "late": {
+        "w": 375,
+        "h": 375
+      },
+      "loaded": 3,
+      "cls": 0.0078,
+      "shifts": 4
+    }
+  ],
+  "deleteDialogFocus": {
+    "first": "button:キャンセル",
+    "seq": [
+      "button:削除",
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル",
+      "button:削除",
+      "S:button:キャンセル",
+      "S:button:削除",
+      "S:button:キャンセル",
+      "S:button:削除"
+    ],
+    "alwaysInside": true
+  },
+  "postDeleteFocus": {
+    "inflightOk": true,
+    "allIn": true,
+    "emsg": true,
+    "back": "button:削除",
+    "posts": 1,
+    "tabs": [
+      "button:削除",
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル",
+      "button:削除"
+    ],
+    "shifts": [
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル"
+    ],
+    "openAfterCancel": true,
+    "openAfterEsc": true
+  },
+  "commentDeleteFocus": {
+    "inflightOk": true,
+    "allIn": true,
+    "emsg": true,
+    "back": "button:@ep4_mwraj58dbop6 のコ",
+    "posts": 1,
+    "tabs": [
+      "button:削除",
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル",
+      "button:削除"
+    ],
+    "shifts": [
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル",
+      "button:削除",
+      "button:キャンセル"
+    ],
+    "openAfterCancel": true,
+    "openAfterEsc": true
+  },
+  "hydration80": {
+    "s1": {
+      "before": {
+        "hydrated": false,
+        "counter": "0 / 10 枚",
+        "items": 0,
+        "tabs": 6,
+        "inputFiles": 2
+      },
+      "items": 2,
+      "items2": 2,
+      "counter": "2 / 10 枚",
+      "alerts": 0,
+      "slides": [
+        "早く選んだ赤",
+        "早く選んだ緑"
+      ]
+    },
+    "s2": {
+      "before": {
+        "hydrated": false,
+        "counter": "0 / 10 枚",
+        "items": 0,
+        "tabs": 6,
+        "inputFiles": 1
+      },
+      "items": 1,
+      "items2": 1,
+      "counter": "1 / 10 枚",
+      "repickItems": 2,
+      "repickCounter": "2 / 10 枚"
+    },
+    "s3": {
+      "before": {
+        "hydrated": false,
+        "counter": "0 / 10 枚",
+        "items": 0,
+        "tabs": 6,
+        "inputFiles": 11
+      },
+      "items": 10,
+      "counter": "10 / 10 枚",
+      "msg": "写真は 10 枚までです"
+    },
+    "s4": {
+      "before": {
+        "hydrated": false,
+        "counter": "0 / 10 枚",
+        "items": 0,
+        "tabs": 6,
+        "inputFiles": 1
+      },
+      "items": 0,
+      "counter": "0 / 10 枚",
+      "msg": "too-large.jpg: ファイルが大きすぎます（1 枚 10MB まで）"
+    },
+    "s5": {
+      "before": {
+        "hydrated": false,
+        "counter": "none",
+        "items": 0,
+        "tabs": 6,
+        "inputFiles": 1
+      },
+      "preview": 1
+    }
+  },
+  "results": {
+    "AC-1": [
+      {
+        "step": "create-empty",
+        "ok": true,
+        "text": "写真が 0 枚のとき「投稿」は無効（空の状態）"
+      },
+      {
+        "step": "url",
+        "ok": true,
+        "text": "投稿後の URL: /p/<uuid>（01a20158-c92d-7000-a8c4-3cba2a94f5ef）"
+      },
+      {
+        "step": "carousel",
+        "ok": true,
+        "text": "枚数バッジ 1/3: true、ドット: 3、スライド: 3"
+      },
+      {
+        "step": "order-alt",
+        "ok": true,
+        "text": "選んだ順の alt と色: 赤い写真=rgb(216,24,24) 640x640 / 緑の写真=rgb(24,184,56) 640x640 / 青い写真=rgb(24,56,232) 640x640"
+      },
+      {
+        "step": "caption",
+        "ok": true,
+        "text": "キャプションが表示される"
+      },
+      {
+        "step": "stored-keys",
+        "ok": true,
+        "text": "バケットの新しいファイル 12 個（3 枚 × 4）"
+      },
+      {
+        "step": "arrow-keys",
+        "ok": true,
+        "text": "ArrowRight で 2/3（1280:true, 768:true, 375:true）"
+      },
+      {
+        "step": "arrow-keys-end",
+        "ok": true,
+        "text": "→→ で 3/3: true、← で 2/3: true"
+      }
+    ],
+    "AC-5": [
+      {
+        "step": "source-has-gps",
+        "ok": true,
+        "text": "元の写真の EXIF: {\"exif\":true,\"gps\":true,\"gpsTags\":[1,2,3,4]}"
+      },
+      {
+        "step": "stored-clean",
+        "ok": true,
+        "text": "01a20158-f6da-7000-b14f-aee5ea31d77e/orig.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false | 01a20158-f6da-7000-b14f-aee5ea31d77e/w1080.webp: webp 900x900 2046B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false | 01a20158-f6da-7000-b14f-aee5ea31d77e/w320.webp: webp 320x320 750B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false | 01a20158-f6da-7000-b14f-aee5ea31d77e/w640.webp: webp 640x640 1296B via media origin; metadata().exif=absent; parsed={\"exif\":false}; 'Exif'/'GPS' bytes found=false"
+      }
+    ],
+    "AC-4": [
+      {
+        "step": "11th",
+        "ok": true,
+        "text": "メッセージ「写真は 10 枚までです」、写真 10 枚のまま、送信した通信 0 件"
+      },
+      {
+        "step": "too-large",
+        "ok": true,
+        "text": "10491823B のファイル。メッセージ「too-large.jpg: ファイルが大きすぎます（1 枚 10MB まで）」、写真 0 枚、通信 0 件"
+      },
+      {
+        "step": "gif",
+        "ok": true,
+        "text": "メッセージ「not-allowed.gif: この形式は使えません（JPEG・PNG・WebP・HEIC）」、写真 0 枚、通信 0 件"
+      },
+      {
+        "step": "caption-2201",
+        "ok": true,
+        "text": "メッセージ「キャプションは 2,200 字までです」、投稿ボタン無効: true、通信 0 件、カウンタ true"
+      },
+      {
+        "step": "upload-failure",
+        "ok": true,
+        "text": "写真の送信が失敗: 「アップロードに失敗しました。もう一度お試しください」、写真 1 枚は残る、「投稿」の状態 無効=false"
+      },
+      {
+        "step": "#80-two-photos",
+        "ok": true,
+        "text": "読み込み前（JS を止めた状態）にキーボードで 2 枚選ぶ: 前は一覧 0（0 / 10 枚）・入力には 2 枚。ハイドレーション後は一覧 2 枚（2 / 10 枚）・1 秒後も 2 枚・警告 0。投稿でき、スライド 2 枚（早く選んだ赤・早く選んだ緑）"
+      },
+      {
+        "step": "#80-no-duplicate",
+        "ok": true,
+        "text": "Slow 3G（500kbps・遅延 400ms）で読み込みながら、読み込み前に 1 枚選ぶ: ハイドレーション後 1 枚（1 / 10 枚）、1 秒後も 1 枚（二重に入らない）"
+      },
+      {
+        "step": "#80-repick",
+        "ok": true,
+        "text": "同じ写真をキーボードで選び直す: 2 枚（2 / 10 枚）。ハイドレーションでの二重の取り込みは無く、選び直した 1 回ぶんだけ増える"
+      },
+      {
+        "step": "#80-eleven",
+        "ok": true,
+        "text": "読み込み前に 11 枚選ぶ: ハイドレーション後 10 枚（10 / 10 枚）、メッセージ「写真は 10 枚までです」"
+      },
+      {
+        "step": "#80-too-large",
+        "ok": true,
+        "text": "読み込み前に 10MB 超を選ぶ: ハイドレーション後 0 枚（0 / 10 枚）、メッセージ「too-large.jpg: ファイルが大きすぎます（1 枚 10MB まで）」"
+      },
+      {
+        "step": "#80-avatar",
+        "ok": true,
+        "text": "（同じ仕組みの AvatarField）読み込み前に選んだアイコンが、ハイドレーション後にプレビューに出る: 1"
+      }
+    ],
+    "AC-2": [
+      {
+        "step": "modal",
+        "ok": true,
+        "text": "1280px: クリック前 scrollY=300、モーダル中 URL=/p/01a20159-33c9-7000-89a0-576a9eefea45、Esc 後 scrollY=300・URL=/ep4_mwraj58dbop6、新しいタブ: ダイアログ無し=true / 768px: クリック前 scrollY=288.5、モーダル中 URL=/p/01a20159-33c9-7000-89a0-576a9eefea45、Esc 後 scrollY=288.5・URL=/ep4_mwraj58dbop6、新しいタブ: ダイアログ無し=true / 375px: クリック前 scrollY=131.5、モーダル中 URL=/p/01a20159-3e95-7000-afe5-85e3f83b4655、Esc 後 scrollY=131.5・URL=/ep4_mwraj58dbop6、新しいタブ: ダイアログ無し=true"
+      },
+      {
+        "step": "unknown-post",
+        "ok": true,
+        "text": "存在しない /p/<id> は HTTP 404（想定した 404）"
+      },
+      {
+        "step": "modal-deleted-post",
+        "ok": true,
+        "text": "グリッドに残っていた削除済みの投稿を開く: モーダルの文言「閉じる ページが見つかりません」、URL /p/01a2015a-341a-7000-b989-d5b2d4956d30"
+      },
+      {
+        "step": "deleted-full-page",
+        "ok": true,
+        "text": "削除済みの投稿の通常のページは HTTP 404"
+      }
+    ],
+    "AC-6": [
+      {
+        "step": "cls",
+        "ok": true,
+        "text": "1280px: 枠 600x600 → 600x600（読み込み前に完了した写真 0、後 3）、CLS=0.0001 / 768px: 枠 524x524 → 524x524（読み込み前に完了した写真 0、後 3）、CLS=0.0002 / 375px: 枠 375x375 → 375x375（読み込み前に完了した写真 0、後 3）、CLS=0.0078"
+      },
+      {
+        "step": "og",
+        "ok": true,
+        "text": "Cookie 無しの HTML の meta 12 個、足りないもの: なし"
+      }
+    ],
+    "AC-3": [
+      {
+        "step": "other-user-no-delete",
+        "ok": true,
+        "text": "他の利用者（B）の画面の「削除」: 0 個、本人（A）の画面: 1 個"
+      },
+      {
+        "step": "likers",
+        "ok": true,
+        "text": "いいねした人の一覧に 1 人"
+      },
+      {
+        "step": "likers-empty",
+        "ok": true,
+        "text": "0 件のとき「まだいいねはありません」"
+      },
+      {
+        "step": "bucket",
+        "ok": true,
+        "text": "削除前 48 個 → 後 36 個。消えたのは 12 個（3 枚 × orig・w320・w640・w1080）で、投稿 01a20158-c92d-7000-a8c4-3cba2a94f5ef のファイルと一致。残り 0 個"
+      },
+      {
+        "step": "grid",
+        "ok": true,
+        "text": "削除後の作者のプロフィールのグリッドに 01a20158-c92d-7000-a8c4-3cba2a94f5ef は 0 件"
+      },
+      {
+        "step": "gone",
+        "ok": true,
+        "text": "削除した投稿の URL は HTTP 404（想定した 404）"
+      },
+      {
+        "step": "focus-trap",
+        "ok": true,
+        "text": "開いた直後の focus button:キャンセル。Tab 7 回・Shift+Tab 4 回の間ずっとダイアログの中: true（button:削除 → button:キャンセル → button:削除 → button:キャンセル → button:削除 → button:キャンセル → button:削除 → S:button:キャンセル → S:button:削除 → S:button:キャンセル → S:button:削除）"
+      },
+      {
+        "step": "esc-cancel",
+        "ok": true,
+        "text": "Esc で閉じる。focus は button:削除 に戻り、投稿は HTTP 200 のまま"
+      },
+      {
+        "step": "cancel-button",
+        "ok": true,
+        "text": "「キャンセル」で閉じる。focus は button:削除 に戻る"
+      },
+      {
+        "step": "delete-inflight",
+        "ok": true,
+        "text": "通信中: Cancel も Esc も閉じず、2 回目の Enter でも送信は 1 件（cancel 後 open=true、Esc 後 open=true）"
+      },
+      {
+        "step": "delete-failure-focus",
+        "ok": true,
+        "text": "失敗後 Tab 5 回・Shift+Tab 5 回ずっとダイアログの中: true。Esc で閉じ focus は button:削除"
+      },
+      {
+        "step": "comment-delete-inflight",
+        "ok": true,
+        "text": "通信中: Cancel も Esc も閉じず、2 回目の Enter でも送信は 1 件"
+      },
+      {
+        "step": "comment-delete-failure-focus",
+        "ok": false,
+        "text": "失敗後 Tab 5 回・Shift+Tab 5 回ずっとダイアログの中: true。Esc で閉じ focus は button:@ep4_mwraj58dbop6 のコ"
+      }
+    ]
+  },
+  "health": {
+    "EXPECTED-404: AC-2 unknown post": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [],
+      "http": [
+        "404 GET http://localhost:3103/p/00000000-0000-7000-8000-000000000000"
+      ]
+    },
+    "EXPECTED-404: AC-3 deleted post": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [],
+      "http": [
+        "404 GET http://localhost:3103/p/01a20158-c92d-7000-a8c4-3cba2a94f5ef"
+      ]
+    },
+    "EXPECTED-404: AC-2x deleted post full page": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [],
+      "http": [
+        "404 GET http://localhost:3103/p/01a2015a-341a-7000-b989-d5b2d4956d30"
+      ]
+    },
+    "EXPECTED-FAIL: AC-3x delete request held then aborted": {
+      "console": [
+        "error: Failed to load resource: net::ERR_FAILED"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "POST http://localhost:3103/p/01a2015a-4e54-7000-b2c2-f130830d9bec net::ERR_FAILED"
+      ],
+      "http": []
+    },
+    "EXPECTED-FAIL: AC-3x comment delete request held then aborted": {
+      "console": [
+        "error: Failed to load resource: net::ERR_FAILED"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "POST http://localhost:3103/p/01a2015a-4e54-7000-b2c2-f130830d9bec net::ERR_FAILED"
+      ],
+      "http": []
+    },
+    "EXPECTED-FAIL: AC-4x upload request aborted": {
+      "console": [
+        "error: Failed to load resource: net::ERR_FAILED"
+      ],
+      "pageerror": [],
+      "requestfailed": [
+        "POST http://localhost:3103/create net::ERR_FAILED"
+      ],
+      "http": []
+    },
+    "AC-4x #80 S5 avatar before hydration": {
+      "console": [
+        "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "pageerror": [],
+      "requestfailed": [],
+      "http": [
+        "404 GET http://localhost:3103/p/01a2015a-341a-7000-b989-d5b2d4956d30"
+      ]
+    }
+  }
+}
