@@ -1,0 +1,86 @@
+$ opennextjs-cloudflare build
+
+┌─────────────────────────────┐
+│ OpenNext — Cloudflare build │
+└─────────────────────────────┘
+
+App directory: /Users/tetsuyaohta/projects/other/insta-modoki/.worktrees/epic-7
+Next.js version : 16.4.5
+@opennextjs/cloudflare version: 1.20.16
+@opennextjs/aws version: 4.1.15
+workerd compatibility_date: 2026-11-01
+
+┌─────────────────────────────────┐
+│ OpenNext — Building Next.js app │
+└─────────────────────────────────┘
+
+▲ Next.js 16.4.5 (Turbopack)
+Using secrets defined in .dev.vars
+✓ Running next.config.ts took 1719ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.6s
+  Running TypeScript ...
+  Finished TypeScript in 5.2s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/17) ...
+  Generating static pages using 15 workers (4/17)
+
+  Generating static pages using 15 workers (8/17)
+
+  Generating static pages using 15 workers (12/17)
+
+✓ Generating static pages using 15 workers (17/17) in 127ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /(.)create
+├ ƒ /(.)stories/[username]
+├ ƒ /[username]
+├ ƒ /[username]/(..)p/[postId]
+├ ƒ /[username]/followers
+├ ƒ /[username]/following
+├ ƒ /accounts/edit
+├ ƒ /accounts/login
+├ ƒ /accounts/logout
+├ ƒ /accounts/signup
+├ ƒ /admin
+├ ƒ /admin/invites
+├ ƒ /api/notifications/stream
+├ ƒ /create
+├ ƒ /e2e-harness/db
+├ ƒ /e2e-harness/upload
+├ ƒ /explore
+├ ƒ /explore/search
+├ ƒ /explore/tags/[tag]
+├ ƒ /notifications
+├ ƒ /p/[postId]
+├ ƒ /stories/[username]
+└ ƒ /stories/create
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+
+WARN Node.js middleware support is experimental in cloudflare, and not officially maintained by OpenNext maintainers. Use at your own risk.
+
+┌──────────────────────────────┐
+│ OpenNext — Generating bundle │
+└──────────────────────────────┘
+
+Bundling middleware function...
+Bundling Node.js middleware...
+Bundling static assets...
+Bundling cache assets...
+Building server function: default...
+Applying code patches: 2.437s
+# copyPackageTemplateFiles
+[35m⚙️ Bundling the OpenNext server...
+[0m
+[35mWorker saved in `.open-next/worker.js` 🚀
+[0m
+OpenNext build complete.
+rc=0

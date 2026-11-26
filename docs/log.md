@@ -1,5 +1,8 @@
 # ドキュメントの更新履歴
 
+## 2026-11-26
+* **Creation**: [EPIC #7 MVP の品質の総合試験（3 回目）](test-reports/epic-0007-mvp-quality-r3.md)（PASS。#132 の後の 5d90708 で 6 つの AC が全て PASS）と画面の写真・記録（`test-reports/evidence/epic-0007-r3/`）を追加し、[test-reports/index.md](test-reports/index.md) に載せた。
+
 ## 2026-11-25
 * **Creation**: [ADR-0074](adr/0074-inline-blur-placeholder-only-for-the-priority-photo.md)（ぼかしの PNG は優先読み込みの写真だけに埋め込み、ほかは ThumbHash の平均の色にする）を追加した（#132）。
 

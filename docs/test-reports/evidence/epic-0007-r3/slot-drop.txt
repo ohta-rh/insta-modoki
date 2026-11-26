@@ -1,0 +1,8 @@
+slot 3 のポート 3103 のプロセスを 0 個止めました
+バケット insta-s3 のオブジェクトを 5087 / 5087 個消しました
+slot 3: Garage の後始末を待っています（MklTodo=14765）
+slot 3: Garage の後始末を待っています（MklTodo=11315）
+slot 3: Garage の後始末を待っています（MklTodo=8893）
+slot 3: Garage の後始末を待っています（MklTodo=1030）
+slot 3 を削除しました（insta-s3、.wrangler/state）。.dev.vars は残しています
+rc=0

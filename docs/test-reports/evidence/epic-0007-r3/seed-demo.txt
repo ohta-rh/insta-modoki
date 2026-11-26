@@ -1,0 +1,4 @@
+$ node scripts/seed/index.ts --profile demo
+Using secrets defined in .dev.vars
+seed: demo OK users=30 posts=300 media=473
+rc=0

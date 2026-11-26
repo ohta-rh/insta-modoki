@@ -1,0 +1,36 @@
+slot 3 のポート 3103 のプロセスを 0 個止めました
+バケット insta-s3 のオブジェクトを 10000 / 62324 個消しました
+バケット insta-s3 のオブジェクトを 20000 / 62324 個消しました
+バケット insta-s3 のオブジェクトを 30000 / 62324 個消しました
+バケット insta-s3 のオブジェクトを 40000 / 62324 個消しました
+バケット insta-s3 のオブジェクトを 50000 / 62324 個消しました
+バケット insta-s3 のオブジェクトを 60000 / 62324 個消しました
+バケット insta-s3 のオブジェクトを 62324 / 62324 個消しました
+slot 3: Garage の後始末を待っています（MklTodo=62233）
+slot 3: Garage の後始末を待っています（MklTodo=62384）
+slot 3: Garage の後始末を待っています（MklTodo=63438）
+slot 3: Garage の後始末を待っています（MklTodo=56317）
+slot 3: Garage の後始末を待っています（MklTodo=53003）
+slot 3: Garage の後始末を待っています（MklTodo=52486）
+slot 3: Garage の後始末を待っています（MklTodo=53028）
+slot 3: Garage の後始末を待っています（MklTodo=52596）
+slot 3: Garage の後始末を待っています（MklTodo=54681）
+slot 3: Garage の後始末を待っています（MklTodo=55761）
+slot 3: Garage の後始末を待っています（MklTodo=57110）
+slot 3: Garage の後始末を待っています（MklTodo=57670）
+slot 3: Garage の後始末を待っています（MklTodo=65608）
+slot 3: Garage の後始末を待っています（MklTodo=77006）
+slot 3: Garage の後始末を待っています（MklTodo=86147）
+slot 3: Garage の後始末を待っています（MklTodo=95846）
+slot 3: Garage の後始末を待っています（MklTodo=92211）
+slot 3: Garage の後始末を待っています（MklTodo=83551）
+slot 3: Garage の後始末を待っています（MklTodo=76112）
+slot 3: Garage の後始末を待っています（MklTodo=71474）
+slot 3: Garage の後始末を待っています（MklTodo=63147）
+slot 3: Garage の後始末を待っています（MklTodo=53140）
+slot 3: Garage の後始末を待っています（MklTodo=39079）
+slot 3: Garage の後始末を待っています（MklTodo=17316）
+slot 3: Garage の後始末を待っています（MklTodo=553）
+slot 3: Garage の後始末を待っています（MklTodo=621）
+slot 3 を初期化しました（insta-s3、PORT=3103、.dev.vars）
+rc=0
