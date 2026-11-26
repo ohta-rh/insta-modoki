@@ -21,7 +21,7 @@ status: stable
 
 ## 決定
 
-- `public/sw.js` は `offline-v1` の中に `/assets/offline.html` の 1 件だけを入れる。ページ・API・画像・スクリプトの応答は保存しない（`put`・`addAll` を使わない）。
+- `public/sw.js` は `offline-v1` の中に `/assets/offline.html` の 1 件だけを入れる。ページ・API・画像・スクリプトの応答は保存しない。`cache.put` は 1 回だけ、`/assets/offline.html` のために使う。Workers Static Assets がこのパスをリダイレクトし、`redirected` の応答はナビゲーションの応答に使えないため、同じ本文とヘッダーの新しい `Response`（`redirected` でない）を入れる。`addAll` は使わず、ほかの応答は一切保存しない。
 - `fetch` はナビゲーションのときだけ `respondWith` し、サーバーの応答（500・404 を含む）はそのまま返す。通信の失敗のときだけ案内の画面を返す。
 - `activate` で `offline-v1` 以外の名前のキャッシュを全て消し、`skipWaiting` と `clients.claim` で新しい版をすぐ効かせる。`sw.js` は `Cache-Control: no-cache` で配る。
 - 案内の画面は 1 ファイルで完結し、「再読み込み」は JS を使わない `<form action="/">` にする。
