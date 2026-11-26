@@ -206,9 +206,10 @@ signedIn('キーボードだけで操作でき、axe の重大な違反が 0 件
     createdAt: at + 24 * 60_000,
     mediaCount: 3,
   });
-  // A like each keeps the two posts the checks below look for on the first pages.
-  seedLikers(withAlt.id, 1);
-  seedLikers(multi.id, 1);
+  // More likes than any other post keep the two posts the checks below look for on the first page.
+  const likes = maxExploreLikeCount() + 1;
+  seedLikers(withAlt.id, likes);
+  seedLikers(multi.id, likes);
   // Tabbing scrolls the marker into view and would load the next page by itself: with no observer
   // only the button can (the scroll path has its own scenario).
   await page.addInitScript(() => {
