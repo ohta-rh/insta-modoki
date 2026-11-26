@@ -1,7 +1,7 @@
 import { expect, test as anonymous, type Locator, type Page } from '@playwright/test';
 import { signedIn } from './support/auth';
 import { expectNoSeriousViolations } from './support/axe';
-import { seedFollow, seedUser, userRow } from './support/db';
+import { maxExploreLikeCount, seedFollow, seedUser, userRow } from './support/db';
 import { harness } from './support/harness';
 import { waitForHydration } from './support/hydration';
 import { tabTo } from './support/keys';
@@ -46,20 +46,6 @@ function seedPosts(n: number, authorUsername = newPerson().username): string[] {
   );
 }
 
-/** Presses "さらに表示" until there is none, waiting each time on the tile count or the button. */
-async function readAll(page: Page): Promise<void> {
-  const more = moreButton(page);
-  for (;;) {
-    await expect(grid(page)).toBeVisible();
-    const before = await tiles(page).count();
-    if ((await more.count()) === 0) return;
-    await more.click();
-    await expect
-      .poll(async () => (await more.count()) === 0 || (await tiles(page).count()) > before)
-      .toBe(true);
-  }
-}
-
 anonymous('未ログインで発見タブを開くとログインへ移る', async ({ page }) => {
   await page.goto('/explore');
   await expect(page).toHaveURL(/\/accounts\/login/);
@@ -77,13 +63,14 @@ signedIn(
       createdAt: at + 120_000,
       mediaCount: 2,
     });
-    seedLikers(low.id, 1);
-    seedLikers(mid.id, 2);
-    seedLikers(top.id, 3);
-    // The slot holds other specs' posts too, so only these three are compared, among themselves.
+    // The slot holds other specs' posts too: beating its most liked post puts these three on the
+    // first page, so no page has to be read to the end.
+    const base = maxExploreLikeCount();
+    seedLikers(low.id, base + 1);
+    seedLikers(mid.id, base + 2);
+    seedLikers(top.id, base + 3);
     await page.goto('/explore');
     await waitForHydration(page);
-    await readAll(page);
 
     await expect(page.getByRole('heading', { level: 1, name: '発見' })).toBeAttached();
     // From 768px the nav's panel opens the search; the page itself has no entrance.
@@ -109,6 +96,7 @@ signedIn(
     const first = (await tiles(page).first().boundingBox())!;
     expect(Math.abs(first.width * (4 / 3) - first.height)).toBeLessThan(1);
 
+    // Tests of this file run in parallel and also lead the list, so only these three are compared.
     const mine = new Set([top.id, mid.id, low.id].map((id) => `/p/${id}`));
     const order = (await hrefsOf(tiles(page))).filter((h) => mine.has(h));
     expect(order).toEqual([`/p/${top.id}`, `/p/${mid.id}`, `/p/${low.id}`]);
@@ -130,11 +118,12 @@ signedIn('自分とフォロー中の人の投稿は出ない', async ({ page, a
   const own = insertPost({ authorUsername: account.me.username, createdAt: at });
   const theirs = insertPost({ authorUsername: followed.username, createdAt: at });
   const other = insertPost({ authorUsername: stranger.username, createdAt: at });
-  for (const post of [own, theirs, other]) seedLikers(post.id, 1);
+  // More likes than any other post: the stranger's post is on the first page.
+  const likes = maxExploreLikeCount() + 1;
+  for (const post of [own, theirs, other]) seedLikers(post.id, likes);
 
   await page.goto('/explore');
   await waitForHydration(page);
-  await readAll(page);
   const hrefs = await hrefsOf(tiles(page));
   // The stranger's post is on the list, so the other two are missing for a reason.
   expect(hrefs).toContain(`/p/${other.id}`);
@@ -217,9 +206,10 @@ signedIn('キーボードだけで操作でき、axe の重大な違反が 0 件
     createdAt: at + 24 * 60_000,
     mediaCount: 3,
   });
-  // A like each keeps the two posts the checks below look for on the first pages.
-  seedLikers(withAlt.id, 1);
-  seedLikers(multi.id, 1);
+  // More likes than any other post keep the two posts the checks below look for on the first page.
+  const likes = maxExploreLikeCount() + 1;
+  seedLikers(withAlt.id, likes);
+  seedLikers(multi.id, likes);
   // Tabbing scrolls the marker into view and would load the next page by itself: with no observer
   // only the button can (the scroll path has its own scenario).
   await page.addInitScript(() => {
