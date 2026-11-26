@@ -1,0 +1,345 @@
+{
+ "health": {
+  "ac1-feed": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac1-profile": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac1-unknown-profile": {
+   "consoleErrWarn": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+   ],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": [
+    "404 http://localhost:3103/no_such_user_zz9"
+   ]
+  },
+  "find-multi": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED",
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac4-detail": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac4-edit": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac4-create": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac4-followers": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac4-modal": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac6-reduce": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  },
+  "ac6-no-preference": {
+   "consoleErrWarn": [],
+   "pageerror": [],
+   "requestfailed": [
+    "http://localhost:3103/api/notifications/stream net::ERR_ABORTED"
+   ],
+   "http400": []
+  }
+ },
+ "axe": {
+  "ホームフィード": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "プロフィール": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "投稿詳細": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "プロフィールの編集": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "投稿の作成": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "フォロワーの一覧": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "投稿のモーダル": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "サインアップ": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "ログイン": {
+   "all": [],
+   "seriousOrCritical": 0
+  },
+  "投稿詳細（AC-5 コメント後）": {
+   "all": [],
+   "seriousOrCritical": 0
+  }
+ },
+ "tabOrder": {
+  "feed": {
+   "reached": 60,
+   "interactiveInDom": 203,
+   "order": [
+    "a:本文へ移動",
+    "button:その他",
+    "a:ストーリーを追加デ+追加",
+    "a:seed_user_29",
+    "a:3週間前",
+    "button:その他の操作",
+    "button:いいね",
+    "a:コメント 1 件",
+    "button:保存",
+    "button:0 件のいいね",
+    "a:コメント 1 件をすべて見る",
+    "input:",
+    "a:seed_user_26",
+    "a:3週間前",
+    "button:その他の操作",
+    "button:いいね",
+    "a:コメント 4 件",
+    "button:保存",
+    "button:6 件のいいね",
+    "a:コメント 4 件をすべて見る",
+    "input:",
+    "a:seed_user_24",
+    "a:3週間前",
+    "button:その他の操作",
+    "button:いいね",
+    "a:コメント 2 件",
+    "button:保存",
+    "button:3 件のいいね",
+    "a:コメント 2 件をすべて見る",
+    "input:",
+    "a:seed_user_23",
+    "a:3週間前",
+    "button:その他の操作",
+    "button:いいね",
+    "a:コメント 3 件",
+    "button:保存",
+    "button:4 件のいいね",
+    "a:コメント 3 件をすべて見る",
+    "input:",
+    "a:seed_user_22",
+    "a:3週間前",
+    "button:その他の操作",
+    "button:いいね",
+    "a:コメント 6 件",
+    "button:保存",
+    "button:2 件のいいね",
+    "a:コメント 6 件をすべて見る",
+    "input:",
+    "a:seed_user_21",
+    "a:3週間前",
+    "button:その他の操作",
+    "button:いいね",
+    "a:コメント 0 件",
+    "button:保存",
+    "button:3 件のいいね",
+    "input:",
+    "a:seed_user_19",
+    "a:3週間前",
+    "button:その他の操作",
+    "div:投稿の写真"
+   ]
+  },
+  "profile": {
+   "reached": 21,
+   "interactiveInDom": 31,
+   "order": [
+    "a:本文へ移動",
+    "button:その他",
+    "a:プロフィールを編集",
+    "a:10 フォロワー",
+    "a:20 フォロー中",
+    "a:投稿",
+    "a:/p/01a21552-042c-70ed-8a8d-02c",
+    "a:/p/01a21552-042c-70cf-b937-9ad",
+    "a:/p/01a21552-042c-70b1-ab60-de0",
+    "a:/p/01a21552-042c-7093-b778-aeb",
+    "a:/p/01a21552-042c-7075-98cf-4d8",
+    "a:/p/01a21552-042c-7057-bcbc-98f",
+    "a:/p/01a21552-042c-7039-bf79-ba6",
+    "a:/p/01a21552-042c-701b-85d2-379",
+    "a:/p/01a21552-042b-703c-882e-c94",
+    "a:/p/01a21552-042b-701e-8a4b-95c",
+    "a:ホーム",
+    "a:発見",
+    "a:投稿",
+    "a:通知",
+    "a:プロフィール"
+   ]
+  },
+  "detail": {
+   "reached": 37,
+   "interactiveInDom": 55,
+   "order": [
+    "a:本文へ移動",
+    "button:その他",
+    "a:demo",
+    "a:3週間前",
+    "button:その他の操作",
+    "div:投稿の写真",
+    "button:前の写真",
+    "button:次の写真",
+    "button:いいね",
+    "a:コメント 6 件",
+    "button:保存",
+    "button:9 件のいいね",
+    "a:demo",
+    "a:seed_user_10",
+    "button:@seed_user_10 に返信する",
+    "button:@seed_user_10 のコメントを削除",
+    "a:demo",
+    "button:@demo に返信する",
+    "button:@demo のコメントを削除",
+    "a:seed_user_04",
+    "button:@seed_user_04 に返信する",
+    "button:@seed_user_04 のコメントを削除",
+    "a:seed_user_05",
+    "button:@seed_user_05 に返信する",
+    "button:@seed_user_05 のコメントを削除",
+    "a:seed_user_15",
+    "button:@seed_user_15 に返信する",
+    "button:@seed_user_15 のコメントを削除",
+    "a:seed_user_05",
+    "button:@seed_user_05 に返信する",
+    "button:@seed_user_05 のコメントを削除",
+    "input:",
+    "a:ホーム",
+    "a:発見",
+    "a:投稿",
+    "a:通知",
+    "a:プロフィール"
+   ]
+  },
+  "followers": {
+   "reached": 18,
+   "interactiveInDom": 27,
+   "order": [
+    "a:本文へ移動",
+    "button:その他",
+    "a:@demo",
+    "a:Sseed_user_10かいと",
+    "a:Sseed_user_20みお",
+    "a:Sseed_user_21こうき",
+    "a:Sseed_user_14いつき",
+    "a:Sseed_user_09めい",
+    "a:Sseed_user_29あかり",
+    "a:Sseed_user_13つむぎ",
+    "a:Sseed_user_12れん",
+    "a:Sseed_user_18しずく",
+    "a:Sseed_user_07そうた",
+    "a:ホーム",
+    "a:発見",
+    "a:投稿",
+    "a:通知",
+    "a:プロフィール"
+   ]
+  }
+ },
+ "notes": {
+  "refusedUrl": "http://localhost:3103/accounts/login",
+  "feedArticles": 12,
+  "feedImages": 25,
+  "profileHeader": "Mado その他",
+  "gridTiles": 10,
+  "gridColumns": "124.328px 124.336px 124.336px",
+  "multiPost": "/p/01a21552-042c-7057-bcbc-98f4835a580d",
+  "motion-reduce-matchMedia": true,
+  "motion-reduce-carousel": {
+   "transition": "0s",
+   "animation": "0s",
+   "scroll": "auto"
+  },
+  "motion-reduce-modal": {
+   "transition": "0s",
+   "animation": "0s",
+   "scroll": "auto"
+  },
+  "motion-no-preference-matchMedia": false,
+  "motion-no-preference-carousel": {
+   "transition": "0s",
+   "animation": "0s",
+   "scroll": "smooth"
+  },
+  "motion-no-preference-modal": {
+   "transition": "0s",
+   "animation": "0.15s",
+   "scroll": "auto"
+  },
+  "signupErrorUrl": "http://localhost:3103/accounts/signup",
+  "signupErrorText": [
+   "メールアドレスの形式を確認してください",
+   "パスワードは 8〜72 字で入力してください"
+  ],
+  "likedPressed": "true",
+  "emptyCommentSubmitDisabled": true,
+  "mouseEvents": 0
+ },
+ "browser": "158.0.8127.37"
+}

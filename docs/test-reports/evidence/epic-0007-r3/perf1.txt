@@ -1,0 +1,16 @@
+| 指標 | 画面 | 値 | 基準 |
+|---|---|---|---|
+| lighthouseScore | / | 96 | 90 |
+| lcpMs | / | 2456 | 2500 |
+| cls | / | 0.0016 | 0.1 |
+| lighthouseScore | /demo | 100 | 90 |
+| lcpMs | /demo | 1527 | 2500 |
+| cls | /demo | 0 | 0.1 |
+| lighthouseScore | /p/01a21529-7b75-714a-b83d-777b8f957d45 | 100 | 90 |
+| lcpMs | /p/01a21529-7b75-714a-b83d-777b8f957d45 | 1378 | 2500 |
+| cls | /p/01a21529-7b75-714a-b83d-777b8f957d45 | 0 | 0.1 |
+| inpMs | / | 40 | 200 |
+| feedApiP95Ms | GET / | 38 | 300 |
+| initialJsGzipBytes | / | 158519 | 170000 |
+perf: OK
+rc=0

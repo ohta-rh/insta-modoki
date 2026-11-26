@@ -1,0 +1,4 @@
+$ node scripts/seed/index.ts --profile bench
+Using secrets defined in .dev.vars
+seed: bench OK users=1000 posts=10000
+rc=0
