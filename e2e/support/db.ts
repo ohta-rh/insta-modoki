@@ -117,3 +117,12 @@ export function unreadNotificationCount(username: string): number {
       ).n,
   );
 }
+
+/** The most likes any post of the last 7 days has (0 when there is none): what a test must beat to lead the discover tab. */
+export function maxExploreLikeCount(): number {
+  const since = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const row = withDb((db) =>
+    db.prepare('SELECT MAX(like_count) AS max FROM posts WHERE created_at >= ?').get(since),
+  ) as { max: number | null };
+  return row.max ?? 0;
+}
